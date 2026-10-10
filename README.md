@@ -8,7 +8,11 @@ save/publish, fixed-model and authored-field readback, optional registered pract
 and platform export. Practice combines ledger and conversation verdicts. Bounded
 JSON patches repair candidates; artifacts and traces persist throughout.
 The compiler binds known private tool-macro response aliases only in routing
-variables; literal API payloads remain opaque.
+variables; literal API payloads remain opaque. Advisory progress checks inspect
+reachable native termination and close-result routes. Repairs receive bounded
+execution counts from real calls without customer speech, arguments or results.
+Invalid source references in policy-gap review receive at most two model repairs;
+original rejected reviews and genuine blocking ambiguities remain recorded.
 
 [Builder architecture](docs/builder-architecture.mmd) shows this implemented path.
 The legacy `forge.ps1 build` command still emits the older offline graph format.
@@ -17,11 +21,19 @@ The legacy `forge.ps1 build` command still emits the older offline graph format.
 
 See [builder R&D status](analysis/builder-rd-status.txt) for evidence and remaining gates.
 
-- Latest full core UTF-8 run: **673 passed, 2 optional integrations skipped in
-  68.62s**. Separately verified: **19 Bridge tests** and **36 MiroFish integration
+- The new [V10 automatic build](local-runs/builder-progress-a-v10/trace.json)
+  emits native termination but was rejected by the source critic after 189s
+  for callback/transfer receipts, stop/retry state and speech/closure ordering.
+  The [V11 automatic Sol repair](local-runs/builder-progress-a-v11/trace.json)
+  hit its 240s model timeout within the same original budget. Neither published
+  nor started hosted practice. Latest actually executed voice score remains
+  **0/3**; source validation and review gates were retained. Builder code was
+  unchanged from commit `d30204e` throughout V10/V11.
+- Latest full core UTF-8 run: **742 passed, 2 optional integrations skipped in
+  65.45s**. Separately verified: **19 Bridge tests** and **36 MiroFish integration
   tests** passed. The latest **86 focused compiler/build/platform checks** and
   earlier 120 focused checks are included in the core total, not added to it.
-  The earlier share audit checked **502 files** cleanly.
+  The latest share audit checked **773 files** cleanly after dataset integration.
 - [V8 development checkpoint run](local-runs/builder-rd-a-v8/trace.json) completed
   in **1153s** from its original **13:37 UTC** start, including manual builder-code
   fixes between processes. Candidate 5 has seven nodes; its independent critic
@@ -198,3 +210,15 @@ Final deliverables require platform-exported workflows, reproducible builder cod
 and commands, and traces from fresh automatic runs on unseen briefs and API schemas
 from one immutable commit within the official time limit. The development checkpoint
 chain above does not establish that competition result.
+
+## Public dataset planning adapters
+
+[Customer dataset adapter](integrations/customer-datasets/README.txt) downloads
+the pinned Banking77 test split and one Taskmaster-3 shard, verifies source and
+license-notice SHA-256, and produces 50 local conversation plans. The separate
+12-test stdlib suite and an offline rebuild pass on the actual downloaded files.
+Raw files and generated plans stay in ignored cache. The records preserve
+taxonomy, turn structure and hashed lexical cues; they contain no raw speech,
+bank policy mapping or bank expected output. Scope is `conversation_only` /
+`not_executed`, not an additional Freya benchmark. See the
+[six-candidate primary-source research](research/customer-datasets.txt).

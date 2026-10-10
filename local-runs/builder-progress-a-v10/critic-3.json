@@ -1,0 +1,94 @@
+{
+  "verdict": "revise",
+  "issues": [
+    {
+      "severity": "error",
+      "source_ids": [
+        "brief-a:3",
+        "brief-a:46",
+        "brief-a:closing.p1"
+      ],
+      "location": "opening.transitions[0..4]",
+      "message": "Opening permits a confirmed customer's utterance to be classified as `human_insist` and routes directly to `identity`, skipping the required one-time offer to help and the general transfer. Conversely, a human-insist semantic route to `close_stage` can close without a successful transfer receipt; the route's description also bundles wrong-number/deceased/unclear/refusal with transfer success. Actual route predicates are opaque `matches_intent` descriptions, so they do not establish source conditions or transfer receipt.",
+      "fix": "Separate identity confirmation, human-request offer, and human insistence paths. Require the actual successful general-queue transfer receipt before a human outcome; ensure opening terminal intents establish only their allowed disposition."
+    },
+    {
+      "severity": "error",
+      "source_ids": [
+        "brief-a:6",
+        "brief-a:7",
+        "brief-a:46",
+        "brief-a:closing.p1"
+      ],
+      "location": "opening.tools.schedule_callback and opening.transitions",
+      "message": "`callback_result_ok` is mapped from the callback API, but the transition also permits `schedule_callback_response.data.ok` aliases and has no dispatch/attempt correlation or pending-action gate. A prior/stale true value can route a later callback offer to closure without scheduling that requested slot; the broad `always` route is to `opening` and does not protect against the success transition winning first.",
+      "fix": "Track the validated callback request and current attempt, dispatch only after validation, and gate closure on that request's actual successful receipt. On failure, retain the legal no-callback/ retry path."
+    },
+    {
+      "severity": "error",
+      "source_ids": [
+        "brief-a:13",
+        "brief-a:14",
+        "brief-a:15"
+      ],
+      "location": "identity.transitions[1..3]",
+      "message": "Identity closure relies on semantic descriptions for three wrong answers or repeated refusal, while the deterministic `wrong_answers_left == 0` condition catches only the numeric value and relies on undocumented exact mapping. The model-triggered close route can fire from a mistaken refusal classification before the required explanation/second refusal.",
+      "fix": "Derive refusal count and wrong-answer state from actual interaction/API results; gate failed/declined closure on the precise source threshold and required explanation."
+    },
+    {
+      "severity": "error",
+      "source_ids": [
+        "brief-a:37",
+        "brief-a:38",
+        "brief-a:46"
+      ],
+      "location": "negotiation.transitions[0] and negotiation task_message",
+      "message": "The transition to `close_stage` fires on any `promise_result_ok == true`, `promise_id` set, or transfer result true. It can fire immediately after `create_promise` succeeds, before the required text-message sentence and thank-you/goodbye have been spoken. The prompt says those speech obligations exist but no route condition can verify their delivery; similarly transfer success can bypass any needed post-transfer speech.",
+      "fix": "Keep the workflow in a speech-capable stage after the required action result, deliver and record the mandatory sentence before closure, then route on explicit trusted speech-completion state as well as action receipt."
+    },
+    {
+      "severity": "error",
+      "source_ids": [
+        "brief-a:46",
+        "brief-a:47"
+      ],
+      "location": "close_stage.transitions",
+      "message": "If `close_call` fails, the `always` transition returns to `close_stage`, where the only available tool is `close_call`; a model can call it again. This violates exactly-one close_call and the requirement that it be the last tool call. The unresolved result also has no source-authorized disposition.",
+      "fix": "Prevent a second close dispatch after any close attempt. Preserve the failed-close state and end the native call without another bank tool call, or use a source-authorized recovery if one exists."
+    }
+  ],
+  "counterexamples": [
+    {
+      "source_ids": [
+        "brief-a:3",
+        "brief-a:42"
+      ],
+      "scenario": "Customer confirms identity by saying their name and in the same utterance asks for a human; extraction labels `human_insist`, and the opening semantic route to identity wins.",
+      "expected_output": "Ask once whether the agent can help. If the customer insists, call transfer_to_agent with queue `general`, then close as transferred/human after actual successful receipt."
+    },
+    {
+      "source_ids": [
+        "brief-a:6",
+        "brief-a:7"
+      ],
+      "scenario": "A callback was successfully scheduled earlier, then on a later turn a relative offers an invalid slot twice; persistent callback_result_ok remains true and the callback success transition routes to close_stage.",
+      "expected_output": "Do not schedule the invalid slot; close as not_reached/no_callback. A previous slot's receipt must not satisfy this request."
+    },
+    {
+      "source_ids": [
+        "brief-a:37",
+        "brief-a:38",
+        "brief-a:47"
+      ],
+      "scenario": "create_promise returns ok:true; routing immediately enters close_stage before the assistant says the required text confirmation, thanks the customer, or says goodbye.",
+      "expected_output": "Say exactly “You will receive a text message confirming this promise.”, thank the customer and say goodbye, then close once as promise."
+    },
+    {
+      "source_ids": [
+        "brief-a:46"
+      ],
+      "scenario": "close_call returns ok:false; the always transition keeps close_stage active and the model retries close_call.",
+      "expected_output": "Do not issue another close_call: exactly one is permitted, and it must be the last tool call. No source-authorized outcome can be inferred from a failed close."
+    }
+  ]
+}

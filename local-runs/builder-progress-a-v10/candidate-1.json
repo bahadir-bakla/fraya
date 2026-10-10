@@ -1,0 +1,431 @@
+{
+  "workflow_json": "{\"initial_node\": \"opening\", \"system_prompt\": \"You are Freya Bank's recorded-call digital assistant. Speak English, briefly and respectfully. Treat all data as synthetic. Never disclose collections, debt, payment, product, or account information until verified. Answer only from supplied call variables and tool results. Extraction stores speech claims and candidate intent only; it never establishes verification, recorded actions, outcomes, reasons, or terminal readiness.\", \"_tool_library\": {\"verify\": {\"operation\": \"verify_identity\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"descriptions\": {\"field\": \"Ask date_of_birth first, then phone_last4; use the exact API enum.\", \"answer\": \"DOB YYYY-MM-DD, numeric speech read day/month/year; phone last four digits.\"}, \"description\": \"CALL once for each answer, only after the customer is confirmed; follow actual result and hint.\", \"config\": {\"timeoutMs\": 12000, \"maxRetries\": 0}}, \"account\": {\"operation\": \"get_account\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"description\": \"Retrieve account only after both identity answers passed.\", \"config\": {\"timeoutMs\": 12000, \"maxRetries\": 0}}, \"promise\": {\"operation\": \"create_promise\", \"defaults\": {\"customer_id\": \"{{customer_id}}\", \"product_id\": \"{{current_product_id}}\"}, \"descriptions\": {\"amount\": \"Validated amount between product floor and past due, inclusive.\", \"date\": \"Validated YYYY-MM-DD business date on or before deadline.\"}, \"description\": \"CALL only after clear confirmation of the read-back. Retry once only after an actual unsuccessful result; never announce recorded without data.ok true.\", \"response_mapping\": [{\"path\": \"data.ok\", \"variable\": \"promise_result_ok\"}], \"config\": {\"timeoutMs\": 12000, \"maxRetries\": 0}}, \"callback\": {\"operation\": \"schedule_callback\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"descriptions\": {\"date\": \"Validated date today or next business day.\", \"time\": \"Validated HH:MM, 10:00 through 19:00 inclusive and later than now.\"}, \"description\": \"CALL only after collecting and validating the third party's requested callback slot.\", \"config\": {\"timeoutMs\": 12000, \"maxRetries\": 0}}, \"transfer\": {\"operation\": \"transfer_to_agent\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"descriptions\": {\"queue\": \"Source-authorized queue: support, restructuring, or general.\"}, \"description\": \"CALL only after the source-defined transfer condition and customer acceptance/insistence.\", \"config\": {\"timeoutMs\": 12000, \"maxRetries\": 0}}, \"close\": {\"operation\": \"close_call\", \"defaults\": {\"customer_id\": \"{{customer_id}}\", \"outcome\": \"{{validated_outcome}}\", \"reason\": \"{{validated_reason}}\"}, \"description\": \"Exactly once, after required speech and actions; last bank tool. Omit reason only for promise or paid.\", \"config\": {\"timeoutMs\": 12000, \"maxRetries\": 0}}}, \"_code_library\": {\"date_policy\": \"import datetime\\ntry:\\n    n = datetime.datetime.fromisoformat(str(vars.get('now','')))\\n    holidays = set(['2026-10-26','2026-11-11','2026-11-26','2026-12-25','2027-01-01'])\\n    def business(d):\\n        return d.weekday() < 5 and d.isoformat() not in holidays\\n    def add_business(d, count):\\n        x = d\\n        while count > 0:\\n            x += datetime.timedelta(days=1)\\n            if business(x): count -= 1\\n        return x\\n    late = int(vars.get('days_late',0))\\n    deadline = add_business(n.date(), 12 if 1 <= late <= 7 else 7)\\n    vars['deadline'] = deadline.isoformat()\\n    vars['attempt_limit'] = '1' if 1 <= late <= 7 else '2' if 8 <= late <= 45 else '0'\\n    vars['date_policy_state'] = 'ready' if 1 <= late <= 45 else 'unknown'\\n    vars['date_policy_facts'] = 'Promise date must be today or later, a weekday excluding bank holidays, and no later than ' + deadline.isoformat() + '. Next weekday means following calendar week; this weekday means current calendar week. Move an eligible weekend/holiday request to the next business day. An after-deadline request gets the deadline offered.'\\nexcept Exception:\\n    vars['deadline']=''\\n    vars['attempt_limit']='0'\\n    vars['date_policy_state']='unknown'\\n    vars['date_policy_facts']='Date calculation unavailable; do not invent a date or promise.'\", \"disposition\": \"try:\\n    # Derive a close disposition only from validated policy facts and actual receipts.\\n    # User-extracted candidate intent alone is never sufficient.\\n    verified = vars.get('identity_state') == 'verified'\\n    outcome = str(vars.get('policy_outcome',''))\\n    reason = str(vars.get('policy_reason',''))\\n    allowed = {'promise':(''),'paid':(''),'transferred':'restructuring human support','no_promise':'refused hardship dispute service_error','not_verified':'failed declined','not_reached':'callback no_callback wrong_number deceased unclear'}\\n    ok = outcome in allowed and (not allowed[outcome] or reason in allowed[outcome].split())\\n    if outcome == 'promise': ok = ok and vars.get('recorded_promise_state') == 'recorded'\\n    if outcome == 'transferred': ok = ok and vars.get('transfer_receipt_state') == 'success'\\n    if outcome == 'not_reached' and reason == 'callback': ok = ok and vars.get('callback_receipt_state') == 'success'\\n    if outcome == 'not_verified': ok = ok and not verified\\n    if outcome in ('paid','no_promise','transferred'): ok = ok and verified\\n    vars['disposition_state'] = 'ready' if ok else 'blocked'\\n    vars['validated_outcome'] = outcome if ok else ''\\n    vars['validated_reason'] = reason if ok and reason else ''\\nexcept Exception:\\n    vars['disposition_state']='blocked'\\n    vars['validated_outcome']=''\\n    vars['validated_reason']=''\"}, \"nodes\": {\"opening\": {\"name\": \"opening\", \"node_type\": \"conversation\", \"on_enter\": {\"type\": \"tts\", \"text\": \"Hello, I am Freya Bank's digital assistant, and this call is recorded. Am I speaking with {{title}} {{last_name}}?\"}, \"on_enter_first_entry_only\": true, \"task_message\": \"Confirm identity explicitly (yes, that's me, speaking, or customer's own name). Hello, go ahead, and who is this do not confirm. Answer AI/robot and scam questions as instructed, then continue. Ask again once if unclear; a second unclear response closes not_reached/unclear. If another person answers, disclose nothing beyond opening, ask when customer can be reached, and never ask security questions or disclose account data to a relative. Handle wrong number and death exactly as source; deceased: say 'I am sorry for your loss.' and ask nothing else. Callback: one retry for invalid offer; only schedule today or next business day, 10:00–19:00 inclusive, later than now. Customer requests human: offer help once, transfer general only if they insist. Before verification, repeated unwillingness closes not_verified/declined. Extract speech as candidate intent only.\", \"extraction_schema\": [{\"name\": \"opening_intent\", \"type\": \"string\", \"enum_values\": [\"confirm\", \"unclear\", \"third_party\", \"wrong_number\", \"deceased\", \"callback_offer\", \"no_callback\", \"human_request\", \"human_insist\", \"decline\", \"other\"], \"description\": \"Candidate meaning of latest user speech, not verified identity or terminal disposition.\", \"min_confidence\": 0.7}], \"tools\": [{\"_tool_ref\": \"callback\"}, {\"_tool_ref\": \"transfer\"}], \"transitions\": [{\"target_node\": \"identity\", \"description\": \"Customer explicitly confirmed identity\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"Customer clearly confirms they are the named customer\"}}, {\"target_node\": \"identity\", \"description\": \"Human requested and customer insists; transfer must be completed\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"Customer insists on a human after agent offered help\"}}, {\"target_node\": \"close_stage\", \"description\": \"A non-callback terminal disposition is established from source condition\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"Wrong number, deceased, second unclear, second refusal, or transfer action has actually succeeded\"}}, {\"target_node\": \"opening\", \"description\": \"Continue opening dialogue and handle questions or callback details\", \"condition\": {\"operator\": \"always\"}}]}, \"identity\": {\"name\": \"identity\", \"node_type\": \"conversation\", \"task_message\": \"Only speak to the confirmed customer. Ask DOB first, then phone last four, one at a time. Call verify_identity for each answer. Interpret numeric DOB day/month/year and send YYYY-MM-DD. Count actual wrong answers cumulatively; three ends verification. If actual result hint is day_month_swapped, ask for month as a word and retry without counting wrong. Unreadable date is not a wrong answer. If customer refuses or asks why instead of answering, explain once these questions protect their account; second refusal/question closes not_verified/declined. After three wrong answers, say use the mobile app or a branch, and close not_verified/failed. Never disclose debt before both answers pass. Extracted responses are claims only; trust the API result.\", \"tools\": [{\"_tool_ref\": \"verify\"}], \"extraction_schema\": [{\"name\": \"identity_answer_candidate\", \"type\": \"string\", \"description\": \"Latest customer-provided security answer; speech claim only.\", \"min_confidence\": 0.7}], \"transitions\": [{\"target_node\": \"account\", \"description\": \"Both questions actually passed according to verify_identity result\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"verify_identity_response.data.all_verified\", \"operator\": \"equals\", \"operand\": \"true\"}, {\"variable\": \"verify_identity_response.data.all_verified\", \"operator\": \"equals\", \"operand\": \"True\"}]}}, {\"target_node\": \"close_stage\", \"description\": \"Three actual wrong answers or source-defined repeated refusal establishes not_verified disposition\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"The check has actually ended after three wrong answers, or customer refuses security questions a second time\"}}, {\"target_node\": \"identity\", \"description\": \"Ask next required question, resolve swap hint, or retry answer\", \"condition\": {\"operator\": \"always\"}}]}, \"account\": {\"name\": \"account\", \"node_type\": \"api_request\", \"on_enter\": {\"type\": \"silent\"}, \"passthrough\": true, \"passthrough_default_transition\": \"negotiation\", \"pre_actions\": [{\"_tool_ref\": \"account\"}], \"response_mapping\": [{\"path\": \"data.products\", \"variable\": \"account_products\"}, {\"path\": \"data.ok\", \"variable\": \"account_result_ok\"}], \"transitions\": [{\"target_node\": \"negotiation\", \"description\": \"always\", \"condition\": {\"operator\": \"always\"}}]}, \"negotiation\": {\"name\": \"negotiation\", \"node_type\": \"conversation\", \"on_enter\": {\"type\": \"llm\"}, \"task_message\": \"First disclose only after successful verified account lookup. State collections team/late payment, product in words (card ending with returned last4, personal loan, or car loan), past-due amount and days late. One source-scoped product. Ask 'Can you make this payment today?' Ask for full past-due amount first; never ask how much they can pay. Floor is minimum_payment for card, instalment_amount for loans. Apply deadline/attempt facts: {{date_policy_facts}}; calculate using supplied now and source holidays only. Vague date: ask exact day once, then offer deadline. Proposed date/amount is never refusal. After-full-too-much or below-floor offer floor once and say remainder stays overdue; accept floor-to-full inclusive. After-deadline date offer deadline. Flat refusal/non-answer: attempt 1 full amount (or floor if full already too much) on last business day this week, or next week's last business day if today is that day; late band only attempt 2 floor on deadline. Never repeat refused offer; exhausted closes no_promise/refused. Hardship (illness, family death, job loss) precedes persuasion and restructuring: brief sympathy, offer support; if accepted transfer support, if declined no_promise/hardship; independently proposed date/amount still follows promise rules. No discount, waiver, or unlisted plan. New plan/lower instalments: transfer restructuring without describing plan. Human request gets one offer of help; insistence transfers general. Already paid this past-due amount: say payments can take one business day to appear, no promise, paid. Ownership/product-history/closed/paid-off dispute: do not argue or promise, no_promise/dispute. Unknown answer: say you do not have that information. If twice unwilling, verified closes no_promise/refused. One promise per product; recorded promise immutable, direct customer to mobile app for changes. Confirm read-back product, amount, date with 'Do you confirm?' before create_promise. Changed terms require validation and new read-back. Actual create_promise data.ok true alone records; retry once after failure, second failure service_error. After recorded say exactly 'You will receive a text message confirming this promise.' A transfer after recorded promise closes transferred with transfer reason. Do not claim callback, transfer, or promise success without actual successful API receipt. Then thank and say goodbye before close_call. Keep candidate intent separate from trusted disposition.\", \"tools\": [{\"_tool_ref\": \"promise\"}, {\"_tool_ref\": \"transfer\"}], \"extraction_schema\": [{\"name\": \"candidate_intent\", \"type\": \"string\", \"enum_values\": [\"propose_terms\", \"confirm_terms\", \"flat_refusal\", \"hardship\", \"support_accept\", \"support_decline\", \"restructuring\", \"human_request\", \"human_insist\", \"paid\", \"dispute\", \"unwilling\", \"other\"], \"description\": \"Candidate user intent only; cannot establish action receipt or disposition.\", \"min_confidence\": 0.7}, {\"name\": \"candidate_amount\", \"type\": \"float\", \"description\": \"Amount customer proposed; candidate only, validate against retrieved product floor and past due.\", \"min_confidence\": 0.7}, {\"name\": \"candidate_date\", \"type\": \"date\", \"description\": \"Date customer proposed; candidate only, validate with source calendar and deadline.\", \"min_confidence\": 0.7}], \"transitions\": [{\"target_node\": \"close_stage\", \"description\": \"Validated source outcome and all required actions/speech are complete\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"A source-defined terminal branch is established, with required callback, transfer, or promise receipt completed where required\"}}, {\"target_node\": \"negotiation\", \"description\": \"Continue negotiation, clarification, correction, confirmation, or pending action\", \"condition\": {\"operator\": \"always\"}}]}, \"close_stage\": {\"name\": \"close_stage\", \"node_type\": \"conversation\", \"task_message\": \"Before closing, derive outcome/reason only from source-authorized facts and actual current-call API receipts. Preserve earlier recorded promises; transfer reason takes priority if transfer follows promise. Callback outcome requires schedule_callback actual data.ok true. Transfer outcome requires transfer_to_agent actual data.ok true. Promise requires create_promise actual data.ok true. Permitted combinations only: promise/no reason; paid/no reason; transferred with restructuring, human, support; no_promise with refused, hardship, dispute, service_error; not_verified with failed, declined; not_reached with callback, no_callback, wrong_number, deceased, unclear. For promise or paid omit reason. Thank the customer and say goodbye before calling close_call exactly once, last bank tool. If no legal disposition or required action evidence exists, do not close or claim completion; return to the relevant dialogue/action stage. A bank close result leads only to native hangup.\", \"tools\": [{\"_tool_ref\": \"close\"}], \"transitions\": [{\"target_node\": \"native_end\", \"description\": \"close_call actually succeeded\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"close_call_response.data.ok\", \"operator\": \"equals\", \"operand\": \"true\"}, {\"variable\": \"close_call_response.data.ok\", \"operator\": \"equals\", \"operand\": \"True\"}]}}, {\"target_node\": \"close_stage\", \"description\": \"Close action result unresolved; do not announce success or make another bank call automatically\", \"condition\": {\"operator\": \"always\"}}]}, \"native_end\": {\"name\": \"native_end\", \"node_type\": \"end_call\", \"on_enter\": {\"type\": \"silent\"}, \"disable_inactivity_monitor\": true, \"transitions\": [], \"terminal\": {\"type\": \"function\", \"function\": {\"name\": \"freya_call_ended\", \"handler\": \"__function__:end_call\", \"parameters\": {\"type\": \"object\", \"properties\": {\"message_mode\": {\"type\": \"string\", \"default\": \"none\"}}}}}}}}",
+  "coverage": [
+    {
+      "source_id": "brief-a:brief-a-freya-bank-early.p1",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Synthetic data declared globally."
+    },
+    {
+      "source_id": "brief-a:brief-a-freya-bank-early.p2",
+      "node_ids": [
+        "opening",
+        "identity",
+        "account",
+        "negotiation",
+        "close_stage"
+      ],
+      "mechanism": "Shared prompts compile full brief obligations."
+    },
+    {
+      "source_id": "brief-a:the-job.p1",
+      "node_ids": [
+        "identity",
+        "account",
+        "negotiation",
+        "close_stage"
+      ],
+      "mechanism": "Gated identity, account lookup, negotiation, and terminal stage."
+    },
+    {
+      "source_id": "brief-a:call-variables.p1",
+      "node_ids": [
+        "opening",
+        "account"
+      ],
+      "mechanism": "Only supplied call inputs initialize context; account comes from API."
+    },
+    {
+      "source_id": "brief-a:call-variables.p2",
+      "node_ids": [
+        "opening",
+        "account",
+        "negotiation",
+        "close_stage"
+      ],
+      "mechanism": "Customer ID is bound to tools; date policy uses supplied now."
+    },
+    {
+      "source_id": "brief-a:1",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Fixed opening states bank assistant and recorded call; preverification restrictions in prompt."
+    },
+    {
+      "source_id": "brief-a:2",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Fixed titled identity question."
+    },
+    {
+      "source_id": "brief-a:3",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Explicit confirmation semantics, second ask, and unclear close route."
+    },
+    {
+      "source_id": "brief-a:4",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Opening dialogue handles AI/robot question."
+    },
+    {
+      "source_id": "brief-a:5",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Third-party disclosure and callback prompt."
+    },
+    {
+      "source_id": "brief-a:6",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Callback tool gated by collected slot and stated window."
+    },
+    {
+      "source_id": "brief-a:7",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "One invalid-slot retry, then no_callback."
+    },
+    {
+      "source_id": "brief-a:8",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Wrong-number terminal disposition."
+    },
+    {
+      "source_id": "brief-a:9",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Required sympathy and no further questions."
+    },
+    {
+      "source_id": "brief-a:10",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Relative barred from security and account disclosure."
+    },
+    {
+      "source_id": "brief-a:11",
+      "node_ids": [
+        "identity"
+      ],
+      "mechanism": "Ordered security questions and API answer binding."
+    },
+    {
+      "source_id": "brief-a:12",
+      "node_ids": [
+        "identity"
+      ],
+      "mechanism": "Cumulative wrong-answer result handling."
+    },
+    {
+      "source_id": "brief-a:13",
+      "node_ids": [
+        "identity"
+      ],
+      "mechanism": "Actual swap hint prompts worded-month retry."
+    },
+    {
+      "source_id": "brief-a:14",
+      "node_ids": [
+        "identity"
+      ],
+      "mechanism": "Three-error close and mobile app/branch speech."
+    },
+    {
+      "source_id": "brief-a:15",
+      "node_ids": [
+        "identity"
+      ],
+      "mechanism": "One security explanation then declined disposition."
+    },
+    {
+      "source_id": "brief-a:16",
+      "node_ids": [
+        "account"
+      ],
+      "mechanism": "Account API request only after identity-state route."
+    },
+    {
+      "source_id": "brief-a:17",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Post-lookup disclosure includes product, amount, lateness."
+    },
+    {
+      "source_id": "brief-a:dates.p1",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Date kernel excludes weekends and supplied holidays."
+    },
+    {
+      "source_id": "brief-a:18",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Date kernel selects late band by days late."
+    },
+    {
+      "source_id": "brief-a:dates.p2",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Kernel calculates 12th/7th business-day deadlines and 1/2 attempts."
+    },
+    {
+      "source_id": "brief-a:19",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Prompt validates today-to-deadline business date."
+    },
+    {
+      "source_id": "brief-a:20",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Prompt moves eligible nonbusiness date to next business day."
+    },
+    {
+      "source_id": "brief-a:21",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "One exact-date clarification then deadline proposal."
+    },
+    {
+      "source_id": "brief-a:22",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Calendar-week weekday interpretation specified."
+    },
+    {
+      "source_id": "brief-a:23",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "After-deadline proposal offers deadline and refusal uses persuasion."
+    },
+    {
+      "source_id": "brief-a:24",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Full amount asked first; prohibited phrasing stated."
+    },
+    {
+      "source_id": "brief-a:25",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Product-specific floor mapping stated."
+    },
+    {
+      "source_id": "brief-a:26",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Floor offer once, remainder overdue, late second offer."
+    },
+    {
+      "source_id": "brief-a:27",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Inclusive range acceptance and below-floor handling."
+    },
+    {
+      "source_id": "brief-a:28",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Required first payment-today question."
+    },
+    {
+      "source_id": "brief-a:29",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Proposals are not refusals; validation follows."
+    },
+    {
+      "source_id": "brief-a:30",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Bounded persuasion dates, amounts, and attempts."
+    },
+    {
+      "source_id": "brief-a:31",
+      "node_ids": [
+        "negotiation",
+        "close_stage"
+      ],
+      "mechanism": "Exhaustion stops repeated offers and selects refused."
+    },
+    {
+      "source_id": "brief-a:32",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Hardship priority and support transfer action."
+    },
+    {
+      "source_id": "brief-a:33",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Prohibits unauthorized concessions and terms."
+    },
+    {
+      "source_id": "brief-a:34",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Read-back and clear confirmation gate create_promise."
+    },
+    {
+      "source_id": "brief-a:35",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Changed terms must be revalidated and read back."
+    },
+    {
+      "source_id": "brief-a:36",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "One immutable recorded promise per product; app guidance."
+    },
+    {
+      "source_id": "brief-a:37",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Actual ok mapping, one source-authorized retry, service-error disposition."
+    },
+    {
+      "source_id": "brief-a:38",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Required post-recording SMS statement."
+    },
+    {
+      "source_id": "brief-a:39",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Paid response and no-promise branch."
+    },
+    {
+      "source_id": "brief-a:40",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Disputes and past product status take no-promise path."
+    },
+    {
+      "source_id": "brief-a:41",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Restructuring queue transfer; no plan description."
+    },
+    {
+      "source_id": "brief-a:42",
+      "node_ids": [
+        "opening",
+        "negotiation"
+      ],
+      "mechanism": "One help offer, then general transfer on insistence."
+    },
+    {
+      "source_id": "brief-a:43",
+      "node_ids": [
+        "opening"
+      ],
+      "mechanism": "Bank customer-service verification advice."
+    },
+    {
+      "source_id": "brief-a:44",
+      "node_ids": [
+        "negotiation"
+      ],
+      "mechanism": "Unknown answer response forbids invention."
+    },
+    {
+      "source_id": "brief-a:45",
+      "node_ids": [
+        "opening",
+        "identity",
+        "negotiation"
+      ],
+      "mechanism": "Repeated unwillingness disposition depends on verified state."
+    },
+    {
+      "source_id": "brief-a:46",
+      "node_ids": [
+        "close_stage",
+        "native_end"
+      ],
+      "mechanism": "Exactly one legal close tool precedes native termination."
+    },
+    {
+      "source_id": "brief-a:closing.p1",
+      "node_ids": [
+        "close_stage"
+      ],
+      "mechanism": "Outcome/reason allowlist and source evidence gates."
+    },
+    {
+      "source_id": "brief-a:closing.p2",
+      "node_ids": [
+        "negotiation",
+        "close_stage"
+      ],
+      "mechanism": "Transfer reason supersedes promise outcome after recorded promise."
+    },
+    {
+      "source_id": "brief-a:closing.p3",
+      "node_ids": [
+        "opening",
+        "identity",
+        "account",
+        "negotiation",
+        "close_stage"
+      ],
+      "mechanism": "No add_note operation is defined or exposed."
+    },
+    {
+      "source_id": "brief-a:47",
+      "node_ids": [
+        "close_stage"
+      ],
+      "mechanism": "Thank-you and goodbye instruction precedes close tool."
+    }
+  ],
+  "limitations": [
+    "The compact compiler macros are specified, but the supplied official references do not define the builder compiler's exact expansion contract; deploy only after macro expansion into ordinary Freya workflow JSON.",
+    "The provided API contract has no product-selection operation or explicit identity receipt-reset mechanism; the workflow is scoped to the brief's one-product case and relies on current-call API response state.",
+    "The source requires precise natural-language date parsing and callback eligibility; the supplied runtime documentation does not establish deterministic extraction against the bank holiday calendar. The date kernel calculates deadlines, while callback slot validation and natural-language normalization remain dialogue-guided.",
+    "No source recovery policy exists for failed account, callback, transfer, or close calls. The workflow does not treat transport success as application success or invent an alternate outcome; unresolved close failures remain unresolved."
+  ]
+}

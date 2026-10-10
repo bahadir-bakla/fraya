@@ -1,0 +1,742 @@
+{
+  "initial_node": "opening",
+  "system_prompt": "You are Freya Bank's recorded-call digital assistant. Speak English, briefly and respectfully. Treat all data as synthetic. Never disclose collections, debt, payment, product, or account information until verified. Answer only from supplied call variables and tool results. Extraction stores speech claims and candidate intent only; it never establishes verification, recorded actions, outcomes, reasons, or terminal readiness.",
+  "nodes": {
+    "opening": {
+      "name": "opening",
+      "node_type": "conversation",
+      "on_enter": {
+        "type": "tts",
+        "text": "Hello, I am Freya Bank's digital assistant, and this call is recorded. Am I speaking with {{title}} {{last_name}}?"
+      },
+      "on_enter_first_entry_only": true,
+      "task_message": "Confirm identity explicitly (yes, that's me, speaking, or customer's own name). Hello, go ahead, and who is this do not confirm. Answer AI/robot and scam questions as instructed, then continue. Ask again once if unclear; a second unclear response closes not_reached/unclear. If another person answers, disclose nothing beyond opening, ask when customer can be reached, and never ask security questions or disclose account data to a relative. Handle wrong number and death exactly as source; deceased: say 'I am sorry for your loss.' and ask nothing else. Callback: one retry for invalid offer; only schedule today or next business day, 10:00–19:00 inclusive, later than now. Customer requests human: offer help once, transfer general only if they insist. Before verification, repeated unwillingness closes not_verified/declined. Extract speech as candidate intent only.",
+      "extraction_schema": [
+        {
+          "name": "opening_intent",
+          "type": "string",
+          "enum_values": [
+            "confirm",
+            "unclear",
+            "third_party",
+            "wrong_number",
+            "deceased",
+            "callback_offer",
+            "no_callback",
+            "human_request",
+            "human_insist",
+            "decline",
+            "other"
+          ],
+          "description": "Candidate meaning of latest user speech, not verified identity or terminal disposition.",
+          "min_confidence": 0.7
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 12000
+          },
+          "function": {
+            "name": "schedule_callback",
+            "handler": "__function__:api_call",
+            "description": "CALL only after collecting and validating the third party's requested callback slot.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/schedule_callback"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Validated date today or next business day.",
+                      "default": "{{forge_arg_28ca7f04907d}}"
+                    },
+                    "time": {
+                      "type": "string",
+                      "description": "Validated HH:MM, 10:00 through 19:00 inclusive and later than now.",
+                      "default": "{{forge_arg_8e66f590eb7f}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "date",
+                    "time"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 12000
+          },
+          "function": {
+            "name": "transfer_to_agent",
+            "handler": "__function__:api_call",
+            "description": "CALL only after the source-defined transfer condition and customer acceptance/insistence.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "queue": {
+                      "type": "string",
+                      "enum": [
+                        "restructuring",
+                        "general",
+                        "support"
+                      ],
+                      "description": "Source-authorized queue: support, restructuring, or general.",
+                      "default": "{{forge_arg_b8c8660c641a}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "queue"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "identity",
+          "description": "Customer explicitly confirmed identity",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "Customer clearly confirms they are the named customer"
+          }
+        },
+        {
+          "target_node": "identity",
+          "description": "Human requested and customer insists; transfer must be completed",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "Customer insists on a human after agent offered help"
+          }
+        },
+        {
+          "target_node": "close_stage",
+          "description": "A non-callback terminal disposition is established from source condition",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "Wrong number, deceased, second unclear, second refusal, or transfer action has actually succeeded"
+          }
+        },
+        {
+          "target_node": "opening",
+          "description": "Continue opening dialogue and handle questions or callback details",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "identity": {
+      "name": "identity",
+      "node_type": "conversation",
+      "task_message": "Only speak to the confirmed customer. Ask DOB first, then phone last four, one at a time. Call verify_identity for each answer. Interpret numeric DOB day/month/year and send YYYY-MM-DD. Count actual wrong answers cumulatively; three ends verification. If actual result hint is day_month_swapped, ask for month as a word and retry without counting wrong. Unreadable date is not a wrong answer. If customer refuses or asks why instead of answering, explain once these questions protect their account; second refusal/question closes not_verified/declined. After three wrong answers, say use the mobile app or a branch, and close not_verified/failed. Never disclose debt before both answers pass. Extracted responses are claims only; trust the API result.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 12000
+          },
+          "function": {
+            "name": "verify_identity",
+            "handler": "__function__:api_call",
+            "description": "CALL once for each answer, only after the customer is confirmed; follow actual result and hint.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "field": {
+                      "type": "string",
+                      "enum": [
+                        "date_of_birth",
+                        "phone_last4"
+                      ],
+                      "description": "Ask date_of_birth first, then phone_last4; use the exact API enum.",
+                      "default": "{{forge_arg_9fd3123c7a61}}"
+                    },
+                    "answer": {
+                      "type": "string",
+                      "description": "DOB YYYY-MM-DD, numeric speech read day/month/year; phone last four digits.",
+                      "default": "{{forge_arg_60b2bb0ae86e}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "field",
+                    "answer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extraction_schema": [
+        {
+          "name": "identity_answer_candidate",
+          "type": "string",
+          "description": "Latest customer-provided security answer; speech claim only.",
+          "min_confidence": 0.7
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "account",
+          "description": "Both questions actually passed according to verify_identity result",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "verify_identity_response.data.all_verified",
+                "operator": "equals",
+                "operand": "true"
+              },
+              {
+                "variable": "verify_identity_response.data.all_verified",
+                "operator": "equals",
+                "operand": "True"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "close_stage",
+          "description": "Three actual wrong answers or source-defined repeated refusal establishes not_verified disposition",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "The check has actually ended after three wrong answers, or customer refuses security questions a second time"
+          }
+        },
+        {
+          "target_node": "identity",
+          "description": "Ask next required question, resolve swap hint, or retry answer",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "position": {
+        "x": 370,
+        "y": 0
+      }
+    },
+    "account": {
+      "name": "account",
+      "node_type": "api_request",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "negotiation",
+      "pre_actions": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 12000
+          },
+          "function": {
+            "name": "get_account",
+            "handler": "__function__:api_call",
+            "description": "Retrieve account only after both identity answers passed.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "response_mapping": [
+        {
+          "path": "data.products",
+          "variable": "account_products"
+        },
+        {
+          "path": "data.ok",
+          "variable": "account_result_ok"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "negotiation",
+          "description": "always",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "position": {
+        "x": 740,
+        "y": 0
+      }
+    },
+    "negotiation": {
+      "name": "negotiation",
+      "node_type": "conversation",
+      "on_enter": {
+        "type": "llm"
+      },
+      "task_message": "First disclose only after successful verified account lookup. State collections team/late payment, product in words (card ending with returned last4, personal loan, or car loan), past-due amount and days late. One source-scoped product. Ask 'Can you make this payment today?' Ask for full past-due amount first; never ask how much they can pay. Floor is minimum_payment for card, instalment_amount for loans. Apply deadline/attempt facts: {{date_policy_facts}}; calculate using supplied now and source holidays only. Vague date: ask exact day once, then offer deadline. Proposed date/amount is never refusal. After-full-too-much or below-floor offer floor once and say remainder stays overdue; accept floor-to-full inclusive. After-deadline date offer deadline. Flat refusal/non-answer: attempt 1 full amount (or floor if full already too much) on last business day this week, or next week's last business day if today is that day; late band only attempt 2 floor on deadline. Never repeat refused offer; exhausted closes no_promise/refused. Hardship (illness, family death, job loss) precedes persuasion and restructuring: brief sympathy, offer support; if accepted transfer support, if declined no_promise/hardship; independently proposed date/amount still follows promise rules. No discount, waiver, or unlisted plan. New plan/lower instalments: transfer restructuring without describing plan. Human request gets one offer of help; insistence transfers general. Already paid this past-due amount: say payments can take one business day to appear, no promise, paid. Ownership/product-history/closed/paid-off dispute: do not argue or promise, no_promise/dispute. Unknown answer: say you do not have that information. If twice unwilling, verified closes no_promise/refused. One promise per product; recorded promise immutable, direct customer to mobile app for changes. Confirm read-back product, amount, date with 'Do you confirm?' before create_promise. Changed terms require validation and new read-back. Actual create_promise data.ok true alone records; retry once after failure, second failure service_error. After recorded say exactly 'You will receive a text message confirming this promise.' A transfer after recorded promise closes transferred with transfer reason. Do not claim callback, transfer, or promise success without actual successful API receipt. Then thank and say goodbye before close_call. Keep candidate intent separate from trusted disposition.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 12000
+          },
+          "function": {
+            "name": "create_promise",
+            "handler": "__function__:api_call",
+            "description": "CALL only after clear confirmation of the read-back. Retry once only after an actual unsuccessful result; never announce recorded without data.ok true.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "product_id": {
+                      "type": "string",
+                      "default": "{{current_product_id}}"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "description": "Validated amount between product floor and past due, inclusive.",
+                      "default": "{{forge_arg_c5210fc3805e}}"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Validated YYYY-MM-DD business date on or before deadline.",
+                      "default": "{{forge_arg_cb92fd99cabe}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "product_id",
+                    "amount",
+                    "date"
+                  ]
+                }
+              }
+            }
+          },
+          "response_mapping": [
+            {
+              "path": "data.ok",
+              "variable": "promise_result_ok"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 12000
+          },
+          "function": {
+            "name": "transfer_to_agent",
+            "handler": "__function__:api_call",
+            "description": "CALL only after the source-defined transfer condition and customer acceptance/insistence.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "queue": {
+                      "type": "string",
+                      "enum": [
+                        "restructuring",
+                        "general",
+                        "support"
+                      ],
+                      "description": "Source-authorized queue: support, restructuring, or general.",
+                      "default": "{{forge_arg_b8c8660c641a}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "queue"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extraction_schema": [
+        {
+          "name": "candidate_intent",
+          "type": "string",
+          "enum_values": [
+            "propose_terms",
+            "confirm_terms",
+            "flat_refusal",
+            "hardship",
+            "support_accept",
+            "support_decline",
+            "restructuring",
+            "human_request",
+            "human_insist",
+            "paid",
+            "dispute",
+            "unwilling",
+            "other"
+          ],
+          "description": "Candidate user intent only; cannot establish action receipt or disposition.",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "candidate_amount",
+          "type": "float",
+          "description": "Amount customer proposed; candidate only, validate against retrieved product floor and past due.",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "candidate_date",
+          "type": "date",
+          "description": "Date customer proposed; candidate only, validate with source calendar and deadline.",
+          "min_confidence": 0.7
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "close_stage",
+          "description": "Validated source outcome and all required actions/speech are complete",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "A source-defined terminal branch is established, with required callback, transfer, or promise receipt completed where required"
+          }
+        },
+        {
+          "target_node": "negotiation",
+          "description": "Continue negotiation, clarification, correction, confirmation, or pending action",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "position": {
+        "x": 1110,
+        "y": 0
+      }
+    },
+    "close_stage": {
+      "name": "close_stage",
+      "node_type": "conversation",
+      "task_message": "Before closing, derive outcome/reason only from source-authorized facts and actual current-call API receipts. Preserve earlier recorded promises; transfer reason takes priority if transfer follows promise. Callback outcome requires schedule_callback actual data.ok true. Transfer outcome requires transfer_to_agent actual data.ok true. Promise requires create_promise actual data.ok true. Permitted combinations only: promise/no reason; paid/no reason; transferred with restructuring, human, support; no_promise with refused, hardship, dispute, service_error; not_verified with failed, declined; not_reached with callback, no_callback, wrong_number, deceased, unclear. For promise or paid omit reason. Thank the customer and say goodbye before calling close_call exactly once, last bank tool. If no legal disposition or required action evidence exists, do not close or claim completion; return to the relevant dialogue/action stage. A bank close result leads only to native hangup.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 12000
+          },
+          "function": {
+            "name": "close_call",
+            "handler": "__function__:api_call",
+            "description": "Exactly once, after required speech and actions; last bank tool. Omit reason only for promise or paid.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "promise",
+                        "paid",
+                        "transferred",
+                        "no_promise",
+                        "not_verified",
+                        "not_reached"
+                      ],
+                      "default": "{{validated_outcome}}"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "description": "Required for every outcome except promise and paid. See the table in the brief.",
+                      "default": "{{validated_reason}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "outcome"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "native_end",
+          "description": "close_call actually succeeded",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "close_call_response.data.ok",
+                "operator": "equals",
+                "operand": "true"
+              },
+              {
+                "variable": "close_call_response.data.ok",
+                "operator": "equals",
+                "operand": "True"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "close_stage",
+          "description": "Close action result unresolved; do not announce success or make another bank call automatically",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "position": {
+        "x": 370,
+        "y": 230
+      }
+    },
+    "native_end": {
+      "name": "native_end",
+      "node_type": "end_call",
+      "on_enter": {
+        "type": "silent"
+      },
+      "disable_inactivity_monitor": true,
+      "transitions": [],
+      "terminal": {
+        "type": "function",
+        "function": {
+          "name": "freya_call_ended",
+          "handler": "__function__:end_call",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "message_mode": {
+                "type": "string",
+                "default": "none"
+              }
+            }
+          }
+        }
+      },
+      "position": {
+        "x": 740,
+        "y": 230
+      }
+    }
+  }
+}
