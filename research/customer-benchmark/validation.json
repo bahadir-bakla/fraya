@@ -1,0 +1,195 @@
+{
+  "status": "pass",
+  "local_scenarios": 362,
+  "hosted_variants": 117,
+  "family_counts": {
+    "dataset_delivery": 50,
+    "full_payment": 12,
+    "floor_correction": 12,
+    "swapped_dob": 12,
+    "three_wrong": 12,
+    "fragmented_phone": 12,
+    "callback_boundary": 12,
+    "callback_rejected": 12,
+    "already_paid": 12,
+    "historical_dispute": 12,
+    "hardship_declines": 12,
+    "hardship_voluntary": 12,
+    "hardship_transfer": 12,
+    "human_before_identity": 12,
+    "mixed_products": 12,
+    "split_deadlines": 12,
+    "partial_failure": 12,
+    "transfer_after_promise": 12,
+    "post_record_correction": 12,
+    "flat_refusal": 12,
+    "vague_date": 12,
+    "below_floor": 12,
+    "after_deadline": 12,
+    "nonbusiness_date": 12,
+    "security_declined": 12,
+    "wrong_number": 12,
+    "deceased": 12
+  },
+  "calendar_days": [
+    "2026-10-14T11:00",
+    "2026-10-23T16:30",
+    "2026-10-23T18:30",
+    "2026-10-26T11:00",
+    "2026-11-10T11:00",
+    "2026-11-11T18:30",
+    "2026-11-25T11:00",
+    "2026-11-26T11:00",
+    "2026-12-24T18:30",
+    "2026-12-25T11:00",
+    "2026-12-31T11:00",
+    "2027-01-01T11:00",
+    "2027-01-04T11:00"
+  ],
+  "checks": [
+    "scenario schema",
+    "source hashes",
+    "OpenAPI argument contracts",
+    "untouched official score_ledger",
+    "additional action trace guards",
+    "immutable hosted facts"
+  ],
+  "negative_controls": [
+    {
+      "name": "duplicate terminal close",
+      "rejected": true,
+      "failed": [
+        "receipt: terminal close_call did not succeed",
+        "A46: exactly one terminal close_call required"
+      ]
+    },
+    {
+      "name": "missing terminal close",
+      "rejected": true,
+      "failed": [
+        "outcome (None, None), expected ('promise', None)",
+        "the call was not closed with close_call",
+        "A46: exactly one terminal close_call required"
+      ]
+    },
+    {
+      "name": "access without identity",
+      "rejected": true,
+      "failed": [
+        "promises [], expected [('p1', 420.01, '2026-10-14')]",
+        "get_account called before identity was verified",
+        "receipt: promise product was not supplied by successful get_account",
+        "A11/A16: account access/promise before verification",
+        "A11/A16: account access/promise before verification",
+        "A16/O-get_account: product not supplied by account tool"
+      ]
+    },
+    {
+      "name": "retry after successful promise",
+      "rejected": true,
+      "failed": [
+        "A36: another promise call for recorded product"
+      ]
+    },
+    {
+      "name": "third attempt after two failures",
+      "rejected": true,
+      "failed": [
+        "promises [('p1', 420.01, '2026-10-14'), ('p2', 900.03, '2026-10-14')], expected [('p1', 420.01, '2026-10-14')]",
+        "A37/B11: more than one promise retry"
+      ]
+    },
+    {
+      "name": "stale pre-correction agreement",
+      "rejected": true,
+      "failed": [
+        "promises [('p1', 420.01, '2026-11-02')], expected [('p1', 126.01, '2026-11-02')]"
+      ]
+    },
+    {
+      "name": "cross-customer write",
+      "rejected": true,
+      "failed": [
+        "promises [], expected [('p1', 420.01, '2026-10-14')]",
+        "A-vars: wrong customer_id"
+      ]
+    },
+    {
+      "name": "wrong product binding",
+      "rejected": true,
+      "failed": [
+        "promises [], expected [('p1', 420.01, '2026-10-14')]",
+        "receipt: promise product was not supplied by successful get_account",
+        "policy: promise attempt on a paid/disputed/refused/unconfirmed product",
+        "O-get_account: unknown product id"
+      ]
+    },
+    {
+      "name": "loan keeps longer card deadline",
+      "rejected": true,
+      "failed": [
+        "promises [('p1', 420.01, '2026-11-02'), ('p2', 900.03, '2026-11-02'), ('p3', 180.03, '2026-11-02')], expected [('p1', 420.01, '2026-11-02'), ('p2', 900.03, '2026-10-23'), ('p3', 180.03, '2026-11-02')]",
+        "A18/A19: invalid promise date"
+      ]
+    },
+    {
+      "name": "callback one minute past upper limit",
+      "rejected": true,
+      "failed": [
+        "callbacks [{'date': '2026-10-15', 'time': '19:01'}], expected [{'date': '2026-10-15', 'time': '10:00'}]",
+        "A6: invalid callback date/time"
+      ]
+    },
+    {
+      "name": "wrong mixed-product closing precedence",
+      "rejected": true,
+      "failed": [
+        "outcome ('no_promise', 'dispute'), expected ('promise', None)"
+      ]
+    },
+    {
+      "name": "note before eventual transfer",
+      "rejected": true,
+      "failed": [
+        "notes [('p3', 'dispute')], expected []",
+        "B10: notes anywhere on a transferred call forbidden"
+      ]
+    },
+    {
+      "name": "third party accesses account",
+      "rejected": true,
+      "failed": [
+        "get_account called before identity was verified",
+        "identity or account tools used although the customer was not on the line",
+        "A5/A10: third-party account or identity action",
+        "A11/A16: account access/promise before verification"
+      ]
+    },
+    {
+      "name": "below floor despite matching ledger oracle and ok true",
+      "rejected": true,
+      "failed": [
+        "A25/A27: invalid amount"
+      ]
+    },
+    {
+      "name": "holiday despite matching ledger oracle and ok true",
+      "rejected": true,
+      "failed": [
+        "A18/A19: invalid promise date"
+      ]
+    },
+    {
+      "name": "correct ledger with failed transcript",
+      "rejected": true,
+      "failed": [
+        "conversation: unconfirmed agreement"
+      ]
+    }
+  ],
+  "errors": [],
+  "agent_executed": false,
+  "transcript_judge_executed": false,
+  "hosted_simulations": 0,
+  "reference_replay_is_agent_pass": false
+}

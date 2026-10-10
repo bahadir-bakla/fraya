@@ -1,0 +1,917 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fraya:customer-benchmark:1",
+  "title": "Kit-v3 dataset delivery and synthetic policy-interaction fixtures",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "rule_registry",
+    "shared_constraints",
+    "scenarios"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "rule_registry": {
+      "type": "object"
+    },
+    "shared_constraints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/constraint"
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1000,
+      "items": {
+        "$ref": "#/$defs/scenario"
+      }
+    }
+  },
+  "$defs": {
+    "constraint": {
+      "type": "object",
+      "required": [
+        "description",
+        "rule_refs",
+        "basis"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "rule_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "basis": {
+          "enum": [
+            "explicit_kit",
+            "derived_from_explicit_kit",
+            "proposed_extension"
+          ]
+        }
+      }
+    },
+    "ledger": {
+      "type": "object",
+      "required": [
+        "outcome",
+        "reason",
+        "promises",
+        "notes",
+        "callbacks",
+        "transfers"
+      ],
+      "properties": {
+        "outcome": {
+          "enum": [
+            "promise",
+            "paid",
+            "no_promise",
+            "not_reached",
+            "not_verified",
+            "transferred"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "promises": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "product_id",
+              "amount",
+              "date"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "product_id",
+              "reason"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "refused",
+                  "hardship",
+                  "dispute",
+                  "paid",
+                  "service_error"
+                ]
+              }
+            }
+          }
+        },
+        "callbacks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "date",
+              "time"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": "string",
+                "description": "HH:MM"
+              }
+            }
+          }
+        },
+        "transfers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "queue"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "queue": {
+                "type": "string",
+                "enum": [
+                  "restructuring",
+                  "general",
+                  "support"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "outcome": {
+              "const": "promise"
+            },
+            "reason": {
+              "enum": [
+                null
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "outcome": {
+              "const": "paid"
+            },
+            "reason": {
+              "enum": [
+                null
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "outcome": {
+              "const": "transferred"
+            },
+            "reason": {
+              "enum": [
+                "restructuring",
+                "human",
+                "support"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "outcome": {
+              "const": "no_promise"
+            },
+            "reason": {
+              "enum": [
+                "refused",
+                "hardship",
+                "dispute",
+                "service_error"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "outcome": {
+              "const": "not_verified"
+            },
+            "reason": {
+              "enum": [
+                "failed",
+                "declined"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "outcome": {
+              "const": "not_reached"
+            },
+            "reason": {
+              "enum": [
+                "callback",
+                "no_callback",
+                "wrong_number",
+                "deceased",
+                "unclear"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "scenario": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "brief",
+        "facts",
+        "speaking_style",
+        "provenance",
+        "expected",
+        "oracle",
+        "execution",
+        "style",
+        "delivery_profile",
+        "local_only",
+        "hosted_registered",
+        "execution_status",
+        "family",
+        "checks"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(DATA-[0-9]{3}|EDGE-[a-z_]+-[0-9]{2})$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "brief": {
+          "enum": [
+            "A",
+            "B"
+          ]
+        },
+        "facts": {
+          "type": "object",
+          "required": [
+            "variables",
+            "identity",
+            "products",
+            "third_party",
+            "entry",
+            "customer_events",
+            "faults"
+          ],
+          "properties": {
+            "variables": {
+              "type": "object",
+              "required": [
+                "customer_id",
+                "first_name",
+                "last_name",
+                "title",
+                "now"
+              ],
+              "properties": {
+                "customer_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "first_name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "last_name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "now": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}$"
+                }
+              }
+            },
+            "identity": {
+              "type": "object",
+              "required": [
+                "date_of_birth",
+                "phone_last4"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "date_of_birth": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "phone_last4": {
+                  "type": "string",
+                  "pattern": "^[0-9]{4}$"
+                }
+              }
+            },
+            "products": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "product_id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "credit_card",
+                      "personal_loan",
+                      "car_loan"
+                    ]
+                  },
+                  "card_last4": {
+                    "type": "string",
+                    "description": "credit cards only"
+                  },
+                  "past_due": {
+                    "type": "number"
+                  },
+                  "days_late": {
+                    "type": "integer"
+                  },
+                  "minimum_payment": {
+                    "type": "number",
+                    "description": "credit cards only"
+                  },
+                  "instalment_amount": {
+                    "type": "number",
+                    "description": "loans only"
+                  }
+                },
+                "required": [
+                  "product_id",
+                  "type",
+                  "past_due",
+                  "days_late"
+                ],
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "type": {
+                          "const": "credit_card"
+                        }
+                      }
+                    },
+                    "then": {
+                      "required": [
+                        "card_last4",
+                        "minimum_payment"
+                      ]
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "type": {
+                          "enum": [
+                            "personal_loan",
+                            "car_loan"
+                          ]
+                        }
+                      }
+                    },
+                    "then": {
+                      "required": [
+                        "instalment_amount"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "third_party": {
+              "type": "boolean"
+            },
+            "customer_events": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "faults": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "tool",
+                  "product_id",
+                  "fail_first_n",
+                  "result"
+                ],
+                "properties": {
+                  "tool": {
+                    "const": "create_promise"
+                  },
+                  "product_id": {
+                    "type": "string"
+                  },
+                  "fail_first_n": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2
+                  },
+                  "result": {
+                    "type": "object",
+                    "required": [
+                      "ok"
+                    ],
+                    "properties": {
+                      "ok": {
+                        "const": false
+                      },
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "speaking_style": {
+          "type": "object",
+          "required": [
+            "name",
+            "facts_must_remain_fixed"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "neutral",
+                "pieces",
+                "corrects",
+                "talkative",
+                "asks_back",
+                "in_words"
+              ]
+            },
+            "facts_must_remain_fixed": {
+              "const": true
+            }
+          }
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "sources",
+                "source_supported_patterns",
+                "architectural_extensions",
+                "expectations_derived_from"
+              ],
+              "properties": {
+                "sources": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "url",
+                      "published_on",
+                      "publication_label",
+                      "accessed_on"
+                    ]
+                  }
+                },
+                "source_supported_patterns": {
+                  "type": "array"
+                },
+                "architectural_extensions": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "synthetic",
+                "design"
+              ],
+              "properties": {
+                "synthetic": {
+                  "const": true
+                },
+                "design": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          ]
+        },
+        "expected": {
+          "$ref": "#/$defs/ledger"
+        },
+        "oracle": {
+          "type": "object",
+          "required": [
+            "scenario_constraints",
+            "rule_refs",
+            "clear_confirmations_required"
+          ],
+          "properties": {
+            "scenario_constraints": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/constraint"
+              }
+            },
+            "rule_refs": {
+              "type": "array"
+            },
+            "clear_confirmations_required": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "execution": {
+          "type": "object",
+          "required": [
+            "mode",
+            "hosted_registered",
+            "reference_tool_calls",
+            "reference_is_agent_test",
+            "script"
+          ],
+          "properties": {
+            "mode": {
+              "const": "local_only"
+            },
+            "hosted_registered": {
+              "const": false
+            },
+            "reference_is_agent_test": {
+              "const": false
+            },
+            "reference_tool_calls": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "tool",
+                      "arguments"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "tool": {
+                        "const": "verify_identity"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "customer_id": {
+                            "type": "string"
+                          },
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "date_of_birth",
+                              "phone_last4"
+                            ]
+                          },
+                          "answer": {
+                            "type": "string",
+                            "description": "For date_of_birth: the date as YYYY-MM-DD. Callers say dates in words, the agent converts. An unreadable value is rejected with ok=false and is not counted as a wrong answer. For phone_last4: four digits."
+                          }
+                        },
+                        "required": [
+                          "customer_id",
+                          "field",
+                          "answer"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "tool",
+                      "arguments"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "tool": {
+                        "const": "get_account"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "customer_id": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "customer_id"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "tool",
+                      "arguments"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "tool": {
+                        "const": "create_promise"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "customer_id": {
+                            "type": "string"
+                          },
+                          "product_id": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "number"
+                          },
+                          "date": {
+                            "type": "string",
+                            "format": "date"
+                          }
+                        },
+                        "required": [
+                          "customer_id",
+                          "product_id",
+                          "amount",
+                          "date"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "tool",
+                      "arguments"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "tool": {
+                        "const": "add_note"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "customer_id": {
+                            "type": "string"
+                          },
+                          "product_id": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string",
+                            "enum": [
+                              "refused",
+                              "hardship",
+                              "dispute",
+                              "paid",
+                              "service_error"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "customer_id",
+                          "product_id",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "tool",
+                      "arguments"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "tool": {
+                        "const": "schedule_callback"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "customer_id": {
+                            "type": "string"
+                          },
+                          "date": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "time": {
+                            "type": "string",
+                            "description": "HH:MM"
+                          }
+                        },
+                        "required": [
+                          "customer_id",
+                          "date",
+                          "time"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "tool",
+                      "arguments"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "tool": {
+                        "const": "transfer_to_agent"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "customer_id": {
+                            "type": "string"
+                          },
+                          "queue": {
+                            "type": "string",
+                            "enum": [
+                              "restructuring",
+                              "general",
+                              "support"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "customer_id",
+                          "queue"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "tool",
+                      "arguments"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "tool": {
+                        "const": "close_call"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "customer_id": {
+                            "type": "string"
+                          },
+                          "outcome": {
+                            "type": "string",
+                            "enum": [
+                              "promise",
+                              "paid",
+                              "transferred",
+                              "no_promise",
+                              "not_verified",
+                              "not_reached"
+                            ]
+                          },
+                          "reason": {
+                            "type": "string",
+                            "description": "Required for every outcome except promise and paid. See the table in the brief."
+                          }
+                        },
+                        "required": [
+                          "customer_id",
+                          "outcome"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "style": {
+          "enum": [
+            null,
+            "pieces",
+            "corrects",
+            "talkative",
+            "asks_back",
+            "in_words"
+          ]
+        },
+        "delivery_profile": {
+          "enum": [
+            "plain",
+            "question_pause",
+            "repair_pause",
+            "distractor_words",
+            "pieces_question"
+          ]
+        },
+        "local_only": {
+          "const": true
+        },
+        "hosted_registered": {
+          "const": false
+        },
+        "execution_status": {
+          "const": "not_executed"
+        },
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

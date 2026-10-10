@@ -222,3 +222,22 @@ taxonomy, turn structure and hashed lexical cues; they contain no raw speech,
 bank policy mapping or bank expected output. Scope is `conversation_only` /
 `not_executed`, not an additional Freya benchmark. See the
 [six-candidate primary-source research](research/customer-datasets.txt).
+
+## Synthetic benchmark fixtures beyond the public cases
+
+[Customer benchmark pack](research/customer-benchmark/README.txt) maps the
+50 dataset plans to authored fixtures and adds 26 policy interaction families
+on 12 calendar dates: **362 local cases** with independent expected ledgers,
+source rule links and declared faults. Its **117 hosted delivery variants**
+preserve the exact 13 registered PUB fixtures; custom EDGE/DATA IDs require
+the local mock adapter and cannot be registered by `--cases` alone.
+
+The unchanged official `score.py` remains the ledger oracle. Additional guards
+check response provenance, action order, dates/floors, retries and one successful
+terminal close. A case passes only with a passing independent transcript judge.
+Source/output hashes, schema/API checks, reference replays and 16 rejected
+negative controls validate the pack; they do not establish an agent pass.
+The dataset benchmark runner defaults to an offline plan and selects explicit
+hosted variants in batches of at most five, with fresh sessions on every repeat.
+No generated agent has executed this new pack. Fixtures belong to kit-v3 test
+data, not permanent builder policy for future final briefs.
