@@ -134,7 +134,7 @@ class ReviewViewTests(unittest.TestCase):
             sources = {"brief-a": "a.md", "brief-b": "b.md", "openapi": "api.json"}
             for relative in ("a.md", "b.md"):
                 (root / relative).write_text("line one\nline two\n", encoding="utf-8")
-            (root / "api.json").write_text('{"paths": {}}', encoding="utf-8")
+            (root / "api.json").write_text('{"paths": {"/get_account": {"post": {}}}}', encoding="utf-8")
             body = "def exact_body():\n    pass\n" * 1000
             candidate = root / "competition/runs/complete/workflow.json"
             candidate.parent.mkdir(parents=True)

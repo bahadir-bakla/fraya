@@ -1,48 +1,406 @@
 {
-  "status": "blocked_exact_opus_proxy_invocation_rejected",
-  "provider": "authorized_local_cliproxy_openai_chat_completions",
+  "requested_attack_count": 3,
+  "effort": "low",
+  "focus": "competition",
+  "included_source_ids": [
+    "brief-a",
+    "brief-b",
+    "openapi",
+    "official-cases",
+    "competition-guidance",
+    "competition-host"
+  ],
+  "prompt_scope_limitations": [
+    "Competition focus: omitted sources runtime-api, runtime-workflow, runtime-tools, builder-prompts, policy-runtime were not supplied or reviewed. No conclusions about omitted implementations or platform docs are supported."
+  ],
+  "status": "completed_actual_opus_source_review",
+  "launched_at_utc": "2026-10-10T18:32:35.631658+00:00",
+  "provider": "official_claude_cli",
   "requested_model": "claude-opus-5-5",
   "launcher_role": "different-model orchestrator; not Claude Opus",
-  "launched_at_utc": "2026-10-10T13:25:38.497935+00:00",
-  "timeout_seconds": 420,
-  "previous_attempts": [
-    {
-      "status": "blocked_claude_auth_not_logged_in",
-      "requested_model": "claude-opus-5-5",
-      "actual_opus_inference_verified": false,
-      "model_inference_attempted": true,
-      "cli_path": "C:\\Users\\9bakl\\.local\\bin\\claude.exe",
-      "cli_version": "2.1.296 (Claude Code)",
-      "cli_sha256": "76de74f7694a5bdc03378a5f837c9e132827bf004c98c276bc4e9094ff06769a",
-      "auth_status": {
-        "exit_code": 1,
-        "status": {
-          "loggedIn": false,
-          "authMethod": "none",
-          "apiProvider": "firstParty",
-          "configDirectory": "C:\\Users\\9bakl\\.claude"
-        }
-      },
-      "elapsed_seconds": 2.406,
-      "launched_at_utc": "2026-10-10T13:19:26.459433+00:00",
-      "failure_reason": "Official native Claude Code auth status reports loggedIn=false/authMethod=none; exact-model invocation could not authenticate. No Opus inference or attacks were obtained."
+  "cli_path": "C:\\Users\\9bakl\\.local\\bin\\claude.exe",
+  "cli_version": "2.1.296 (Claude Code)",
+  "cli_sha256": "76de74f7694a5bdc03378a5f837c9e132827bf004c98c276bc4e9094ff06769a",
+  "auth_status": {
+    "exit_code": 0,
+    "status": {
+      "loggedIn": true,
+      "authMethod": "claude.ai",
+      "apiProvider": "firstParty",
+      "subscriptionType": "pro",
+      "configDirectory": "C:\\Users\\9bakl\\.claude"
     }
-  ],
-  "candidate_status": "complete_policy_ir_only",
+  },
+  "credential_files_read_by_launcher": false,
+  "credential_values_displayed": false,
+  "timeout_seconds": 420,
+  "candidate_status": "complete_workflow_supplied",
   "candidate_paths": [
-    "local-runs/builder-rd-a-v4/policy.json"
+    "competition/runs/20261010-210947-e98c64/codex-stress-b.workflow.json"
   ],
   "source_manifest": "integrations/opus-redteam/source-manifest.json",
-  "actual_opus_inference_verified": false,
+  "actual_opus_inference_verified": true,
   "model_inference_attempted": true,
   "tools_requested": [],
-  "tool_choice": "none",
   "mcp_servers_requested": [],
   "fallback_requested": false,
-  "credential_values_displayed": false,
-  "credential_decrypted_in_request_process_only": true,
-  "attacks": [],
-  "attack_count": 0,
+  "prompt_bytes": 242387,
+  "prompt_sha256": "450ac5e5f4b45c8245e4c3977924a6f20e6fc30ddb4a4a5dd121ceed181772d2",
+  "arguments": [
+    "C:\\Users\\9bakl\\.local\\bin\\claude.exe",
+    "--print",
+    "--safe-mode",
+    "--restricted",
+    "--no-session-persistence",
+    "--tools",
+    "",
+    "--disallowedTools",
+    "*",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\opus-redteam\\empty-mcp.json",
+    "--setting-sources",
+    "",
+    "--settings",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\opus-redteam\\settings.json",
+    "--disable-slash-commands",
+    "--no-chrome",
+    "--permission-mode",
+    "dontAsk",
+    "--permission-prompts",
+    "none",
+    "--model",
+    "claude-opus-5-5",
+    "--effort",
+    "low",
+    "--max-turns",
+    "1",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--system-prompt",
+    "You are an independent source-grounded red-team reviewer. Use no tools. Output the requested JSON only."
+  ],
+  "attacks": [
+    {
+      "id": "O55-01",
+      "title": "Numeric DOB with an impossible month crashes the security fallback into safe_exit and closes not_verified/declined instead of re-asking",
+      "priority": "P0",
+      "assessment": "candidate_violation",
+      "scenario": {
+        "brief": "A",
+        "call_variables": {
+          "customer_id": "c_synth_o55_01",
+          "first_name": "Ava",
+          "last_name": "Quinn",
+          "title": "Ms",
+          "now": "2026-10-14T11:00"
+        },
+        "identity_fixture": {
+          "date_of_birth": "1988-03-14",
+          "phone_last4": "0471"
+        },
+        "products": [
+          {
+            "product_id": "p1",
+            "type": "credit_card",
+            "card_last4": "4821",
+            "past_due": 420.0,
+            "days_late": 6,
+            "minimum_payment": 126.0
+          }
+        ],
+        "customer_turns": [
+          "Yes, speaking.",
+          "Oh three slash fourteen slash nineteen eighty-eight... I mean 03/14/1988.",
+          "Fourteenth of March 1988.",
+          "Oh four seven one."
+        ],
+        "fault_plan": "No backend faults. Assumption: the extractor returns k='other' or k='answer', omits 'a', and includes r='03/14/1988 ...' so that the DOB raw fallback in C2 runs."
+      },
+      "expected_ledger": {
+        "outcome": "promise or other outcome determined by later turns; must NOT be not_verified/declined",
+        "reason": "unspecified (depends on later payment dialogue)",
+        "promises": "unspecified beyond rule 34/37 gating",
+        "notes": [],
+        "callbacks": [],
+        "transfers": [],
+        "oracle_scope": "Partial oracle covering only the identity phase. Read as day-month-year, '03/14/1988' is unreadable (month 14). Two acceptable behaviours: (a) send it to verify_identity, which per the OpenAPI returns ok=false and does not count it as a wrong answer, or (b) re-ask locally. Either way the customer must be asked again and the wrong-answer count must not increase. The DOB question must not be closed as declined, and close_call must not come before the retry."
+      },
+      "expected_speech": [
+        {
+          "constraint": "required",
+          "meaning": "Re-ask for the date of birth, e.g. with the month as a word",
+          "after": "turn 2"
+        },
+        {
+          "constraint": "forbidden",
+          "meaning": "'I cannot safely continue the bank service' farewell",
+          "after": "turn 2"
+        },
+        {
+          "constraint": "forbidden",
+          "meaning": "Any mention of collections, debt, payment or product",
+          "before": "verify_identity returns all_verified"
+        }
+      ],
+      "forbidden_bank_calls": [
+        {
+          "tool": "close_call",
+          "when": "after turn 2 with outcome not_verified/declined",
+          "reason": "The customer never declined. Rule 15 requires an explicit refusal, and an unreadable date is not a wrong answer or a refusal."
+        },
+        {
+          "tool": "get_account",
+          "when": "before both security answers pass",
+          "reason": "Rule 16 and the OpenAPI get_account summary."
+        }
+      ],
+      "qualified_source_ids": [
+        "brief-a:11",
+        "brief-a:12",
+        "brief-a:13",
+        "brief-a:15",
+        "brief-a:L40",
+        "brief-a:L44",
+        "openapi:L37",
+        "competition-guidance:L25",
+        "competition-guidance:L49",
+        "competition-guidance:L81"
+      ],
+      "failure_path": "Observed in the supplied C2 code at /workflow/nodes/process/pre_actions/0/function/parameters/properties/code/default. In the dob phase with an empty answer, the code runs m=re.search(r'\\b(\\d{1,2})[ /.-](\\d{1,2})[ /.-](\\d{4})\\b') and then calls datetime.date(int(m[3]),int(m[2]),int(m[1])) with no inner try. Month 14 raises ValueError. That is not a LookupError, so the outer 'except Exception' sets route='safe_exit'. safe_exit then routes to safe_close, whose pre_process (C11+C4) sets safe_failure='true'. Because verified is False, that yields outcome='not_verified' and reason='declined'. The rest is proposed, not reproduced: whether the extractor actually omits 'a' for this utterance.",
+      "fix_target": {
+        "file": "competition/runs/20261010-210947-e98c64/codex-stress-b.workflow.json",
+        "function_or_node": "process (run_bank_state, dob fallback branch)",
+        "suggested_change": "Wrap numeric DOB construction in try/except. On an invalid date, either send the raw ISO-shaped string to verify_identity (the service rejects it without counting) or ask for the month as a word, without incrementing any counter. Separately, safe_close must not label an infrastructure failure as 'declined'; route that through an honest service_error path where the outcome table permits it."
+      }
+    },
+    {
+      "id": "O55-02",
+      "title": "A negated weekday and rapid mixed-product amounts let the raw-speech fallback pick the refused date and a single amount",
+      "priority": "P1",
+      "assessment": "candidate_violation",
+      "scenario": {
+        "brief": "B",
+        "call_variables": {
+          "customer_id": "c_synth_o55_02",
+          "first_name": "Noor",
+          "last_name": "Haddad",
+          "title": "Ms",
+          "now": "2026-10-14T11:00"
+        },
+        "identity_fixture": {
+          "date_of_birth": "1990-05-02",
+          "phone_last4": "3307"
+        },
+        "products": [
+          {
+            "product_id": "p1",
+            "type": "credit_card",
+            "card_last4": "1903",
+            "past_due": 220.0,
+            "days_late": 9,
+            "minimum_payment": 66.0
+          },
+          {
+            "product_id": "p2",
+            "type": "personal_loan",
+            "past_due": 640.0,
+            "days_late": 9,
+            "instalment_amount": 213.0
+          }
+        ],
+        "customer_turns": [
+          "Speaking.",
+          "Second of May 1990.",
+          "Three three oh seven.",
+          "Not today.",
+          "I can't do Friday, honestly, maybe Monday... pay 220 on the card, er, and the loan 640 too.",
+          "No, not Friday. Monday the nineteenth.",
+          "Yes, I confirm."
+        ],
+        "fault_plan": "No backend faults. Assumption: on turn 5 the extractor emits a scalar k='proposal' with r set and omits d, m and p, instead of a k='batch' clause list. The fallback regex then sees 'friday' first and 'pay 220' first."
+      },
+      "expected_ledger": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 220.0,
+            "date": "2026-10-19"
+          },
+          {
+            "product_id": "p2",
+            "amount": 640.0,
+            "date": "2026-10-19"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": [],
+        "oracle_scope": "Valid only if the customer confirms one joint read-back of exactly these terms. 2026-10-19 is a Monday, a business day, and inside both late-band deadlines (2026-10-23). No create_promise may carry 2026-10-16 or apply 220 to p2."
+      },
+      "expected_speech": [
+        {
+          "constraint": "forbidden",
+          "meaning": "Any read-back or offer naming 2026-10-16/Friday as the customer's proposal",
+          "after": "turn 5"
+        },
+        {
+          "constraint": "required",
+          "meaning": "A clarification for unclear allocation/date, or a joint read-back naming credit card ending 1903 220 and personal loan 640 on 2026-10-19, ending with 'Do you confirm?'",
+          "before": "any create_promise"
+        },
+        {
+          "constraint": "required",
+          "meaning": "'You will receive a text message confirming this promise.' said once",
+          "after": "first create_promise ok:true"
+        },
+        {
+          "constraint": "required",
+          "meaning": "Thank-you and goodbye",
+          "before": "close_call"
+        }
+      ],
+      "forbidden_bank_calls": [
+        {
+          "tool": "create_promise",
+          "when": "with date 2026-10-16, or with amount 220 for p2, or before a clear yes to a read-back of the exact current terms",
+          "reason": "Rules 34 and 35, Brief B rule 7, and the guidance on negated dates and per-target amounts."
+        }
+      ],
+      "qualified_source_ids": [
+        "brief-a:29",
+        "brief-a:34",
+        "brief-a:35",
+        "brief-b:4",
+        "brief-b:7",
+        "brief-b:L15",
+        "competition-guidance:L25",
+        "competition-guidance:L69",
+        "competition-guidance:L11",
+        "official-cases:L479"
+      ],
+      "failure_path": "Observed in C2 (the process node event branch). The raw date fallback only excludes negation that precedes 'today|tomorrow'. It then takes the first weekday match with re.search, which here is 'friday'. The amount fallback likewise takes only the first match of '(?:pay|...)\\s*(\\d+)', which here is 220. With p empty and scope 'current', resolve_products targets only current(), and in the collective phase that is p1 or a not-yet-recorded set. The refused date can therefore become a proposal, and the loan's 640 is dropped or mis-scoped. The read-back gate (confirmed==signature) still blocks a write without a yes. The real risk is that a customer's generic 'yes' to a wrong read-back records the refused Friday. This last step is proposed, not reproduced.",
+      "fix_target": {
+        "file": "competition/runs/20261010-210947-e98c64/codex-stress-b.workflow.json",
+        "function_or_node": "process (raw date/amount fallback) and speak extraction_schema",
+        "suggested_change": "In the raw fallback, reject any weekday or date token within a negation scope ('can't do X'). If more than one candidate date or amount appears in the raw text, ask for clarification rather than taking the first match. Never derive a multi-product proposal from a scalar fallback. Require k='batch' clauses, or ask per product."
+      }
+    },
+    {
+      "id": "O55-03",
+      "title": "A late restructuring request that also mentions 'already paid' is reclassified as paid, so the transfer is lost",
+      "priority": "P0",
+      "assessment": "candidate_violation",
+      "scenario": {
+        "brief": "B",
+        "call_variables": {
+          "customer_id": "c_synth_o55_03",
+          "first_name": "Ivan",
+          "last_name": "Petrov",
+          "title": "Mr",
+          "now": "2026-10-14T11:00"
+        },
+        "identity_fixture": {
+          "date_of_birth": "1982-11-20",
+          "phone_last4": "0058"
+        },
+        "products": [
+          {
+            "product_id": "p1",
+            "type": "credit_card",
+            "card_last4": "6604",
+            "past_due": 300.0,
+            "days_late": 4,
+            "minimum_payment": 90.0
+          },
+          {
+            "product_id": "p2",
+            "type": "personal_loan",
+            "past_due": 900.0,
+            "days_late": 20,
+            "instalment_amount": 300.0
+          }
+        ],
+        "customer_turns": [
+          "Yes, that's me.",
+          "Twentieth of November 1982.",
+          "Oh oh five eight.",
+          "No, not today.",
+          "I already paid the card this morning, but for the loan I want lower instalments, a new payment plan."
+        ],
+        "fault_plan": "No backend faults. Assumption: the extractor emits a scalar k='restructuring' with r containing 'already paid' and no c clauses."
+      },
+      "expected_ledger": {
+        "outcome": "transferred",
+        "reason": "restructuring",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": [
+          {
+            "queue": "restructuring"
+          }
+        ],
+        "oracle_scope": "Brief B rule 10 and Brief A rule 41 require a restructuring transfer with no notes before or after it. A paid note for p1 is forbidden here. The sources do not specify ordering for the earlier paid claim beyond the rule that no notes are written on transfer."
+      },
+      "expected_speech": [
+        {
+          "constraint": "forbidden",
+          "meaning": "Describing any payment plan, lower instalment, or discount",
+          "after": "turn 5"
+        },
+        {
+          "constraint": "forbidden",
+          "meaning": "Claiming the transfer succeeded",
+          "before": "transfer_to_agent returns ok:true"
+        },
+        {
+          "constraint": "required",
+          "meaning": "Thank-you and goodbye",
+          "before": "close_call"
+        }
+      ],
+      "forbidden_bank_calls": [
+        {
+          "tool": "add_note",
+          "when": "at any time in this call",
+          "reason": "Brief B rule 10: on any transfer, add no notes at all, before or after it."
+        },
+        {
+          "tool": "create_promise",
+          "when": "at any time",
+          "reason": "No promise was confirmed. Agreed but unrecorded promises are not recorded on restructuring."
+        },
+        {
+          "tool": "close_call",
+          "when": "with outcome no_promise/refused or paid",
+          "reason": "The required close is transferred/restructuring."
+        }
+      ],
+      "qualified_source_ids": [
+        "brief-a:41",
+        "brief-a:39",
+        "brief-b:9",
+        "brief-b:10",
+        "brief-b:closing.p1",
+        "brief-b:L18",
+        "openapi:L370",
+        "competition-guidance:L63",
+        "competition-guidance:L65",
+        "competition-guidance:L27"
+      ],
+      "failure_path": "Observed in C2. For non-clause events, kind is computed as payment_claim(kind, raw). In payment_claim, current_paid is True when the raw text contains 'paid' together with 'already paid', and it returns 'paid' for any input kind other than partial or correction, including 'restructuring'. The later 'if kind==\"restructuring\"' branch is therefore skipped. The kind in ['paid','dispute'] branch then sets reason 'paid' on every target and calls next_product, so the request ends in a payment flow or a finalize() that writes add_note(paid/refused) instead of transferring. This is proposed, not reproduced, and depends on the extractor choosing a scalar event rather than a batch.",
+      "fix_target": {
+        "file": "competition/runs/20261010-210947-e98c64/codex-stress-b.workflow.json",
+        "function_or_node": "process (payment_claim and the scalar kind dispatch)",
+        "suggested_change": "Restrict payment_claim reclassification to kinds that are payment-neutral (other/answer/proposal). Never override restructuring, human, hardship or stop. Check for transfer intents before any paid or dispute reclassification, and keep the early-return to finalize() with s['transfer'] set, so that no notes are written."
+      }
+    }
+  ],
+  "attack_count": 3,
   "no_model_substitution": true,
   "bank_calls": 0,
   "freya_hosted_calls": 0,
@@ -55,123 +413,42 @@
     "proxy": "https://github.com/router-for-me/CLIProxyAPI",
     "proxy_model_rewriter": "https://github.com/router-for-me/CLIProxyAPI/blob/main/sdk/cliproxy/auth/response_model_rewriter.go"
   },
-  "proxy_base_url": "http://127.0.0.1:8317/v1",
-  "inventory": {
-    "inventory_authenticated": true,
-    "advertised_model_ids": [
-      "codex-auto-review",
-      "gpt-5.5",
-      "gpt-5.6-luna",
-      "gpt-5.6-sol",
-      "gpt-5.6-terra",
-      "gpt-6-astra",
-      "gpt-6-luna",
-      "gpt-6-sol",
-      "gpt-6.1-sol",
-      "gpt-image-1.5",
-      "gpt-image-2"
+  "exit_code": 0,
+  "elapsed_seconds": 70.953,
+  "event_count": 23,
+  "event_reader_errors": [],
+  "inference_evidence": {
+    "models": [
+      "claude-opus-5-5",
+      "claude-opus-5-5"
     ],
-    "exact_model_advertised": false,
-    "claude_model_ids": [],
-    "checked_at_utc": "2026-10-10T13:25:38.787798+00:00"
-  },
-  "failure_code": "live_inventory_does_not_advertise_claude_opus_5_5",
-  "elapsed_seconds": 0.296,
-  "failure_reason": "Authenticated exact claude-opus-5-5 tiny completion was rejected: proxy_http_502; unknown_provider_for_requested_model. No actual Opus inference, substitute model, or red-team attacks were obtained.",
-  "exact_route_probe": {
-    "requested_model": "claude-opus-5-5",
-    "timeout_seconds": 30,
-    "max_tokens": 32,
-    "prompt": "Reply ready",
-    "tools": [],
-    "tool_choice": "none",
-    "fallback_requested": false,
-    "completion_requested": true,
-    "route_accepted": false,
-    "actual_opus_inference_verified": false,
-    "credential_values_displayed": false,
-    "credential_decrypted_in_request_process_only": true,
-    "failure_code": "proxy_http_502",
-    "http_status": 502,
-    "provider_error_type": "server_error",
-    "provider_error_code": "internal_server_error",
-    "provider_error_classification": "unknown_provider_for_requested_model",
-    "elapsed_seconds": 0.047
-  },
-  "proxy_provider_readiness": {
-    "config_path": "C:\\Users\\9bakl\\OneDrive\\Masaüstü\\clıproxy\\bin\\config.yaml",
-    "repository_path": "C:\\Users\\9bakl\\OneDrive\\Masaüstü\\clıproxy\\CLIProxyAPI",
-    "top_level_config_keys": [
-      "host",
-      "port",
-      "remote-management",
-      "auth-dir",
-      "api-keys",
-      "debug",
-      "logging-to-file",
-      "usage-statistics-enabled",
-      "request-retry",
-      "routing"
-    ],
-    "auth_directory": "C:\\Users\\9bakl\\.cli-proxy-api",
-    "auth_file_name_class_counts": {
-      "codex_named": 2
+    "model_usage": {
+      "claude-opus-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 7520,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 93835,
+        "webSearchRequests": 0,
+        "costUSD": 0.901088,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 1827,
+        "canonicalModel": "claude-opus-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
     },
-    "claude_api_key_section_present": false,
-    "openai_compatible_section_present": false,
-    "oauth_exclusion_section_present": false,
-    "oauth_alias_section_present": false,
-    "auth_file_contents_read": false,
-    "credential_values_inspected_or_displayed": false,
-    "proxy_configuration_modified": false,
-    "existing_service_restarted": false,
-    "limitation": "Filename classes do not establish provider identity for generic auth files or prove token validity. No auth file was opened.",
-    "conclusion": "No existing Claude API-key section or Claude-named auth file was found in the designated normal configuration/auth directory; two Codex-named auth files only. No provider was activated or service configuration changed.",
-    "inspection_stopped_pending_user_reply": true
+    "tool_calls": 0
   },
-  "candidate_search_directories": [
-    "local-runs/builder-rd-a-v4",
-    "local-runs/builder-rd-a-v3",
-    "local-runs/builder-rd-a-v2",
-    "local-runs/builder-rd-a"
+  "validation_repair": "Original OpenAPI has no operationId; original supplied endpoint paths are authoritative operation names. Review text unchanged; revalidated against supplied source snapshot.",
+  "supplied_api_tool_names": [
+    "add_note",
+    "close_call",
+    "create_promise",
+    "get_account",
+    "schedule_callback",
+    "transfer_to_agent",
+    "verify_identity"
   ],
-  "required_attack_count_when_actual_model_available": 15,
-  "requested_redteam_completed": false,
-  "handoff_state": "Harness ready; exact model invocation rejected. Further auth checks stopped pending user async configuration reply.",
-  "validation": {
-    "unit_tests": {
-      "command": "python -B -m unittest discover -s integrations/opus-redteam/tests -v",
-      "passed": 17,
-      "failed": 0,
-      "scope": "synthetic launcher fixtures, not model inference or Freya tests"
-    },
-    "live_proxy_authenticated_inventory": "passed; 11 IDs, none Claude/Opus",
-    "single_exact_model_tiny_completion": "HTTP 502; server_error/internal_server_error; unknown_provider_for_requested_model",
-    "source_snapshot_preparation": "passed; original briefs/runtime/OpenAPI/code plus complete candidate policy IR",
-    "runtime_gitignored": true,
-    "git_diff_check": "passed; task files remain untracked"
-  },
-  "changed_paths": [
-    "analysis/opus-redteam.json",
-    "analysis/opus-redteam.txt",
-    "integrations/opus-redteam/.gitignore",
-    "integrations/opus-redteam/empty-mcp.json",
-    "integrations/opus-redteam/settings.json",
-    "integrations/opus-redteam/review-instructions.txt",
-    "integrations/opus-redteam/run.py",
-    "integrations/opus-redteam/proxy_provider.py",
-    "integrations/opus-redteam/inspect_proxy.py",
-    "integrations/opus-redteam/source-manifest.json",
-    "integrations/opus-redteam/README.txt",
-    "integrations/opus-redteam/tests/test_launcher.py"
-  ],
-  "preexisting_installer_modified_or_executed": false,
-  "official_binary_verification": {
-    "version": "2.1.296",
-    "platform": "win32-x64",
-    "manifest_url": "https://downloads.claude.ai/claude-code-releases/2.1.296/manifest.json",
-    "sha256": "76de74f7694a5bdc03378a5f837c9e132827bf004c98c276bc4e9094ff06769a",
-    "manifest_checksum_match": true,
-    "authenticode_status": "Valid"
-  }
+  "review_output_sha256": "d789f36c251075197f2919f2a11820fdbe6be2f4603bc17db4dea0dce0c9d5c8"
 }

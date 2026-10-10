@@ -3,6 +3,7 @@
 Prepare snapshots or launch from fraya root:
   python -B integrations/opus-redteam/run.py prepare
   python -B integrations/opus-redteam/run.py run --timeout-seconds 420
+  python -B integrations/opus-redteam/run.py run --attack-count 3 --effort low --focus competition
 Native Claude Code handles its ordinary authentication. The local proxy helper
 decrypts only the user-designated DPAPI key in request-process memory. Neither
 route dumps credentials, environment values, or uses a fallback model.
@@ -42,6 +43,8 @@ SOURCES = {
     "competition-guidance": "competition/skills/build-phone-agent.md",
     "competition-host": "competition/builder.py",
 }
+COMPETITION_SOURCE_IDS = ("brief-a", "brief-b", "openapi", "official-cases",
+                          "competition-guidance", "competition-host")
 DOCS = {
     "exact_model": "https://platform.claude.com/docs/en/models/opus-5-5/overview",
     "cli": "https://code.claude.com/docs/en/cli-reference",
@@ -306,8 +309,98 @@ def latest_published_candidate(root: Path) -> Path | None:
     return max(available, key=lambda item: item[0])[1] if available else None
 
 
-def prepare(*, manifest_path: Path | None = None) -> dict:
-    RUNTIME.mkdir(exist_ok=True)
+def api_tool_names(api: dict) -> list[str]:
+    """Use explicit operation IDs or the supplied endpoint's operation name."""
+    names = set()
+    for path, methods in api["paths"].items():
+        for method, operation in methods.items():
+            if method.lower() not in ("get", "post", "put", "patch", "delete", "head", "options") or not isinstance(operation, dict):
+                continue
+            name = operation.get("operationId") or path.rstrip("/").rsplit("/", 1)[-1]
+            if not isinstance(name, str) or not name:
+                raise ValueError("API operation has no usable tool name")
+            names.add(name)
+    if not names:
+        raise ValueError("API supplies no callable operations")
+    return sorted(names)
+
+
+def review_options(attack_count: int = 15, effort: str = "medium", focus: str = "full") -> dict:
+    if type(attack_count) is not int or attack_count not in (3, 15):
+        raise ValueError("Attack count must be 3 or 15")
+    if effort not in ("low", "medium"):
+        raise ValueError("Effort must be low or medium")
+    if focus not in ("full", "competition"):
+        raise ValueError("Focus must be full or competition")
+    included = [key for key in SOURCES if focus == "full" or key in COMPETITION_SOURCE_IDS]
+    omitted = [key for key in SOURCES if key not in included]
+    limitations = (["Competition focus: omitted sources " + ", ".join(omitted)
+                    + " were not supplied or reviewed. No conclusions about omitted implementations or platform docs are supported."]
+                   if focus == "competition" else [])
+    return {"requested_attack_count": attack_count, "effort": effort, "focus": focus,
+            "included_source_ids": included, "prompt_scope_limitations": limitations}
+
+
+def build_review_prompt(snapshot: dict) -> tuple[bytes, bytes]:
+    """Build the scoped prompt without dropping any candidate JSON value."""
+    count = snapshot.get("requested_attack_count", 15)
+    focus = snapshot.get("focus", "full")
+    instruction = (HERE / "review-instructions.txt").read_text(encoding="utf-8")
+    if count != 15:
+        for old, new in (("exactly 15 objects", f"exactly {count} objects"),
+                         ("O55-01 through O55-15", f"O55-01 through O55-{count:02d}"),
+                         ("Cover all of these, across 15 concrete attacks:",
+                          f"Select the {count} highest-value distinct attacks from these areas; coverage of every area is not required:"),
+                         ("Fifteen attack contracts are required, not fifteen repetitions of one generic warning.",
+                          f"Exactly {count} distinct attack contracts are required."),
+                         ("Include at least three attacks about", "Include at least one attack about")):
+            instruction = instruction.replace(old, new)
+    if focus == "competition":
+        instruction = instruction.replace("relevant API/runtime/code evidence", "relevant supplied API/candidate/competition code evidence")
+        instruction = instruction.replace(
+            "pointing to supplied builder_prompts.py, policy_runtime.py, a supplied policy IR rule, or a supplied workflow candidate node.",
+            "pointing only to supplied competition-guidance, competition-host, or a supplied workflow candidate node.")
+        instruction = instruction.replace("Test the actual compact extractor grammar and phase fallback,",
+                                          "Test only extractor grammar and phase fallback visible in the supplied candidate/competition code,")
+    included = snapshot.get("included_source_ids", list(snapshot["sources"]))
+    chunks = [instruction, "\nREVIEW REQUEST AND PROMPT SCOPE:\n",
+              json.dumps({key: snapshot[key] for key in ("requested_attack_count", "effort", "focus",
+                         "included_source_ids", "prompt_scope_limitations") if key in snapshot}, ensure_ascii=False),
+              "\nOnly SOURCE blocks actually included below may be cited or claimed read. The full local snapshot is not model-visible. "
+              "Never claim to have read omitted documents or infer defects in them. Copy prompt_scope_limitations verbatim into limitations.\n",
+              "\nSOURCE REGISTRY AND CANONICAL QUALIFIED CLAUSES:\n",
+              json.dumps({"clauses": snapshot["canonical_source_clauses"], "tool_names": snapshot["tool_names"]}, ensure_ascii=False),
+              "\nSOURCE LINE IDs: <source_id>:L<number>, e.g. brief-a:L1. Within each SOURCE block, L<number> labels belong to that block's source_id. Use only valid supplied lines.\n"]
+    for source_id in included:
+        source = snapshot["sources"][source_id]
+        chunks.extend([f"\nSOURCE {source_id} PATH {source['path']} SHA256 {source['sha256']}\n",
+                       "\n".join(f"L{number} {line}" for number, line in enumerate(source["text"].splitlines(), 1)), "\n"])
+    chunks.extend(["\nCANDIDATE STATUS: ", snapshot["candidate_status"], "\n"])
+    raw_chunks = list(chunks)
+    candidates = snapshot["candidates"]
+    for candidate in candidates:
+        heading = ("\nCOMPLETE CANDIDATE " + candidate["kind"] + " " + candidate["path"]
+                   + " SOURCE SHA256 " + candidate["sha256"] + "\n")
+        raw_chunks.extend([heading, candidate["text"], "\n"])
+        chunks.extend([heading, REVIEW_VIEW_INSTRUCTIONS,
+                       json.dumps(candidate["review_view"], ensure_ascii=True, separators=(",", ":")), "\n"]
+                      if candidate["review_view"] else [heading, candidate["text"], "\n"])
+    if candidates and not any(c["kind"] == "workflow" for c in candidates):
+        limitation = "Only policy IR is supplied. Review its rules, but do not claim workflow-node defects or execution results.\n"
+        chunks.append(limitation)
+        raw_chunks.append(limitation)
+    if not candidates:
+        limitation = (f"No candidate defect may be claimed. Review only the supplied sources and provide {count} source-derived attack contracts instead.\n")
+        chunks.append(limitation)
+        raw_chunks.append(limitation)
+    return "".join(chunks).encode("utf-8"), "".join(raw_chunks).encode("utf-8")
+
+
+def prepare(*, manifest_path: Path | None = None, attack_count: int = 15,
+            effort: str = "medium", focus: str = "full", write_outputs: bool = True) -> dict:
+    options = review_options(attack_count, effort, focus)
+    if write_outputs:
+        RUNTIME.mkdir(exist_ok=True)
     sources = {}
     for source_id, relative in SOURCES.items():
         raw = (ROOT / relative).read_bytes()
@@ -326,6 +419,8 @@ def prepare(*, manifest_path: Path | None = None) -> dict:
     from agent_forge.tool_api import validate_json
     candidates = []
     published = latest_published_candidate(ROOT)
+    if focus == "competition" and published is None:
+        raise ValueError("Competition focus requires a complete latest published workflow candidate")
     directories = (str(published.parent.relative_to(ROOT)).replace("\\", "/"),) if published else ("local-runs/builder-rd-a-v4", "local-runs/builder-rd-a-v3", "local-runs/builder-rd-a-v2", "local-runs/builder-rd-a")
     # A complete policy IR is a candidate even when workflow generation is pending.
     # Never read partial model streams or claim a policy is an executable workflow.
@@ -353,50 +448,31 @@ def prepare(*, manifest_path: Path | None = None) -> dict:
                 raw = path.read_bytes()
                 review_view = make_review_view(raw) if kind == "workflow" else None
                 raw_path = RUNTIME / ("candidate-" + hashlib.sha256(raw).hexdigest() + ".raw.json")
-                raw_path.write_bytes(raw)
+                if write_outputs:
+                    raw_path.write_bytes(raw)
                 candidates.append({"path": relative, "sha256": hashlib.sha256(raw).hexdigest(),
                                    "kind": kind, "complete_workflow_shape": kind == "workflow",
                                    "text": raw.decode("utf-8-sig"),
                                    "raw_snapshot": str(raw_path), "review_view": review_view})
         if candidates:
             break
+    if focus == "competition" and (len(candidates) != 1 or candidates[0]["kind"] != "workflow"):
+        raise ValueError("Competition focus requires the complete latest published workflow candidate")
     qualified_ids = [clause["qualified_id"] for clause in clauses]
     openapi = json.loads(sources["openapi"]["text"])
-    tool_names = sorted({operation["operationId"] for methods in openapi["paths"].values()
-                         for operation in methods.values() if isinstance(operation, dict) and "operationId" in operation})
-    snapshot = {"requested_model": MODEL, "sources": sources, "canonical_source_clauses": clauses,
+    tool_names = api_tool_names(openapi)
+    snapshot = {**options, "requested_model": MODEL, "sources": sources, "canonical_source_clauses": clauses,
                 "qualified_source_ids": qualified_ids, "tool_names": tool_names,
                 "candidate_search_directories": list(directories), "candidates": candidates,
                 "candidate_status": ("complete_workflow_supplied" if any(c["kind"] == "workflow" for c in candidates)
                                      else "complete_policy_ir_only" if candidates else "no_complete_candidate_available"),
                 "task_limitations": "No bank calls, Freya sessions, workflow edits, or code execution by the review model."}
+    prompt, raw_prompt = build_review_prompt(snapshot)
+    snapshot.update(prompt_sha256=hashlib.sha256(prompt).hexdigest(), prompt_bytes=len(prompt),
+                    raw_prompt_bytes=len(raw_prompt), prompt_bytes_saved=len(raw_prompt) - len(prompt))
+    if not write_outputs:
+        return snapshot
     json_write(RUNTIME / "input-snapshot.json", snapshot)
-    instruction = (HERE / "review-instructions.txt").read_text(encoding="utf-8")
-    chunks = [instruction, "\nSOURCE REGISTRY AND CANONICAL QUALIFIED CLAUSES:\n",
-              json.dumps({"clauses": clauses, "tool_names": tool_names}, ensure_ascii=False),
-              "\nSOURCE LINE IDs: <source_id>:L<number>, e.g. policy-runtime:L1. Within each SOURCE block, L<number> labels belong to that block's source_id. Use only valid supplied lines.\n"]
-    for source_id, source in sources.items():
-        chunks.extend([f"\nSOURCE {source_id} PATH {source['path']} SHA256 {source['sha256']}\n",
-                       "\n".join(f"L{number} {line}" for number, line in enumerate(source["text"].splitlines(), 1)), "\n"])
-    chunks.extend(["\nCANDIDATE STATUS: ", snapshot["candidate_status"], "\n"])
-    raw_chunks = list(chunks)
-    for candidate in candidates:
-        heading = ("\nCOMPLETE CANDIDATE " + candidate["kind"] + " " + candidate["path"]
-                   + " SOURCE SHA256 " + candidate["sha256"] + "\n")
-        raw_chunks.extend([heading, candidate["text"], "\n"])
-        chunks.extend([heading, REVIEW_VIEW_INSTRUCTIONS,
-                       json.dumps(candidate["review_view"], ensure_ascii=True, separators=(",", ":")), "\n"]
-                      if candidate["review_view"] else [heading, candidate["text"], "\n"])
-    if candidates and not any(c["kind"] == "workflow" for c in candidates):
-        limitation = "Only policy IR is supplied. Review its rules, but do not claim workflow-node defects or execution results.\n"
-        chunks.append(limitation)
-        raw_chunks.append(limitation)
-    if not candidates:
-        limitation = "No candidate defect may be claimed. Review the actual builder prompts/runtime and provide 15 source-derived attack contracts instead.\n"
-        chunks.append(limitation)
-        raw_chunks.append(limitation)
-    prompt = "".join(chunks).encode("utf-8")
-    raw_prompt = "".join(raw_chunks).encode("utf-8")
     (RUNTIME / "prompt.txt").write_bytes(prompt)
     (RUNTIME / "prompt-raw.txt").write_bytes(raw_prompt)
     manifest = {key: value for key, value in snapshot.items() if key not in ("sources", "canonical_source_clauses", "candidates")}
@@ -417,13 +493,14 @@ def prepare(*, manifest_path: Path | None = None) -> dict:
     return snapshot
 
 
-def cli_arguments(cli: Path) -> list[str]:
+def cli_arguments(cli: Path, *, effort: str = "medium") -> list[str]:
+    review_options(effort=effort)
     return [str(cli), "--print", "--safe-mode", "--restricted", "--no-session-persistence",
             "--tools", "", "--disallowedTools", "*", "--strict-mcp-config",
             "--mcp-config", str(HERE / "empty-mcp.json"), "--setting-sources", "",
             "--settings", str(HERE / "settings.json"), "--disable-slash-commands", "--no-chrome",
             "--permission-mode", "dontAsk", "--permission-prompts", "none",
-            "--model", MODEL, "--effort", "medium", "--max-turns", "1",
+            "--model", MODEL, "--effort", effort, "--max-turns", "1",
             "--output-format", "stream-json", "--verbose",
             "--system-prompt", "You are an independent source-grounded red-team reviewer. Use no tools. Output the requested JSON only."]
 
@@ -434,8 +511,20 @@ def validate_review(review: dict, snapshot: dict) -> None:
     if review.get("candidate_reviewed") is not bool(snapshot["candidates"]):
         raise ValueError("Candidate review claim does not match supplied candidates")
     attacks = review.get("attacks")
-    if not isinstance(attacks, list) or len(attacks) != 15 or {a.get("id") for a in attacks} != {f"O55-{n:02d}" for n in range(1, 16)}:
-        raise ValueError("Exactly 15 uniquely identified attack contracts are required")
+    count = snapshot.get("requested_attack_count", 15)
+    review_options(count, snapshot.get("effort", "medium"), snapshot.get("focus", "full"))
+    included = set(snapshot.get("included_source_ids", snapshot["sources"]))
+    if not included.issubset(snapshot["sources"]):
+        raise ValueError("Unknown included source ID")
+    if snapshot.get("focus", "full") == "competition":
+        limitations = review.get("limitations")
+        if not isinstance(limitations, list) or not all(
+                limitation in limitations for limitation in snapshot.get("prompt_scope_limitations", [])):
+            raise ValueError("Focused review must acknowledge prompt scope limitations")
+    if (not isinstance(attacks, list) or len(attacks) != count
+            or not all(isinstance(a, dict) and isinstance(a.get("id"), str) for a in attacks)
+            or {a["id"] for a in attacks} != {f"O55-{n:02d}" for n in range(1, count + 1)}):
+        raise ValueError(f"Exactly {count} uniquely identified attack contracts are required")
     required = {"id", "title", "priority", "assessment", "scenario", "expected_ledger", "expected_speech",
                 "forbidden_bank_calls", "qualified_source_ids", "failure_path", "fix_target"}
     for attack in attacks:
@@ -459,6 +548,8 @@ def validate_review(review: dict, snapshot: dict) -> None:
             if forbidden.get("tool") not in snapshot["tool_names"] or not forbidden.get("when") or not forbidden.get("reason"):
                 raise ValueError("Forbidden call must name a supplied bank operation and condition")
         for source_id in attack["qualified_source_ids"]:
+            if not isinstance(source_id, str) or source_id.split(":", 1)[0] not in included:
+                raise ValueError("Unknown qualified source ID or source omitted from supplied prompt")
             if source_id in snapshot["qualified_source_ids"]:
                 continue
             match = re.fullmatch(r"(.+):L([1-9][0-9]*)", source_id)
@@ -467,7 +558,7 @@ def validate_review(review: dict, snapshot: dict) -> None:
         if not {"file", "function_or_node", "suggested_change"}.issubset(attack["fix_target"]):
             raise ValueError("Incomplete fix target")
         allowed_targets = {SOURCES[key] for key in ("builder-prompts", "policy-runtime", "competition-guidance", "competition-host")
-                           if key in snapshot["sources"]} | {c["path"] for c in snapshot["candidates"]}
+                           if key in included} | {c["path"] for c in snapshot["candidates"]}
         if attack["fix_target"]["file"] not in allowed_targets:
             raise ValueError("Fix target outside supplied implementation files")
 
@@ -494,6 +585,9 @@ def verify_inference(events: list[dict]) -> dict:
 
 
 def write_reports(metadata: dict, review: dict | None = None) -> None:
+    # The unchanged proxy/probe entry points use the default full review options.
+    for key, value in review_options().items():
+        metadata.setdefault(key, value)
     metadata["attacks"] = review["attacks"] if review else []
     metadata["attack_count"] = len(metadata["attacks"])
     metadata["no_model_substitution"] = True
@@ -503,6 +597,7 @@ def write_reports(metadata: dict, review: dict | None = None) -> None:
     json_write(ROOT / "analysis" / "opus-redteam.json", metadata)
     lines = ["Claude Opus 5.5 external red-team launch", "Status: " + metadata["status"],
              "Requested exact model: " + MODEL, "Actual inference verified: " + str(metadata.get("actual_opus_inference_verified", False)),
+             "Review request: " + str(metadata["requested_attack_count"]) + " attacks; effort " + metadata["effort"] + "; focus " + metadata["focus"],
              "Attacks received from verified Opus inference: " + str(metadata["attack_count"]),
              "No launcher-written attacks, fallback model, bank calls or Freya hosted calls.",
              "Provider: " + str(metadata.get("provider", metadata.get("cli_path", "unavailable"))),
@@ -527,22 +622,26 @@ def write_reports(metadata: dict, review: dict | None = None) -> None:
         lines += ["", "Source-review limitations:", *review.get("limitations", [])]
         for attack in review["attacks"]:
             lines += ["", attack["id"] + " " + attack["title"], json.dumps(attack, ensure_ascii=False, indent=2)]
-    lines += ["", "Rerun from fraya root:", "  python -B integrations/opus-redteam/run.py run --timeout-seconds 420",
-              "Auto uses the designated local proxy when its metadata exists; --provider claude-cli selects the native CLI.",
+    rerun = "  python -B integrations/opus-redteam/run.py run --timeout-seconds " + str(metadata.get("timeout_seconds", 420))
+    if (metadata["requested_attack_count"], metadata["effort"], metadata["focus"]) != (15, "medium", "full"):
+        rerun += f" --attack-count {metadata['requested_attack_count']} --effort {metadata['effort']} --focus {metadata['focus']}"
+    lines += ["", "Rerun from fraya root:", rerun,
+              "Auto uses the designated local proxy for default full/15/medium reviews when its metadata exists; nondefault review options use the native CLI.",
               "Proxy auth uses only the designated DPAPI key in memory; no plaintext key or raw auth response is logged.",
-              "Candidate directories are checked again on each run; builder-rd-a-v4 is preferred, then v3, v2, and the original.",
+              "Each run reviews the latest completed published workflow; legacy policy directories are fallback only when no published workflow exists.",
               "", "Official sources:", *DOCS.values()]
     (ROOT / "analysis" / "opus-redteam.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def run_cli(timeout: int) -> int:
+def run_cli(timeout: int, *, attack_count: int = 15, effort: str = "medium", focus: str = "full") -> int:
     if not 300 <= timeout <= 480:
         raise ValueError("Run bound must be between 300 and 480 seconds")
-    snapshot = prepare()
+    options = review_options(attack_count, effort, focus)
+    snapshot = prepare(attack_count=attack_count, effort=effort, focus=focus)
     cli = find_cli()
     env = {key: value for key, value in os.environ.items() if not key.startswith("FREYA_") and key not in ("CLAUDECODE", "CLAUDE_CODE_SESSION_ID")}
     env.update(DISABLE_AUTOUPDATER="1", CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1", PYTHONUTF8="1")
-    metadata = {"status": "launching", "launched_at_utc": datetime.now(timezone.utc).isoformat(),
+    metadata = {**options, "status": "launching", "launched_at_utc": datetime.now(timezone.utc).isoformat(),
                 "provider": "official_claude_cli",
                 "requested_model": MODEL, "launcher_role": "different-model orchestrator; not Claude Opus",
                 "cli_path": str(cli), "cli_version": subprocess.check_output([str(cli), "--version"], env=env, text=True).strip(),
@@ -553,7 +652,9 @@ def run_cli(timeout: int) -> int:
                 "source_manifest": "integrations/opus-redteam/source-manifest.json",
                 "actual_opus_inference_verified": False, "model_inference_attempted": False,
                 "tools_requested": [], "mcp_servers_requested": [], "fallback_requested": False}
-    arguments = cli_arguments(cli)
+    metadata.update({key: snapshot[key] for key in ("included_source_ids", "prompt_scope_limitations",
+                                                   "prompt_bytes", "prompt_sha256")})
+    arguments = cli_arguments(cli, effort=effort)
     metadata["arguments"] = arguments
     write_reports(metadata)
     events, reader_errors = [], []
@@ -627,20 +728,33 @@ def main() -> int:
     parser.add_argument("command", choices=("prepare", "run", "probe"))
     parser.add_argument("--timeout-seconds", type=int, default=420)
     parser.add_argument("--provider", choices=("auto", "claude-cli", "local-proxy"), default="auto")
+    parser.add_argument("--attack-count", type=int, choices=(3, 15), default=15)
+    parser.add_argument("--effort", choices=("low", "medium"), default="medium")
+    parser.add_argument("--focus", choices=("full", "competition"), default="full",
+                        help="Competition includes complete briefs/API/candidate and current competition sources; nondefault review options use the native CLI in auto mode")
     arguments = parser.parse_args()
+    nondefault = (arguments.attack_count, arguments.effort, arguments.focus) != (15, "medium", "full")
     if arguments.command == "probe":
+        if nondefault:
+            parser.error("Review count/effort/focus options do not apply to probe")
         from proxy_provider import probe_proxy
         return probe_proxy(arguments.timeout_seconds)
     if arguments.command == "prepare":
-        snapshot = prepare()
+        snapshot = prepare(attack_count=arguments.attack_count, effort=arguments.effort, focus=arguments.focus)
         print(json.dumps({"requested_model": MODEL, "candidate_status": snapshot["candidate_status"],
-                          "candidate_count": len(snapshot["candidates"]), "sources": len(snapshot["sources"])}))
+                          "candidate_count": len(snapshot["candidates"]), "sources": len(snapshot["sources"]),
+                          **{key: snapshot[key] for key in ("requested_attack_count", "effort", "focus", "included_source_ids", "prompt_bytes")}}))
         return 0
     if not 300 <= arguments.timeout_seconds <= 480:
         parser.error("Run bound must be between 300 and 480 seconds")
-    if arguments.provider == "local-proxy" or (arguments.provider == "auto" and (ROOT / ".local-secrets/cli-proxy-connection.json").is_file()):
+    if nondefault and arguments.provider == "local-proxy":
+        parser.error("Nondefault review options require the native claude-cli provider")
+    if arguments.provider == "local-proxy" or (arguments.provider == "auto" and not nondefault and (ROOT / ".local-secrets/cli-proxy-connection.json").is_file()):
         from proxy_provider import run_proxy
         return run_proxy(arguments.timeout_seconds)
+    if nondefault:
+        return run_cli(arguments.timeout_seconds, attack_count=arguments.attack_count,
+                       effort=arguments.effort, focus=arguments.focus)
     return run_cli(arguments.timeout_seconds)
 
 
