@@ -8,7 +8,7 @@ def validate_coverage(coverage):
     def walk(value,path='coverage'):
         if isinstance(value,dict):
             status=str(value.get('status','')).lower().replace('_',' ')
-            if 'status' in value and any(key in value for key in ('rule','id','requirement')):inventory.append(value)
+            if 'status' in value and any(key in value for key in ('rule','rule_id','id','requirement')):inventory.append(value)
             if any(marker in status for marker in ('degraded enforcement','weakened enforcement','not implemented','not enforced','prompt only','omitted','unknown','unresolved','uncertain','unsupported','not covered','missing','todo')):
                 errors.append(f'{path}: required policy enforcement is incomplete: {value.get("rule",value.get("id",status))}')
             for key,item in value.items():walk(item,path+'.'+key)
@@ -17,6 +17,8 @@ def validate_coverage(coverage):
     walk(coverage)
     if not inventory:errors.append('coverage: nonempty rule inventory with explicit implementation status is required')
     for rule in inventory:
+        if not any(isinstance(rule.get(key),str) and rule[key].strip() for key in ('rule','rule_id','id','requirement')):
+            errors.append('coverage: every rule needs a nonempty identifier or requirement')
         if not str(rule.get('status','')).strip():errors.append('coverage: every rule needs a nonempty implementation status')
     return errors
 
