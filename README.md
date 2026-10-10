@@ -51,7 +51,7 @@ are under `local-runs/mcp-connect` and `local-runs/mcp-smoke`.
 .\freya-call.ps1 -Request local-runs/mcp-connect/request.json -OutFile local-runs/connect-result.json
 cd skill-creator-skill-lift
 .\.venv\Scripts\python.exe -X utf8 -m pytest -c agent_forge/pytest.ini agent_forge/tests voice_contract/tests -q
-.\integrations\freya-mcp\.venv\Scripts\python.exe -X utf8 -m pytest integrations/freya-mcp/tests -q
+.\integrations\freya-mcp\.venv\Scripts\python.exe -X utf8 -m unittest discover -s integrations/freya-mcp/tests -p "test_*.py" -q
 ```
 
 ## Shared workspace coordination
