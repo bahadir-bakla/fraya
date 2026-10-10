@@ -77,7 +77,7 @@ def apply_repair(previous: dict, repair: dict) -> dict:
 
 
 def repair_prompt(contract: dict, policy: dict, kit, feedback: dict) -> str:
-    from .builder_prompts import raw_sources
+    from .builder_prompts import raw_sources, PROGRESS_GUIDANCE
     instructions = """Repair the previous workflow with a minimal bounded JSON patch.
 Return ONLY changed paths, not the whole workflow. op is add, replace or remove;
 path is an RFC6901 JSON pointer into TARGET_WORKFLOW itself; value_json is valid
@@ -111,7 +111,7 @@ do not return an empty patch or silently leave a missing required branch.
 """
     diagnostics = {k: v for k, v in feedback.items() if k not in {"previous_workflow", "expanded_workflow"}}
     refs = {name: (kit / "docs" / name).read_text(encoding="utf-8") for name in ["workflow-format.md", "tools-and-code.md"]}
-    return instructions + "\nTARGET_WORKFLOW:\n" + json.dumps(feedback["previous_workflow"], ensure_ascii=False) + \
+    return instructions + "\n" + PROGRESS_GUIDANCE + "\nTARGET_WORKFLOW:\n" + json.dumps(feedback["previous_workflow"], ensure_ascii=False) + \
         "\nDIAGNOSTICS:\n" + json.dumps(diagnostics, ensure_ascii=False) + \
         "\nRAW SOURCES:\n" + json.dumps(raw_sources(contract), ensure_ascii=False) + \
         "\nINPUT API/CLAUSES:\n" + json.dumps(contract, ensure_ascii=False) + \

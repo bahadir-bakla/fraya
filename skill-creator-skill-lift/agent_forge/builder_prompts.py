@@ -5,6 +5,97 @@ import hashlib
 from pathlib import Path
 
 
+PROGRESS_GUIDANCE = """PLATFORM PROGRESS GUIDANCE (shared mechanics, not bank policy):
+Use the supplied sources/API for every policy value, question, amount, calendar,
+retry limit, queue, outcome/reason and speech obligation. The stage labels below
+are architecture examples, not a fixed node count or an outcome table. Equivalent
+implementations are acceptable if their actual paths preserve source obligations.
+
+SMALL CYCLIC CAPABILITY/ACTION STAGES:
+- Use a few reusable stages for identity, account/context, negotiation and
+  confirmation, required actions, legal bank closure and native termination.
+  Cycle for clarification, corrections, source-permitted retries and per-product
+  work. Keep sensitive tools available only after their source prerequisites.
+- Conversation nodes expose dialogue tools; api_request/code nodes execute
+  pre_actions on entry. Do not put pre_actions on conversation nodes or dialogue
+  tools on action nodes: the platform strips those misplaced fields. Where all
+  request values are validated and available, a dedicated action stage can make
+  a required operation unavoidable instead of hoping a closing prompt calls it.
+  Bind every required engine-run body field to those values; unresolved single
+  placeholders are dropped. Fresh model-argument placeholders need dialogue tools,
+  not an engine-only pre_action with no model to fill them.
+- A callback agreement, confirmed payment terms or a permitted transfer request
+  creates an action obligation, not a completed action. Keep that action reachable
+  until its source-required completion evidence arrives. Preserve partial commits.
+
+TRUSTED PROGRESS STATE:
+- Extraction records user speech: identity claims, proposed terms, corrections,
+  consent and requested intent. It must NEVER write backend-success, recorded
+  promise/callback/transfer, final outcome/reason, bank-close or terminal-ready
+  facts. Separate candidate user intent from trusted policy-derived disposition.
+- Only deterministic validation of source conditions and actual API receipts may
+  derive legal terminal state. Some source outcomes require no preceding write;
+  do not invent an extra required action for them. For required actions, correlate
+  receipts to the current request/product/attempt and retain already recorded facts.
+- Use documented response_mapping or guarded code to consume the API's actual
+  application-level result. HTTP 200, a generic success counter, an extracted yes
+  or a transfer announcement is not proof of the required bank action. Variables
+  persist across nodes; clear/consume pending state so an old success cannot stand
+  for a new action. Unknown writes and hook failures are not successful receipts.
+- Errors do not authorize a different outcome or queue unless the source permits
+  that path. Never claim a human transfer merely to escape a technical problem.
+
+ROUTING THAT PRESERVES REQUIRED ACTIONS:
+- Official workflow-format.md, Order of evaluation: loop_condition precedes node
+  transitions, and node transitions precede global interrupts. Within transitions,
+  deterministic conditions run first; a match suppresses semantic matches_intent
+  evaluation regardless of where the semantic entry appears in the list. Merely
+  moving semantic routes first is NOT a fix for a matching deterministic fallback.
+- A broad always/is_set/self route or loop condition can starve specific intents
+  and global interrupts. Prefer an exclusive user-intent enum or non-overlapping
+  semantic routes with source priority. Validate intent before dispatch; an intent
+  enum must not double as a terminal outcome. In dialogue, no matching route means
+  stay and answer. A passthrough action/code node instead needs a safe always
+  fallback and passthrough_default_transition, not an unconditional action loop.
+- Duplicate target_node routes merge with OR; an always route to that target
+  makes the merged route unconditional. Check the effective merged conditions.
+- is_tool_call:true routes are dialogue-model transition tools, NOT routes checked
+  by the router after each turn. They do not guarantee execution of a bank action.
+- Routing runs before dialogue and again after a tool result. No result gate may
+  eject a stage before its still-required tools run: prior identity/account success
+  is a prerequisite, not completion of a later promise/callback/transfer action.
+  Test completion of the whole stage, with fresh action receipts. Do not re-test
+  an earlier user intent to leave an action stage before dispatch. Keep unfinished
+  action tools reachable; advance only on the current stage's completion evidence.
+
+LEGAL CLOSURE AND SPEECH:
+- Derive outcome/reason with source priority from validated facts and required
+  action receipts. Enforce source close-count/last-bank-tool rules. A goodbye,
+  accepted terms or customer hangup cannot replace a missing callback, promise,
+  transfer or bank closure. Avoid dialogue/lifecycle duplicate bank-close calls.
+- Deliver required speech at the source-specified point, including before bank
+  close when required. Tool success does NOT prove a goodbye or confirmation was
+  spoken. Route a confirmed successful bank close to a silent native end_call node:
+  on_enter silent, terminal handler __function__:end_call, message_mode default
+  none, disable_inactivity_monitor true, no outgoing transitions. Do not return
+  to a farewell conversation/self-loop or issue another bank call. Native hangup
+  is distinct from the bank close API and does not manufacture bank ledger success.
+
+OPTIONAL GUARD KERNEL BOUNDARY:
+- @builtin:guarded_dispatch is available for explicit composition, not automatically
+  integrated policy. Its caller must supply trusted source policy, validated command
+  and state; persist guard_state_json on EVERY result, including blocked corrections.
+  Only guard_flag == 'allowed' permits dispatch of the unchanged guard_request_json
+  body. That is a reservation, not a successful bank receipt. Feed the actual bank
+  result back into trusted state before advancing. Extraction must not author these
+  control facts. validate_guard_wiring checks local gate shape, not trusted inputs,
+  downstream request binding, interruption handling or every alternative write path.
+
+Mechanics references: workflow-format.md (node types, variables, routing,
+extraction and end-call nodes); tools-and-code.md (results, mappings and hooks).
+"""
+
+
 def raw_sources(contract: dict) -> list[dict]:
     result = []
     for document in contract["documents"]:
@@ -33,7 +124,10 @@ operation name must come from supplied OpenAPI. Derive question order, identity
 gates, disclosure limits, counting/retry semantics, confirmation, tool success,
 per-product obligations, terminal priority and required spoken statements from
 these inputs. Distinguish proposed, confirmed and recorded state; preserve
-partial commits. Identify constraints over the WHOLE conversation, including
+partial commits. For each required action and terminal outcome, identify the
+source conditions and completion evidence; user intent is not bank completion.
+Keep required speech separate from action success. Identify constraints over the
+WHOLE conversation, including
 actions forbidden before a later event. Report unresolved ambiguities rather
 than inventing policy. This stage has no platform side effects.
 
@@ -54,7 +148,8 @@ Use a compact hybrid graph: capability stages gate sensitive tool availability,
 while semantic dialogue within a stage handles varied wording and interruptions.
 Do not add a node for every possible sentence. Prefer shared source-derived
 deterministic snippets and reusable state over duplicated long code/prompts.
-
+Apply the shared mechanics below using only source-derived policy values.
+""" + PROGRESS_GUIDANCE + """
 COMPACT BUILDER IR (expanded deterministically before Freya sees it):
 - Put bank tool definitions in root _tool_library, a map of your chosen reference
   IDs to {operation, defaults, descriptions, description, pre_process_code,
@@ -110,7 +205,8 @@ PLATFORM HARDENING:
   Only documented handlers. No external APIs beyond supplied tool URLs.
 - Maintain complete per-product behavior and the source terminal priority. If
   source requires goodbye before a final backend tool, a later hangup farewell
-  does not satisfy it. No extra tool after the final backend close.
+  does not satisfy it. No extra bank API tool after the final backend close;
+  the native end_call terminal ends the platform call.
 
 Any source behavior you cannot implement is a limitation, never a success claim.
 Coverage mechanism describes real node/hooks/routes, not simply 'covered'.
@@ -144,6 +240,23 @@ an optional recovery strategy. Never turn a may-retry option into a requirement.
 Use 'revise' only with at least one concrete error. With only advisory warnings,
 use 'pass'; with only an irreducible contradictory binding source gap, use
 'blocked'. A model review passing still does not prove a runtime test passed.
+Use the shared platform mechanics to audit actual paths, not to accept a named
+stage or the author's claim that a guard is integrated. For each source-required
+callback/promise/transfer, trace validated input -> required dispatch -> actual
+receipt -> source-legal disposition. Check that a success gate cannot route away
+before an outstanding action runs, including on the next user turn. Inspect all
+writers of progress/outcome variables: user extraction must not author backend
+success or terminal readiness. Test deterministic-route starvation, merged OR
+targets and model-triggered transitions under the documented evaluation order.
+Trace accepted terms/callback times, corrections and technical failures through
+closure; flag invented transfers, skipped actions and repeated farewell paths
+when they violate binding sources. Check required speech separately from bank
+success, and bank closure separately from actual native termination. For every
+error, cite qualified source IDs plus concrete node/tool/condition evidence and
+an input/action/ledger/transcript counterexample. Do not relax the verdict because
+some tools now work or dialogue sounds correct. Do not require this exact stage
+layout or optional guard kernel without a source-grounded violation.
+""" + PROGRESS_GUIDANCE + """
 RAW SOURCES:
 """ + json.dumps(raw_sources(contract), ensure_ascii=False) + \
         "\nSOURCE CLAUSES/TABLES AND API:\n" + json.dumps(contract, ensure_ascii=False) + \

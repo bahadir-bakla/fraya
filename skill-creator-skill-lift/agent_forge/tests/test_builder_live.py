@@ -147,3 +147,47 @@ def test_raw_sources_refuses_file_modified_after_inventory(tmp_path):
     source.write_text("Replacement instructions", encoding="utf-8")
     with pytest.raises(ValueError, match="changed after inventory"):
         raw_sources(contract)
+
+
+@pytest.mark.parametrize("defect", ["unknown_source", "duplicate_index", "empty_resolution"])
+def test_gap_review_is_repaired_before_workflow_generation_without_weakening_gate(tmp_path, defect):
+    from copy import deepcopy
+    source, contract, policy, workflow, emitted, critic = fixture(tmp_path)
+    policy["ambiguities"] = ["Failure recovery is unspecified"]
+    good = {"assessments": [{"index": 0, "source_ids": [contract["documents"][0]["clauses"][0]["qualified_id"]],
+            "disposition": "safe_protocol_choice", "resolution": "Do not invent successful actions"}]}
+    bad = deepcopy(good)
+    if defect == "unknown_source":
+        bad["assessments"][0]["source_ids"] = ["invented.clause"]
+    elif defect == "duplicate_index":
+        bad["assessments"].append(deepcopy(bad["assessments"][0]))
+    else:
+        bad["assessments"][0]["resolution"] = " "
+    provider = Provider([policy, bad, good, emitted, critic])
+    result = run(source, tmp_path, provider, compile_only=True, repairs=1)
+    assert result["status"] == "compiled_unpublished"
+    assert provider.purposes == ["policy", "policy-gap-review", "policy-gap-repair-1", "workflow-1", "critic-1"]
+    saved = json.loads((tmp_path / "out/policy-gap-attempt-1.json").read_text())
+    assert saved == bad
+
+
+def test_gap_reference_repairs_stop_at_bound_and_never_generate_workflow(tmp_path):
+    source, contract, policy, *_ = fixture(tmp_path)
+    policy["ambiguities"] = ["Missing information"]
+    bad = {"assessments": [{"index": 0, "source_ids": ["unknown"], "disposition": "safe_protocol_choice", "resolution": "Try"}]}
+    provider = Provider([policy, bad, bad, bad])
+    with pytest.raises(BuildFailure, match="source-linked assessments"):
+        run(source, tmp_path, provider, compile_only=True, repairs=4)
+    assert provider.purposes == ["policy", "policy-gap-review", "policy-gap-repair-1", "policy-gap-repair-2"]
+
+
+def test_repaired_review_keeps_real_binding_ambiguity_blocking(tmp_path):
+    source, contract, policy, *_ = fixture(tmp_path)
+    policy["ambiguities"] = ["Contradictory binding instructions"]
+    bad = {"assessments": []}
+    good = {"assessments": [{"index": 0, "source_ids": [contract["documents"][0]["clauses"][0]["qualified_id"]],
+            "disposition": "blocking", "resolution": "Required instructions remain contradictory"}]}
+    provider = Provider([policy, bad, good])
+    with pytest.raises(BuildFailure, match="Unresolved binding policy ambiguity"):
+        run(source, tmp_path, provider, compile_only=True, repairs=1)
+    assert provider.purposes[-1] == "policy-gap-repair-1"

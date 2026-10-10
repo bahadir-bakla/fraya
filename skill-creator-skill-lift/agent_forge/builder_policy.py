@@ -60,6 +60,28 @@ def source_ids(contract: dict) -> set[str]:
     return {c["qualified_id"] for d in contract["documents"] for c in d["clauses"]}
 
 
+def gap_source_ids(contract: dict) -> set[str]:
+    return source_ids(contract) | {d["id"] for d in contract["documents"]} | {"tool_contract"} | {
+        "tool_contract.operations." + name for name in contract["tool_contract"]["operations"]}
+
+
+def validate_gap_review(review: dict, contract: dict, ambiguity_count: int) -> list[str]:
+    issues = validate_json(POLICY_GAP_SCHEMA, review)
+    if issues:
+        return issues
+    rows = review["assessments"]
+    if sorted(r["index"] for r in rows) != list(range(ambiguity_count)):
+        issues.append("Assess every listed ambiguity index exactly once")
+    allowed = gap_source_ids(contract)
+    for row in rows:
+        unknown = set(row["source_ids"]) - allowed
+        if not row["source_ids"] or unknown:
+            issues.append(f"Assessment {row['index']} missing/unknown source references: {sorted(unknown)}")
+        if not row["resolution"].strip():
+            issues.append(f"Assessment {row['index']} has an empty resolution")
+    return issues
+
+
 def validate_policy(policy: dict, contract: dict) -> list[str]:
     issues = validate_json(POLICY_SCHEMA, policy)
     if issues:

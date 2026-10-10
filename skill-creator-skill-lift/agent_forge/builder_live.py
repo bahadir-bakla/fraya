@@ -14,7 +14,7 @@ import sys
 import time
 from collections import deque, Counter
 
-from .builder_policy import POLICY_SCHEMA, WORKFLOW_SCHEMA, CRITIC_SCHEMA, POLICY_GAP_SCHEMA, validate_policy, validate_coverage, source_ids
+from .builder_policy import POLICY_SCHEMA, WORKFLOW_SCHEMA, CRITIC_SCHEMA, POLICY_GAP_SCHEMA, validate_policy, validate_coverage, source_ids, gap_source_ids, validate_gap_review
 from .builder_prompts import policy_prompt, workflow_prompt, critic_prompt, policy_gap_prompt
 from .builder_provider import CodexProvider
 from .input_contract import inspect_inputs
@@ -137,6 +137,8 @@ class LiveBackend:
         self.evidence = evidence
         evidence.scrub = self.bridge.scrub
         self.tool_calls = 0
+        self.execution_nodes = set()
+        self.execution_functions = set()
 
     def call(self, method: str, *args, **kwargs):
         remaining = self.evidence.remaining()
@@ -166,6 +168,15 @@ class LiveBackend:
         if config.get("provider") != "experimental-5" or config.get("model") != "experimental-5":
             raise BuildFailure("Saved phone model differs from the official competition model")
         self.evidence.trace["deployment"] = deployed
+        definitions = list(expected.get("nodes", {}).items()) + list(expected.get("global_nodes", {}).items())
+        self.execution_nodes = {name for name, _ in definitions}
+        self.execution_functions = {
+            action.get("function", {}).get("name")
+            for _, node in definitions
+            for action in node.get("tools", []) + node.get("pre_actions", []) + ([node["terminal"]] if "terminal" in node else [])
+            if isinstance(action, dict) and isinstance(action.get("function"), dict)
+            and isinstance(action["function"].get("name"), str)
+        }
         return deployed
 
     def practice(self, deployed: dict, case_ids: list[str], style: str = "", repetitions: int = 1) -> list[dict]:
@@ -219,14 +230,20 @@ class LiveBackend:
                     ledger = self.call("ledger", binding["customer_id"], case_id=binding["case_id"])
                     self.evidence.write(f"ledger-{binding['customer_id']}.json", ledger)
                     call_id = judge.get("callId")
+                    execution = {}
                     if call_id:
-                        self.evidence.write(f"call-{call_id}.json", self.call("call", call_id))
+                        call = self.call("call", call_id)
+                        self.evidence.write(f"call-{call_id}.json", call)
+                        from .practice_diagnostics import summarize_execution
+                        execution = summarize_execution(call, node_names=self.execution_nodes,
+                                                        function_names=self.execution_functions)
                     failed = list(ledger["ledger_score"]["failed"])
                     if judge.get("outcome") != "pass":
                         failed.append("conversation: " + str(judge.get("reason") or "no verdict"))
                     result = {**binding, "simulation_id": sid, "call_id": call_id, "repetition": rep+1,
                               "pass": not failed, "failed": failed,
-                              "tools": [c["tool"] for c in ledger["ledger"].get("calls", [])]}
+                              "tools": [c["tool"] for c in ledger["ledger"].get("calls", [])],
+                              "execution": execution}
                     all_rows.append(result)
                 batch["results"] = all_rows[-len(prepared["cases"]):]
                 self.evidence.event("simulation_scored", passed=sum(r["pass"] for r in batch["results"]), total=len(batch["results"]))
@@ -301,18 +318,25 @@ def build_live(briefs: list[str], tool_api: str, out: str, *, root: Path, kit: P
             raise BuildFailure("Policy compilation rejected: " + "; ".join(issues))
         gap_review = {}
         if policy["ambiguities"]:
-            gap_review = checkpoint_review or engine.generate("policy-gap-review", policy_gap_prompt(contract, policy["ambiguities"]),
-                                                              POLICY_GAP_SCHEMA, min(180, evidence.remaining(reserve)))
+            gap_input = policy_gap_prompt(contract, policy["ambiguities"]) + "\nEXACT ALLOWED SOURCE REFERENCES:\n" + json.dumps(sorted(gap_source_ids(contract)))
+            gap_review = checkpoint_review
+            for gap_attempt in range(min(repairs, 2)+1):
+                if gap_review is None or gap_attempt:
+                    purpose = "policy-gap-review" if not gap_attempt else f"policy-gap-repair-{gap_attempt}"
+                    gap_review = engine.generate(purpose, gap_input, POLICY_GAP_SCHEMA, min(180, evidence.remaining(reserve)))
+                evidence.write(f"policy-gap-attempt-{gap_attempt+1}.json", gap_review)
+                gap_errors = validate_gap_review(gap_review, contract, len(policy["ambiguities"]))
+                if not gap_errors:
+                    break
+                evidence.event("policy_gap_review_rejected", attempt=gap_attempt+1, errors=gap_errors)
+                gap_input = policy_gap_prompt(contract, policy["ambiguities"]) + \
+                    "\nRepair the previous review's validation errors. Return all assessments; retain any genuine binding ambiguity. Do not weaken source policy or fabricate references.\n" + \
+                    "EXACT ALLOWED SOURCE REFERENCES:\n" + json.dumps(sorted(gap_source_ids(contract))) + \
+                    "\nPREVIOUS REVIEW:\n" + json.dumps(gap_review, ensure_ascii=False) + "\nVALIDATION ERRORS:\n" + json.dumps(gap_errors)
             evidence.write("policy-gap-review.json", gap_review)
-            if validate_json(POLICY_GAP_SCHEMA, gap_review):
-                raise BuildFailure("Policy gap review has invalid structure")
+            if gap_errors:
+                raise BuildFailure("Policy gap review lacks complete source-linked assessments: " + "; ".join(gap_errors)[:1000])
             rows = gap_review["assessments"]
-            indices = [r["index"] for r in rows]
-            references = source_ids(contract) | {d["id"] for d in contract["documents"]} | {"tool_contract"} | {
-                "tool_contract.operations." + name for name in contract["tool_contract"]["operations"]}
-            if sorted(indices) != list(range(len(policy["ambiguities"]))) or any(
-                not r["source_ids"] or set(r["source_ids"])-references or not r["resolution"].strip() for r in rows):
-                raise BuildFailure("Policy gap review lacks complete source-linked assessments")
             blocking = [r for r in rows if r["disposition"] == "blocking"]
             if blocking and not allow_source_gaps:
                 raise BuildFailure("Unresolved binding policy ambiguity: " + "; ".join(r["resolution"] for r in blocking))
@@ -378,6 +402,9 @@ def build_live(briefs: list[str], tool_api: str, out: str, *, root: Path, kit: P
             local = lint_workflow(workflow, api)
             from .guarded_freya_adapter import validate_guard_wiring
             local += validate_guard_wiring(workflow)
+            from .workflow_progress import diagnose_workflow_progress
+            progress = diagnose_workflow_progress(workflow, close_operation_name="close_call" if "close_call" in api.operations else None)
+            local += progress
             coverage = validate_coverage({**generated, "limitations": []} if allow_source_gaps else generated, contract, workflow) if node_maps_valid else ["Workflow node collections must be maps"]
             evidence.trace["emitter_limitations"] = generated["limitations"]
             feedback = {"previous_workflow": json.loads(generated["workflow_json"]), "expanded_workflow": workflow,
@@ -387,7 +414,8 @@ def build_live(briefs: list[str], tool_api: str, out: str, *, root: Path, kit: P
             if coverage or any(i["severity"] == "error" for i in local):
                 evidence.event("candidate_rejected_locally", candidate=attempt+1, errors=len(coverage)+sum(i["severity"]=="error" for i in local))
                 continue
-            critic = engine.generate(f"critic-{attempt+1}", critic_prompt(contract, workflow), CRITIC_SCHEMA,
+            critic_input = critic_prompt(contract, workflow) + "\nADVISORY OFFLINE PROGRESS DIAGNOSTICS:\n" + json.dumps(progress, ensure_ascii=False)
+            critic = engine.generate(f"critic-{attempt+1}", critic_input, CRITIC_SCHEMA,
                                      min(240, evidence.remaining(reserve)))
             evidence.write(f"critic-{attempt+1}.json", critic)
             feedback["independent_critic"] = critic

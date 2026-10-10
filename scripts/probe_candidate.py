@@ -15,6 +15,7 @@ from agent_forge.builder_live import Evidence, LiveBackend
 from agent_forge.freya_compiler import compile_workflow
 from agent_forge.freya_lint import lint_workflow
 from agent_forge.guarded_freya_adapter import validate_guard_wiring
+from agent_forge.workflow_progress import diagnose_workflow_progress
 from agent_forge.tool_api import load_tool_api
 
 
@@ -36,9 +37,11 @@ def main():
         parser.error("Select explicit practice cases")
     candidate = json.loads(Path(args.candidate).read_text(encoding="utf-8"))
     review = json.loads(Path(args.review).read_text(encoding="utf-8"))
-    workflow = compile_workflow(json.loads(candidate["workflow_json"]), load_tool_api(args.tool_api), chat_mode=args.chat_entry_adapter)
-    lint = lint_workflow(workflow, load_tool_api(args.tool_api))
+    api = load_tool_api(args.tool_api)
+    workflow = compile_workflow(json.loads(candidate["workflow_json"]), api, chat_mode=args.chat_entry_adapter)
+    lint = lint_workflow(workflow, api)
     lint += validate_guard_wiring(workflow)
+    lint += diagnose_workflow_progress(workflow, close_operation_name="close_call" if "close_call" in api.operations else None)
     if any(item["severity"] == "error" for item in lint):
         raise ValueError("Draft has structural errors; inspect with the builder linter first")
     evidence = Evidence(Path(args.out), args.budget_seconds)

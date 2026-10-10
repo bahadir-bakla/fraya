@@ -308,6 +308,8 @@ def test_multiple_batches_and_repetitions_keep_bank_case_and_persona_bindings(pl
     for rep in (1, 2):
         assert {row["case_id"] for row in rows if row["repetition"] == rep} == set(requested)
     assert len({row["customer_id"] for row in rows}) == 14
+    assert all(row["execution"]["message_counts"] == {"user": 1} for row in rows)
+    assert all(row["execution"]["scope"] == "observed_counts_only_no_policy_verdict" for row in rows)
     source_ids = {case["identity"]["customer_id"] for case in env.bridge.catalog}
     assert not source_ids.intersection(row["customer_id"] for row in rows)
     ledger_pairs = [(event["args"][0], event["kwargs"]["case_id"])
