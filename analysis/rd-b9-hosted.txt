@@ -1,0 +1,118 @@
+Pinned B9 hosted review: 20261010T203603Z-22cc1dece641
+Completed authored grouped scenario: 2/3 repetitions pass; 0/1 all-three-required variants pass. Original failure preserved.
+All 3 calls/judges independently bind to d5dd0517-28ec-4c7e-b700-bfbab900a1c8 / version 9 / af4da529-073a-45d7-8bd8-12b84adad0f2. Embedded engine code in all three traces matches the supplied actual export (SHA256 ad7e558fe12ec5f0c338b68d121d51aaeae3472b5ff3b1b22371ccdf6b333676).
+Counts: ledger+trace 2 pass/1 fail; judges 2 pass/1 fail/0 inconclusive; 17/17 bank calls HTTP200/ok:true and customer/args/order reconciled; promises 3,3,0; close_call 1,1,0.
+
+Targeted B8 regression repaired in observed B9 complete corrections:
+B8 EARLIER EVIDENCE (baseline, not the current B9 run): Earlier B8 baseline: a complete authored correction was blocked by a comma-bearing car date; atomic decode rejected the group and repeated the personal-loan clarification. In current B9, all three complete comma-bearing corrections below are accepted. The earlier B8 failure and its judge remain unchanged.
+CURRENT PINNED B9 RUN: All three repetitions accepted complete comma-bearing date tokens, including next Friday, 23 October 2026, and reached the correctly corrected grouped read-back. The remaining partial d=16 recovery fault is separate; rep3 ultimately failed because the customer ended before required confirmation.
+Rep1 M13/raw96 complete full correction -> extractor raw97 preserves d=next Friday, 23 October 2026 -> guard raw104 format=0, p2=213/2026-10-16 and p3=75/2026-10-23 -> M14/raw106 corrected grouped readback -> M15/raw107 unqualified confirmation -> raw117/125/133 corrected promise writes, each HTTP200/ok:true.
+Rep3 M7/raw63 -> raw64 d=Friday, 16 October 2026 -> raw71 accepts initial group with format=0. M21/raw140 -> raw141 d=next Friday, 23 October 2026 -> raw148 format=0 and p3=75/2026-10-23 -> M22/raw150 correct grouped readback. No comma-triggered decode rejection occurs for these complete tokens.
+Rep2 M11/raw85 complete full correction -> extractor raw86 retains the same comma-bearing car date -> guard raw93 produces corrected terms -> M12/raw95 correct grouped readback -> M13/raw96 unqualified confirmation -> promises raw106/114/122 and bank close raw133, all HTTP200/ok:true.
+
+Rep3 failure:
+The last observed utterance is the correct corrected grouped readback M22/raw150. There is no following customer yes and no create_promise, close_call, or end_call event. Saved endedReason=customer-ended-call. Primary and embedded judges agree on fail and attribute missing completion to the simulated customer. No consent is invented or failure converted to pass.
+Saved persona requires the complete corrected group on the next clarification and confirmation after a matching new readback. Delivered M11/M13/M15/M19 are partial/incomplete alternatives, then call ends immediately after matching M22. Why the customer ended or fragments were delivered is unknown; no ASR, audio, streaming, truncation, or hidden transport mechanism is inferred.
+Only raw27->28 verify_identity DOB; raw46->47 verify_identity phone; raw54->55 get_account. All three HTTP200/ok:true and customer-bound. No subsequent bank call. Both successful verification results precede account and debt disclosure M6/raw62.
+
+Remaining real recovery defect (separate from comma regression and terminal actor failure):
+Rep3 M11/raw85 and M15/raw107 say Two hundred thirteen for the personal loan on 16. Extractors raw86/raw108 correctly mark c=0,a=213,d=16,u=date. dateval rejects 16 before the incomplete branch: raw93/raw115 format=1, staged_rows=[], retained p2 pending a=640.0/need amount (later amount,date); assistant M12/raw95 and M16/raw117 asks exact date. M13/raw96 ends on, extractor raw97 partial c=0,a=213,u=date; raw104 keeps old a=640.0 and unions need amount,date, prompting M14/raw106 to repeat BOTH amount and exact date despite completed amount 213. M17/raw118 supplies full p2 pair, raw119 extracts c=1, raw126 accepts 213/2026-10-16. These were genuine incomplete delivered dates, not a rejection of a complete comma date.
+Supported extra clarification/recovery defect; contributes turns but does not establish the cause of customer termination or an unauthorized bank write.
+
+Terminal scope:
+Farewell M16/raw141 -> bank close_call raw144/145 -> platform end_call raw148/151. Seven bank operations, close last, no post-close bank call.
+Farewell M14/raw130 -> bank close_call raw133/134 -> platform end_call raw137/140. Seven bank operations, close last, no post-close bank call.
+No close_call or platform end_call is present. Missing terminal close is an actual ledger/trace failure after customer-ended-call, not a post-close tool-scope allegation.
+Retain literal-policy scope disagreement. Both passing B9 judges accept this sequence (rep2 explicitly names end_call). Cannot claim unrestricted literal no-tool compliance, and cannot treat platform termination as a post-close bank operation. This ambiguity is separate from rep3 failure and was already present in B8.
+
+Exact rep3 spoken/extractor/guard chronology (zero-based raw and spoken indices):
+raw3 guard: {"state": {"phase": "recipient", "verified": false, "format": 0}, "products": []}
+raw5 M0 assistant: Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Almeida?
+raw6 M1 user: Yes, Sofia Almeida.
+raw7 extractor event: k=yes|c=1
+END
+raw14 guard: {"state": {"phase": "dob", "verified": false, "format": 0, "turns": 1}, "products": []}
+raw16 M2 assistant: What is your date of birth? Please say the month as a word.
+raw17 M3 user: 3 June 1987.
+raw18 extractor event: k=answer|c=1|v=1987-06-03
+END
+raw25 guard: {"state": {"phase": "dob", "verified": false, "format": 0, "awaiting": "verify_identity", "awaiting_id": "1", "request_serial": 1, "turns": 2}, "products": []}
+raw27 -> raw28 API: {"raw_index": 27, "pointer": "/call/messages/27/message", "endpoint": "verify_identity", "customer_matches": true, "args": {"field": "date_of_birth", "answer": "1987-06-03"}, "complete_raw_index": 28, "http_status": 200, "result_ok": true}
+raw33 guard: {"state": {"phase": "phone", "verified": false, "format": 0, "awaiting": "", "awaiting_id": "", "request_serial": 1, "consumed_receipt": "1", "stale_receipts": 0, "turns": 2}, "products": []}
+raw35 M4 assistant: What are the last four digits of the phone number on file?
+raw36 M5 user: 2288.
+raw37 extractor event: k=answer|c=1|v=2288
+END
+raw44 guard: {"state": {"phase": "phone", "verified": false, "format": 0, "awaiting": "verify_identity", "awaiting_id": "2", "request_serial": 2, "consumed_receipt": "1", "stale_receipts": 0, "turns": 3}, "products": []}
+raw46 -> raw47 API: {"raw_index": 46, "pointer": "/call/messages/46/message", "endpoint": "verify_identity", "customer_matches": true, "args": {"field": "phone_last4", "answer": "2288"}, "complete_raw_index": 47, "http_status": 200, "result_ok": true}
+raw52 guard: {"state": {"phase": "phone", "verified": true, "format": 0, "awaiting": "get_account", "awaiting_id": "3", "request_serial": 3, "consumed_receipt": "2", "stale_receipts": 0, "turns": 3}, "products": []}
+raw54 -> raw55 API: {"raw_index": 54, "pointer": "/call/messages/54/message", "endpoint": "get_account", "customer_matches": true, "args": {}, "complete_raw_index": 55, "http_status": 200, "result_ok": true}
+raw60 guard: {"state": {"phase": "collect", "verified": true, "format": 0, "current": "p1", "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 3}, "products": [{"product_id": "p1", "status": "open", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "open", "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "open", "deadline": "2026-11-02", "floor": 25.0}]}
+raw62 M6 assistant: I am calling from the collections team about a late payment. Your credit card ending 2288 has 220.00 past due and is 9 days late. Your personal loan has 640.00 past due and is 9 days late. Your car loan has 75.00 past due and is 3 days late. Can you make all these payments today?
+raw63 M7 user: Not today; I can pay all three full amounts this Friday, 16 October 2026.
+raw64 extractor event: k=proposal|c=1|p=all|a=full|d=Friday, 16 October 2026
+END
+raw71 guard: {"state": {"phase": "confirm", "verified": true, "format": 0, "current": "p1", "consent": [], "readback": [["p1", 220.0, "2026-10-16"], ["p2", 640.0, "2026-10-16"], ["p3", 75.0, "2026-10-16"]], "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 4}, "products": [{"product_id": "p1", "status": "agreed", "amount": 220.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "agreed", "amount": 640.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "agreed", "amount": 75.0, "date": "2026-10-16", "deadline": "2026-11-02", "floor": 25.0}]}
+raw73 M8 assistant: Please confirm: credit card ending 2288, 220.00 on 2026-10-16; personal loan, 640.00 on 2026-10-16; car loan, 75.00 on 2026-10-16. Do you confirm?
+raw74 M9 user: Yes, but the personal loan is only two
+raw75 extractor event: k=confirm|c=1|p=credit card|a=220.00|d=2026-10-16
+k=confirm|c=1|p=car loan|a=75.00|d=2026-10-16
+k=partial|c=0|p=personal loan|u=amount|d=2026-10-16
+END
+raw82 guard: {"state": {"phase": "collect", "verified": true, "format": 0, "current": "p2", "consent": [], "readback": [["p1", 220.0, "2026-10-16"], ["p2", 640.0, "2026-10-16"], ["p3", 75.0, "2026-10-16"]], "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 5}, "products": [{"product_id": "p1", "status": "agreed", "amount": 220.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "open", "amount": 640.0, "date": "2026-10-16", "pending": {"a": "640.0", "d": "2026-10-16", "need": ["amount"], "incomplete": true}, "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "agreed", "amount": 75.0, "date": "2026-10-16", "deadline": "2026-11-02", "floor": 25.0}]}
+raw84 M10 assistant: Please finish the amount for your personal loan.
+raw85 M11 user: Two hundred thirteen for the personal loan on 16
+raw86 extractor event: k=proposal|c=0|p=personal loan|a=213|d=16|u=date
+END
+raw93 guard: {"state": {"phase": "collect", "verified": true, "format": 1, "current": "p2", "consent": [], "readback": [["p1", 220.0, "2026-10-16"], ["p2", 640.0, "2026-10-16"], ["p3", 75.0, "2026-10-16"]], "staged_rows": [], "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 6}, "products": [{"product_id": "p1", "status": "agreed", "amount": 220.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "open", "amount": 640.0, "date": "2026-10-16", "pending": {"a": "640.0", "d": "2026-10-16", "need": ["amount"], "incomplete": true}, "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "agreed", "amount": 75.0, "date": "2026-10-16", "deadline": "2026-11-02", "floor": 25.0}]}
+raw95 M12 assistant: Please clarify the exact date for personal loan.
+raw96 M13 user: Two hundred thirteen for the personal loan on
+raw97 extractor event: k=partial|c=0|p=personal loan|a=213|u=date
+END
+raw104 guard: {"state": {"phase": "collect", "verified": true, "format": 0, "current": "p2", "consent": [], "readback": [["p1", 220.0, "2026-10-16"], ["p2", 640.0, "2026-10-16"], ["p3", 75.0, "2026-10-16"]], "staged_rows": [], "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 7}, "products": [{"product_id": "p1", "status": "agreed", "amount": 220.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "open", "amount": 640.0, "date": "2026-10-16", "pending": {"a": "640.0", "d": "2026-10-16", "need": ["amount", "date"], "incomplete": true}, "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "agreed", "amount": 75.0, "date": "2026-10-16", "deadline": "2026-11-02", "floor": 25.0}]}
+raw106 M14 assistant: Please finish the amount and exact date for your personal loan.
+raw107 M15 user: Two hundred thirteen for the personal loan on 16
+raw108 extractor event: k=proposal|c=0|p=personal loan|a=213|d=16|u=date
+END
+raw115 guard: {"state": {"phase": "collect", "verified": true, "format": 1, "current": "p2", "consent": [], "readback": [["p1", 220.0, "2026-10-16"], ["p2", 640.0, "2026-10-16"], ["p3", 75.0, "2026-10-16"]], "staged_rows": [], "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 8}, "products": [{"product_id": "p1", "status": "agreed", "amount": 220.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "open", "amount": 640.0, "date": "2026-10-16", "pending": {"a": "640.0", "d": "2026-10-16", "need": ["amount", "date"], "incomplete": true}, "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "agreed", "amount": 75.0, "date": "2026-10-16", "deadline": "2026-11-02", "floor": 25.0}]}
+raw117 M16 assistant: Please clarify the exact date for personal loan.
+raw118 M17 user: Two hundred thirteen for the personal loan on 16 October
+raw119 extractor event: k=proposal|c=1|p=personal loan|a=213|d=16 October
+END
+raw126 guard: {"state": {"phase": "confirm", "verified": true, "format": 0, "current": "p2", "consent": [], "readback": [["p1", 220.0, "2026-10-16"], ["p2", 213.0, "2026-10-16"], ["p3", 75.0, "2026-10-16"]], "staged_rows": [], "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 9}, "products": [{"product_id": "p1", "status": "agreed", "amount": 220.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "agreed", "amount": 213.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "agreed", "amount": 75.0, "date": "2026-10-16", "deadline": "2026-11-02", "floor": 25.0}]}
+raw128 M18 assistant: For your personal loan, the rest stays overdue. Please confirm: credit card ending 2288, 220.00 on 2026-10-16; personal loan, 213.00 on 2026-10-16; car loan, 75.00 on 2026-10-16. Do you confirm?
+raw129 M19 user: Two hundred thirteen for the personal loan
+raw130 extractor event: k=proposal|c=1|p=personal loan|a=213.00
+END
+raw137 guard: {"state": {"phase": "confirm", "verified": true, "format": 0, "current": "p2", "consent": [], "readback": [["p1", 220.0, "2026-10-16"], ["p2", 213.0, "2026-10-16"], ["p3", 75.0, "2026-10-16"]], "staged_rows": [], "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 10}, "products": [{"product_id": "p1", "status": "agreed", "amount": 220.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "agreed", "amount": 213.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "agreed", "amount": 75.0, "date": "2026-10-16", "deadline": "2026-11-02", "floor": 25.0}]}
+raw139 M20 assistant: For your personal loan, the rest stays overdue. Please confirm: credit card ending 2288, 220.00 on 2026-10-16; personal loan, 213.00 on 2026-10-16; car loan, 75.00 on 2026-10-16. Do you confirm?
+raw140 M21 user: Two hundred thirteen for the personal loan on 16 October; the car loan is next Friday, 23 October 2026, still seventy-five;
+raw141 extractor event: k=proposal|c=1|p=personal loan|a=213|d=16 October
+k=proposal|c=1|p=car loan|a=75|d=next Friday, 23 October 2026
+END
+raw148 guard: {"state": {"phase": "confirm", "verified": true, "format": 0, "current": "p2", "consent": [], "readback": [["p1", 220.0, "2026-10-16"], ["p2", 213.0, "2026-10-16"], ["p3", 75.0, "2026-10-23"]], "staged_rows": [], "awaiting": "", "awaiting_id": "", "request_serial": 3, "consumed_receipt": "3", "stale_receipts": 0, "turns": 11}, "products": [{"product_id": "p1", "status": "agreed", "amount": 220.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 66.0}, {"product_id": "p2", "status": "agreed", "amount": 213.0, "date": "2026-10-16", "deadline": "2026-10-23", "floor": 213.0}, {"product_id": "p3", "status": "agreed", "amount": 75.0, "date": "2026-10-23", "deadline": "2026-11-02", "floor": 25.0}]}
+raw150 M22 assistant: For your personal loan, the rest stays overdue. Please confirm: credit card ending 2288, 220.00 on 2026-10-16; personal loan, 213.00 on 2026-10-16; car loan, 75.00 on 2026-10-23. Do you confirm?
+
+Source SHA256 (raw bytes; unchanged at end of review):
+68f53f687a57dba30f75189c2b704457fcd548134f5dcfd1b5e7454204a5ce6b  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/manifest.json
+482a360766784212147c4c88d02a00ef7e1de1a2c1d5308678edc54b492350ca  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/results.json
+31534ac1e36c0f2c6bdf0d4b3d43da1218449f43108e29ed2f9a03e49da38464  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/batches/0001-iteration.json
+ef2836a15ac3035188ae4a80101845b9a6ec036c099ba5f0ca4cf6ccd6ae83cb  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/batches/0001-start.json
+44c5eb9ec07e3089f17f63c9d049518f6c36d3ec93a56bdfca16c335779eae55  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/batches/0001-status.json
+24b0b1c21160c64954e0cce09039e5e4472a34eca5c727c5231adabf8fa65f7c  analysis/b8-observed-classification.json
+1b7a8e05d0808b41846719cbfeabff95b0414d501eda70f9d445257f26b729a7  competition/runs/20261010-232341-090e9c/codex-stress-b.workflow.json
+8805ef06bdf996866931f4cb331445fba7ff66b0a8fb5de56d216b9610969a1c  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0001.json
+903fdc5c3c9358e70120b6c4b274b0c8f59cd07b8a09ed5b17630ea44c2b0c2e  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/personas/1e43a1b1-69d6-4538-8049-9f5085791fb3.json
+2bc04c74f750c391a24f5025a7102bdf3459b43591c560c9b59faca5599314ff  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0002.json
+77030a4a57a43bdc9e4d22e10be51e9cbe5118b78892a98ebd1aaf147af554d6  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/personas/19e1cff5-f247-4de5-81e9-fd25ddefabd0.json
+b4146e255ced4f4833e5e238eccb872de63195041d6130f145cb60c72609de7d  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json
+7369a2e69267dee6672e29ddc8911ad73e2e619ecd7e50f035cf124d657844f4  local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/personas/a5eed020-a30a-40f7-b35a-eb2d601e81a0.json
+
+Limitations:
+Pinned to this completed run and actual supplied export; other parallel B9 tests/A5 work/latest agent state were not inspected.
+Authored text_only_approximation only; no official/public/hidden score or ASR/audio certification.
+Recorded provenance hashes are distinct from independently computed raw byte source hashes.
+No attempted rerun or local execution of workflow logic; conclusions use saved delivered trace and read-only embedded source.
+
+No external requests, credential access/use, git commands, reruns or source edits. Outputs only authorized report pair and b9-review-hosted.py scratch.
+Written 2026-10-10T20:43:59.627251+00:00; elapsed 208.63 seconds.

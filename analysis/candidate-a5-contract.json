@@ -1,0 +1,2250 @@
+{
+  "scope": "Independent narrow offline literal producer/consumer A5 audit; not mirror coverage or hosted/ASR evidence",
+  "started_at": "2026-10-10T20:45:40+00:00",
+  "completed_at": "2026-10-10T20:47:54.304500+00:00",
+  "elapsed_seconds": 134.3045,
+  "source": {
+    "run_id": "20261010-234004-77e29f",
+    "export_path": "competition\\runs\\20261010-234004-77e29f\\codex-stress-a.workflow.json",
+    "export_sha256": "24397f08e2cb464b9445b2797867e4e2a637e4e95a7e38eec65a4d2bb47cf8c3",
+    "published_version": 5,
+    "workflow_id": "092bb06d-a735-43b3-b411-c2c7138b0c1f",
+    "agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+    "version_binding": "Completed pinned status freya.version=5 and matching export IDs; no live lookup. Export has no asserted version field.",
+    "status_sha256": "2214e365133dc32ada328a38ce515a27f94e81c774674544d9a1f32342bf1d4d",
+    "producer_pointer": "/workflow/nodes/talk/extraction_schema/0/description",
+    "producer_sha256": "4d7bee81b79ee40e59e525e1db87d9f0f1fe6694ebf51ddfcb21aa29158fa797",
+    "producer_literal_description": "Extract only the latest user message, never earlier consent. Current phase: {{phase}}. Exact tagged-row grammar: k=KIND;c=0_OR_1;[optional key=value;]END. Rows separated by a single newline. No quotes, JSON, empty fields, extra separators or trailing newline. Required k and c. c=0 for unfinished answers or corrections, c=1 only complete. For unfinished payment/proposal/change/consent/hardship rows c=0, REQUIRED u=amount, date, both, or unknown: the component still unfinished, independently of any complete sibling. a and d contain ONLY completed components. u=unknown if unclear which changed. A complete date beside an unfinished amount requires u=amount; Mon... requires u=date. Complete rows c=1 omit u. Optional p=exact product ID or spoken type/label; a=plain positive decimal amount; d=verbatim exact date phrase (today, tomorrow, this/next weekday, YYYY-MM-DD, DD/MM/YYYY, day month year); v=security answer (DOB verbatim date, phone exactly four digits); t=HH:MM. Values may contain only letters, numbers, spaces, underscore, period, slash, colon, hyphen. No escaping: if a value needs a delimiter, emit k=unknown;c=1;END. Unknown/duplicate keys forbidden. Kinds: agree callback change confirm deceased decline dispute hardship human paid plan proposal purpose question recipient refuse security stop third_party too_much unknown vague wrong_number. Recipient only explicit yes/thats me/speaking/own name; greeting is unknown. Security v must preserve numeric DOB as day/month/year. Proposal a/d only positive asserted payment terms, never negated or incidental dates. Partial amount/date retains its target. Agreement to an actual spoken offer is agree; clear unqualified yes after readback is confirm. Qualified yes with new terms is proposal; incomplete correction c=0. paid means current arrears already paid, historical closed/paid off is dispute; negated claims do not count. Hardship outranks plans/refusal but include any voluntary a/d. Human/plan/stop outrank incidental keywords. One row per distinct target; collective yes can use one unscoped agree/confirm only when it clearly covers all spoken offers/readback. Examples (literal valid outputs):\nk=recipient;c=1;END\nk=security;c=1;v=14 October 1980;END\nk=security;c=1;v=1234;END\nk=proposal;c=1;p=credit card;a=120;d=next Friday;END\nk=agree;c=1;p=personal loan;END\nk=confirm;c=1;END\nk=proposal;c=0;p=car loan;u=date;a=50;END\nk=callback;c=1;d=tomorrow;t=15:00;END\nk=proposal;c=1;p=credit card;a=120;d=next Friday;END\nk=refuse;c=1;p=personal loan;END\nk=paid;c=1;p=car loan;END ALWAYS emit a nonempty event for every latest reply. A bare complete four-digit reply in phone phase is security with v, never omit it. A complete birth date in dob phase is security with v. Every security event requires v. Incomplete date corrections use k=change;c=0 and d only if a complete date was spoken. One proposal plus too_much for the same product is allowed; do not put the rejected full amount into the proposal. Simple yes in readback phase is k=confirm;c=1;END, and yes in offer phase is k=agree;c=1;END. Never extract prior speech.\nUnfinished examples (literal valid outputs):\nk=change;c=0;u=date;END\nk=proposal;c=0;u=amount;d=this Friday;END\nk=change;c=0;u=amount;END\nk=change;c=0;u=unknown;END\nOnly a newly complete explicit customer amount resolves u=amount; a later date-only answer leaves it unresolved. Never reuse an earlier superseded amount.\nA both/unknown correction may be completed over multiple turns: emit only each latest explicit completed component, for example k=proposal;c=1;a=120;END then k=proposal;c=1;d=next Friday;END, or the reverse order. Never repeat cached facts as newly spoken facts. Literal both correction: k=change;c=0;u=both;END.\nPrimary intent and independent questions: emit ONE primary row plus admin flags, not question rows. Husband/wife/relative plus purpose or payment offer is third_party, never recipient/security. Security with a complete answer plus a question remains security with v. Lower instalments/new plan is plan, never an incomplete amount. In support phase refusal plus discount question is decline. AI/robot question alone is question with admin=ai, never human. A complete spoken date uses d verbatim; accept yearless month/ordinal expressions, weekday plus day ordinal and ordinary punctuation. On agree with a new explicit date ALWAYS include d; never reuse old offer date. Vague periods use vague, not unfinished amount. Examples: k=third_party;c=1;END (admin=purpose); k=security;c=1;v=21 July 1990;END (admin=purpose); k=proposal;c=1;d=the sixth of November;END (admin=ai); k=decline;c=1;END (support decline plus discount question); k=plan;c=1;END (lower instalments); k=agree;c=1;d=this Friday;END; k=proposal;c=1;d=Monday the twenty sixth;END. c=0 only genuinely unfinished speech, never a complete refusal, hardship or restructuring request.",
+    "snippets": [
+      {
+        "pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default",
+        "sha256": "535bd9ee928119e4f94640c2015d9ff8058adf01416d0ce97df614fe9d687fd0",
+        "lines": 503
+      },
+      {
+        "pointer": "/workflow/nodes/close_call/pre_actions/0/pre_process_code",
+        "sha256": "4904d5d5c0a58e2ba6b80fbc1c771366a914d470390403fee93e75d566965423"
+      },
+      {
+        "pointer": "/workflow/nodes/close_call/pre_actions/0/post_process_code",
+        "sha256": "1844a985ffb85f0f2c51ca8c00364e14967fa1f327666dedb8aa263728ee3c6a"
+      },
+      {
+        "pointer": "/workflow/nodes/get_account/pre_actions/0/pre_process_code",
+        "sha256": "6d4a4c434448f088117ebdda3931e57455490819612efe4acb5b17f8e98d6179"
+      },
+      {
+        "pointer": "/workflow/nodes/get_account/pre_actions/0/post_process_code",
+        "sha256": "e0c003b4a23149be237f1df359826da8593857feace6ac19cac6a442a49bab70"
+      },
+      {
+        "pointer": "/workflow/nodes/create_promise/pre_actions/0/pre_process_code",
+        "sha256": "7b92081d8fc6bcd02d47296b758094e293b55b9027795481943b48c0ae807f2d"
+      },
+      {
+        "pointer": "/workflow/nodes/create_promise/pre_actions/0/post_process_code",
+        "sha256": "401e8087e807b2832e746a14a541d39ad848ddb57136fd9004d3bcb8b430b1fe"
+      },
+      {
+        "pointer": "/workflow/nodes/verify_identity/pre_actions/0/pre_process_code",
+        "sha256": "089906dd7d5e032234f0ef7e12f2476c37ee741ec5d4b745be04a19c45bbd534"
+      },
+      {
+        "pointer": "/workflow/nodes/verify_identity/pre_actions/0/post_process_code",
+        "sha256": "8a45dd6abed2fefee0c5c97eb68fbfa24cccd0d9a3144e8ae266c1b258a1a132"
+      },
+      {
+        "pointer": "/workflow/nodes/schedule_callback/pre_actions/0/pre_process_code",
+        "sha256": "25a1e8c2fc322b0efc181ebfc39ca367295966e337bca409e9e95b6ab1a6f3d8"
+      },
+      {
+        "pointer": "/workflow/nodes/schedule_callback/pre_actions/0/post_process_code",
+        "sha256": "71002e352b62e26b02d05b0904ffa029f17cf043eb0e3d807b42ed6a9c3a5059"
+      },
+      {
+        "pointer": "/workflow/nodes/transfer_to_agent/pre_actions/0/pre_process_code",
+        "sha256": "ffcbcfd5998bbd4fca634164905fdab8490b037f64fe3b1132d93eae95adcb30"
+      },
+      {
+        "pointer": "/workflow/nodes/transfer_to_agent/pre_actions/0/post_process_code",
+        "sha256": "1ee7f309a61c75b1680f514f96eac8f52b1c8764d5514b5fdd29d98f2193c955"
+      }
+    ],
+    "relevant_source_lines": [
+      {
+        "line": 78,
+        "text": "        if expected is not None and d.weekday()!=expected: raise ValueError('weekday contradiction')"
+      },
+      {
+        "line": 89,
+        "text": "        if len(candidates)!=1: raise ValueError('weekday ordinal ambiguity')"
+      },
+      {
+        "line": 158,
+        "text": "def primary_raw(raw,s,today):"
+      },
+      {
+        "line": 162,
+        "text": "    if s['phase']=='support' and re.search(r\"\\bno\\b|do not want to be transferred|don't want.*transfer|decline\",r): return {'k':'decline','c':'1'}"
+      },
+      {
+        "line": 186,
+        "text": "def raw_date(raw,today):"
+      },
+      {
+        "line": 381,
+        "text": "                            vars['security_field']='date_of_birth' if phase=='dob' else 'phone_last4'; vars['security_answer']=answer; route='verify_identity'"
+      },
+      {
+        "line": 396,
+        "text": "                    elif phase=='support' and k in ('refuse','decline'): route,line=finish(s,'no_promise','hardship','I cannot offer a discount.' if re.search(r'discount|waiver',raw.lower()) else '')"
+      },
+      {
+        "line": 401,
+        "text": "                        elif not q.get('amount') and s.get('offer') and not missing and not unresolved: q['amount']=s['offer']['amount']"
+      },
+      {
+        "line": 406,
+        "text": "                                if s['vague']>=2 and not q.get('incomplete'):"
+      }
+    ],
+    "owned_harness_files": [
+      {
+        "path": "local-runs\\autonomous-rd\\a5-audit-20261010T204540Z\\audit_a5.py",
+        "sha256": "cd8fceed03a13796237952cf225ed2bd32c63ca4ed671f26c3fc7ee033f5f2b7"
+      },
+      {
+        "path": "local-runs\\autonomous-rd\\a5-audit-20261010T204540Z\\finalize_a5.py",
+        "sha256": "232c5a6b41af9bdc69180e5d2678dfddc0677b8f5022f423b29589444876112d"
+      }
+    ],
+    "trace_sha256": "dc068c91f32e6660a867aee55e2cb4bdf5c1b64705eadaf5c4006e1212db6e14"
+  },
+  "method": {
+    "scaffold_readonly_path": "local-runs\\autonomous-rd\\a4-audit-20261010T202523Z\\audit.py",
+    "scaffold_sha256": "da8acc28193491fce7c77c5e0dc3c78be6d030d2e66e528b10f458619ce23675",
+    "scaffold_loading": "Read only helper prefix before def row; A4 export loaded during definitions then replaced with exact A5 nodes/source before any snippet execution. Prior main never run.",
+    "namespace": "Shared globals/locals. Conditional local execution only; undocumented hosted namespace not certified.",
+    "persistence": "Deep-copy vars per snippet and merge snapshot into store; current extraction inputs merged. Exact export snippets unchanged.",
+    "receipts": "In-memory synthetic status success/status_code200/data envelope; exported pre/post hooks and response_mapping execute, ordered exported transitions selected. Actual body defaults rendered before prehook. http_sent=false for every request.",
+    "fixtures": "Synthetic A4-labeled customer/product IDs inherited deliberately, now=2026-10-14T11:00, past_due420 minimum126 days_late6. Identity established only via synthetic verification receipts, account via synthetic account receipt; phases established by actual A5 dispatch.",
+    "authoring_assumptions": "Inputs authored to exact current row grammar, one primary row plus admin=purpose. No extractor model execution or evidence that hosted producer emits these rows. Impossible calendar and contradictory weekday values are syntactically conforming customer assertions for rejection controls; not claims of valid dates. Raw override can dominate literal event.",
+    "external_calls": 0,
+    "auth_or_keys_read": false,
+    "hosted_results": null,
+    "official_subset": "Parent-owned A5 actual subset after B9 is outside this audit; not launched/read/scored here.",
+    "focus_counting": "11 scenario controls, including date cases; 5 explicitly counted auxiliary parse_date invocations qualify those dates, not a broad mirror suite.",
+    "receipt_mapping_provenance": {
+      "verify_identity": {
+        "pointer": "/workflow/nodes/verify_identity/response_mapping",
+        "mapping": [
+          {
+            "path": "data.ok",
+            "variable": "verify_identity_ok",
+            "description": ""
+          }
+        ]
+      },
+      "get_account": {
+        "pointer": "/workflow/nodes/get_account/response_mapping",
+        "mapping": [
+          {
+            "path": "data.ok",
+            "variable": "get_account_ok",
+            "description": ""
+          },
+          {
+            "path": "data.products",
+            "variable": "products",
+            "description": ""
+          }
+        ]
+      },
+      "schedule_callback": {
+        "pointer": "/workflow/nodes/schedule_callback/response_mapping",
+        "mapping": [
+          {
+            "path": "data.ok",
+            "variable": "schedule_callback_ok",
+            "description": ""
+          }
+        ]
+      },
+      "transfer_to_agent": {
+        "pointer": "/workflow/nodes/transfer_to_agent/response_mapping",
+        "mapping": [
+          {
+            "path": "data.ok",
+            "variable": "transfer_to_agent_ok",
+            "description": ""
+          }
+        ]
+      },
+      "close_call": {
+        "pointer": "/workflow/nodes/close_call/response_mapping",
+        "mapping": [
+          {
+            "path": "data.ok",
+            "variable": "close_call_ok",
+            "description": ""
+          }
+        ]
+      }
+    }
+  },
+  "counts": {
+    "snippet_invocations": 52,
+    "dispatch_invocations": 33,
+    "snippet_completed": 52,
+    "pre_hook_invocations": 9,
+    "post_hook_invocations": 9,
+    "decoder_bootstrap_invocations": 1,
+    "focused_controls": 11,
+    "matched_observations": 9,
+    "unmatched_observations": 2,
+    "date_helper_invocations": 5,
+    "synthetic_request_receipt_pairs": 9,
+    "new_network_requests": 0,
+    "new_model_calls": 0,
+    "snippet_aborts": 0,
+    "dispatch_caught_safe_failure": 0
+  },
+  "controls": [
+    {
+      "id": "third-party-purpose-callback",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Third party stays unverified, no account purpose disclosed; callback body tomorrow 15:00",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=third_party;c=1;END",
+            "raw": "I am her husband. What is this call about?",
+            "admin": "purpose"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": " When can the customer be reached, today or the next business day between 10:00 and 19:00?",
+            "phase": "callback",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 1,
+            "security_field": null,
+            "security_answer": null,
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "callback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": false,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {},
+            "readback": null,
+            "offer": null,
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 1,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": null, \"pending\": {}, \"phase\": \"callback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": false, \"wrong\": 0}",
+            "third_party": true
+          },
+          "producer_example_offset": 4457,
+          "literal_is_current_advertised_example": true
+        },
+        {
+          "input": {
+            "event": "k=callback;c=1;d=tomorrow;t=15:00;END",
+            "raw": "Tomorrow at 15:00.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "schedule_callback",
+            "speech": "",
+            "phase": "callback",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 2,
+            "security_field": null,
+            "security_answer": null,
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "callback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": false,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {},
+            "readback": null,
+            "offer": null,
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 2,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": null, \"pending\": {}, \"phase\": \"callback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": false, \"wrong\": 0}",
+            "third_party": true
+          },
+          "producer_example_offset": 2400,
+          "literal_is_current_advertised_example": true
+        }
+      ],
+      "pipeline": {
+        "node": "schedule_callback",
+        "body": {
+          "date": "2026-10-15",
+          "time": "15:00",
+          "customer_id": "c_a4_synthetic"
+        },
+        "expected_body": {
+          "date": "2026-10-15",
+          "time": "15:00",
+          "customer_id": "c_a4_synthetic"
+        },
+        "body_matches": true,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "schedule_callback_ok",
+            "description": ""
+          }
+        ],
+        "mapped_values": {
+          "schedule_callback_ok": true
+        },
+        "after_receipt": {
+          "route": "farewell",
+          "speech": "Your callback is scheduled. Thank you. Goodbye.",
+          "phase": "callback",
+          "pending": {},
+          "readback": null,
+          "attempts": 0,
+          "wrong": 0,
+          "declines": 0,
+          "formats": 0,
+          "recorded": false,
+          "steps": 3,
+          "security_field": null,
+          "security_answer": null,
+          "mode": "event",
+          "event": "",
+          "raw": "",
+          "admin": "none",
+          "bank_result": {}
+        },
+        "http_sent": false
+      },
+      "trace_ids": [
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "request_ids": [
+        6
+      ],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "security-dob-purpose-current-field",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Complete DOB plus purpose submits current DOB, with no wrong/decline inflation",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=security;c=1;v=21 July 1990;END",
+            "raw": "21 July 1990. What is this call about?",
+            "admin": "purpose"
+          },
+          "observation": {
+            "route": "verify_identity",
+            "speech": "",
+            "phase": "dob",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 2,
+            "security_field": "date_of_birth",
+            "security_answer": "1990-07-21",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "dob",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": false,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {},
+            "readback": null,
+            "offer": null,
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "purpose purpose",
+            "steps": 2,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": null, \"pending\": {}, \"phase\": \"dob\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": false, \"wrong\": 0}"
+          },
+          "producer_example_offset": 4496,
+          "literal_is_current_advertised_example": true
+        }
+      ],
+      "pipeline": {
+        "node": "verify_identity",
+        "body": {
+          "field": "date_of_birth",
+          "answer": "1990-07-21",
+          "customer_id": "c_a4_synthetic"
+        },
+        "expected_body": {
+          "field": "date_of_birth",
+          "answer": "1990-07-21",
+          "customer_id": "c_a4_synthetic"
+        },
+        "body_matches": true,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "verify_identity_ok",
+            "description": ""
+          }
+        ],
+        "mapped_values": {
+          "verify_identity_ok": true
+        },
+        "after_receipt": {
+          "route": "talk",
+          "speech": "I can explain after the security check. Please tell me the last four digits of the phone number on file.",
+          "phase": "phone",
+          "pending": {},
+          "readback": null,
+          "attempts": 0,
+          "wrong": 0,
+          "declines": 0,
+          "formats": 0,
+          "recorded": false,
+          "steps": 3,
+          "security_field": "date_of_birth",
+          "security_answer": "1990-07-21",
+          "mode": "event",
+          "event": "",
+          "raw": "",
+          "admin": "none",
+          "bank_result": {}
+        },
+        "http_sent": false
+      },
+      "trace_ids": [
+        27,
+        28,
+        29,
+        30
+      ],
+      "request_ids": [
+        7
+      ],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "lower-instalments-amount-fragment",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Restructuring request outranks incidental unfinished amount and maps queue",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=plan;c=1;END",
+            "raw": "I need lower instalments, maybe pay one hundred and...",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "transfer_to_agent",
+            "speech": "",
+            "phase": "offer",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 7,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "offer",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {},
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 7,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {}, \"phase\": \"offer\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_personal_loan",
+              "type": "personal_loan",
+              "past_due": 420.0,
+              "days_late": 6,
+              "instalment_amount": 126,
+              "label": "personal loan",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_personal_loan",
+                "type": "personal_loan",
+                "past_due": 420.0,
+                "days_late": 6,
+                "instalment_amount": 126,
+                "label": "personal loan",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ],
+            "queue": "restructuring",
+            "transfer_reason": "restructuring"
+          },
+          "producer_example_offset": 4662,
+          "literal_is_current_advertised_example": true
+        }
+      ],
+      "pipeline": {
+        "node": "transfer_to_agent",
+        "body": {
+          "queue": "restructuring",
+          "customer_id": "c_a4_synthetic"
+        },
+        "expected_body": {
+          "queue": "restructuring",
+          "customer_id": "c_a4_synthetic"
+        },
+        "body_matches": true,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "transfer_to_agent_ok",
+            "description": ""
+          }
+        ],
+        "mapped_values": {
+          "transfer_to_agent_ok": true
+        },
+        "after_receipt": {
+          "route": "farewell",
+          "speech": "I am connecting you with the team. Thank you. Goodbye.",
+          "phase": "offer",
+          "pending": {},
+          "readback": null,
+          "attempts": 0,
+          "wrong": 0,
+          "declines": 0,
+          "formats": 0,
+          "recorded": false,
+          "steps": 8,
+          "security_field": "phone_last4",
+          "security_answer": "4471",
+          "mode": "event",
+          "event": "",
+          "raw": "",
+          "admin": "none",
+          "bank_result": {}
+        },
+        "http_sent": false
+      },
+      "trace_ids": [
+        31,
+        32,
+        33,
+        34
+      ],
+      "request_ids": [
+        8
+      ],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "support-decline-discount",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Decline ends hardship branch with discount explanation, without another offer",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=decline;c=1;END",
+            "raw": "No, I do not want to be transferred. Can I get a discount?",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "farewell",
+            "speech": "I cannot offer a discount. Thank you. Goodbye.",
+            "phase": "support",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 8,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "support",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {},
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": true,
+            "outcome": "no_promise",
+            "reason": "hardship",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 8,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {}, \"phase\": \"support\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ]
+          },
+          "producer_example_offset": 4602,
+          "literal_is_current_advertised_example": true
+        }
+      ],
+      "pipeline": {
+        "node": "close_call",
+        "via_node": "farewell",
+        "farewell_transition": [
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "Continue to close_call",
+            "target_node": "close_call"
+          }
+        ],
+        "body": {
+          "reason": "hardship",
+          "outcome": "no_promise",
+          "customer_id": "c_a4_synthetic"
+        },
+        "expected_body": {
+          "reason": "hardship",
+          "outcome": "no_promise",
+          "customer_id": "c_a4_synthetic"
+        },
+        "body_matches": true,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "close_call_ok",
+            "description": ""
+          }
+        ],
+        "mapped_values": {
+          "close_call_ok": true
+        },
+        "selected_transition": "end",
+        "after_receipt": {
+          "route": "farewell",
+          "speech": "I cannot offer a discount. Thank you. Goodbye.",
+          "phase": "support",
+          "pending": {},
+          "readback": null,
+          "attempts": 0,
+          "wrong": 0,
+          "declines": 0,
+          "formats": 0,
+          "recorded": false,
+          "steps": 8,
+          "security_field": "phone_last4",
+          "security_answer": "4471",
+          "mode": "closed",
+          "event": "",
+          "raw": "",
+          "admin": "none",
+          "bank_result": {
+            "ok": true,
+            "what_to_do_next": "Immediately continue to the next permitted action or speak the computed customer response."
+          }
+        },
+        "http_sent": false
+      },
+      "trace_ids": [
+        36,
+        51,
+        52
+      ],
+      "request_ids": [
+        9
+      ],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "agreed-known-floor-new-friday",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Known floor126 preserved, newly stated Friday16 read back; no write before later consent",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=agree;c=1;d=this Friday;END",
+            "raw": "Yes, the minimum, but this Friday.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 126.0 on 16 October 2026. Do you confirm?",
+            "phase": "readback",
+            "pending": {
+              "amount": 126.0,
+              "date": "2026-10-16"
+            },
+            "readback": {
+              "amount": 126.0,
+              "date": "2026-10-16"
+            },
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 8,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "readback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "amount": 126.0,
+              "date": "2026-10-16"
+            },
+            "readback": {
+              "amount": 126.0,
+              "date": "2026-10-16"
+            },
+            "offer": {
+              "amount": 126.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": true,
+            "too_much": true,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 8,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": true, \"offer\": {\"amount\": 126.0, \"date\": \"2026-10-14\"}, \"pending\": {\"amount\": 126.0, \"date\": \"2026-10-16\"}, \"phase\": \"readback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ],
+            "warned": "true"
+          },
+          "producer_example_offset": 4698,
+          "literal_is_current_advertised_example": true
+        }
+      ],
+      "pipeline": null,
+      "trace_ids": [
+        38
+      ],
+      "request_ids": [],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "yearless-spoken-ordinal-full-date",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Date helper normalizes November6; consumer negotiates bounded deadline because date exceeds fixture deadline",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=proposal;c=1;a=126;d=the sixth of November;END",
+            "raw": "I can pay 126 on the sixth of November.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "The latest date I can record is 02 November 2026. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 02 November 2026?",
+            "phase": "offer",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 7,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "offer",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {},
+            "readback": null,
+            "offer": {
+              "amount": 126.0,
+              "date": "2026-11-02"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 7,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 126.0, \"date\": \"2026-11-02\"}, \"pending\": {}, \"phase\": \"offer\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ]
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        }
+      ],
+      "pipeline": null,
+      "trace_ids": [
+        40
+      ],
+      "request_ids": [],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "weekday-spoken-ordinal-full-date",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Unique weekday ordinal normalizes to full Friday16 and readback126",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=proposal;c=1;a=126;d=Friday the sixteenth;END",
+            "raw": "I can pay 126 on Friday the sixteenth.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 126.0 on 16 October 2026. Do you confirm?",
+            "phase": "readback",
+            "pending": {
+              "amount": 126.0,
+              "date": "2026-10-16"
+            },
+            "readback": {
+              "amount": 126.0,
+              "date": "2026-10-16"
+            },
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 7,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "readback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "amount": 126.0,
+              "date": "2026-10-16"
+            },
+            "readback": {
+              "amount": 126.0,
+              "date": "2026-10-16"
+            },
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 7,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {\"amount\": 126.0, \"date\": \"2026-10-16\"}, \"phase\": \"readback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ],
+            "warned": "true"
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        }
+      ],
+      "pipeline": null,
+      "trace_ids": [
+        41
+      ],
+      "request_ids": [],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "malformed-date-remains-rejected",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Impossible complete date stays unresolved on repeat, with no newly fabricated offer/date",
+      "matched": false,
+      "steps": [
+        {
+          "input": {
+            "event": "k=proposal;c=1;a=126;d=31 February 2026;END",
+            "raw": "I can pay 126 on 31 February 2026.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "What exact day will you pay that amount?",
+            "phase": "offer",
+            "pending": {
+              "amount": 126.0,
+              "missing": "date"
+            },
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 7,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "offer",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "amount": 126.0,
+              "missing": "date"
+            },
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 1,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 7,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {\"amount\": 126.0, \"missing\": \"date\"}, \"phase\": \"offer\", \"recorded\": false, \"stops\": 0, \"vague\": 1, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ]
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        },
+        {
+          "input": {
+            "event": "k=proposal;c=1;d=31 February 2026;END",
+            "raw": "31 February 2026.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "The latest date I can record is 02 November 2026. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 02 November 2026?",
+            "phase": "offer",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 8,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "offer",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {},
+            "readback": null,
+            "offer": {
+              "amount": 126.0,
+              "date": "2026-11-02"
+            },
+            "vague": 2,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 8,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 126.0, \"date\": \"2026-11-02\"}, \"pending\": {}, \"phase\": \"offer\", \"recorded\": false, \"stops\": 0, \"vague\": 2, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ]
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        }
+      ],
+      "pipeline": null,
+      "trace_ids": [
+        42,
+        43
+      ],
+      "request_ids": [],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "conflicting-weekday-date-remains-rejected",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Contradictory weekday/date stays unresolved on repeat without fallback offer",
+      "matched": false,
+      "steps": [
+        {
+          "input": {
+            "event": "k=proposal;c=1;a=126;d=Tuesday the twenty sixth of October;END",
+            "raw": "I can pay 126 on Tuesday the twenty sixth of October.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "What exact day will you pay that amount?",
+            "phase": "offer",
+            "pending": {
+              "amount": 126.0,
+              "missing": "date"
+            },
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 7,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "offer",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "amount": 126.0,
+              "missing": "date"
+            },
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 1,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 7,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {\"amount\": 126.0, \"missing\": \"date\"}, \"phase\": \"offer\", \"recorded\": false, \"stops\": 0, \"vague\": 1, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ]
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        },
+        {
+          "input": {
+            "event": "k=proposal;c=1;d=Tuesday the twenty sixth of October;END",
+            "raw": "Tuesday the twenty sixth of October.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "The latest date I can record is 02 November 2026. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 02 November 2026?",
+            "phase": "offer",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 8,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "offer",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {},
+            "readback": null,
+            "offer": {
+              "amount": 126.0,
+              "date": "2026-11-02"
+            },
+            "vague": 2,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 8,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 126.0, \"date\": \"2026-11-02\"}, \"pending\": {}, \"phase\": \"offer\", \"recorded\": false, \"stops\": 0, \"vague\": 2, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ]
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        }
+      ],
+      "pipeline": null,
+      "trace_ids": [
+        44,
+        45
+      ],
+      "request_ids": [],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "unfinished-amount-date-only-no-cache",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Unfinished replacement amount cannot restore cached200/420 by date or consent",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=proposal;c=0;u=amount;d=this Friday;END",
+            "raw": "Actually I will pay two hundred and... this Friday",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "Please finish the amount you want to pay for credit card ending 4821.",
+            "phase": "readback",
+            "pending": {
+              "date": "2026-10-16",
+              "incomplete": true,
+              "missing": "amount",
+              "required_components": [
+                "amount"
+              ],
+              "completed_components": []
+            },
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 8,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "readback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "date": "2026-10-16",
+              "incomplete": true,
+              "missing": "amount",
+              "required_components": [
+                "amount"
+              ],
+              "completed_components": []
+            },
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 8,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {\"completed_components\": [], \"date\": \"2026-10-16\", \"incomplete\": true, \"missing\": \"amount\", \"required_components\": [\"amount\"]}, \"phase\": \"readback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ],
+            "warned": "true"
+          },
+          "producer_example_offset": 3167,
+          "literal_is_current_advertised_example": true
+        },
+        {
+          "input": {
+            "event": "k=proposal;c=1;d=next Monday;END",
+            "raw": "Next Monday.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "Please finish the amount you want to pay for credit card ending 4821.",
+            "phase": "readback",
+            "pending": {
+              "date": "2026-10-19",
+              "incomplete": true,
+              "missing": "amount",
+              "required_components": [
+                "amount"
+              ],
+              "completed_components": []
+            },
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 9,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "readback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "date": "2026-10-19",
+              "incomplete": true,
+              "missing": "amount",
+              "required_components": [
+                "amount"
+              ],
+              "completed_components": []
+            },
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 9,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {\"completed_components\": [], \"date\": \"2026-10-19\", \"incomplete\": true, \"missing\": \"amount\", \"required_components\": [\"amount\"]}, \"phase\": \"readback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ],
+            "warned": "true"
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        },
+        {
+          "input": {
+            "event": "k=confirm;c=1;END",
+            "raw": "Yes.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "Please finish the amount you want to pay for credit card ending 4821.",
+            "phase": "readback",
+            "pending": {
+              "date": "2026-10-19",
+              "incomplete": true,
+              "missing": "amount",
+              "required_components": [
+                "amount"
+              ],
+              "completed_components": []
+            },
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 10,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "readback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "date": "2026-10-19",
+              "incomplete": true,
+              "missing": "amount",
+              "required_components": [
+                "amount"
+              ],
+              "completed_components": []
+            },
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 10,
+            "no_progress": 1,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {\"completed_components\": [], \"date\": \"2026-10-19\", \"incomplete\": true, \"missing\": \"amount\", \"required_components\": [\"amount\"]}, \"phase\": \"readback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ],
+            "warned": "true"
+          },
+          "producer_example_offset": 2340,
+          "literal_is_current_advertised_example": true
+        }
+      ],
+      "pipeline": null,
+      "trace_ids": [
+        46,
+        47,
+        48
+      ],
+      "request_ids": [],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    },
+    {
+      "id": "invalid-high-amount-date-only-no-cache",
+      "classification": "authored_producer_conforming_literal_control",
+      "producer_conforming": true,
+      "expected": "Rejected above-past-due500 cannot be replaced by cached420 on date-only reply",
+      "matched": true,
+      "steps": [
+        {
+          "input": {
+            "event": "k=proposal;c=1;a=500;d=this Friday;END",
+            "raw": "Actually make it 500 this Friday.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "The full past-due amount is 420.0. Please finish the amount you want to pay for credit card ending 4821.",
+            "phase": "readback",
+            "pending": {
+              "date": "2026-10-16",
+              "missing": "amount"
+            },
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 8,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "readback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "date": "2026-10-16",
+              "missing": "amount"
+            },
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 8,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {\"date\": \"2026-10-16\", \"missing\": \"amount\"}, \"phase\": \"readback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ],
+            "warned": "true"
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        },
+        {
+          "input": {
+            "event": "k=proposal;c=1;d=next Monday;END",
+            "raw": "Next Monday.",
+            "admin": "none"
+          },
+          "observation": {
+            "route": "talk",
+            "speech": "Please finish the amount you want to pay for credit card ending 4821.",
+            "phase": "readback",
+            "pending": {
+              "date": "2026-10-19",
+              "missing": "amount"
+            },
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 9,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "state": {
+            "phase": "readback",
+            "address": "Ms Example",
+            "now": "2026-10-14T11:00:00",
+            "verified": true,
+            "recipient_asks": 1,
+            "wrong": 0,
+            "declines": 0,
+            "stops": 0,
+            "formats": 0,
+            "attempts": 0,
+            "callback_tries": 0,
+            "human_asked": false,
+            "recorded": false,
+            "pending": {
+              "date": "2026-10-19",
+              "missing": "amount"
+            },
+            "readback": null,
+            "offer": {
+              "amount": 420.0,
+              "date": "2026-10-14"
+            },
+            "vague": 0,
+            "floor_offered": false,
+            "too_much": false,
+            "hardship": false,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "write_tries": 0,
+            "admin": "",
+            "steps": 9,
+            "no_progress": 0,
+            "progress_signature": "{\"attempts\": 0, \"callback_tries\": 0, \"declines\": 0, \"floor_offered\": false, \"offer\": {\"amount\": 420.0, \"date\": \"2026-10-14\"}, \"pending\": {\"date\": \"2026-10-19\", \"missing\": \"amount\"}, \"phase\": \"readback\", \"recorded\": false, \"stops\": 0, \"vague\": 0, \"verified\": true, \"wrong\": 0}",
+            "product": {
+              "product_id": "p_a4_credit_card",
+              "type": "credit_card",
+              "past_due": 420.0,
+              "days_late": 6,
+              "card_last4": "4821",
+              "minimum_payment": 126,
+              "label": "credit card ending 4821",
+              "floor": 126.0,
+              "deadline": "2026-11-02",
+              "limit": 1
+            },
+            "products": [
+              {
+                "product_id": "p_a4_credit_card",
+                "type": "credit_card",
+                "past_due": 420.0,
+                "days_late": 6,
+                "card_last4": "4821",
+                "minimum_payment": 126,
+                "label": "credit card ending 4821",
+                "floor": 126.0,
+                "deadline": "2026-11-02",
+                "limit": 1
+              }
+            ],
+            "warned": "true"
+          },
+          "producer_example_offset": -1,
+          "literal_is_current_advertised_example": false
+        }
+      ],
+      "pipeline": null,
+      "trace_ids": [
+        49,
+        50
+      ],
+      "request_ids": [],
+      "source_pointers": [
+        "/workflow/nodes/talk/extraction_schema/0/description",
+        "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+      ]
+    }
+  ],
+  "date_helpers": [
+    {
+      "phrase": "the sixth of November",
+      "expected": "2026-11-06",
+      "value": "2026-11-06",
+      "exception": null,
+      "matched": true,
+      "pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+    },
+    {
+      "phrase": "Monday the twenty sixth",
+      "expected": "2026-10-26",
+      "value": "2026-10-26",
+      "exception": null,
+      "matched": true,
+      "pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+    },
+    {
+      "phrase": "Friday the sixteenth",
+      "expected": "2026-10-16",
+      "value": "2026-10-16",
+      "exception": null,
+      "matched": true,
+      "pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+    },
+    {
+      "phrase": "31 February 2026",
+      "expected": null,
+      "value": null,
+      "exception": "ValueError: day is out of range for month",
+      "matched": true,
+      "pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+    },
+    {
+      "phrase": "Tuesday the twenty sixth of October",
+      "expected": null,
+      "value": null,
+      "exception": "ValueError: weekday contradiction",
+      "matched": true,
+      "pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+    }
+  ],
+  "faults": [
+    {
+      "id": "malformed-date-remains-rejected",
+      "expected": "Impossible complete date stays unresolved on repeat, with no newly fabricated offer/date",
+      "actual_final": {
+        "route": "talk",
+        "speech": "The latest date I can record is 02 November 2026. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 02 November 2026?",
+        "phase": "offer",
+        "pending": {},
+        "readback": null,
+        "attempts": 0,
+        "wrong": 0,
+        "declines": 0,
+        "formats": 0,
+        "recorded": false,
+        "steps": 8,
+        "security_field": "phone_last4",
+        "security_answer": "4471",
+        "mode": "event",
+        "event": "",
+        "raw": "",
+        "admin": "none",
+        "bank_result": {}
+      },
+      "qualification": "Parser rejects input date; repeated syntactically valid but calendar-invalid/contradictory assertions increment vague then negotiate 2026-11-02. This violates requested remain-rejected behavior only; no invalid date accepted or promise recorded.",
+      "source_pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+    },
+    {
+      "id": "conflicting-weekday-date-remains-rejected",
+      "expected": "Contradictory weekday/date stays unresolved on repeat without fallback offer",
+      "actual_final": {
+        "route": "talk",
+        "speech": "The latest date I can record is 02 November 2026. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 02 November 2026?",
+        "phase": "offer",
+        "pending": {},
+        "readback": null,
+        "attempts": 0,
+        "wrong": 0,
+        "declines": 0,
+        "formats": 0,
+        "recorded": false,
+        "steps": 8,
+        "security_field": "phone_last4",
+        "security_answer": "4471",
+        "mode": "event",
+        "event": "",
+        "raw": "",
+        "admin": "none",
+        "bank_result": {}
+      },
+      "qualification": "Parser rejects input date; repeated syntactically valid but calendar-invalid/contradictory assertions increment vague then negotiate 2026-11-02. This violates requested remain-rejected behavior only; no invalid date accepted or promise recorded.",
+      "source_pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+    }
+  ],
+  "audit_abort": null,
+  "validation": {
+    "readonly_inputs_unchanged": {
+      "competition\\runs\\20261010-234004-77e29f\\codex-stress-a.workflow.json": true,
+      "competition/runs/20261010-234004-77e29f/status.json": true,
+      "local-runs\\autonomous-rd\\a4-audit-20261010T202523Z\\audit.py": true
+    },
+    "all_requests_unsent": true,
+    "control_bound_12": true,
+    "before_2049UTC": true,
+    "within_3min": true
+  },
+  "owned_outputs": [
+    "analysis/candidate-a5-contract.json",
+    "analysis/candidate-a5-contract.txt",
+    "local-runs\\autonomous-rd\\a5-audit-20261010T204540Z"
+  ],
+  "limitations": [
+    "Local literal event probes do not certify ASR, hidden tests, extractor authoring, backend semantics or hosted execution.",
+    "Synthetic success receipts qualify body/hook/mapping consumption only; no request was sent.",
+    "Observation match counts are not policy or official score pass claims.",
+    "Producer prose permits ordinary punctuation while tagged values exclude comma; untested punctuation forms remain an authoring ambiguity."
+  ],
+  "execution_history": {
+    "first_execution": "11 controls, 5 auxiliary date-helper calls, 50 snippet invocations; 8 matches, 3 unmatched expectations. Saved first-report.json and first-trace.json.",
+    "expectation_correction": "Support correctly routes farewell then close_call; initial direct close_call expectation was a harness error. Reviewed source/trace and continued only exported close hooks from persisted support snapshot; no suite rerun.",
+    "additional_snippet_invocations": 2,
+    "additional_synthetic_pairs": 1
+  },
+  "audit_conclusion": "Nine of eleven authored scenario observations match. Mixedintent fixes and both amount-cache guards qualify locally. Impossible/conflicting dates reject at parse but repeated invalid date assertions trigger deadline counteroffer, so strict remain-rejected behavior is not qualified. No hosted, extractor, ASR or hidden-test claims.",
+  "parent_policy_qualification": "The two strict remain-unresolved design controls remain mismatches, with original observations/expectations preserved. Brief A does not explicitly define repeated impossible/contradictory date handling; offering a valid policy deadline with later fresh confirmation is not itself proof of an official policy breach. No invalid-date acceptance or promise write was observed. Treat as clarification/fallback design issue requiring policy-qualified review, not a demonstrated consent bypass."
+}
