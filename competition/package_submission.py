@@ -1,0 +1,53 @@
+"""Package a completed builder run, its provenance and matching platform export, without credentials."""
+import argparse,hashlib,json,pathlib,re,zipfile
+ROOT=pathlib.Path(__file__).resolve().parent
+KIT=ROOT.parent/'build-the-builder 2'
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--run',nargs='+');parser.add_argument('--output');args=parser.parse_args()
+    ids=args.run or [json.loads((ROOT/'.state/latest.json').read_text())['run_id']]
+    entries=[]
+    for ident in ids:
+        if not re.fullmatch(r'[A-Za-z0-9_-]+',ident):parser.error('Invalid run ID')
+        run=ROOT/'runs'/ident;status=json.loads((run/'status.json').read_text())
+        if status['phase'] not in {'completed','needs_attention'}:parser.error('Wait for every run to finish before packaging.')
+        if status.get('within_30_minutes') is False:parser.error('A selected run exceeds the 30-minute limit; retain it as diagnostic provenance, not as the submission run.')
+        export=run/status.get('artifacts',{}).get('workflow','missing')
+        if not export.is_file():parser.error('A run has no matching Freya platform export.')
+        entries.append({'run_id':run.name,'test_brief':status.get('test_brief'),'status':status['phase'],'score':status.get('latest_score'),'freya':status['freya'],'platform_export':'competition/runs/'+run.name+'/'+export.name,'trace':'competition/runs/'+run.name+'/trace.jsonl'})
+    output=pathlib.Path(args.output).resolve() if args.output else ROOT/'submissions'/((ids[0] if len(ids)==1 else 'freya-hackathon-demo')+'.zip')
+    output.parent.mkdir(parents=True,exist_ok=True)
+    files=[]
+    for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','server.py','package_submission.py','README.md'):
+        files.append((ROOT/name,'competition/'+name))
+    for directory in ('skills','tests','web'):
+        files.extend((file,'competition/'+str(file.relative_to(ROOT))) for file in (ROOT/directory).rglob('*') if file.is_file() and '__pycache__' not in file.parts)
+    ancestry=[];pending=[ROOT/'runs'/ident for ident in ids];seen=set()
+    while pending:
+        ancestor=pending.pop()
+        if ancestor.name in seen:continue
+        seen.add(ancestor.name);ancestry.append(ancestor.name)
+        if not ancestor.is_dir():raise SystemExit('Missing provenance run: '+ancestor.name)
+        files.extend((file,'competition/runs/'+ancestor.name+'/'+str(file.relative_to(ancestor))) for file in ancestor.rglob('*') if file.is_file() and '__pycache__' not in file.parts and not file.name.endswith('.tmp'))
+        for line in (ancestor/'trace.jsonl').read_text().splitlines():
+            event=json.loads(line)
+            if event.get('kind')=='practice_seed':
+                parent=event['source_run']
+                if not re.fullmatch(r'[A-Za-z0-9_-]+',parent):raise SystemExit('Invalid provenance run')
+                pending.append(ROOT/'runs'/parent)
+    for name in ('README.md','VERSION','freya.py','public-test-set.json','env.example'):
+        files.append((KIT/name,'build-the-builder 2/'+name))
+    for directory in ('docs','briefs','tools','examples'):
+        files.extend((file,'build-the-builder 2/'+str(file.relative_to(KIT))) for file in (KIT/directory).rglob('*') if file.is_file() and '__pycache__' not in file.parts)
+    manifest={'runs':entries,'ancestry':ancestry,'files':[]}
+    payload=[]
+    for file,name in files:
+        data=file.read_bytes()
+        if re.search(rb'fak_[A-Za-z0-9_-]{20,}',data):raise SystemExit(f'Refusing to package potential credential in {name}')
+        payload.append((name,data));manifest['files'].append({'path':name,'sha256':hashlib.sha256(data).hexdigest()})
+    with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as archive:
+        for name,data in payload:archive.writestr(name,data)
+        archive.writestr('manifest.json',json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+    print(str(output))
+
+if __name__=='__main__':main()
