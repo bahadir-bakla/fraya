@@ -1,0 +1,243 @@
+{
+  "name": "example_mutual_insurance_overdue_premium_reminde",
+  "entry": "core",
+  "max_handoffs": 4,
+  "agents": [
+    {
+      "id": "core",
+      "role": "entry",
+      "source": [
+        "1.1",
+        "2.1",
+        "3.1",
+        "3.2",
+        "13.1",
+        "2.3",
+        "5.1",
+        "8.1"
+      ],
+      "requires": [],
+      "spawned_because": "",
+      "nodes": [
+        "greet",
+        "verify",
+        "inform",
+        "promise",
+        "close",
+        "third_party",
+        "third_party_declined",
+        "third_party_done",
+        "human_agent"
+      ],
+      "tools": [
+        "verify_identity",
+        "save_promise",
+        "schedule_callback"
+      ]
+    },
+    {
+      "id": "update_address",
+      "role": "specialist",
+      "source": [
+        "11.1"
+      ],
+      "requires": [
+        "event:identity_verified"
+      ],
+      "spawned_because": "update_address: caller raised 'update_address' and no agent handles it",
+      "nodes": [
+        "verify",
+        "update_address",
+        "update_address_declined",
+        "done",
+        "human_agent"
+      ],
+      "tools": [
+        "verify_identity",
+        "update_address"
+      ]
+    },
+    {
+      "id": "block_card",
+      "role": "specialist",
+      "source": [
+        "12.1"
+      ],
+      "requires": [
+        "event:identity_verified"
+      ],
+      "spawned_because": "block_card: caller raised 'block_card' and no agent handles it",
+      "nodes": [
+        "verify",
+        "block_card",
+        "block_card__reissue_card",
+        "block_card_declined",
+        "done",
+        "human_agent"
+      ],
+      "tools": [
+        "verify_identity",
+        "block_card",
+        "reissue_card"
+      ]
+    },
+    {
+      "id": "issue_refund",
+      "role": "specialist",
+      "source": [
+        "13.1"
+      ],
+      "requires": [
+        "event:identity_verified"
+      ],
+      "spawned_because": "issue_refund_no_approval: caller raised 'issue_refund' and no agent handles it",
+      "nodes": [
+        "verify",
+        "issue_refund",
+        "issue_refund__approve_lead",
+        "issue_refund__approve_manager",
+        "issue_refund__issue_refund",
+        "issue_refund__direct",
+        "done",
+        "human_agent"
+      ],
+      "tools": [
+        "verify_identity",
+        "approve_lead",
+        "approve_manager",
+        "issue_refund"
+      ]
+    },
+    {
+      "id": "dispute",
+      "role": "specialist",
+      "source": [
+        "9.1"
+      ],
+      "requires": [
+        "event:identity_verified"
+      ],
+      "spawned_because": "dispute: caller raised 'dispute' and no agent handles it",
+      "nodes": [
+        "verify",
+        "dispute",
+        "dispute_declined",
+        "done",
+        "human_agent"
+      ],
+      "tools": [
+        "verify_identity",
+        "record_dispute"
+      ]
+    },
+    {
+      "id": "hardship",
+      "role": "specialist",
+      "source": [
+        "10.1"
+      ],
+      "requires": [
+        "event:identity_verified"
+      ],
+      "spawned_because": "hardship: caller raised 'hardship' and no agent handles it",
+      "nodes": [
+        "verify",
+        "hardship",
+        "hardship_declined",
+        "done",
+        "human_agent"
+      ],
+      "tools": [
+        "verify_identity",
+        "hardship_plan"
+      ]
+    }
+  ],
+  "handoffs": [
+    {
+      "src": "core",
+      "dst": "update_address",
+      "intent": "update_address",
+      "source": [
+        "11.1"
+      ],
+      "carry": [
+        "event:identity_verified"
+      ],
+      "handback": false
+    },
+    {
+      "src": "update_address",
+      "dst": "core",
+      "intent": "done",
+      "source": [
+        "11.1"
+      ],
+      "carry": [],
+      "handback": true
+    },
+    {
+      "src": "core",
+      "dst": "block_card",
+      "intent": "block_card",
+      "source": [
+        "12.1"
+      ],
+      "carry": [
+        "event:identity_verified"
+      ],
+      "handback": false
+    },
+    {
+      "src": "block_card",
+      "dst": "core",
+      "intent": "done",
+      "source": [
+        "12.1"
+      ],
+      "carry": [],
+      "handback": true
+    },
+    {
+      "src": "core",
+      "dst": "issue_refund",
+      "intent": "issue_refund",
+      "source": [
+        "13.1"
+      ],
+      "carry": [
+        "event:identity_verified"
+      ],
+      "handback": false
+    },
+    {
+      "src": "core",
+      "dst": "dispute",
+      "intent": "dispute",
+      "source": [
+        "9.1"
+      ],
+      "carry": [
+        "event:identity_verified"
+      ],
+      "handback": false
+    },
+    {
+      "src": "core",
+      "dst": "hardship",
+      "intent": "hardship",
+      "source": [
+        "10.1"
+      ],
+      "carry": [
+        "event:identity_verified"
+      ],
+      "handback": false
+    }
+  ],
+  "pending_capabilities": [],
+  "inline": [
+    "third_party"
+  ],
+  "style": "router + 5 specialists, 2 with handback, 1 inline branch, 1 join (issue_refund after all of approve_lead, approve_manager in order)"
+}

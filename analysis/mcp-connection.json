@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-10",
+  "status": "ready_for_parent_registration",
+  "integration_path": "C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/skill-creator-skill-lift/integrations/freya-mcp",
+  "official_mcp": {
+    "discovery": "none_discovered",
+    "sources": [
+      "https://docs.freyavoice.ai/llms.txt",
+      "https://docs.freyavoice.ai/api-reference/openapi.json"
+    ],
+    "method": "Official-domain search and published documentation index; no endpoint scans or guesses."
+  },
+  "implementation": {
+    "transport": "stdio",
+    "sdk": "mcp==1.27.1",
+    "entrypoint": "freya_mcp/server.py",
+    "launcher": "run.ps1",
+    "tool_count": 22,
+    "requirements": "requirements-lock.txt",
+    "kit_base_url": "https://staging-app.freyavoice.ai",
+    "scope": "Documented REST API wrapper; does not modify kit source."
+  },
+  "verification": {
+    "offline_suite": {
+      "passed": 18,
+      "failed": 0,
+      "mocked_and_config_tests": 17,
+      "real_mcp_sdk_test": 1
+    },
+    "real_stdio": {
+      "initialize": "passed",
+      "tools_list": "passed",
+      "protocol_version": "2025-11-25",
+      "tool_count": 22,
+      "offline_health": "unconfigured",
+      "offline_calls": "passed",
+      "powerShell_launcher": "passed"
+    },
+    "dependencies": "pip check passed",
+    "live_authenticated": false,
+    "remote_dry_run": false,
+    "remote_published": false,
+    "simulation_started": false,
+    "execution_note": "Python asyncio Windows socketpair blocks in restricted sandbox; offline protocol tests passed under approved non-sandbox execution. Host-launch MCP is the intended runtime."
+  },
+  "authentication": {
+    "source": "Injected FREYA_API_KEY/FREYA_BANK_TEAM_KEY or explicit --env-file path. No dotenv search or credential-store discovery.",
+    "bridge_process_api_key_present": false,
+    "bridge_process_bank_team_key_present": false,
+    "parent_has_private_api_key": true,
+    "workspace_selector": "FREYA_WORKSPACE_ID required if the key sees multiple workspaces.",
+    "bank_team_key": "16+ characters required for practice sessions/ledger and explicit bank-key placeholder injection; parent supplies privately.",
+    "secret_outputs": "Response, transcript, export, state, and errors are redacted; no credential values in this report."
+  },
+  "controls": {
+    "single_simulation": "Persistent per-remote-workspace marker + nonblocking cross-process OS lock + documented remote running check. Platform provides final global cap.",
+    "nonblocking": "start returns id; status fetches once. Poll every 10 seconds.",
+    "stable_workflows": "save reuses slot and publishes after update; bind slot recovers uncertain creation.",
+    "unknown_write_outcome": "No automatic write retries; reconcile workflow id or adopt known simulation id.",
+    "destructive_delete_tools": false,
+    "bank_placeholder": "${FREYA_BANK_TEAM_KEY} injected only into save/update/start payloads in memory. Dry-run does not need bank key.",
+    "export": "Fixed integration/exports directory; redacted exports need credentials restored through an authorized flow before use."
+  },
+  "parent_handoff": {
+    "install_command": "powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\skill-creator-skill-lift\\integrations\\freya-mcp\\install.ps1\"",
+    "registration": "Merge codex-mcp.toml [mcp_servers.freya] into trusted project .codex/config.toml, preserving current entries. Use parent's DPAPI launcher in command/args if needed. No global config written.",
+    "check_command": "codex -C \"C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\" mcp list",
+    "first_live_tools": [
+      "freya_health(live=true)",
+      "freya_list_workspaces()",
+      "freya_validate_workflow(workflow_path=<workspace JSON>, remote=true)"
+    ],
+    "reload": "Reload the client or open a fresh chat; current tool catalog is unchanged by this handoff.",
+    "optional_plugin": "plugin/freya-mcp/plugin.json + mcp.json; scoped catalog plugin/.agents/plugins/marketplace.json. See README for exact isolated-home registration commands. Choose standalone or plugin route once."
+  },
+  "preserved": [
+    "Other workers' files",
+    "Existing kit/source",
+    "Global Codex settings"
+  ]
+}

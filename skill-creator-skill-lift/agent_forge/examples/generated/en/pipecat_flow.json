@@ -1,0 +1,281 @@
+{
+  "initial_node": "greet",
+  "nodes": {
+    "greet": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# greet: Open the call with the required disclosure  [§1.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nHello, this is Example Mutual Insurance. This call is recorded; we are calling about your overdue premium.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Open the call with the required disclosure Say: Hello, this is Example Mutual Insurance. This call is recorded; we are calling about your overdue premium."
+        }
+      ],
+      "functions": [],
+      "transitions": [
+        {
+          "to": "verify",
+          "when": "always"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "verify": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Verify the caller's identity"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_dob",
+            "description": "To verify your identity, could you tell me your date of birth?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_id_last4",
+            "description": "Could you tell me the last four digits of your policy number?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id_last4"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "verify_identity",
+            "description": "Call when dob, id_last4 are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                },
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob",
+                "id_last4"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=2"
+        },
+        {
+          "to": "inform",
+          "when": "event:identity_verified"
+        },
+        {
+          "to": "verify",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "inform": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# inform: Tell the verified caller the overdue amount and due date  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nYour overdue premium is {overdue} dollars, due on {due_date}.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Tell the verified caller the overdue amount and due date Say: Your overdue premium is {overdue} dollars, due on {due_date}."
+        }
+      ],
+      "functions": [],
+      "transitions": [
+        {
+          "to": "promise",
+          "when": "always"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "promise": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# promise: Collect a payment promise (amount and date) and record it  [§3.2]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## In this step\n- Before asking for an amount, state the minimum promise that can be accepted. [§3.3]\n\n## Collect\n- `amount` (amount): How much would you be able to pay? Read it back and get a yes before using it [§3.2].\n- `pay_date` (date): On what date can you make the payment? Read it back and get a yes before using it [§3.2].\n\n## Tool\n- Call `save_promise(amount, pay_date)` once every value is collected.\n- Only call it when amount >= 0.25 × overdue [§3.3].\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Collect a payment promise (amount and date) and record it"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_amount",
+            "description": "How much would you be able to pay?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "amount"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_pay_date",
+            "description": "On what date can you make the payment?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "pay_date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "pay_date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "save_promise",
+            "description": "Call when amount, pay_date are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number"
+                },
+                "pay_date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "amount",
+                "pay_date"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=3"
+        },
+        {
+          "to": "close",
+          "when": "event:promise_saved"
+        },
+        {
+          "to": "promise",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "close": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# close: End the call  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded your promise of {amount} dollars on {pay_date}. Thank you, goodbye.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "End the call Say: I have recorded your promise of {amount} dollars on {pay_date}. Thank you, goodbye."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "human_agent": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# human_agent: Hand the call to a human agent  [§2.3, §5.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI am transferring you to a colleague now.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Hand the call to a human agent Say: I am transferring you to a colleague now."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    }
+  }
+}

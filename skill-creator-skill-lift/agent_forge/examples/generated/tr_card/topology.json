@@ -1,0 +1,69 @@
+{
+  "name": "ornek_banka_a_s_kart_hizmetleri_gelen_cagri_pros",
+  "entry": "core",
+  "max_handoffs": 4,
+  "agents": [
+    {
+      "id": "core",
+      "role": "entry",
+      "source": [
+        "2.1",
+        "3.1",
+        "5.1",
+        "3.3"
+      ],
+      "requires": [],
+      "spawned_because": "",
+      "nodes": [
+        "greet",
+        "verify",
+        "close",
+        "human_agent"
+      ],
+      "tools": [
+        "verify_identity"
+      ]
+    },
+    {
+      "id": "block_card",
+      "role": "specialist",
+      "source": [
+        "4.1"
+      ],
+      "requires": [
+        "event:identity_verified"
+      ],
+      "spawned_because": "block_card: caller raised 'block_card' and no agent handles it",
+      "nodes": [
+        "verify",
+        "block_card",
+        "block_card__reissue_card",
+        "block_card_declined",
+        "done",
+        "human_agent"
+      ],
+      "tools": [
+        "verify_identity",
+        "block_card",
+        "reissue_card"
+      ]
+    }
+  ],
+  "handoffs": [
+    {
+      "src": "core",
+      "dst": "block_card",
+      "intent": "block_card",
+      "source": [
+        "4.1"
+      ],
+      "carry": [
+        "event:identity_verified"
+      ],
+      "handback": false
+    }
+  ],
+  "pending_capabilities": [],
+  "inline": [],
+  "style": "router + 1 specialist"
+}

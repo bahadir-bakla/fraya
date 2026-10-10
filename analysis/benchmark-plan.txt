@@ -1,0 +1,70 @@
+FINAL BENCHMARK VE GELİŞTİRME PLANI
+
+Final: iki görülmemiş brief; her biri kendi OpenAPI dosyasıyla gelir. Temiz şartname
+ve ham banka materyali (mail/policy/memo/code list) biçimleri beklenir. Alanlar,
+enumlar, doğrulama soruları, limitler, takvim ve sonuç tablosu girdiden türetilir.
+Final açıldıktan sonra yeni değer/politika builder koduna veya prompta elle eklenemez.
+
+30 müşteri/brief, toplam 60 müşteri, her müşteri 3 kez: 180 çağrı denemesi.
+Bir müşteri yalnız üç koşunun da tamamında başarılıysa sayılır. Sonuç/ödeme
+sözleri/notlar/callback/transfer banka ledger'ından; politika ve dürüstlük
+konuşmadan kontrol edilir. Kısmi puan yok. Eşitlik sırası: geçen müşterilerde
+toplam söz tutarı, kısa build süresi, erken teslim. API ok:true politika kanıtı değildir.
+
+Public ZIP benchmark: A için 10, B için 3 müşteri. JSON beklenen kayıtları ve
+konuşma checks alanlarını, tools/score.py ledger oracle'ını, run_cases.py fixture
+kurma + persona + simülasyon + iki sonucu birleştirme yolunu içerir. Kaynak kit
+değiştirilmedi. Vakaların ayrıntısı benchmark-plan.json dosyasındadır.
+
+ÜÇ TEST KATMANI
+1. Yerel: source-linked kural/floor/date/business-day/now/identity/retry ve
+   proposed-confirmed-recorded state ayrımı. Bunları canlı LLM beklemeden denetle.
+2. Bağımsız oracle: ledger ve konuşma sırasını birlikte doğrula. Test beklentisini
+   workflow'un kendi iddiasından türetme; kaynakla tekrar karşılaştır. Mutasyonlar
+   yanlış guard, eksik confirmation, note-before-transfer ve yanlış close'u yakalasın.
+3. Freya: önce hedefli public smoke, sonra public 13 ve tekrarlar; pieces, corrects,
+   talkative, asks_back, in_words varyasyonları. Simülatörün fact/speech fidelity'sini
+   de denetle. API/altyapı, yavaşlık, timeout ve gerçek politika hatasını ayrı raporla.
+
+GELİŞTİRME SIRASI VE BİTİŞ ÖLÇÜTLERİ
+A. Kaynak/API inventory: tamamlandı; 47 A + 11 B numaralı kural kayıpsız, tool
+   isimleri OpenAPI allowlist'inden. Semantic override/contradiction çözümü henüz yok.
+B. Policy compiler: brief'ten parametreli IR + provenance + explicit override;
+   bağımsız kaynak denetçisi; belirsizliği görünür tut. Sabit A/B değerleri builder
+   çekirdeğine gömülmesin. Değiştirilmiş brief/API ile genelleme testi bitiş şartı.
+C. Freya compiler: official nodes/transitions, tools/result mapping, code/hook
+   guard'ları, kimlik gate'leri, ürün state ve not erteleme. Dry-run + saklanan ve
+   yayımlanan sürümün geri okunması bitiş şartı. Legacy exporter henüz uygun değil.
+D. Oracle/runner: bağımsız beklenen ledger ve konuşma sırası; public 13, üç tekrar,
+   kritik edge/style testleri; başarısız simülatör ve infra ayrı durumlar. 50 case
+   kataloğu tasarım girdisidir; keyfi bank fixture kayıt endpoint'i belgelenmemiştir.
+E. Otomatik build-check-repair: tek komut, 1800 sn toplam bütçe; kendi testleri
+   dahil. 30 dk'ya sığan hedefli test seçimi, sınırlı düzeltme, en iyi doğrulanmış
+   sürümü saklama. Geniş 13x3/style taraması geliştirme sırasında yapılmalı.
+F. Teslim: platform export'u + builder repo/commit/run_command + her brief için
+   trace. Trace start/end, her model/purpose, Freya object/version/step/tool sayısı
+   ve tüm testleri içermeli. İki workflow JSON tek başına teslimin tamamı değildir.
+
+PARALEL İŞ BÖLÜMÜ
+Compiler/provenance; Freya emitter/state/hooks; bağımsız oracle/local fixtures;
+integration/trace/budget olmak üzere ayrı dosya sahipliği. Kod işleri paralel,
+aynı workspace'teki hosted simülasyonlar seri. Her kişinin slotu ayrı olsun.
+
+MIROFISH
+Henüz kurulmadı veya çalıştırılmadı. Plan: yalnız persona/konuşma varyasyonu
+üreten optional adapter; fact fixture ve oracle ayrı tutulacak. Hosted test
+sonucunu MiroFish'in başarı iddiası belirlemeyecek. Önce Freya test döngüsü ve
+compiler; sonra MiroFish ile farklı persona/style/correction kombinasyonları.
+
+CANLI DURUM
+MCP 22 araç; authenticated health/list/dry-run/save/publish/practice/simulation,
+transcript/ledger okuma ve export çalıştı. Dış koşu bitince smoke başlatıldı.
+PUB-01 tek koşuda ledger geçti, conversation judge SMS teyidi eksik olduğu için
+kaldı. Bu, kayıt doğru olsa bile policy'nin puanı sıfırladığını canlı gösteriyor.
+Baseline, otomatik builder'ın ürettiği final ajan veya yarışma hazır oluş kanıtı değil.
+
+KAYNAKLAR
+competition-v3/build-the-builder/README.md; public-test-set.json; tools/score.py;
+tools/run_cases.py; docs/api.md. Resmî final takvimi/detayları:
+https://www.freyavoice.ai/hackathon (yerel snapshot analysis/official-hackathon.txt).
+Literatür: analysis/literature-review.txt; guide merge: analysis/guide-merge.txt.

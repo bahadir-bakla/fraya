@@ -1,0 +1,314 @@
+{
+  "initial_node": "verify",
+  "nodes": {
+    "verify": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Verify the caller's identity"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_dob",
+            "description": "Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_id_last4",
+            "description": "T.C. kimlik numaranızın son dört hanesini söyler misiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id_last4"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "verify_identity",
+            "description": "Call when dob, id_last4 are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                },
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob",
+                "id_last4"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=3"
+        },
+        {
+          "to": "extend_due_date",
+          "when": "event:identity_verified"
+        },
+        {
+          "to": "verify",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "extend_due_date": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# extend_due_date: Handle: Müşteri ödeme süresinin uzatılmasını isterse gelir kontrolü check_income ve risk kontrolü check_risk yapılır; ikisi de olumluysa extend_due_date ile yeni vade kaydedilir, biri olumsuzsa talebin onaylanamadığı bildirilir ve görüşmeye kaldığı yerden devam edilir.  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `details` (text): Anlıyorum. Bunun detaylarını söyler misiniz?\n\n## Tool\n- Call `check_income(details)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Handle: Müşteri ödeme süresinin uzatılmasını isterse gelir kontrolü check_income ve risk kontrolü check_risk yapılır; ikisi de olumluysa extend_due_date ile yeni vade kaydedilir, biri olumsuzsa talebin onaylanamadığı bildirilir ve görüşmeye kaldığı yerden devam edilir."
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_details",
+            "description": "Anlıyorum. Bunun detaylarını söyler misiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "check_income",
+            "description": "Call when details are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "extend_due_date__check_risk",
+          "when": "event:check_income_done"
+        },
+        {
+          "to": "extend_due_date_declined",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "extend_due_date__check_risk": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# extend_due_date__check_risk: Run check_risk after check_income  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Tool\n- Call `check_risk(details)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Run check_risk after check_income"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_risk",
+            "description": "Call when details are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "extend_due_date__extend_due_date",
+          "when": "event:check_risk_done"
+        },
+        {
+          "to": "extend_due_date_declined",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "extend_due_date__extend_due_date": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# extend_due_date__extend_due_date: Run extend_due_date only if check_income, check_risk all succeeded  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Tool\n- Call `extend_due_date(details)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Run extend_due_date only if check_income, check_risk all succeeded"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "extend_due_date",
+            "description": "Call when details are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "done",
+          "when": "event:extend_due_date_done"
+        },
+        {
+          "to": "extend_due_date_declined",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "extend_due_date_declined": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# extend_due_date_declined: Tell the caller the request could not go ahead  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, talebiniz şu an onaylanamadı.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Tell the caller the request could not go ahead Say: Üzgünüm, talebiniz şu an onaylanamadı."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "done": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# done: Hand the call back to the agent it came from  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nKaydettim, teşekkür ederim.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Hand the call back to the agent it came from Say: Kaydettim, teşekkür ederim."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "human_agent": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# human_agent: Hand the call to a human agent  [§3.3, §6.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nSizi şimdi bir müşteri temsilcimize aktarıyorum.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Hand the call to a human agent Say: Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    }
+  }
+}

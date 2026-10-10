@@ -1,0 +1,144 @@
+BUILD THE BUILDER v3 - ilk dokümantasyon incelemesi
+Tarih: 10 Ekim 2026, Europe/Istanbul
+
+Amaç
+Kullanıcının hedefi, verilen brief ve tool sözleşmesinden sıfırdan voice agent
+üreten, kendi testlerini çalıştıran ve çıktısını teslim eden bir builder.
+Çekirdeğin genel bir policy/workflow derleyicisi olması; bu yarışmanın banka
+senaryolarının onun ilk adapter'ı olması uygun bir geliştirme yönü.
+
+Paket
+ZIP competition-v3/build-the-builder/ altına açıldı. Kit VERSION=3.
+Brief A: 47 kural ve tablolar. Brief B: A'nın üzerine 11 çoklu ürün kuralı
+ve kapanış önceliği. OpenAPI: 7 tool, şema sürümü 0.3-draft.
+Public test set: 13 müşteri; 10 A, 3 B.
+Paketin kendisi ve mevcut clone değiştirilmedi.
+
+Kesinleşen teslim ve ölçüm
+README.md:69-92:
+- Her final brief için platformdan export edilen <brief>.workflow.json,
+  builder kodu ve o run'a ait trace teslim ediliyor.
+- Final girdilerde kurallar, kimlik soruları, limitler, tatiller, sonuç
+  tablosu ve API alan/enumeration değerleri değişebilir. Bir brief temiz
+  specification; diğeri mail/policy/memo/kod listesi gibi ham materyal.
+- Final brief açıldıktan sonra ondan bir kural, değer veya isim builder
+  koduna/promptuna elle eklenemez. Genel bug düzeltmesine izin var.
+- Agent finalde 3 tekrarın hepsini geçmeli; farklı çağrı takvimleri var.
+- Backend ledger doğru olmalı; ayrıca konuşma policy ve honesty judge'ı var.
+- Bir run tüm kendi testleri dahil en çok 30 dakika.
+- Phone-agent modeli freya.py:AGENT_LLM; builder istediği modeli kullanabilir.
+- Aynı workspace'te bir simulation; workflow slot'ları update edilmeli.
+- Agent bankanın tool API'sini kullanır. Workflow code/hook adımları serbest.
+
+Mevcut tabanın gerçek durumu
+Yerel eski örnek testleri: 195 geçti, 2 optional Pipecat testi atlandı.
+Bu sonuç resmi yarışma brief'ini kapsadığımızı göstermiyor.
+Resmi Brief A ile doğrudan compile ve build denendi:
+- agent_forge/sop.py:64 numaraları yalnızca 3.2 gibi dotted formatta kabul
+  ediyor; 1., 2., ... 47. kuralları ayrı clause yapmıyor.
+- 47 kural 20 paragrafta toplanıyor; 14 paragraf normative sayılıyor.
+- extract.py:202 token tabanlı tool tahmini yapıyor; no_promise sonuç
+  kodunu tool sanıyor. OpenAPI whitelist/schema bilgisi girdi olarak yok.
+- Extractor'da 'How much would you be able to pay?' sabit sorusu var
+  (extract.py:116). Brief A rule 24 bu soruyu açıkça yasaklıyor.
+- Yeni Brief A build'i uncovered/negative-branch kuralları nedeniyle bloklandı.
+Bu bloklama faydalı: yanlış çıktıyı başarılı sanıp ilerlemiyoruz.
+Kanıt: baseline-brief-probe.json. B'nin tek başına probe'u yalnızca parser
+tanısı; doğru üretim A ve B'yi inheritance/override ile birlikte derlemeli.
+
+İlk geliştirme sırası
+1. Girdi okuyucu: numaralı kurallar, tablolar, mail/memo amendment'ları;
+   her kurala dosya/satır kanıtı ve explicit override ilişkisi.
+2. OpenAPI compiler: tool isimlerini, request/response alanlarını ve
+   enum değerlerini API'den çıkar; 'service_error' gibi kodları ayır.
+3. Policy IR: kimlik gate'i, takvim, tutar, retry, multi-product, transfer
+   ve terminal önceliklerini parametreli bir sözleşmeye çevir.
+4. Resmi Freya compiler: JSON yapısı, API bağlantıları, response mapping,
+   route/code/hook adımları ve export semantiği için uyumlu backend.
+5. Ayrı test compiler: aynı brief'ten bağımsız oracle, persona ve tool
+   failure fixture'ları; source coverage, mutation ve metamorphic testler.
+6. Freya dry-run, save/update/publish, seri simulation ve ledger/transcript
+   okumaları. Test sonucu gelmeden builder run'ı bitmemeli.
+7. 30 dakika bütçesi, model çağrısı amaçları ve sonuçlarıyla redakte trace;
+   platform export'u ve teslim artifact kontrolü.
+
+Sentetik kapsam
+Üç ayrı test ekseni gerekir:
+- Policy sınırları: minimum/maximum, tarih/tatil/week boundary, kimlik
+  yanlışları ve format hint'i, retry sayısı, tool fail/success.
+- Konuşma biçimi: parçalı sayılar, kelimelerle tutar/tarih, aynı turn'de
+  düzeltme, konu dışı sayılar, soru sorarak cevaplama, interruption.
+- Builder genellemesi: aynı işi farklı doküman biçiminde vermek; anonim
+  isim/enum/kimlik alanı/tatil/band/deadline değerlerini değiştirmek;
+  sonradan gelen amendment'ın bir önceki kuralı değiştirmesi.
+Üçüncü eksende değerlendirme fixture'ları değişen policy ile yeniden
+üretilmeli. Eğitim brief'inin değerleri builder'a sabit yazılmamalı.
+
+Kritik state ayrımları
+- Bilinen customer_id ve product_id sadece gerçek tool verisinden gelir.
+- now çağrı değişkenidir; ödeme tarihi hesabında makinenin saati kullanılmaz.
+- Kullanıcının önerdiği, okunup onaylanan ve tool ile kaydedilen promise
+  ayrı tutulmalı. Tool ok:true gelmeden 'kaydettim' denemez.
+- B: notes transfer öncesinde de yasak. Sonradan transfer olabilecekken
+  note'u hemen yazmak riskli; terminal kararına kadar bekletmek gerekir.
+- B: ilk non-paid note'un backend ürün sırası kapanış reason'ını belirler.
+- Exactly one close_call; son tool. Goodbye ondan önce söylenir.
+- Banka API'si tatil/deadline ihlalini reddetmeyebilir. ok:true tek başına
+  brief uyumu değildir (tools/openapi.json:6).
+- close_call.reason API'de enum değil; required listesinde de yok. Hangi
+  outcome'da hangi reason'ın zorunlu/geçerli olduğu brief tablosundan
+  derlenmeli. JSON Schema doğrulaması bu iş kuralını tek başına kanıtlamaz.
+
+Simülasyon araçlarının yeri
+MiroFish resmi projesi persona üretimi ve çoklu ajan simülasyonu sunuyor:
+https://github.com/666ghj/MiroFish
+Öneri: konuşma varyasyonlarını üretmek için optional generator adapter.
+Onun çıktısını call-runner fixture formatına dönüştürmek gerekir. Sonuç
+hakemliği source-derived policy ve ledger invariant'larıyla yapılmalı.
+Kestra Python workflow orkestrasyonu sunuyor:
+https://kestra.io/docs/use-cases/python-workflows
+Öneri: pipeline'ın run budget, seri Freya testleri, trace ve export
+adımlarını orkestre etmesi. v3 ZIP'te Kestra'ya özgü yarışma gereksinimi yok.
+İki araç da bu inceleme sırasında kurulmadı veya çalıştırılmadı.
+
+Canlı ölçüm sınırı
+Freya API/team key bu process'te yok. Platform çağrısı yapılmadı.
+Sentetik müşteri kataloglarını --cases ile vermek tek başına yeni banka
+fixture'ı oluşturmaz: run_cases.py practice/sessions'e case id gönderir.
+Keyfi yeni fixture registration endpoint'i bu kitte belgelenmiyor.
+Bu yüzden synthetic catalog ile executable local fixtures ayrı geliştirme
+adımları. Public style testleri mevcut hosted fixture'ları kullanabilir.
+
+Makine tarafından okunabilir sözleşme: competition-contract.json
+Ek incelemeler: freya-compatibility.json/txt, synthetic-cases.json/txt
+
+Paralel inceleme sonuçları
+Freya uyumluluk raporu 12 blocker belirledi: graph JSON şekli, condition
+operator'leri, tool HTTP binding'leri, success/identity sonuçlarının mapping'i,
+placeholder ve extraction tipleri, confirmation/constraint/join gate'leri,
+retry sayaçları, routing önceliği, ledger close/transfer, simulation payload,
+multi-agent state/return alanları ve dış stream guard'ın deploy edilmemesi.
+Mevcut 17 workflow kontrolü yalnızca legacy exporter formatını denetlemişti;
+resmi Freya formatına uyum kanıtı değil. Sekiz yerel probe raporda kayıtlı.
+AgentSpec/provenance ve offline test/repair yaklaşımı yeniden kullanılabilir;
+resmi Freya compiler ve runtime semantics adapter gerekiyor.
+
+Sentetik katalog 50 bağımsız planlama vakası içeriyor: 44 A, 6 B.
+46 vaka explicit kit; diğerleri proposed harness/recovery veya extension
+olarak ayrı etiketli. Unique id ve zorunlu alan/source kontrolleri yapıldı.
+Bunlar henüz yürütülen veya Freya'ya kayıtlı fixture'lar değil.
+
+Sonraki paralel araştırmalar
+Kullanıcının önerdiği arXiv:2406.12045 (tau-bench) ve ilgili birincil literatür
+ayrı research subagent'ında. Beklenen çıktılar literature-review.json/txt.
+origin/main dalındaki BenchFlow/Skill Lift yöntemleri ayrı subagent'ta.
+Beklenen çıktılar benchflow-transfer.json/txt. Mevcut branch değiştirilmiyor.
+
+
+PARENT SON DURUM — 2026-10-10
+Canlı MCP auth/list/dry-run/save/publish/practice/simulation/transcript/ledger/export doğrulandı.
+PUB-01 referans baseline ledger geçti, conversation SMS teyidi eksikliği nedeniyle kaldı.
+Kaynak/API suite 230 geçti, 2 skip; bridge 18 geçti, 22 MCP araç.
+Genel semantic compiler, official Freya emitter ve bağımsız oracle henüz tamamlanmadı.
+Private repo: github.com/bahadir-bakla/fraya; yusuf-said write daveti oluşturuldu.
+Güncel tam plan ve kanıt: benchmark-plan.txt, competition-contract.json ve local-runs/mcp-smoke.

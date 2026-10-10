@@ -1,0 +1,233 @@
+{
+  "contract_version": 1,
+  "kit_version": 3,
+  "reviewed_on": "2026-10-10",
+  "timezone": "Europe/Istanbul",
+  "source_archive_sha256": "655CBE581B0B0A7FBA1F62EBD7D8C806EDCFCC43F4D4FD47A27DCA1E2534413A",
+  "source_root": "competition-v3/build-the-builder",
+  "source_of_competition_rules": "README.md",
+  "status": "source/API inventory and live MCP bridge verified; general semantic/Freya compiler pending",
+  "builder_interface_proposal": {
+    "brief_paths": "ordered list of source documents, including amendments",
+    "tool_api_path": "the OpenAPI document delivered with this brief",
+    "slot": "stable label for create-or-update on Freya",
+    "output_dir": "run-specific artifact directory",
+    "credentials": "environment variables; excluded from artifacts and traces",
+    "final_run": "no manual editing of the generated agent"
+  },
+  "competition_requirements": {
+    "maximum_run_seconds_per_brief": 1800,
+    "deadline_includes_builder_tests": true,
+    "phone_agent_model_source": "freya.py:AGENT_LLM; do not change",
+    "builder_model": "any model or coding agent",
+    "phone_agent_external_calls": "only the bank tool API",
+    "code_steps_and_hooks_allowed": true,
+    "workspace_simulations_at_once": 1,
+    "workflow_slots": "reuse or update; workspace cap is 200 workflows",
+    "publish_before_simulation": true,
+    "final_brief_values_must_not_be_added_manually_to_builder": true,
+    "real_customer_data_allowed": false,
+    "source": "README.md:69-92"
+  },
+  "final_artifacts_per_brief": [
+    {
+      "kind": "workflow_export",
+      "producer": "freya.export_workflow",
+      "filename": "<brief>.workflow.json",
+      "contents": "platform-exported envelope containing workflow_id, agent_id, updated_at, workflow"
+    },
+    {
+      "kind": "builder_code",
+      "contents": "reproducible builder and required resources"
+    },
+    {
+      "kind": "builder_trace",
+      "contents": "start/end timestamps, each model call with model and purpose, created/updated Freya objects, all tests in this run"
+    }
+  ],
+  "scoring": {
+    "customer_pass": "backend outcome/promises/notes/callbacks/transfers match AND transcript policy passes AND honesty passes",
+    "partial_credit": false,
+    "final_required_successes_per_customer": 3,
+    "final_test_calendars": "several calendar days",
+    "maximum_products": 3,
+    "tie_breakers_in_order": [
+      "total promised amount on passing customers",
+      "shorter build time",
+      "earlier submission"
+    ],
+    "source": "README.md:55-90"
+  },
+  "source_compilation_requirements": [
+    "Preserve each numbered rule, table row, exception and amendment with source locations.",
+    "Resolve explicit replacements across documents; Brief B inherits Brief A unless it replaces a rule.",
+    "Resolve tool names, body schemas, field names and enums from supplied OpenAPI.",
+    "Derive organization, identity procedure, limits, retry budgets, holidays, outcomes and queues from inputs.",
+    "Treat the call's now variable as the calendar clock.",
+    "Keep unresolved contradictions visible and stop unsupported compilation rather than silently inventing a policy.",
+    "Separate workflow compiler and test/oracle compiler; compare both against source evidence."
+  ],
+  "proposed_policy_ir": {
+    "per_rule": [
+      "id",
+      "source_file",
+      "source_lines",
+      "source_quote",
+      "scope",
+      "trigger",
+      "required_actions",
+      "forbidden_actions",
+      "priority",
+      "overrides",
+      "data_dependencies",
+      "failure_path",
+      "confidence",
+      "ambiguities"
+    ],
+    "per_tool": [
+      "name",
+      "http_method",
+      "url",
+      "request_schema",
+      "response_schema",
+      "required_inputs",
+      "policy_required_inputs",
+      "policy_allowed_values",
+      "success_predicate",
+      "failure_predicate"
+    ],
+    "per_conversation_state": [
+      "stage",
+      "identity_state",
+      "products_in_backend_order",
+      "active_product",
+      "candidate_promises",
+      "confirmed_promises",
+      "recorded_promises",
+      "pending_notes",
+      "retry_counters",
+      "terminal_outcome",
+      "closed"
+    ]
+  },
+  "implementation_order_proposal": [
+    "Numbered-rule/table parsing, source provenance, document inheritance and overrides",
+    "OpenAPI contract compiler and schema validation",
+    "Parameter-driven date, amount, retry and per-product state logic",
+    "Official Freya workflow compiler with code steps/hooks and source traceability",
+    "Independent synthetic caller/oracle generation, mutation and metamorphic checks",
+    "Freya dry-run, save/update/publish and controlled live regression tests",
+    "Wall-clock budget, redacted trace, platform export and final artifact checks"
+  ],
+  "training_rules_that_need_mechanical_checks": [
+    {
+      "invariant": "No account disclosure or get_account/create_promise before completed identity verification",
+      "source": "briefs/brief-a.md rules 1, 10, 11, 16"
+    },
+    {
+      "invariant": "Amount and business-day deadline guards apply before create_promise; backend does not enforce policy",
+      "source": "briefs/brief-a.md rules 18-27; tools/openapi.json info.description"
+    },
+    {
+      "invariant": "Read back again after a correction; commit only after clear confirmation",
+      "source": "briefs/brief-a.md rules 34-35; briefs/brief-b.md rule 7"
+    },
+    {
+      "invariant": "Only a successful tool result licenses a claim that the promise is recorded",
+      "source": "briefs/brief-a.md rules 37-38"
+    },
+    {
+      "invariant": "Recorded promises remain; unrecorded promises do not commit after transfer; no notes before or after any transfer",
+      "source": "briefs/brief-b.md rule 10"
+    },
+    {
+      "invariant": "Defer note writes until final non-transfer disposition to avoid a later transfer invalidating earlier notes",
+      "source": "implementation proposal derived from briefs/brief-b.md rule 10"
+    },
+    {
+      "invariant": "Exactly one close_call, last tool call, with goodbye before it",
+      "source": "briefs/brief-a.md rules 46-47"
+    }
+  ],
+  "evidence_limits": [
+    "Existing 195 passing tests cover old example SOPs; they do not demonstrate compliance with official briefs.",
+    "The existing rule-based compiler merges Brief A's 47 numbered rules into 20 paragraphs and mistakes outcome tokens for tools.",
+    "Brief B must be compiled together with A; the isolated B parser probe is diagnostic only.",
+    "Public cases contain 10 A and 3 B customers; generated scenarios require separate backend fixtures before becoming executable tests.",
+    "run_cases.py uses the host's /v1/practice/sessions with a case id; registering arbitrary new bank fixtures is not documented in this kit.",
+    "close_call.reason has no enum and is not unconditionally required in the API schema; its permitted and required values must be compiled from the brief's outcome table.",
+    "FREYA_API_KEY and FREYA_BANK_TEAM_KEY were not present in this process; no platform validation, publication, export or live simulation performed."
+  ],
+  "optional_development_integrations": {
+    "mirofish": {
+      "role_proposal": "persona and conversational variation generator feeding an independent test harness",
+      "installed_or_running": false,
+      "source": "https://github.com/666ghj/MiroFish",
+      "note": "Its scenarios need conversion to a phone-call runner; use deterministic backend invariants for judging."
+    },
+    "kestra": {
+      "role_proposal": "orchestrate compiler, checks, publish, simulation and export with budget and workspace serialization",
+      "installed_or_running": false,
+      "source": "https://kestra.io/docs/use-cases/python-workflows",
+      "note": "No Kestra-specific event materials are included in kit v3; revisit when provided."
+    }
+  },
+  "parallel_review_results": {
+    "freya_compatibility": {
+      "artifact": "freya-compatibility.json",
+      "blockers": 12,
+      "live_validation": false
+    },
+    "synthetic_cases": {
+      "artifact": "synthetic-cases.json",
+      "count": 50,
+      "executed": false,
+      "hosted_fixtures_registered": false
+    },
+    "literature_research": {
+      "status": "running",
+      "focus_paper": "https://arxiv.org/pdf/2406.12045",
+      "expected_artifact": "literature-review.json"
+    },
+    "benchflow_review": {
+      "status": "running",
+      "branch": "origin/main",
+      "expected_artifact": "benchflow-transfer.json"
+    }
+  },
+  "milestone": {
+    "branch": "codex/builder-contract",
+    "main_tests": {
+      "passed": 230,
+      "skipped": 2
+    },
+    "bridge_tests": {
+      "passed": 18
+    },
+    "mcp_tools": 22,
+    "live_verified": [
+      "authenticated workspace access",
+      "remote workflow dry-run",
+      "isolated workflow save+publish",
+      "official practice session preparation",
+      "simulation completion on fixed model/version",
+      "transcript and ledger retrieval/scoring",
+      "secret-redacted platform export"
+    ],
+    "smoke_status": "completed: reference baseline ledger passed; transcript failed missing SMS confirmation",
+    "guide_merge": "analysis/guide-merge.json",
+    "literature": "analysis/literature-review.json",
+    "benchmark": "analysis/benchmark-plan.json"
+  },
+  "submission": {
+    "code_repository": "https://github.com/bahadir-bakla/fraya",
+    "visibility": "private",
+    "requested_collaborator": "yusuf-said",
+    "collaborator_status": "write invitation created",
+    "final_run_command_inputs": [
+      "brief_path",
+      "tool_api_path"
+    ],
+    "ready": false
+  }
+}

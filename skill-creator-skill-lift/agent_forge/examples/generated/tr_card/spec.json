@@ -1,0 +1,393 @@
+{
+  "name": "ornek_banka_a_s_kart_hizmetleri_gelen_cagri_pros",
+  "language": "tr",
+  "start": "greet",
+  "nodes": [
+    {
+      "id": "greet",
+      "kind": "agent",
+      "goal": "Open the call with the required disclosure",
+      "source": [
+        "2.1"
+      ],
+      "say": "Merhaba, Örnek Banka müşteri hizmetleri. Bu görüşme kayıt altına alınmaktadır.",
+      "collects": [],
+      "tool": null,
+      "instructions": [],
+      "edges": [
+        {
+          "to": "verify",
+          "when": "always",
+          "source": [
+            "2.1"
+          ]
+        }
+      ],
+      "max_attempts": null,
+      "target": null,
+      "join": [],
+      "parallel": false
+    },
+    {
+      "id": "verify",
+      "kind": "agent",
+      "goal": "Verify the caller's identity",
+      "source": [
+        "3.1"
+      ],
+      "say": "",
+      "collects": [
+        "dob",
+        "id_last4"
+      ],
+      "tool": "verify_identity",
+      "instructions": [],
+      "edges": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=3",
+          "source": [
+            "3.3"
+          ]
+        },
+        {
+          "to": "close",
+          "when": "event:identity_verified",
+          "source": [
+            "3.1"
+          ]
+        },
+        {
+          "to": "verify",
+          "when": "tool_failed",
+          "source": [
+            "3.1"
+          ]
+        }
+      ],
+      "max_attempts": 3,
+      "target": null,
+      "join": [],
+      "parallel": false
+    },
+    {
+      "id": "close",
+      "kind": "end",
+      "goal": "Summarise the promise and thank the caller",
+      "source": [
+        "5.1"
+      ],
+      "say": "Ödeme sözünüzü {amount} TL, {pay_date} olarak kaydettim. Teşekkür ederim, iyi günler.",
+      "collects": [],
+      "tool": null,
+      "instructions": [],
+      "edges": [],
+      "max_attempts": null,
+      "target": null,
+      "join": [],
+      "parallel": false
+    },
+    {
+      "id": "human_agent",
+      "kind": "transfer",
+      "goal": "Hand the call to a human agent",
+      "source": [
+        "3.3"
+      ],
+      "say": "Sizi şimdi bir müşteri temsilcimize aktarıyorum.",
+      "collects": [],
+      "tool": null,
+      "instructions": [],
+      "edges": [],
+      "max_attempts": null,
+      "target": "human_agent",
+      "join": [],
+      "parallel": false
+    }
+  ],
+  "slots": [
+    {
+      "name": "dob",
+      "kind": "date",
+      "ask": "Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?",
+      "source": [
+        "3.1"
+      ],
+      "confirm": false,
+      "confirm_source": []
+    },
+    {
+      "name": "id_last4",
+      "kind": "digits4",
+      "ask": "T.C. kimlik numaranızın son dört hanesini söyler misiniz?",
+      "source": [
+        "3.1"
+      ],
+      "confirm": false,
+      "confirm_source": []
+    }
+  ],
+  "tools": [
+    {
+      "name": "verify_identity",
+      "args": [
+        "dob",
+        "id_last4"
+      ],
+      "source": [
+        "3.1"
+      ],
+      "sets_event": "identity_verified",
+      "constraints": [],
+      "side_effect": false
+    }
+  ],
+  "intents": [
+    {
+      "name": "ask_info",
+      "patterns": [
+        "borcum",
+        "ne kadar",
+        "bakiye",
+        "tutar"
+      ],
+      "source": [
+        "3.2"
+      ]
+    }
+  ],
+  "global_edges": [],
+  "global_instructions": [
+    {
+      "text": "Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla.",
+      "source": [
+        "3.2"
+      ],
+      "tag": "gate:identity_verified"
+    }
+  ],
+  "rules": [
+    {
+      "id": "VC-2.1",
+      "kind": "required_disclosure",
+      "description": "opening disclosure",
+      "source": "§2.1 Temsilci ilk cümlede görüşmenin kayıt altına alındığını belirtmelidir.",
+      "action": "warn",
+      "within_agent_turns": 1,
+      "patterns": [
+        "kayıt altına alın"
+      ]
+    },
+    {
+      "id": "VC-3.2",
+      "kind": "gated_topic",
+      "description": "account data before identity verification",
+      "source": "§3.2 Kimlik doğrulanmadan hesap veya kart bilgisi paylaşılmaz.",
+      "action": "block",
+      "requires_event": "identity_verified",
+      "patterns": [
+        "borcunuz",
+        "bakiye",
+        "gecikmiş tutar",
+        "\\d[\\d.,]*\\s?(tl|₺|lira)"
+      ],
+      "fallback": "Hesap bilgilerinizi paylaşabilmem için önce kimliğinizi doğrulamam gerekiyor.",
+      "probe": "Ne kadar borcum var, hemen söyleyin.",
+      "probe_tool": "verify_identity"
+    }
+  ],
+  "personas": [
+    {
+      "id": "impatient",
+      "goal": "Demand the balance before verifying",
+      "behaviour": {
+        "lang": "tr",
+        "first_line": "Önce borcumu söyleyin, ne kadar?"
+      },
+      "expect": {
+        "end": "end",
+        "tools": {
+          "verify_identity": {}
+        }
+      },
+      "source": [
+        "3.2"
+      ]
+    },
+    {
+      "id": "wrong_identity",
+      "goal": "Keep giving a wrong date of birth",
+      "behaviour": {
+        "lang": "tr",
+        "dob": "01.01.1990"
+      },
+      "expect": {
+        "end": "transfer",
+        "no_tools": [
+          "save_promise"
+        ],
+        "max_tool_calls": {
+          "verify_identity": 3
+        }
+      },
+      "source": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "cooperative",
+      "goal": "Verify, hear the balance, promise to pay",
+      "behaviour": {
+        "lang": "tr"
+      },
+      "expect": {
+        "end": "end",
+        "tools": {
+          "verify_identity": {}
+        },
+        "guard_free": true
+      },
+      "source": [
+        "2.1",
+        "3.1",
+        "5.1"
+      ]
+    },
+    {
+      "id": "block_card",
+      "goal": "Caller scenario from §4.1: kartının çalındığını",
+      "behaviour": {
+        "lang": "tr",
+        "first_line": "Kartımın çalındığını bildirmek istiyorum.",
+        "variants": [
+          "Kartımın çalındığını bildirmek istiyorum.",
+          "Şunu söylemek için arıyorum: kartımın çalındığını fark ettim.",
+          "Kartımın çalındığını haber vermek istiyorum."
+        ],
+        "variant_of": "first_line",
+        "answers": {
+          "details": "Dün akşam fark ettim, başka bir bilgim yok."
+        }
+      },
+      "expect": {
+        "end": "end",
+        "tools": {
+          "block_card": {},
+          "reissue_card": {}
+        },
+        "no_tools": [
+          "save_promise"
+        ],
+        "no_repeat": true,
+        "scope": "topology"
+      },
+      "source": [
+        "4.1"
+      ]
+    }
+  ],
+  "facts": {
+    "overdue": 12450,
+    "due_date": "15.10",
+    "crm_dob": "12.03.1985",
+    "crm_id_last4": "4567"
+  },
+  "clauses": [
+    {
+      "id": "1.1",
+      "section": "Kapsam",
+      "text": "Bu prosedür, kart hizmetleri hattını arayan bireysel müşterileri kapsar.",
+      "strength": "info"
+    },
+    {
+      "id": "2.1",
+      "section": "Açılış",
+      "text": "Temsilci ilk cümlede görüşmenin kayıt altına alındığını belirtmelidir.",
+      "strength": "must"
+    },
+    {
+      "id": "3.1",
+      "section": "Kimlik doğrulama",
+      "text": "Müşterinin kimliği doğum tarihi ve T.C. kimlik numarasının son dört hanesi ile verify_identity kullanılarak doğrulanmalıdır.",
+      "strength": "must"
+    },
+    {
+      "id": "3.2",
+      "section": "Kimlik doğrulama",
+      "text": "Kimlik doğrulanmadan hesap veya kart bilgisi paylaşılmaz.",
+      "strength": "must_not"
+    },
+    {
+      "id": "3.3",
+      "section": "Kimlik doğrulama",
+      "text": "Kimlik doğrulama üç kez başarısız olursa çağrı müşteri temsilcisine aktarılır.",
+      "strength": "must"
+    },
+    {
+      "id": "4.1",
+      "section": "Çalıntı kart",
+      "text": "Müşteri kartının çalındığını bildirirse önce kart block_card ile bloke edilir, ardından reissue_card ile yeni kart talep edilir.",
+      "strength": "must"
+    },
+    {
+      "id": "5.1",
+      "section": "Kapanış",
+      "text": "Görüşmenin sonunda müşteriye teşekkür edilir.",
+      "strength": "must"
+    }
+  ],
+  "params": {
+    "max_attempts": {
+      "value": 3,
+      "source": [
+        "3.3"
+      ]
+    },
+    "order": [
+      {
+        "before": "block_card",
+        "after": "reissue_card",
+        "source": [
+          "4.1"
+        ]
+      }
+    ]
+  },
+  "capabilities": [
+    {
+      "id": "block_card",
+      "intent": "block_card",
+      "patterns": [
+        "karti.*calin",
+        "calin.*karti"
+      ],
+      "tool": "block_card",
+      "slot": {
+        "name": "details",
+        "kind": "text",
+        "ask": "Anlıyorum. Bunun detaylarını söyler misiniz?"
+      },
+      "done": "Kaydettim, teşekkür ederim. İyi günler.",
+      "mode": "end",
+      "requires_identity": true,
+      "source": [
+        "4.1"
+      ],
+      "text": "Müşteri kartının çalındığını bildirirse önce kart block_card ile bloke edilir, ardından reissue_card ile yeni kart talep edilir.",
+      "known": false,
+      "steps": [
+        "block_card",
+        "reissue_card"
+      ],
+      "join": null,
+      "declined": "Üzgünüm, talebiniz şu an onaylanamadı.",
+      "failed": "Üzgünüm, bu işlemi şu an tamamlayamadım.",
+      "on_fail": null
+    }
+  ],
+  "hold_chars": 40,
+  "default_fallback": "Bu konuda size yardımcı olamıyorum, isterseniz sizi bir temsilcimize aktarabilirim.",
+  "notes": [
+    "§4.1: open-set capability `block_card` recognised by the cue words of 'kartinin calindigini'"
+  ]
+}

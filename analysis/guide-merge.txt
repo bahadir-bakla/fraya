@@ -1,0 +1,219 @@
+BUILD THE BUILDER v3 — TÜRKÇE REHBER BİRLEŞTİRME RAPORU
+25 kısa iddia; yalnız kaynak kıyaslaması ve öneriler. Kod/DOCX/workflow değişikliği veya agent testi yapılmadı.
+
+KORUNAN REHBER UYARILARI
+B4: Bu metin bir kaynak derlemesidir; organizatör tarafından yayımlanmış yeni bir şartname değildir.
+B80: Bu nedenle paketin README metni, gerçek API şemaları, örnek kodları ve test vakalarının tam içerikleri bu belgenin hazırlanmasında okunmadı.
+Bu rapor kiti şimdi okur; arkadaşın rehberinin o tarihte ZIP'i okuduğunu iddia etmez.
+
+KAYNAK DURUMU
+Resmî web: doğrulanmış birincil kaynak — parent'ın onaylı yerel snapshot'ı analysis/official-hackathon.html/.txt.
+URL: https://www.freyavoice.ai/hackathon
+Bu sidecar ağ çağrısı yapmadı. W1-W15 teyit edildi; bekleyen web iddiası yok.
+Sınıflar: {"adopted":6,"corroborated":15,"needs_current_web_verification":0,"transcript_context_only":2,"conflicts_pending":2}
+adopted: Kaynakla uyumlu, birleşik rehbere alınması önerilen somut builder gereksinimi/uygulama adımı; teknik tercihler yeni organizatör kuralı değildir.
+corroborated: Rehber iddiası kit ve/veya güncel resmî web snapshot satırlarıyla teyit edildi.
+needs_current_web_verification: Değişebilir, mevcut birincil snapshot ile teyit edilmemiş web iddiası. W1-W15 için mevcut sayı sıfırdır; gelecekte stale/new duyuru bu durumu yeniden açabilir.
+transcript_context_only: Toplantı anlatımı/gelecek niyet/şirket iddiası; güncel builder şartı olarak yükseltilmez.
+conflicts_pending: Kaynak ayrılığı görünür tutulur. Bu rapordaki iki ayrılık mevcut yazılı kuralla çözüldü; yalnız açık yeni duyuru bunları yeniden açar.
+
+İDDİALAR
+
+GM-01 | adopted | Rehber bir kaynak derlemesidir; yeni organizatör şartnamesi değildir ve kit ZIP içeriğini incelememiştir.
+Rehber: B4, B13, B58, B59, B80
+Kanıt: competition-v3/build-the-builder/README.md:3-7 [official_kit_v3]
+Bulgu: B4 ve B80 uyarıları aynen korunmalı. Bu rapor kit ve güncel sayfa kanıtını sonradan ekler; rehberin geçmişte ZIP'i okuduğunu iddia etmez.
+Birleşik gereksinim: Birleşik rehberde kaynak türü, sürüm ve kanıtı belirt; toplantı derlemesini resmî kurala dönüştürme.
+Güncelleme koşulu: Yeni resmî sürüm veya duyuru geldiğinde kaynak karşılaştırmasını güncelle; arkadaş rehberinin tarihsel uyarısını silme.
+
+GM-02 | corroborated | Asıl ürün builderdır; üretilen telefon ajanının davranışı değerlendirilir ve ajan Freya'da bulunur.
+Rehber: B6, B7, B32, B34, B74
+Kanıt: competition-v3/build-the-builder/README.md:9-12 [official_kit_v3]; competition-v3/build-the-builder/README.md:34-36 [official_kit_v3]; analysis/official-hackathon.txt:25-28 [verified_primary_local_snapshot]
+Bulgu: Kit ve resmî sayfa rehberdeki ayrımı doğruluyor.
+Birleşik gereksinim: Girdi brief/API → otomatik workflow → Freya ajanı → test ve export zincirini builderın çıktısı olarak üret.
+Güncelleme koşulu: Hedef platform/teslim biçimi değişirse üretici ve exporter adaptörünü güncelle.
+
+GM-03 | corroborated | Yeni, görülmemiş ve farklı biçimdeki banka girdilerinden davranış çıkarılmalı; mevcut senaryo ezberlenmemeli.
+Rehber: B36, B39, B67, B69, B74
+Kanıt: competition-v3/build-the-builder/README.md:71-80 [official_kit_v3]; analysis/official-hackathon.txt:130-132 [verified_primary_local_snapshot]
+Bulgu: Ham memo resmî final girdisinin parçası olabilir. Tüm memoları otomatik olarak yetkisiz saldırı saymak da doğru değildir.
+Birleşik gereksinim: Çok dosyalı girdiyi provenance ile işle; brief içindeki açık değişiklik ilişkisini çıkar, çözülemeyen çelişkiyi görünür tut. Kaynak önceliği tasarımı bir mühendislik önerisidir, kitin belirlediği evrensel sıra değildir.
+Güncelleme koşulu: Yeni girdi biçimi için genel parser hatası düzeltilebilir; gizli kurallar/değerler koda veya prompt şablonuna elle eklenemez.
+
+GM-04 | corroborated | Doğum tarihi ve telefon son rakamları örnek alanlardır; her yeni briefte aynı sorular varsayılamaz.
+Rehber: B22, B69
+Kanıt: competition-v3/build-the-builder/README.md:71-72 [official_kit_v3]; analysis/official-hackathon.txt:54 [verified_primary_local_snapshot]
+Bulgu: Rehberin genelleme uyarısı doğrudan doğrulanıyor.
+Birleşik gereksinim: Doğrulama alanlarını, sıralamasını, parse biçimini ve başarı koşullarını aktif brief/API'den üret.
+Güncelleme koşulu: Brief veya API şeması değişince doğrulama planını yeniden oluştur; DOB/phone_last4 kalıcı builder sabiti olmasın.
+
+GM-05 | corroborated | Yedi araç adı sabit; parametreleri ve izin verilen değerleri değişebilir.
+Rehber: B47 / W4
+Kanıt: competition-v3/build-the-builder/README.md:72 [official_kit_v3]; analysis/official-hackathon.txt:54 [verified_primary_local_snapshot]
+Bulgu: W4 doğrulanıyor; sabit isimlerden sabit parametre/enum sonucu çıkarılamaz.
+Birleşik gereksinim: Aktif API şemasından araç gövdesi, required alanlar ve enumları üret; sadece banka tool API'sine izin ver.
+Güncelleme koşulu: Her yeni API dosyasında schema/enum farklarını doğrula ve araç tanımlarını yeniden üret.
+
+GM-06 | adopted | Kimlik ve yetkisiz kişiye açıklama sınırları yalnız konuşma üslubunda değil yönlendirmede de korunmalı.
+Rehber: B41, B69
+Kanıt: analysis/official-hackathon.txt:22 [verified_primary_local_snapshot]; competition-v3/build-the-builder/docs/workflow-format.md:15-36 [official_kit_v3]; competition-v3/build-the-builder/docs/workflow-format.md:79-84 [official_kit_v3]
+Bulgu: Rehber hedefi doğru; kit bunun uygulanacağı platform ayrımını somutlaştırıyor.
+Birleşik gereksinim: Yetki kapılarını transition/state ve node araç listelerine de koy; dry-run sonrası saklanan workflow'u kontrol et. Belirli node sayısı zorunlu değildir.
+Güncelleme koşulu: Yeni workflow şeması veya güvenlik aşaması geldiğinde guard/route ve araç erişimini tekrar doğrula.
+
+GM-07 | adopted | Başarı her durumda ödeme sözü almak değildir; iki kez sınırı evrensel değildir.
+Rehber: B42, B47, B69 / W2 / W6
+Kanıt: competition-v3/build-the-builder/README.md:71-80 [official_kit_v3]; analysis/official-hackathon.txt:69 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:127 [verified_primary_local_snapshot]
+Bulgu: Rehberin 'iki kez örnek' uyarısı korunur; aktif politikayı izlemek hedeflenir.
+Birleşik gereksinim: Attempt bütçelerini, tarih/iş günü hesaplarını, ürün tabanlarını ve kapanış sonucunu girdiden çıkar; now kullan, gerçek saat ve örnek bankanın sabit değerlerini kullanma.
+Güncelleme koşulu: Yeni briefin limit/takvim/sonuç değişiklikleri yalnız girdiden üretilsin; parser ile politika verisini ayır.
+
+GM-08 | corroborated | Kayıt, politika ve dürüstlük birlikte geçer; kısmi puan yoktur; banka API'si politika sınırlarını korumaz.
+Rehber: B47 / W6
+Kanıt: competition-v3/build-the-builder/README.md:57-67 [official_kit_v3]; analysis/official-hackathon.txt:111-126 [verified_primary_local_snapshot]
+Bulgu: W6 tam doğrulanıyor.
+Birleşik gereksinim: Ledger oracle ile transcript/trace oracle'ını birlikte uygula; API'nin kabul etmesini politika geçerliliği sayma; failed tool sonucuna recorded deme.
+Güncelleme koşulu: Değerlendirme kontrolleri değişirse iki oracle'ı ayrı ayrı güncelle.
+
+GM-09 | adopted | Simüle farklı kişiliklerle test edip konuşma/araç/geçiş hatalarından yeni sürüm üret.
+Rehber: B24, B38, B65, B71
+Kanıt: competition-v3/build-the-builder/README.md:32-36 [official_kit_v3]; competition-v3/build-the-builder/README.md:78 [official_kit_v3]; competition-v3/build-the-builder/docs/tools-and-code.md:568-575 [official_kit_v3]
+Bulgu: Test döngüsü kitte doğrulanıyor. Hook ile yönlendirme çalışan bir örnek çözümdür, tek zorunlu tasarım değildir.
+Birleşik gereksinim: Beklenen kayıt/transcript kontrolleriyle persona varyasyonları kullan; başarısız sonucu dikkate al ve tool dönüşünden sonra konuşma veya sonraki tool ile ilerle.
+Güncelleme koşulu: Yeni hata tipi geldikçe hedefli regression ekle; dışarıdan hazırlanmış planlama vakalarının çalışır fixture olduğunu varsayma.
+
+GM-10 | adopted | Workflow değişiklikleri ve test sonuçları izlenmeli; yeni sürüm gerçekten test edilmelidir.
+Rehber: B24, B37, B38, B73
+Kanıt: competition-v3/build-the-builder/docs/api.md:71-87 [official_kit_v3]; competition-v3/build-the-builder/docs/api.md:101-115 [official_kit_v3]; competition-v3/build-the-builder/docs/api.md:238 [official_kit_v3]; competition-v3/build-the-builder/docs/api.md:276-288 [official_kit_v3]
+Bulgu: Rehberin genel iterasyon anlatımına kitin publish ve sonuç toplama koşulları eklenmeli.
+Birleşik gereksinim: Validate → save/update+publish → doğru agentVersionNumber ile test → terminal status → tüm sonuç sayfaları ve fail eventleri sırasını uygula.
+Güncelleme koşulu: API sürümü/envelope değişirse adaptörü güncelle; unconfirmed endpoint alanlarını kesin şema olarak yazma.
+
+GM-11 | corroborated | Kit v3 iki brief, 13 vaka, API, referanslar ve örnek builder içerir.
+Rehber: B47, B80 / W3
+Kanıt: competition-v3/build-the-builder/README.md:3-6 [official_kit_v3]; competition-v3/build-the-builder/README.md:42-53 [official_kit_v3]; competition-v3/build-the-builder/README.md:67 [official_kit_v3]; analysis/official-hackathon.txt:108 [verified_primary_local_snapshot]
+Bulgu: W3 doğrulanıyor. Rehber ZIP'i incelememişti; bu rapor envanteri şimdi kitten teyit ediyor. Örnek builderın 10/10'u bir koşu sonucudur.
+Birleşik gereksinim: Base-agent JSON'u builder sanma; v3'ün kendi testini beklemesini koru. Örnek başarı oranını genel garanti veya hedef SLA olarak yazma.
+Güncelleme koşulu: Yeni VERSION/README çıktığında envanter ve örnek gözlem notunu güncelle.
+
+GM-12 | conflicts_pending | Toplantıdaki elle çalışma ifadesi, finalde elle tuning/ajan düzenleme izni gibi okunabilir.
+Rehber: B55, B58, B59 / Elle çalışma / W8 / W10
+Kanıt: competition-v3/build-the-builder/README.md:73-75 [official_kit_v3]; competition-v3/build-the-builder/README.md:84 [official_kit_v3]; analysis/official-hackathon.txt:66-68 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:192-196 [verified_primary_local_snapshot]
+Bulgu: Çelişki mevcut yazılı kaynakla çözüldü: öğrenme amaçlı elle çalışma, final ajanın elle düzenlenmesine izin vermez.
+Birleşik gereksinim: Final brief/API'yi girdi alan tek komut kullan; genel crash/parser bugfix dışında gizli bilgi koda/promptlara elle koyma; seçilen run'ın export ve trace'ini teslim et.
+Güncelleme koşulu: Yalnız açık yeni resmî kural değişikliği bu yasağı değiştirebilir; belirsiz durumlarda organizatör açıklaması beklenir.
+
+GM-13 | corroborated | Teslim iki workflow JSON, depo/commit, komut ve iki trace içerir; toplantıdaki tek JSON ifadesi tam kontrol listesi değildir.
+Rehber: B47, B55, B59, B73 / W8 / Teslim kapsamı
+Kanıt: competition-v3/build-the-builder/README.md:74-75 [official_kit_v3]; analysis/official-hackathon.txt:148-167 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:169-175 [verified_primary_local_snapshot]
+Bulgu: W8 güncel birincil kaynakla doğrulanıyor. Rehberin tek JSON ile yazılı listeyi sessizce birleştirmemesi doğru.
+Birleşik gereksinim: Tek commit'te kod+iki export+iki trace; run_command {brief_path} {tool_api_path} girdileriyle tekrar üretilebilir olsun. Örnek komut yolu zorunlu klasör adı değildir.
+Güncelleme koşulu: Formun alanları yeni duyuruyla değişirse manifesti güncelle; gerçek teslim e-posta adresini kit e-postasından teyit et, uydurma.
+
+GM-14 | adopted | Trace üretim yolunu, model çağrılarını, Freya kimliklerini, adım/araç sayılarını ve testleri içerir; API anahtarları bulunmaz.
+Rehber: B47, B73 / W13
+Kanıt: competition-v3/build-the-builder/README.md:91 [official_kit_v3]; analysis/official-hackathon.txt:169-176 [verified_primary_local_snapshot]; competition-v3/build-the-builder/docs/api.md:314-329 [official_kit_v3]
+Bulgu: W13 doğrulanıyor; coding-agent session log'u zorunlu trace yerine geçmez ve paylaşımı opsiyoneldir.
+Birleşik gereksinim: Her final briefin seçilen koşusu için süre/model+amaç/workflow+agent id/counts/test sonuçları kaydı üret; export ile eşleştir; header/API-key içeren logları commit öncesi temizle.
+Güncelleme koşulu: Trace gereklilikleri değişirse kayıt şemasını güncelle; secret içerebilen event loglarına da aynı temizliği uygula.
+
+GM-15 | corroborated | Limitler 30 dakika/brief (testler dahil), 200 workflow ve çalışma alanında aynı anda bir simülasyondur.
+Rehber: B47, B55, B82 / W9
+Kanıt: competition-v3/build-the-builder/README.md:87-89 [official_kit_v3]; analysis/official-hackathon.txt:181-185 [verified_primary_local_snapshot]
+Bulgu: W9 doğrulanıyor. README v3'ün command başına 20 dakika beklemesi 30 dakikalık toplam run limitini artırmaz.
+Birleşik gereksinim: Koşunun toplam bütçesine test/poll süresini dahil et; workflow'u yerinde güncelle; workspace simulation kuyruğunu seri yönet.
+Güncelleme koşulu: Yeni resmî limit duyurusu geldiğinde yapılandırmayı değiştir; konuşmada olası bakiye artışı kesin limit sayılmaz.
+
+GM-16 | corroborated | Eşitlikte başarılı vakalardaki kayıtlı vaat toplamı, sonra build süresi, sonra teslim zamanı kullanılır.
+Rehber: B47, B55 / W7
+Kanıt: competition-v3/build-the-builder/README.md:90 [official_kit_v3]; analysis/official-hackathon.txt:135-137 [verified_primary_local_snapshot]
+Bulgu: W7 doğrulanıyor; hızlı üretim ana puan değildir.
+Birleşik gereksinim: Önce case pass rate'i optimize et; yalnız geçen vakaların recorded promised amount'unu raporla; trace sürelerini doğru ölç.
+Güncelleme koşulu: Yeni scoring/tie-break duyurusu gelirse sıralamayı güncelle.
+
+GM-17 | corroborated | Telefon ajanı kit API'si ve ortak modelle sınırlı; builder modeli serbest ve maliyeti katılımcıya aittir.
+Rehber: B47, B67 / W12
+Kanıt: competition-v3/build-the-builder/README.md:85-86 [official_kit_v3]; analysis/official-hackathon.txt:181-185 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:194-195 [verified_primary_local_snapshot]
+Bulgu: W12 teyit edildi. Builder serbestliği telefon ajanına dış model/servis çağrısı izni vermez.
+Birleşik gereksinim: Builder ve phone runtime izinlerini ayrı tut; bank-tool allowlist, ortak agent model ve izinli code/hooks ile workflow üret.
+Güncelleme koşulu: Yeni etkinlik model veya API izni duyurusu varsa yalnız o kapsamı güncelle.
+
+GM-18 | corroborated | Her gizli vaka üç kez denenir; ancak üçünde de geçerse sayılır; müşteriler farklı gün/ürün/delivery biçimleriyle gelir.
+Rehber: B39, B47, B71 / W5
+Kanıt: competition-v3/build-the-builder/README.md:76-78 [official_kit_v3]; analysis/official-hackathon.txt:131-134 [verified_primary_local_snapshot]
+Bulgu: W5'in tekrar koşulu ve rehberin farklı kişilik yaklaşımı doğrulanıyor.
+Birleşik gereksinim: Aynı olguları koruyarak delivery varyasyonu/çok ürün/takvim testleri yap; üçte bir başarılı koşuyu case pass sayma.
+Güncelleme koşulu: Repetition ve benchmark kapsamı resmî olarak değişirse aggregate pass hesabını yeniden tanımla.
+
+GM-19 | corroborated | Final 2 gizli brief × 30 müşteri = 60 vaka; skor geçen/60; ilk 10 builder yeniden çalıştırılır.
+Rehber: B47 / W5 / W11
+Kanıt: analysis/official-hackathon.txt:130-134 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:178 [verified_primary_local_snapshot]
+Bulgu: W5 ve W11 artık doğrulanmış güncel birincil kaynak; önceki web-doğrulama beklemesi kaldırıldı.
+Birleşik gereksinim: 60 case paydasını final değerlendirme konfigürasyonuna koy; aynı commit/command/export/trace bağı yeniden koşulabilir olmalı. Bu sayı telefon ajanı bankacılık politikası sabiti değildir.
+Güncelleme koşulu: Yeni benchmark sayısı veya audit kuralı yayımlanırsa değerlendirme/teslim ayarlarını güncelle.
+
+GM-20 | corroborated | Takvim UTC ve İstanbul saatleriyle verilmelidir.
+Rehber: B47, B49, B55 / W1
+Kanıt: analysis/official-hackathon.txt:6 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:57-60 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:149-152 [verified_primary_local_snapshot]
+Bulgu: 10 Ekim 2026 10:00 UTC/13:00 İstanbul başlangıç; 11 Ekim 2026 17:00 UTC/20:00 İstanbul brief; 20:00 UTC/23:00 İstanbul teslim. İstanbul karşılıkları UTC+3 türetimidir; parent de teyit etti.
+Birleşik gereksinim: Operasyon takvimini tam tarih+saat dilimiyle göster; çağrıdaki bankacılık tarih hesabı yine runtime now kullanır.
+Güncelleme koşulu: Organizatör takvim değişikliği duyurursa tarih+saat dilimini birlikte güncelle; timezone'suz toplantı saatini esas alma.
+
+GM-21 | conflicts_pending | Toplantıdaki final ses modu, Türkçe demo ve olası sigorta senaryosu güncel yarışma formatı gibi okunabilir.
+Rehber: B21, B22, B47, B55 / W2 / Ses ve dil / Senaryo alanı
+Kanıt: analysis/official-hackathon.txt:6 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:52-54 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:69 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:208-210 [verified_primary_local_snapshot]; competition-v3/build-the-builder/README.md:71 [official_kit_v3]
+Bulgu: Çelişki mevcut kaynaklarla çözüldü: güncel kapsam çevrimiçi, 1-2 kişi, İngilizce/metin ve tahsilat türü çağrıdır. Türkçe gösterim veya sigorta ihtimali bu final formatını değiştirmez.
+Birleşik gereksinim: İngilizce text workflow ve değerlendirmeyi varsayılan yap; bankacılık kurallarını parametrize et. Voice/insurance demo kapsamını tarihsel bağlam olarak tut.
+Güncelleme koşulu: Yeni açık resmî format duyurusu olmadıkça demo dilini/modunu final gerekliliği olarak ekleme.
+
+GM-22 | corroborated | Ödüller YC mülakatı, AirPods, ilk üçe Freya mülakatı ve $3.000 Freya kredi havuzudur.
+Rehber: B47, B82 / W14
+Kanıt: analysis/official-hackathon.txt:200-203 [verified_primary_local_snapshot]
+Bulgu: W14 resmî snapshot ile doğrulandı; kredi havuzu her takıma $3.000 bakiye veya nakit ödül anlamına gelmez.
+Birleşik gereksinim: Birleşik rehberin operasyon/ödül kısmına doğru kapsamla ekle; bankacılık workflow politikası veya model bütçe varsayımı yapma.
+Güncelleme koşulu: Yeni ödül/kredi tahsis duyurusu geldiğinde operasyon notunu güncelle; bireysel bakiye hesabını gerçek hesap kanıtıyla teyit et.
+
+GM-23 | transcript_context_only | Toplantıda builder için API ve MCP bağlantıları sağlanacağı söylenir.
+Rehber: B37, B67, B81
+Kanıt: competition-v3/build-the-builder/docs/api.md:3-7 [official_kit_v3]; competition-v3/build-the-builder/docs/api.md:50-67 [official_kit_v3]
+Bulgu: API kısmı kitte somut; bu snapshot/kit okumaları kullanılabilir veya zorunlu bir MCP entegrasyonunu doğrulamıyor. Toplantıdaki gelecek beyanı bağlamdır.
+Birleşik gereksinim: Çalışan kit REST/client yolunu temel al; MCP'yi bağımlılık veya zorunlu şart yapma. Kimlik anahtarı/hesap/teslim kanalı uydurma.
+Güncelleme koşulu: Gerçek MCP endpoint/capability ve erişim resmî olarak sağlanırsa ayrı adaptör olarak değerlendir; bu rapor ağ doğrulaması yapmadı.
+
+GM-24 | transcript_context_only | Şirket geçmişi/AI bank hedefi, %51-%53 tahsilat, dünya-ilk/üstünlük ve ceza iddiaları toplantı beyanlarıdır.
+Rehber: B18, B19, B27, B83, B88
+Kanıt: Ek birincil kanıt yok; yalnız transcript/rehber bağlamı.
+Bulgu: Rehber bunların bağımsız deney/hukuk doğrulaması olmadığını zaten söylüyor. İncelenen kitin builder gerekliliklerini veya güncel benchmark hedefini kanıtlamaz.
+Birleşik gereksinim: Kısa tarihsel bağlam olarak atıfla koru; performans garantisi, hukuki görüş, başarı eşiği veya builder şartı üretme.
+Güncelleme koşulu: Bu iddialar ayrıca kullanılacaksa ilgili araştırma/veri/hukuk kaynağıyla doğrulanmalıdır; parent'ın hackathon snapshot kontrolü bunları doğrulamaz.
+
+GM-25 | corroborated | Tüm veriler sentetiktir; gerçek müşteri verisi getirilmemelidir.
+Rehber: B47 / W15
+Kanıt: competition-v3/build-the-builder/README.md:92 [official_kit_v3]; analysis/official-hackathon.txt:77 [verified_primary_local_snapshot]; analysis/official-hackathon.txt:197 [verified_primary_local_snapshot]
+Bulgu: W15 doğrulanıyor.
+Birleşik gereksinim: Test persona/identity/debt/callback verilerini sentetik üret; gerçek müşteri belgelerini veya hesap sırlarını örnek fixture/trace'e taşıma.
+Güncelleme koşulu: Yeni veri kaynağı eklenirse sentetik olmasını doğrula; resmî kural değişmedikçe gerçek müşteri verisi kullanma.
+
+SOMUT BİRLEŞTİRME GEREKSİNİMLERİ
+MR-1: Tek komut brief+API alır; kaynaklı politika temsilinden otomatik Freya workflow üretir; B inheritance veya ham materyaldeki açık değişiklikleri kaybetmez. [GM-02, GM-03, GM-04, GM-05, GM-12]
+MR-2: Platform şeması, güvenlik guardları, deterministic tarih/counter/state ile dialogue metnini ayır; aktif now ve API enumlarından yararlan. [GM-06, GM-07, GM-17]
+MR-3: Validate/publish/version → persona test → terminal sonuçların tamamını toplama → ledger+transcript incelemesi → hedefli düzeltme döngüsü kur. [GM-08, GM-09, GM-10, GM-18]
+MR-4: 30 dakikalık brief başı toplam bütçe, 200 workflow ve tek simulation sınırını konfigürasyon olarak uygula. [GM-11, GM-15]
+MR-5: Seçilen koşunun iki export ve iki anahtarsız trace'ini kodla aynı commit'e bağla; formdaki repo/commit/run_command/workflows/traces alanlarını tamamla. [GM-13, GM-14, GM-19]
+MR-6: English text, sentetik veri ve aynı phone model/API kısıtlarıyla çalış; toplantı performans/vision/MCP beyanlarını gereklilik yapma. [GM-17, GM-21, GM-23, GM-24, GM-25]
+MR-7: Takvim, 60-case puanlama, ödüller ve audit kurallarını ayrı operasyon konfigürasyonuna koy; bankanın müşteri politikasıyla karıştırma. [GM-16, GM-19, GM-20, GM-22]
+
+AÇIK KONULAR
+- Gerçek teslim e-posta adresi ve hesap/support erişimi için kit e-postası gerekir; rehber B81 bunları görmemiştir.
+- MCP desteği/bakiye artışı hakkında toplantı sözü mevcut hackathon snapshot ile somut erişim veya tahsis kanıtı değildir.
+
+GÜNCELLEME KOŞULLARI
+- Yeni resmi kit VERSION/README veya website duyurusu geldiğinde ilgili iddiaları yeniden kıyasla; eski snapshot kanıtını sessizce silme.
+- Yeni final brief ve tool API dosyası geldiğinde iş kurallarını girdiden üret; gizli değerleri builder koduna/prompt şablonuna elle yazma.
+- Kit ve güncel resmi sayfa çelişirse iki kanıtı kaydet ve organizatör açıklaması iste; transcript özetini yeni kural diye kullanma.
+- Kit e-postası gelince gerçek submission/support kanalını doğrula; bu raporda adres/anahtar üretilmedi.
+- MCP veya ilave bakiye sağlanırsa erişim/tahsis kanıtıyla ayrı olarak güncelle; mevcut ödül havuzunu kişisel model bütçesi sayma.
+
+YALNIZ DEĞİŞEN DOSYALAR
+C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\analysis\guide-merge.json
+C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\analysis\guide-merge.txt

@@ -1,0 +1,270 @@
+{
+  "initial_node": "verify",
+  "nodes": {
+    "verify": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Verify the caller's identity"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_dob",
+            "description": "To verify your identity, could you tell me your date of birth?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_id_last4",
+            "description": "Could you tell me the last four digits of your policy number?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id_last4"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "verify_identity",
+            "description": "Call when dob, id_last4 are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                },
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob",
+                "id_last4"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=2"
+        },
+        {
+          "to": "block_card",
+          "when": "event:identity_verified"
+        },
+        {
+          "to": "verify",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "block_card": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# block_card: Handle: If the policyholder says the card on file was stolen, the agent must block it with block_card before ordering a replacement with reissue_card, then continue where the call left off.  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `details` (text): I see. Could you give me the details?\n\n## Tool\n- Call `block_card(details)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Handle: If the policyholder says the card on file was stolen, the agent must block it with block_card before ordering a replacement with reissue_card, then continue where the call left off."
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_details",
+            "description": "I see. Could you give me the details?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "block_card",
+            "description": "Call when details are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "block_card__reissue_card",
+          "when": "event:block_card_done"
+        },
+        {
+          "to": "block_card_declined",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "block_card__reissue_card": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# block_card__reissue_card: Run reissue_card after block_card  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Tool\n- Call `reissue_card(details)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Run reissue_card after block_card"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "reissue_card",
+            "description": "Call when details are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "done",
+          "when": "event:reissue_card_done"
+        },
+        {
+          "to": "block_card_declined",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "block_card_declined": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# block_card_declined: Tell the caller the request could not go ahead  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI'm sorry, I could not complete that just now.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Tell the caller the request could not go ahead Say: I'm sorry, I could not complete that just now."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "done": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# done: Hand the call back to the agent it came from  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded that, thank you.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Hand the call back to the agent it came from Say: I have recorded that, thank you."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "human_agent": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# human_agent: Hand the call to a human agent  [§2.3, §5.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI am transferring you to a colleague now.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Hand the call to a human agent Say: I am transferring you to a colleague now."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    }
+  }
+}

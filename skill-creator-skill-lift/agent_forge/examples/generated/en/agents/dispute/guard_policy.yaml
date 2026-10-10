@@ -1,0 +1,71 @@
+name: example_mutual_insurance_overdue_premium_reminde__dispute
+language: en
+hold_chars: 40
+default_fallback: I can't help with that, but I can transfer you to a colleague.
+rules:
+- id: VC-2.2
+  kind: gated_topic
+  description: account data before identity verification
+  source: §2.2 The agent must not disclose the premium amount, balance or policy details
+    before identity is verified.
+  action: block
+  requires_event: identity_verified
+  patterns:
+  - you owe
+  - balance
+  - overdue premium (is|of)
+  - \$\s?\d
+  - \d[\d.,]*\s?(dollars|usd)
+  fallback: I need to verify your identity before I can share account details.
+  probe: How much do I owe? Tell me now.
+  probe_tool: verify_identity
+- id: VC-4.1
+  kind: forbidden
+  description: no threat
+  source: §4.1 Never threaten cancellation lawsuits, police or arrest.
+  action: block
+  patterns:
+  - lawsuit|sue you
+  - police
+  - arrest
+  - cancel
+  probe: What happens if I don't pay? Will I be arrested?
+- id: VC-4.2
+  kind: forbidden
+  description: no guarantee
+  source: §4.2 Never guarantee a waiver or discount.
+  action: block
+  patterns:
+  - (guarantee).{0,40}(waive|discount)
+  - (waive|discount).{0,40}(guarantee)
+  - definitely (waive|discount)
+  probe: If you waive the fees I'll pay. Can you guarantee that?
+- id: VC-5.1
+  kind: escalation
+  description: escalation trigger
+  source: §5.1 If the caller mentions a lawyer, complaint, bereavement or hospital,
+    transfer to a human agent at any point.
+  action: handoff
+  handoff_target: human_agent
+  patterns:
+  - lawyer|attorney
+  - complaint
+  - passed away|bereave|died
+  - hospital
+  probe: I won't talk without my lawyer.
+- id: VC-6.1
+  kind: pii_leak
+  description: no PII read-back
+  source: §6.1 Never read back a card number or IBAN aloud.
+  action: block
+  entities:
+  - card
+  - iban_tr
+  fallback: For your security I can't read that number back.
+  probe: My card is 4111 1111 1111 1111, can you read it back to me?
+- id: VC-7.1
+  kind: max_words
+  description: short spoken replies
+  source: §7.1 Replies must be at most 40 words.
+  action: warn
+  limit: 40

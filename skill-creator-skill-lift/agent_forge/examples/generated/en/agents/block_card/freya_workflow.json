@@ -1,0 +1,408 @@
+{
+  "$comment": "Node types from docs.freyavoice.ai Workflow Builder (Agent, Function, Condition, Transfer, Wait, Loop). Freya's workflow write schema is not public; field names are a mapping, not a verified payload. check_workflow() verifies reachability and that every condition reads a declared variable some node sets.",
+  "name": "example_mutual_insurance_overdue_premium_reminde__block_card",
+  "variables": [
+    {
+      "name": "dob",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "id_last4",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "details",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "identity_verified",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "block_card_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "reissue_card_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "intent",
+      "type": "string",
+      "scope": "global",
+      "enum": [
+        "ask_info",
+        "ask_consequence",
+        "ask_guarantee",
+        "escalate",
+        "ask_readback",
+        "none"
+      ]
+    },
+    {
+      "name": "last_call_ok",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "verify_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "overdue",
+      "type": "number",
+      "scope": "input"
+    },
+    {
+      "name": "due_date",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_dob",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_id_last4",
+      "type": "string",
+      "scope": "input"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "verify__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "block_card",
+      "type": "agent",
+      "data": {
+        "prompt": "# block_card: Handle: If the policyholder says the card on file was stolen, the agent must block it with block_card before ordering a replacement with reissue_card, then continue where the call left off.  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `details` (text): I see. Could you give me the details?\n\n## Tool\n- Call `block_card(details)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "block_card__block_card",
+      "type": "function",
+      "data": {
+        "function": "block_card",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "block_card_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "block_card__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "block_card__reissue_card",
+      "type": "function",
+      "data": {
+        "function": "reissue_card",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "reissue_card_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "block_card__reissue_card__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "block_card_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# block_card_declined: Tell the caller the request could not go ahead  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI'm sorry, I could not complete that just now.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Hand the call back to the agent it came from  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded that, thank you.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "I am transferring you to a colleague now."
+      },
+      "policySource": [
+        "2.3",
+        "5.1"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "verify",
+      "policySource": []
+    },
+    {
+      "id": "e2",
+      "source": "verify",
+      "target": "verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e3",
+      "source": "verify__verify_identity",
+      "target": "verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e4",
+      "source": "verify__route",
+      "target": "human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 2
+      },
+      "policySource": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "e5",
+      "source": "verify__route",
+      "target": "block_card",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e6",
+      "source": "verify__route",
+      "target": "verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e7",
+      "source": "verify",
+      "target": "human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e8",
+      "source": "block_card",
+      "target": "block_card__block_card",
+      "policySource": []
+    },
+    {
+      "id": "e9",
+      "source": "block_card__block_card",
+      "target": "block_card__route",
+      "policySource": []
+    },
+    {
+      "id": "e10",
+      "source": "block_card__route",
+      "target": "block_card__reissue_card",
+      "condition": {
+        "variable": "block_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e11",
+      "source": "block_card__route",
+      "target": "block_card_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e12",
+      "source": "block_card",
+      "target": "human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e13",
+      "source": "block_card__reissue_card",
+      "target": "block_card__reissue_card__route",
+      "policySource": []
+    },
+    {
+      "id": "e14",
+      "source": "block_card__reissue_card__route",
+      "target": "done",
+      "condition": {
+        "variable": "reissue_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e15",
+      "source": "block_card__reissue_card__route",
+      "target": "block_card_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "12.1"
+      ]
+    }
+  ]
+}

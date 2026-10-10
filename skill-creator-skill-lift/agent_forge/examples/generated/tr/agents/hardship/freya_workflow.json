@@ -1,0 +1,354 @@
+{
+  "$comment": "Node types from docs.freyavoice.ai Workflow Builder (Agent, Function, Condition, Transfer, Wait, Loop). Freya's workflow write schema is not public; field names are a mapping, not a verified payload. check_workflow() verifies reachability and that every condition reads a declared variable some node sets.",
+  "name": "ornek_banka_a_s_gecikmis_kredi_karti_borcu_tahsi__hardship",
+  "variables": [
+    {
+      "name": "dob",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "id_last4",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "monthly_amount",
+      "type": "number",
+      "scope": "global"
+    },
+    {
+      "name": "identity_verified",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "hardship_plan_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "intent",
+      "type": "string",
+      "scope": "global",
+      "enum": [
+        "ask_info",
+        "ask_consequence",
+        "ask_guarantee",
+        "escalate",
+        "ask_readback",
+        "third_party",
+        "right_party",
+        "none"
+      ]
+    },
+    {
+      "name": "last_call_ok",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "verify_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "overdue",
+      "type": "number",
+      "scope": "input"
+    },
+    {
+      "name": "due_date",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_dob",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_id_last4",
+      "type": "string",
+      "scope": "input"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "verify__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "hardship",
+      "type": "agent",
+      "data": {
+        "prompt": "# hardship: Handle: Müşteri iş kaybı, hastalık veya benzeri bir maddi zorluk belirtirse ayda ödeyebileceği tutar sorulur ve yapılandırma talebi hardship_plan ile kaydedilir.  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `monthly_amount` (amount): Ayda ne kadar ödeyebilirsiniz?\n\n## Tool\n- Call `hardship_plan(monthly_amount)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "monthly_amount",
+            "type": "number"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "hardship__hardship_plan",
+      "type": "function",
+      "data": {
+        "function": "hardship_plan",
+        "args": {
+          "monthly_amount": "{{monthly_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "hardship_plan_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "hardship__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "hardship_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# hardship_declined: Tell the caller the request could not go ahead  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, bu işlemi şu an tamamlayamadım.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Close the call  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nYapılandırma talebinizi aylık {monthly_amount} TL olarak kaydettim. İyi günler.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3",
+        "6.1"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "verify",
+      "policySource": []
+    },
+    {
+      "id": "e2",
+      "source": "verify",
+      "target": "verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e3",
+      "source": "verify__verify_identity",
+      "target": "verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e4",
+      "source": "verify__route",
+      "target": "human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e5",
+      "source": "verify__route",
+      "target": "hardship",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e6",
+      "source": "verify__route",
+      "target": "verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e7",
+      "source": "verify",
+      "target": "human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e8",
+      "source": "hardship",
+      "target": "hardship__hardship_plan",
+      "policySource": []
+    },
+    {
+      "id": "e9",
+      "source": "hardship__hardship_plan",
+      "target": "hardship__route",
+      "policySource": []
+    },
+    {
+      "id": "e10",
+      "source": "hardship__route",
+      "target": "done",
+      "condition": {
+        "variable": "hardship_plan_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "e11",
+      "source": "hardship__route",
+      "target": "hardship_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "e12",
+      "source": "hardship",
+      "target": "human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    }
+  ]
+}

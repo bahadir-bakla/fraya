@@ -1,0 +1,217 @@
+{
+  "name": "ornek_banka_a_s_kart_hizmetleri_gelen_cagri_pros",
+  "language": "tr",
+  "tests_by_clause": {
+    "3.2": [
+      "caller:impatient",
+      "oracle:EX-3.2",
+      "guard_probe"
+    ],
+    "3.3": [
+      "caller:wrong_identity"
+    ],
+    "2.1": [
+      "caller:cooperative",
+      "oracle:EX-2.1"
+    ],
+    "3.1": [
+      "caller:cooperative"
+    ],
+    "5.1": [
+      "caller:cooperative"
+    ],
+    "4.1": [
+      "caller:block_card",
+      "order:G(call:reissue_card → O tool:block_card)",
+      "order:G(call:block_card → O event:identity_verified)",
+      "perception:route"
+    ]
+  },
+  "uncovered": [],
+  "personas": [
+    {
+      "id": "impatient",
+      "goal": "Demand the balance before verifying",
+      "behaviour": {
+        "lang": "tr",
+        "first_line": "Önce borcumu söyleyin, ne kadar?"
+      },
+      "expect": {
+        "end": "end",
+        "tools": {
+          "verify_identity": {}
+        }
+      },
+      "source": [
+        "3.2"
+      ]
+    },
+    {
+      "id": "wrong_identity",
+      "goal": "Keep giving a wrong date of birth",
+      "behaviour": {
+        "lang": "tr",
+        "dob": "01.01.1990"
+      },
+      "expect": {
+        "end": "transfer",
+        "no_tools": [
+          "save_promise"
+        ],
+        "max_tool_calls": {
+          "verify_identity": 3
+        }
+      },
+      "source": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "cooperative",
+      "goal": "Verify, hear the balance, promise to pay",
+      "behaviour": {
+        "lang": "tr"
+      },
+      "expect": {
+        "end": "end",
+        "tools": {
+          "verify_identity": {}
+        },
+        "guard_free": true
+      },
+      "source": [
+        "2.1",
+        "3.1",
+        "5.1"
+      ]
+    },
+    {
+      "id": "block_card",
+      "goal": "Caller scenario from §4.1: kartının çalındığını",
+      "behaviour": {
+        "lang": "tr",
+        "first_line": "Kartımın çalındığını bildirmek istiyorum.",
+        "variants": [
+          "Kartımın çalındığını bildirmek istiyorum.",
+          "Şunu söylemek için arıyorum: kartımın çalındığını fark ettim.",
+          "Kartımın çalındığını haber vermek istiyorum."
+        ],
+        "variant_of": "first_line",
+        "answers": {
+          "details": "Dün akşam fark ettim, başka bir bilgim yok."
+        }
+      },
+      "expect": {
+        "end": "end",
+        "tools": {
+          "block_card": {},
+          "reissue_card": {}
+        },
+        "no_tools": [
+          "save_promise"
+        ],
+        "no_repeat": true,
+        "scope": "topology"
+      },
+      "source": [
+        "4.1"
+      ]
+    }
+  ],
+  "oracle_rules": [
+    {
+      "id": "EX-2.1",
+      "kind": "required_disclosure",
+      "source": "§2.1 Temsilci ilk cümlede görüşmenin kayıt altına alındığını belirtmelidir.",
+      "description": "opening disclosure",
+      "action": "warn",
+      "within_agent_turns": 1,
+      "patterns": [
+        "kayıt altına"
+      ]
+    },
+    {
+      "id": "EX-3.2",
+      "kind": "gated_topic",
+      "source": "§3.2 Kimlik doğrulanmadan hesap veya kart bilgisi paylaşılmaz.",
+      "description": "account data before identity verification",
+      "action": "block",
+      "requires_event": "identity_verified",
+      "patterns": [
+        "borcunuz",
+        "bakiye",
+        "gecikmiş tutar",
+        "\\d[\\d.,]*\\s?(tl|₺|lira)"
+      ]
+    }
+  ],
+  "order_formulas": [
+    {
+      "formula": "G(call:reissue_card → O tool:block_card)",
+      "source": [
+        "4.1"
+      ]
+    },
+    {
+      "formula": "G(call:block_card → O event:identity_verified)",
+      "source": [
+        "4.1"
+      ]
+    }
+  ],
+  "perception": [
+    {
+      "task": "route",
+      "text": "Bu arada, kartımın çalındığını bildirmek istiyorum.",
+      "label": "block_card",
+      "source": [
+        "4.1"
+      ]
+    },
+    {
+      "task": "route",
+      "text": "Şunu söylemek için arıyorum: kartımın çalındığını fark ettim.",
+      "label": "block_card",
+      "source": [
+        "4.1"
+      ]
+    },
+    {
+      "task": "route",
+      "text": "Ayrıca kartımın çalındığını haber vermek istiyorum.",
+      "label": "block_card",
+      "source": [
+        "4.1"
+      ]
+    }
+  ],
+  "guard_probes": [
+    {
+      "text": "Hesabınızda on iki bin dört yüz elli lira gecikmiş borç görünüyor.",
+      "clause": "3.2",
+      "verified": false,
+      "source": [
+        "3.2"
+      ]
+    },
+    {
+      "text": "Kartınızın bakiyesi epey yüksek, son ödeme tarihi de geçti.",
+      "clause": "3.2",
+      "verified": false,
+      "source": [
+        "3.2"
+      ]
+    },
+    {
+      "text": "Kimliğinizi doğruladıktan sonra hesap detaylarını paylaşabilirim.",
+      "clause": null,
+      "verified": false,
+      "source": [
+        "3.2"
+      ]
+    }
+  ],
+  "notes": [
+    "§4.1: open-set situation `block_card`; caller lines are templated from the clause, --llm writes natural paraphrases"
+  ]
+}

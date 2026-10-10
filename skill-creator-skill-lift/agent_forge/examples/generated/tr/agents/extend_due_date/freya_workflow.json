@@ -1,0 +1,531 @@
+{
+  "$comment": "Node types from docs.freyavoice.ai Workflow Builder (Agent, Function, Condition, Transfer, Wait, Loop). Freya's workflow write schema is not public; field names are a mapping, not a verified payload. check_workflow() verifies reachability and that every condition reads a declared variable some node sets.",
+  "name": "ornek_banka_a_s_gecikmis_kredi_karti_borcu_tahsi__extend_due_date",
+  "variables": [
+    {
+      "name": "dob",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "id_last4",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "details",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "identity_verified",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "check_income_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "check_risk_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "extend_due_date_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "intent",
+      "type": "string",
+      "scope": "global",
+      "enum": [
+        "ask_info",
+        "ask_consequence",
+        "ask_guarantee",
+        "escalate",
+        "ask_readback",
+        "none"
+      ]
+    },
+    {
+      "name": "last_call_ok",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "verify_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "overdue",
+      "type": "number",
+      "scope": "input"
+    },
+    {
+      "name": "due_date",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_dob",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_id_last4",
+      "type": "string",
+      "scope": "input"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "verify__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "extend_due_date",
+      "type": "agent",
+      "data": {
+        "prompt": "# extend_due_date: Handle: Müşteri ödeme süresinin uzatılmasını isterse gelir kontrolü check_income ve risk kontrolü check_risk yapılır; ikisi de olumluysa extend_due_date ile yeni vade kaydedilir, biri olumsuzsa talebin onaylanamadığı bildirilir ve görüşmeye kaldığı yerden devam edilir.  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `details` (text): Anlıyorum. Bunun detaylarını söyler misiniz?\n\n## Tool\n- Call `check_income(details)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "extend_due_date__check_income",
+      "type": "function",
+      "data": {
+        "function": "check_income",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "check_income_done": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "parallel": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "extend_due_date__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "extend_due_date__check_risk",
+      "type": "function",
+      "data": {
+        "function": "check_risk",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "check_risk_done": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "parallel": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "extend_due_date__check_risk__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "extend_due_date__extend_due_date",
+      "type": "function",
+      "data": {
+        "function": "extend_due_date",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "extend_due_date_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "extend_due_date__extend_due_date__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "extend_due_date_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# extend_due_date_declined: Tell the caller the request could not go ahead  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, talebiniz şu an onaylanamadı.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Hand the call back to the agent it came from  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nKaydettim, teşekkür ederim.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3",
+        "6.1"
+      ]
+    },
+    {
+      "id": "extend_due_date__extend_due_date__join",
+      "type": "condition",
+      "data": {
+        "join": "all",
+        "waitsOn": [
+          "check_income",
+          "check_risk"
+        ],
+        "parallel": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "verify",
+      "policySource": []
+    },
+    {
+      "id": "e2",
+      "source": "verify",
+      "target": "verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e3",
+      "source": "verify__verify_identity",
+      "target": "verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e4",
+      "source": "verify__route",
+      "target": "human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e5",
+      "source": "verify__route",
+      "target": "extend_due_date",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e6",
+      "source": "verify__route",
+      "target": "verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e7",
+      "source": "verify",
+      "target": "human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e8",
+      "source": "extend_due_date",
+      "target": "extend_due_date__check_income",
+      "policySource": []
+    },
+    {
+      "id": "e9",
+      "source": "extend_due_date__check_income",
+      "target": "extend_due_date__route",
+      "policySource": []
+    },
+    {
+      "id": "e10",
+      "source": "extend_due_date__route",
+      "target": "extend_due_date__check_risk",
+      "condition": {
+        "variable": "check_income_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e11",
+      "source": "extend_due_date__route",
+      "target": "extend_due_date_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e12",
+      "source": "extend_due_date",
+      "target": "human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e13",
+      "source": "extend_due_date__check_risk",
+      "target": "extend_due_date__check_risk__route",
+      "policySource": []
+    },
+    {
+      "id": "e14",
+      "source": "extend_due_date__check_risk__route",
+      "target": "extend_due_date__extend_due_date__join",
+      "condition": {
+        "variable": "check_risk_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e15",
+      "source": "extend_due_date__check_risk__route",
+      "target": "extend_due_date_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e16",
+      "source": "extend_due_date__extend_due_date",
+      "target": "extend_due_date__extend_due_date__route",
+      "policySource": []
+    },
+    {
+      "id": "e17",
+      "source": "extend_due_date__extend_due_date__route",
+      "target": "done",
+      "condition": {
+        "variable": "extend_due_date_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e18",
+      "source": "extend_due_date__extend_due_date__route",
+      "target": "extend_due_date_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e19",
+      "source": "extend_due_date__extend_due_date__join",
+      "target": "extend_due_date__extend_due_date",
+      "condition": {
+        "operator": "all",
+        "conditions": [
+          {
+            "variable": "check_income_done",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "variable": "check_risk_done",
+            "operator": "equals",
+            "value": true
+          }
+        ]
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e20",
+      "source": "extend_due_date__extend_due_date__join",
+      "target": "extend_due_date_declined",
+      "condition": {
+        "operator": "not_all",
+        "conditions": [
+          {
+            "variable": "check_income_done",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "variable": "check_risk_done",
+            "operator": "equals",
+            "value": true
+          }
+        ]
+      },
+      "policySource": [
+        "14.1"
+      ]
+    }
+  ]
+}

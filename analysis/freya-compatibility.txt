@@ -1,0 +1,200 @@
+Freya compatibility audit -- 2026-10-10
+Workspace: C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER
+
+VERDICT: NOT DIRECTLY COMPATIBLE
+Reuse the IR, provenance, prompt content and offline test harness. Replace the speculative Freya emitter with a documented-format adapter and tool-binding layer; guarded local passes do not prove Freya deployment correctness.
+Read-only/offline: no credentials, network, source edits or implementation. JSON includes full evidence notes, source hashes and probe results.
+
+Major blockers
+B01 [blocker] Legacy graph is not a Freya write payload
+freya_workflow emits nodes/edges arrays, a synthetic start node, type/data fields and a variables declaration. Freya requires initial_node plus a node-keyed object containing node_type, task_message and per-node transitions. The emitter explicitly calls its output an unverified mapping. check_workflow validates only that legacy mapping; a passing result does not establish Freya compatibility.
+Adapter: Emit the documented bare workflow from AgentSpec directly; keep provenance in a separate artifact and validate the official shape.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:89-107; skill-creator-skill-lift/agent_forge/emit.py:151-168; skill-creator-skill-lift/agent_forge/emit.py:171-214; competition-v3/build-the-builder/docs/workflow-format.md:38-84; skill-creator-skill-lift/agent_forge/tests/test_agent_forge.py:213-233
+
+B02 [blocker] Condition syntax and collection gates change behavior
+The emitter uses gt/lt/gte/lte and value; Freya documents greater_than/less_than and operand. Variable checks should be in a top-level OR, with AND nested inside it. slots_filled is emitted without any condition. confirmed/rejected pass the spec grammar but runtime._holds never implements them. Boolean equality is unsafe because Freya compares string representations.
+Adapter: Compile slots_filled to an AND of is_set checks inside OR; translate operators, use explicit string status flags, and implement or reject confirmed/rejected. For integer attempts>=N use greater_than N-1; for general numeric >=/<= use normalized code predicates or a tested compound condition.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:68-83; skill-creator-skill-lift/agent_forge/spec.py:27-30; skill-creator-skill-lift/agent_forge/runtime.py:443-460; competition-v3/build-the-builder/docs/workflow-format.md:290-391
+
+B03 [blocker] Tools have names and slot arguments but no deployable binding
+Tool holds only name, args, provenance, event, constraints and side_effect. The emitter creates data.function/args/preconditions/outputs without a handler, URL, HTTP method, JSON-schema body or response mapping. The kit requires function wrappers with __function__:api_call or code_exec and leaf defaults under parameters.properties.body.properties.
+Adapter: Add a separate tool registry keyed by semantic tool name: server/path/method, request fields and sources, enums/required fields, response schema, success predicate, execution placement, timeout/retry policy. Bind names against the supplied OpenAPI; do not assume a matching name alone is sufficient.
+Evidence: skill-creator-skill-lift/agent_forge/spec.py:73-80; skill-creator-skill-lift/agent_forge/emit.py:109-119; competition-v3/build-the-builder/docs/tools-and-code.md:7-76; competition-v3/build-the-builder/docs/tools-and-code.md:78-109; competition-v3/build-the-builder/docs/tools-and-code.md:143-169; competition-v3/build-the-builder/tools/openapi.json:8-15
+
+B04 [blocker] Existing mock contract does not establish kit tool correctness
+mock_tools verifies a combined dob/id_last4 argument set against local CRM facts, compares only the first five DOB characters, and returns success for other tools. The kit verify_identity accepts customer_id, field and answer, with field=date_of_birth or phone_last4; get_account requires both answers to pass. HTTP 200 can still contain ok=false. Existing save_promise naming in tests must explicitly bind to create_promise, with customer_id/product_id/amount/date. Mock success/events cannot stand in for real API response semantics.
+Adapter: Use exact OpenAPI requests and a result envelope containing status/data/status_code. Distinguish transport success, data.ok, individual verified and aggregate all_verified; derive events only from the intended business predicate. Normalize dates to ISO and use synthetic fixtures for full-date mismatch, rejected answers and multiple products.
+Evidence: skill-creator-skill-lift/agent_forge/runtime.py:182-195; skill-creator-skill-lift/agent_forge/runtime.py:408-420; competition-v3/build-the-builder/tools/openapi.json:15-85; competition-v3/build-the-builder/tools/openapi.json:89-105; competition-v3/build-the-builder/tools/openapi.json:172-229; skill-creator-skill-lift/agent_forge/tests/test_agent_forge.py:101-102; competition-v3/build-the-builder/docs/tools-and-code.md:248-287
+
+B05 [blocker] Extraction, prompt interpolation and call inputs need conversion
+The emitter's amount:number/date:string and collect/enum fields are not Freya extraction_schema types and enum_values. node_prompt preserves single-brace {fact}/{slot} text while local runtime uses str.format; Freya uses double braces. spec.facts values are available locally but emitted input variables carry no values. Dates emitted as strings lose Freya's relative-date anchor.
+Adapter: Keep JSON-schema request types separate from extraction types: amount->float, date->date, digits4->string with validation_pattern, yesno->boolean, text->string; specify descriptions and min_confidence. Translate known IR placeholders safely into Freya prompts. Supply per-call inputs through customerVariablesMap, use explicit setup code for derived facts, and avoid serializing private CRM answers as prompts or defaults.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:29; skill-creator-skill-lift/agent_forge/emit.py:32-54; skill-creator-skill-lift/agent_forge/emit.py:85-87; skill-creator-skill-lift/agent_forge/emit.py:157-164; skill-creator-skill-lift/agent_forge/runtime.py:153-162; skill-creator-skill-lift/agent_forge/runtime.py:462-466; competition-v3/build-the-builder/docs/workflow-format.md:176-221; competition-v3/build-the-builder/docs/workflow-format.md:554-580
+
+B06 [blocker] Confirmation, constraints and joins are mostly runtime-only
+The local runtime waits for read-back confirmation, enforces numeric constraints before a tool call, and blocks joins using successful-tool trace entries. The emitted preconditions are descriptive strings, outputs are declarations, and join uses undocumented condition nodes with all/not_all/waitsOn/parallel. A prompt request to confirm is not equivalent to the runtime's gate.
+Adapter: Lower explicit confirmation and correction states, validate constraints before entering any engine-run write action, and derive string success flags from actual responses. Compile join gates as nested AND or code predicates. Serialize independent checks unless concurrent execution is separately established; config.interruptible=false is documented asynchronous behavior, not a general join/parallel schema.
+Evidence: skill-creator-skill-lift/agent_forge/runtime.py:320-343; skill-creator-skill-lift/agent_forge/runtime.py:379-403; skill-creator-skill-lift/agent_forge/emit.py:112-116; skill-creator-skill-lift/agent_forge/emit.py:131-150; competition-v3/build-the-builder/docs/workflow-format.md:331-368; competition-v3/build-the-builder/docs/tools-and-code.md:343-345; competition-v3/build-the-builder/docs/tools-and-code.md:418-460
+
+B07 [blocker] Retry counters and loop limits need semantic lowering
+Legacy emission adds increment metadata to tool nodes and declarations for <node>_attempts; a bounded collection node without a tool declares but never sets its counter. Local runtime separately counts unanswered collection turns and failed calls, resets successful attempts and clears rejected inputs. Freya max_node_turns counts user turns only and needs max_turn_transition to enforce an exit. Built-in tool counters do not by themselves encode these policies or business-answer failures.
+Adapter: Specify whether each budget counts wrong answers, malformed answers, transport failures, unanswered turns or total visits. Use business response fields such as wrong_answers_left and explicit code state where needed; add a finite turn-cap fallback and ensure passthrough nodes have default targets and final always transitions.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:100-121; skill-creator-skill-lift/agent_forge/runtime.py:344-363; skill-creator-skill-lift/agent_forge/runtime.py:417-426; competition-v3/build-the-builder/tools/openapi.json:35-37; competition-v3/build-the-builder/tools/openapi.json:66-70; competition-v3/build-the-builder/docs/workflow-format.md:462-484; competition-v3/build-the-builder/docs/workflow-format.md:658-674; competition-v3/build-the-builder/docs/tools-and-code.md:319-365
+
+B08 [blocker] Local and Freya routing priority differ
+WorkflowRuntime.on_user evaluates global intent edges before local intent edges and before slot extraction. Freya extracts first and then checks loop/current-node transitions before global handlers. A naive adapter that puts global_edges into global_nodes while leaving an unconditional local fallback can starve those interrupts; priority equivalence requires a deliberate design.
+Adapter: Define desired interrupt precedence, lower interrupt checks before broad local fallbacks where necessary, and explicitly gate local progress. Use global handlers for genuine interrupts with terminal/excluded_nodes protection. Test competing intents, slot completion plus escalation and same-turn tool-result routing.
+Evidence: skill-creator-skill-lift/agent_forge/runtime.py:246-276; skill-creator-skill-lift/agent_forge/runtime.py:344-350; competition-v3/build-the-builder/docs/workflow-format.md:13-36; competition-v3/build-the-builder/docs/workflow-format.md:393-410; competition-v3/build-the-builder/docs/workflow-format.md:486-526
+
+B09 [blocker] Ending and transfer do not implement the kit ledger contract
+Legacy end uses agent.data.endCall; transfer uses type=transfer with target/message. Runtime sets done without calling the bank backend. Freya end_call needs terminal.__function__:end_call, with farewell configured there. The kit additionally exposes transfer_to_agent(customer_id,queue) and close_call(customer_id,outcome,reason); close_call must be the final bank tool, and reason is required except promise/paid. The base example uses an end_of_call lifecycle close_call tool.
+Adapter: Lower terminal states separately from backend transfer/close actions. Record transfer through the supplied HTTP operation, set outcome/reason deterministically, and run exactly one final close_call using an appropriate lifecycle tool or a guarded final action. Use the full OpenAPI enum rather than the base example's reduced subset.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:92-99; skill-creator-skill-lift/agent_forge/runtime.py:291-297; competition-v3/build-the-builder/docs/workflow-format.md:611-656; competition-v3/build-the-builder/tools/openapi.json:354-379; competition-v3/build-the-builder/tools/openapi.json:409-441; competition-v3/build-the-builder/examples/base-agent.json:330-395; competition-v3/build-the-builder/docs/tools-and-code.md:514-564
+
+B10 [blocker] Simulation artifacts are incomplete for the kit's workflow
+freya_simulation emits mode=voice with placeholder agent/persona IDs, runsPerPersona and tags; it omits customerVariablesMap, model overrides and duration/concurrency. The kit's reference loop uses chat and explicit dialogue/routing/extraction overrides. This is a readiness gap for the kit, not evidence that Freya never supports voice. Persona core fields match the kit; optional agentIds is not confirmed by the supplied local persona documentation. The unit-test emitter's endpoint/schema is not covered by these kit docs.
+Adapter: Resolve IDs after persona/workflow creation, map official per-persona call variables, select chat for the documented local review loop and supply all required overrides. Preserve configurable k; note freya.run_simulation currently hardcodes runsPerPersona=1. Treat unit-test payloads and optional persona fields as unverified until separately documented.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:217-230; skill-creator-skill-lift/agent_forge/emit.py:249-257; competition-v3/build-the-builder/freya.py:69; competition-v3/build-the-builder/freya.py:87-106; competition-v3/build-the-builder/docs/api.md:157-164; competition-v3/build-the-builder/docs/api.md:208-224; skill-creator-skill-lift/voice_contract/emit.py:47-78
+
+B11 [blocker] Multi-agent export uses undocumented state and handback fields
+freya_multiagent_workflow retains the invalid graph schema, dotted node IDs and agents/context/handoff/handback/setVariables/targetVariable metadata. The kit documents a single call-wide variable table and string target_node, with __previous__ for global returns; it does not document dynamic targetVariable or native multi-agent invocation for this workflow subset. Bare shared intent/event/slot names can collide across agents.
+Adapter: Flatten specialist AgentSpecs into a single official node map with stable snake_case names and explicit variable namespace/ownership. Implement static return branches or genuine global __previous__ returns, and translate carried state explicitly. Do not advertise native invoke_agent or generic dynamic return behavior from this mapping.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:331-399; competition-v3/build-the-builder/docs/workflow-format.md:77; competition-v3/build-the-builder/docs/workflow-format.md:90; competition-v3/build-the-builder/docs/workflow-format.md:178; competition-v3/build-the-builder/docs/workflow-format.md:285-288; competition-v3/build-the-builder/docs/workflow-format.md:499-525
+
+B12 [blocker_for_behavioral_equivalence] The external stream guard is not deployed by a workflow JSON
+The runtime applies StreamGuard and an optional semantic judge before speech. write_all emits guard_policy.yaml alongside the graph but does not attach that guard to Freya. The supplied workflow subset has no documented per-token TTS interception; lifecycle each_turn is accepted but never fires. Therefore local guarded-policy success cannot be claimed as Freya behavior.
+Adapter: Convert enforceable requirements into data availability gates, workflow transitions, tool schemas and explicit prompts, then assess speech behavior independently. Keep StreamGuard as a separate runtime target or local oracle; mark unsupported enforcement honestly.
+Evidence: skill-creator-skill-lift/agent_forge/runtime.py:485-522; skill-creator-skill-lift/agent_forge/emit.py:301-327; competition-v3/build-the-builder/docs/workflow-format.md:26-36; competition-v3/build-the-builder/docs/tools-and-code.md:514-522
+
+Reusable modules
+R01 AgentSpec and provenance: Reuse as the internal graph/brief representation, with a separate target/tool-binding layer. Keep source references, cloning, serialization, citations and coverage; never send the dataclass serialization as the Freya workflow.
+Evidence: skill-creator-skill-lift/agent_forge/spec.py:33-146; skill-creator-skill-lift/agent_forge/spec.py:165-195; skill-creator-skill-lift/agent_forge/spec.py:199-248
+
+R02 Spec validation: Retain structural checks for IDs, tools, slots, reachability, terminal paths and retry policy. Add an official-payload validator, definite-variable assignment checks and unsupported-condition diagnostics; existing validation is not Freya schema validation.
+Evidence: skill-creator-skill-lift/agent_forge/spec.py:260-333; skill-creator-skill-lift/agent_forge/emit.py:171-214
+
+R03 node_prompt and traceability: Reuse cited instruction content and traceability rendering, after separating global system rules from node task text, translating placeholders and retaining sensitive gate rules. Store provenance metadata separately from platform fields.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:32-54; skill-creator-skill-lift/agent_forge/emit.py:286-298; competition-v3/build-the-builder/docs/workflow-format.md:117-142
+
+R04 WorkflowRuntime state, ToolCall and Signal: Reuse as an offline state-machine test harness and failure signal source. Introduce a Freya semantics/result adapter; preserve confirmation/constraint intent while fixing routing, retry, extraction and mock parity. Current runtime is not a Freya engine emulator.
+Evidence: skill-creator-skill-lift/agent_forge/runtime.py:43-75; skill-creator-skill-lift/agent_forge/runtime.py:200-219; skill-creator-skill-lift/agent_forge/runtime.py:379-426
+
+R05 Persona creation and success criteria: Core personas envelope and name/prompt/successCriteria/tags are compatible with local kit documentation. Reuse narrative test generation, but translate tool names and per-persona backend fixtures, retain returned real IDs and review optional fields.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:217-246; competition-v3/build-the-builder/docs/api.md:145-164
+
+R06 Pipecat and external guard targets: Keep as separate runtime/export targets. pipecat_flow already uses initial_node and a node map, which is conceptually useful, but its role_messages/task_messages/functions/transitions are not a Freya payload.
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:260-283; skill-creator-skill-lift/agent_forge/emit.py:301-327
+
+Exported formats versus requests
+F01 AgentSpec serialization: Internal reusable IR only.
+Shape: AgentSpec.to_dict()/to_json(): nodes list, slots, tools, facts, rules, provenance.
+Evidence: skill-creator-skill-lift/agent_forge/spec.py:125-146; skill-creator-skill-lift/agent_forge/spec.py:168-172
+
+F02 Current agent_forge Freya mapping: Legacy inspection artifact; not directly deployable.
+Shape: {"$comment": "unverified mapping", "name": "...", "variables": [], "nodes": [], "edges": []}
+Evidence: skill-creator-skill-lift/agent_forge/emit.py:151-168
+
+F03 Bare official workflow: The definition passed as workflow to the reference client.
+Shape: {"initial_node": "greeting", "system_prompt": "...", "nodes": {"greeting": {"name": "greeting", "node_type": "conversation", "task_message": "...", "transitions": []}}, "global_nodes": {}}
+Caveat: Minimal illustrative shape only; add a reachable end_call and complete tools/gates. Request optional fields should be omitted instead of null.
+Evidence: competition-v3/build-the-builder/docs/workflow-format.md:38-84; competition-v3/build-the-builder/docs/workflow-format.md:676-683
+
+F04 Create and dry-run requests: POST /api/v2/workflow or same route with ?dryRun=true.
+Shape: {"name": "Brief name", "workflow": "<bare official workflow>"}
+Evidence: competition-v3/build-the-builder/docs/workflow-format.md:66; competition-v3/build-the-builder/freya.py:31-34; competition-v3/build-the-builder/freya.py:48; competition-v3/build-the-builder/docs/api.md:71-75
+
+F05 Update request and publication: PUT /api/v2/workflow/{workflow_id}; replace the complete definition, then publish its newest version.
+Shape: {"workflow": "<complete bare official workflow>"}
+Caveat: Update alone saves an unpublished version. The reference client's update_workflow also aligns the event model and publishes. save_workflow preserves workflow/agent IDs by slot. None of these network operations were performed in this audit.
+Evidence: competition-v3/build-the-builder/freya.py:36-64; competition-v3/build-the-builder/docs/api.md:101-115
+
+F06 Reference client export artifact: Saved/submission/read artifact; unwrap .workflow before create/update.
+Shape: {"workflow_id": "<id>", "agent_id": "<id>", "updated_at": "<timestamp>", "workflow": "<stored workflow definition>"}
+Evidence: competition-v3/build-the-builder/freya.py:65-68
+
+F07 examples/base-agent.json: Bare workflow sample with platform-shaped fields; useful evidence, not a write-safe template to copy unchanged.
+Shape: nodes object, workflow-level lifecycle tools, global_nodes, initial_node, system_prompt, test_variables; no metadata wrapper.
+Caveat: The sample has four explicit null optional fields, while the write guide rejects null. It also has empty pre_actions on conversation nodes and legacy editor settings. Sanitize to a target allowlist and use current write docs as authority; this is an observed sample/documentation mismatch, not live proof of API rejection.
+Evidence: competition-v3/build-the-builder/examples/base-agent.json:112-152; competition-v3/build-the-builder/examples/base-agent.json:309-327; competition-v3/build-the-builder/examples/base-agent.json:398-407; competition-v3/build-the-builder/docs/workflow-format.md:62-84
+
+Exact bank tool bindings (no HTTP calls made)
+Server: https://freya-bank-mock.freyavoice.workers.dev/v1
+POST /verify_identity; required=customer_id, field, answer. field enum date_of_birth|phone_last4; one answer per call; date answer ISO YYYY-MM-DD; gate on aggregate all_verified for account access.
+Evidence: competition-v3/build-the-builder/tools/openapi.json:15-79
+POST /get_account; required=customer_id. Available only after both security questions passed; products is a list with per-product balances and IDs.
+Evidence: competition-v3/build-the-builder/tools/openapi.json:89-164
+POST /create_promise; required=customer_id, product_id, amount, date. amount number, date ISO; one promise per product; success must check business result, not HTTP 200 alone.
+Evidence: competition-v3/build-the-builder/tools/openapi.json:172-229
+POST /add_note; required=customer_id, product_id, reason. Optional text; reason enum refused|hardship|dispute|paid|service_error.
+Evidence: competition-v3/build-the-builder/tools/openapi.json:234-269
+POST /schedule_callback; required=customer_id, date, time. date ISO; time HH:MM.
+Evidence: competition-v3/build-the-builder/tools/openapi.json:298-325
+POST /transfer_to_agent; required=customer_id, queue. queue enum restructuring|general|support; backend transfer is distinct from a local terminal label.
+Evidence: competition-v3/build-the-builder/tools/openapi.json:354-381
+POST /close_call; required=customer_id, outcome. Final bank tool only. outcome enum promise|paid|transferred|no_promise|not_verified|not_reached. reason additionally required except promise/paid; exact reason values come from the brief.
+Evidence: competition-v3/build-the-builder/tools/openapi.json:409-441
+
+Concrete adapter requirements
+A01 Dedicated official workflow emitter and validator (B01, B02)
+Bare workflow has initial_node pointing to a node-map key, official node fields, per-node transitions, no legacy edges/variables/type/data transport fields, and a reachable terminal on every realistic branch.
+A02 OpenAPI-backed tool binding registry (B03, B04)
+Every referenced semantic action resolves to exact HTTP parameters/schema and business success predicate; baked defaults and model-filled body fields are explicit; missing bindings fail the build.
+A03 Prompt, extraction and variable adapter (B05)
+Explicit extraction types/confidence; safe double-brace prompt substitution; ISO date conversion; per-call inputs supplied; derived values initialized; stale results reset on repeat actions. Do not rely on context_variables: the kit reports it being silently dropped (workflow-format.md:244-246).
+A04 Executable guards for writes and joins (B02, B06, B12)
+Separate read-back/confirmation/correction states; constraints and aggregate join success block entry to write actions; explicit string status flags; any generated code_exec reads vars, catches errors and sets fallback outputs, with no double-brace delimiters (tools-and-code.md:492-499).
+A05 Freya routing and retry semantics (B07, B08)
+Explicit interrupt priority, variable-based collection gates, business versus transport retry counts, bounded unanswered turns, reset policy and passthrough fallbacks. Preserve the brief's policy rather than copying mock counters.
+A06 Terminal and lifecycle binding (B09)
+Transfer and bank close operations execute with valid enums/inputs; close runs once and last; terminal farewell comes from end_call.function parameters; no unconfirmed native telephony assumptions.
+A07 Specialist graph flattening (B11)
+Stable snake_case node keys and variable ownership; carried state is assigned explicitly; static return branches or appropriate __previous__ global returns; no undocumented dynamic targetVariable/parallel metadata.
+A08 Artifact/request normalization and lifecycle client (B01, B10)
+Internal spec, bare workflow, create/update request and exported metadata wrapper remain distinct. Optional nulls removed using a write allowlist. Future deployment uses stable slots, dry-run, publish, read-back and ID persistence.
+A09 Simulation request adapter (B10, B12)
+Real persona and agent IDs, customerVariablesMap, chat mode for kit practice, all event model overrides, duration/concurrency controls, configurable k and trace-based checks. Guarded offline pass and platform pass are reported separately.
+
+Executed local probes
+AST-selected pure functions only; no project imports, bytecode writes, source writes, credentials, or network
+P01: {"has_initial_node": false, "legacy_checker_errors": [], "nodes_python_type": "list", "top_level_keys": ["$comment", "name", "variables", "nodes", "edges"]}
+P02: {"gate_condition_missing": true, "slots_filled_emitted_edge": {"id": "e3", "policySource": ["1"], "source": "collect__route", "target": "done"}}
+P03: {"collect_fields": [{"name": "amount", "type": "number"}, {"name": "wanted_day", "type": "string"}], "fact_default_missing": true, "single_brace_placeholder_still_in_prompt": true}
+P04: {"checker_errors": ["edge e3 reads collect_attempts, which no node sets"], "retry_condition": {"operator": "gte", "value": 3, "variable": "collect_attempts"}}
+P05: {"confirmed": {"runtime_holds": false, "spec_grammar_accepts": true}, "rejected": {"runtime_holds": false, "spec_grammar_accepts": true}}
+P06: {"simulation_request": {"agentId": "<AGENT_ID>", "mode": "voice", "name": "Audit fixture policy suite", "runsPerPersona": 3, "selectedPersonaIds": [], "tags": ["agent-forge", "Audit fixture"]}}
+P07: {"synthetic_dob_different_year_accepted": true}
+P08: {"base_is_bare_workflow": true, "base_null_paths": ["$.nodes.identity.max_turn_transition", "$.nodes.identity.passthrough_default_transition", "$.nodes.collection.max_turn_transition", "$.nodes.collection.passthrough_default_transition"], "base_top_level_keys": ["nodes", "tools", "global_nodes", "initial_node", "system_prompt", "test_variables"]}
+
+Suggested local tests (not implemented/run here)
+T01 Official payload shape and export round trip (B01)
+Validate a small collect->action->end fixture with a node-map checker; ensure the legacy emitter output fails it even when check_workflow passes. Unwrap export.workflow, sanitize optional nulls and construct create/PUT wrappers.
+T02 Condition truth tables (B02)
+Test missing/partial/all slots, integer retry thresholds, numeric >= boundaries, true/True/false/False normalization, explicit confirmation/rejection, unsupported operators and Freya duplicate-target transition OR merging.
+T03 Exact HTTP request schema, without HTTP (B03, B04)
+Resolve all seven OpenAPI operations in memory and assert server/path/method, leaf defaults, required inputs and enums. Verify semantic aliases such as save_promise bind to create_promise with product_id and customer_id.
+T04 Response and business status fixtures (B04, B06)
+Feed synthetic envelopes for HTTP 200/ok=false, verified=false, one/both identity answers, malformed input, 500, missing fields and multiple products. Map data.* at the proper node/tool level; stale success must never unlock a later attempt.
+T05 Dates, numeric extraction and interpolation (B05)
+Check Freya amount=float/date=date/enum_values fields, digits4 regex and confidence. Normalize existing dotted dates to ISO; keep brief now separate from real clock. Verify braces in literal prose remain intact and all required call variables/derived facts are initialized.
+T06 Confirmation, constraints and join parity (B06, B12)
+Use an injected in-memory tool backend to assert no write before explicit yes, changed amount/date requires new confirmation, rejected approval stops the action, and every required check succeeded before the join. Compare generated workflow decisions with intended IR behavior.
+T07 Retry budgets and interrupt precedence (B07, B08)
+Exercise wrong versus malformed security answers, unanswered collection turns, transient transport failure, success resets, and escalation combined with slot completion. Assert finite exits and that broad local always/loop conditions do not mask required interrupts.
+T08 Final bank ledger ordering (B09)
+Record in-memory action calls for normal, transfer, verification failure, wrong number, paid and refusal paths. Assert valid queue/outcome/reason, one close_call, no bank action after close, and a reachable end_call with intended farewell.
+T09 Multi-agent state and return branches (B11)
+Flatten two specialists with shared slot names; assert namespace isolation, explicit carry, valid snake_case keys, supported target strings and return to the correct waiting node.
+T10 Fake Freya client requests (B10)
+Use a fake api callable rather than importing the network client: assert create/name/workflow, update/workflow, explicit publish after update, export wrapper, persona ID ordering, customerVariablesMap and all three event overrides. Test k separately because run_simulation hardcodes 1.
+T11 Existing offline tests as regression evidence (B01, B04)
+Existing tests test_agent_forge.py:213-233 and :244-255 are regression checks of the old mapping, not acceptance checks for official Freya. Reuse relevant IR/runtime fixtures only after reviewing imports; disable bytecode/pytest cache and use an authorized temporary directory for any future run. No full suite was run in this audit.
+T12 Speech enforcement boundary (B12)
+Test raw generated dialogue independently of StreamGuard, then compare guard-on results. Flag requirements that pass only because the local guard blocked speech; do not label those as deployed Freya guarantees.
+
+Limitations
+No implementation, network calls, server dry run, publication, persona creation or platform simulation was performed.
+The base sample's exported nulls conflict with the documented no-null write rule; use write normalization and report the discrepancy rather than treating a read artifact as a validated request.
+Native telephony transfer, invoke_agent, optional persona agentIds and the legacy unit-test endpoint/schema are outside the confirmed local subset.
+No full project test suite or source package imports were run. Probes executed only AST-selected pure functions with synthetic inputs.
+
+Source references are relative to scope.workspace, with absolute_file also provided. start_line/end_line are exact one-based physical lines of the manifest snapshot. Source hashes identify the inspected version.

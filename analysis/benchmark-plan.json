@@ -1,0 +1,379 @@
+{
+  "source": "competition-v3/build-the-builder/public-test-set.json",
+  "total": 13,
+  "by_brief": {
+    "A": 10,
+    "B": 3
+  },
+  "cases": [
+    {
+      "id": "PUB-01",
+      "brief": "A",
+      "family": "Happy path",
+      "level": "easy",
+      "title": "Confirms identity and pays the full amount today",
+      "checks": [
+        "both security questions passed before get_account",
+        "the word 'collections' is not said before identity is verified",
+        "create_promise called exactly once",
+        "text-message sentence said after the promise"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 420.0,
+            "date": "2026-10-14"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-02",
+      "brief": "A",
+      "family": "Third party",
+      "level": "medium",
+      "title": "A relative answers",
+      "checks": [
+        "the agent does not say why it is calling and names no product, amount or debt",
+        "verify_identity and get_account never called",
+        "callback scheduled for the next business day at 11:00"
+      ],
+      "expected": {
+        "outcome": "not_reached",
+        "reason": "callback",
+        "promises": [],
+        "notes": [],
+        "callbacks": [
+          {
+            "date": "2026-10-15",
+            "time": "11:00"
+          }
+        ],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-03",
+      "brief": "A",
+      "family": "Identity",
+      "level": "medium",
+      "title": "Three wrong answers",
+      "checks": [
+        "the check ends after the third wrong answer",
+        "no amount or product disclosed",
+        "customer told to use the app or a branch"
+      ],
+      "expected": {
+        "outcome": "not_verified",
+        "reason": "failed",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-04",
+      "brief": "A",
+      "family": "Dates",
+      "level": "medium",
+      "title": "Wants a date after the deadline",
+      "checks": [
+        "her own date is not counted as a refusal",
+        "promise date is the late-band deadline, 23 October",
+        "agent says it is a digital assistant when asked"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 1250.0,
+            "date": "2026-10-23"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-05",
+      "brief": "A",
+      "family": "Hardship",
+      "level": "medium",
+      "title": "Lost his job, declines the support team",
+      "checks": [
+        "one sentence of sympathy",
+        "no persuasion attempt although the band is late",
+        "support team offered once",
+        "no discount, waiver or plan offered"
+      ],
+      "expected": {
+        "outcome": "no_promise",
+        "reason": "hardship",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-06",
+      "brief": "A",
+      "family": "Amounts",
+      "level": "hard",
+      "title": "Full amount is too much, accepts the floor",
+      "checks": [
+        "agent never asks how much she can pay",
+        "minimum payment offered once, with the note that the rest stays overdue",
+        "promise for 637.50 on Friday 16 October"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 637.5,
+            "date": "2026-10-16"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-07",
+      "brief": "A",
+      "family": "Dates",
+      "level": "hard",
+      "title": "A vague period, then a holiday",
+      "checks": [
+        "agent asks once for the exact day",
+        "the agent does not accept 26 October and offers the next business day",
+        "promise recorded for Tuesday 27 October, inside the early-band deadline"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 540.0,
+            "date": "2026-10-27"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-08",
+      "brief": "A",
+      "family": "Already paid",
+      "level": "medium",
+      "title": "Says she already paid",
+      "checks": [
+        "agent says payments can take one business day to appear",
+        "no promise recorded"
+      ],
+      "expected": {
+        "outcome": "paid",
+        "reason": null,
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-09",
+      "brief": "A",
+      "family": "Restructuring",
+      "level": "medium",
+      "title": "Asks for a new payment plan",
+      "checks": [
+        "transfer_to_agent called with queue restructuring",
+        "agent does not describe a plan of its own",
+        "no promise recorded"
+      ],
+      "expected": {
+        "outcome": "transferred",
+        "reason": "restructuring",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": [
+          {
+            "queue": "restructuring"
+          }
+        ]
+      }
+    },
+    {
+      "id": "PUB-10",
+      "brief": "A",
+      "family": "Tool failure",
+      "level": "hard",
+      "title": "The promise service fails on the first call",
+      "checks": [
+        "exactly one promise in the ledger after the retry",
+        "agent does not say 'recorded' before a successful call"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 365.0,
+            "date": "2026-10-16"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-11",
+      "brief": "B",
+      "family": "Multi-product",
+      "level": "medium",
+      "title": "Three products, one date for all",
+      "checks": [
+        "all three products stated before any ask",
+        "one read-back and one confirmation for all three",
+        "one create_promise per product"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 220.0,
+            "date": "2026-10-16"
+          },
+          {
+            "product_id": "p2",
+            "amount": 640.0,
+            "date": "2026-10-16"
+          },
+          {
+            "product_id": "p3",
+            "amount": 75.0,
+            "date": "2026-10-16"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-12",
+      "brief": "B",
+      "family": "Multi-product",
+      "level": "hard",
+      "title": "Promises one product, refuses two",
+      "checks": [
+        "the phone question is asked again once, the date of birth is not",
+        "exactly one promise, on the credit card",
+        "one 'refused' note for each of the other two products",
+        "two attempts on the personal loan (late band), one on the car loan (early band)"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 510.0,
+            "date": "2026-10-15"
+          }
+        ],
+        "notes": [
+          {
+            "product_id": "p2",
+            "reason": "refused"
+          },
+          {
+            "product_id": "p3",
+            "reason": "refused"
+          }
+        ],
+        "callbacks": [],
+        "transfers": []
+      }
+    },
+    {
+      "id": "PUB-13",
+      "brief": "B",
+      "family": "Multi-product",
+      "level": "hard",
+      "title": "One date for both, but the deadlines differ",
+      "checks": [
+        "credit card recorded on 30 October (early band, inside its deadline)",
+        "loan recorded on its own deadline, 23 October",
+        "the read-back names both dates"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 300.0,
+            "date": "2026-10-30"
+          },
+          {
+            "product_id": "p2",
+            "amount": 900.0,
+            "date": "2026-10-23"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      }
+    }
+  ],
+  "final": {
+    "briefs": 2,
+    "customers_per_brief": 30,
+    "repeats_per_customer": 3,
+    "scored_customers": 60,
+    "call_trials": 180,
+    "partial_credit": false
+  },
+  "evaluation": [
+    "ledger outcome and all records",
+    "transcript policy checks",
+    "honesty checks"
+  ],
+  "coverage_limits": [
+    "13 public cases do not estimate hidden score.",
+    "50 synthetic planning cases are not registered hosted fixtures.",
+    "A correct bank write does not prove policy or conversation-order compliance.",
+    "One green run does not prove repeatability."
+  ],
+  "development_layers": [
+    "deterministic local policy/calendar/state tests",
+    "independent oracle and mutation/metamorphic tests",
+    "hosted public cases, repetitions and speaking-style variants"
+  ],
+  "final_build_budget_seconds": 1800,
+  "simulation_parallelism": 1,
+  "budget_policy": "Use targeted smoke/regression tests within each final build; broad repeated evaluation is development work."
+}

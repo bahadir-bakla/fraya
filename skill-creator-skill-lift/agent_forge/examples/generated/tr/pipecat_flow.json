@@ -1,0 +1,281 @@
+{
+  "initial_node": "greet",
+  "nodes": {
+    "greet": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# greet: Open the call with the required disclosure  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nMerhaba, Örnek Banka'dan arıyorum. Bu görüşme kayıt altına alınmaktadır; tahsilat amacıyla arıyoruz.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Open the call with the required disclosure Say: Merhaba, Örnek Banka'dan arıyorum. Bu görüşme kayıt altına alınmaktadır; tahsilat amacıyla arıyoruz."
+        }
+      ],
+      "functions": [],
+      "transitions": [
+        {
+          "to": "verify",
+          "when": "always"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "verify": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Verify the caller's identity"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_dob",
+            "description": "Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_id_last4",
+            "description": "T.C. kimlik numaranızın son dört hanesini söyler misiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id_last4"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "verify_identity",
+            "description": "Call when dob, id_last4 are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                },
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob",
+                "id_last4"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=3"
+        },
+        {
+          "to": "inform",
+          "when": "event:identity_verified"
+        },
+        {
+          "to": "verify",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "inform": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# inform: Tell the verified caller the overdue amount and due date  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nGecikmiş tutarınız {overdue} TL, son ödeme tarihi {due_date}.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Tell the verified caller the overdue amount and due date Say: Gecikmiş tutarınız {overdue} TL, son ödeme tarihi {due_date}."
+        }
+      ],
+      "functions": [],
+      "transitions": [
+        {
+          "to": "promise",
+          "when": "always"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "promise": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# promise: Collect a payment promise (amount and date) and record it  [§4.2]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## In this step\n- Tutarı sormadan önce kabul edilebilecek en düşük ödeme sözü tutarını söyle. [§4.3]\n\n## Collect\n- `amount` (amount): Ne kadarlık bir ödeme yapabilirsiniz? Read it back and get a yes before using it [§4.2].\n- `pay_date` (date): Ödemeyi hangi tarihte yapabilirsiniz? Read it back and get a yes before using it [§4.2].\n\n## Tool\n- Call `save_promise(amount, pay_date)` once every value is collected.\n- Only call it when amount >= 0.1 × overdue [§4.3].\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Collect a payment promise (amount and date) and record it"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_amount",
+            "description": "Ne kadarlık bir ödeme yapabilirsiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "amount"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_pay_date",
+            "description": "Ödemeyi hangi tarihte yapabilirsiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "pay_date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "pay_date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "save_promise",
+            "description": "Call when amount, pay_date are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number"
+                },
+                "pay_date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "amount",
+                "pay_date"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=3"
+        },
+        {
+          "to": "close",
+          "when": "event:promise_saved"
+        },
+        {
+          "to": "promise",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "close": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# close: Summarise the promise and thank the caller  [§8.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÖdeme sözünüzü {amount} TL, {pay_date} olarak kaydettim. Teşekkür ederim, iyi günler.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Summarise the promise and thank the caller Say: Ödeme sözünüzü {amount} TL, {pay_date} olarak kaydettim. Teşekkür ederim, iyi günler."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "human_agent": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# human_agent: Hand the call to a human agent  [§3.3, §6.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nSizi şimdi bir müşteri temsilcimize aktarıyorum.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Hand the call to a human agent Say: Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    }
+  }
+}

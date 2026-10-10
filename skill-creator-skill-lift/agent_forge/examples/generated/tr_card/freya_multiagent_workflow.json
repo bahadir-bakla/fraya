@@ -1,0 +1,610 @@
+{
+  "$comment": "Multi-agent topology as one Freya workflow. Node types as in freya_workflow.json; the write schema is not public, so this is a mapping, not a verified payload.",
+  "name": "ornek_banka_a_s_kart_hizmetleri_gelen_cagri_pros",
+  "agents": [
+    {
+      "id": "core",
+      "role": "entry",
+      "policySource": [
+        "2.1",
+        "3.1",
+        "5.1",
+        "3.3"
+      ]
+    },
+    {
+      "id": "block_card",
+      "role": "specialist",
+      "policySource": [
+        "4.1"
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "name": "dob",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "id_last4",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "identity_verified",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "intent",
+      "type": "string",
+      "scope": "global",
+      "enum": [
+        "ask_info",
+        "block_card",
+        "none"
+      ]
+    },
+    {
+      "name": "last_call_ok",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "verify_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "overdue",
+      "type": "number",
+      "scope": "input"
+    },
+    {
+      "name": "due_date",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_dob",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_id_last4",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "details",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "block_card_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "reissue_card_done",
+      "type": "boolean",
+      "scope": "global"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "core.greet",
+      "type": "agent",
+      "data": {
+        "prompt": "# greet: Open the call with the required disclosure  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Say on entry\nMerhaba, Örnek Banka müşteri hizmetleri. Bu görüşme kayıt altına alınmaktadır.\n",
+        "collect": [
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "block_card",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.greet__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "block_card",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.close",
+      "type": "agent",
+      "data": {
+        "prompt": "# close: Summarise the promise and thank the caller  [§5.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Say on entry\nÖdeme sözünüzü {amount} TL, {pay_date} olarak kaydettim. Teşekkür ederim, iyi günler.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "5.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "block_card.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card",
+      "type": "agent",
+      "data": {
+        "prompt": "# block_card: Handle: Müşteri kartının çalındığını bildirirse önce kart block_card ile bloke edilir, ardından reissue_card ile yeni kart talep edilir.  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Collect\n- `details` (text): Anlıyorum. Bunun detaylarını söyler misiniz?\n\n## Tool\n- Call `block_card(details)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "4.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__block_card",
+      "type": "function",
+      "data": {
+        "function": "block_card",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "block_card_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "4.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__reissue_card",
+      "type": "function",
+      "data": {
+        "function": "reissue_card",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "reissue_card_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "4.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__reissue_card__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# block_card_declined: Tell the caller the request could not go ahead  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Say on entry\nÜzgünüm, bu işlemi şu an tamamlayamadım.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "4.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Close the call  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Say on entry\nKaydettim, teşekkür ederim. İyi günler.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "4.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3"
+      ],
+      "agent": "block_card"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "core.greet",
+      "policySource": []
+    },
+    {
+      "id": "e2",
+      "source": "core.greet",
+      "target": "core.greet__route",
+      "policySource": []
+    },
+    {
+      "id": "e3",
+      "source": "core.greet__route",
+      "target": "core.verify",
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e4",
+      "source": "core.verify",
+      "target": "core.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e5",
+      "source": "core.verify__verify_identity",
+      "target": "core.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e6",
+      "source": "core.verify__route",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e7",
+      "source": "core.verify__route",
+      "target": "core.close",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e8",
+      "source": "core.verify__route",
+      "target": "core.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e9",
+      "source": "block_card.verify",
+      "target": "block_card.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e10",
+      "source": "block_card.verify__verify_identity",
+      "target": "block_card.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e11",
+      "source": "block_card.verify__route",
+      "target": "block_card.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e12",
+      "source": "block_card.verify__route",
+      "target": "block_card.block_card",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e13",
+      "source": "block_card.verify__route",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e14",
+      "source": "block_card.block_card",
+      "target": "block_card.block_card__block_card",
+      "policySource": []
+    },
+    {
+      "id": "e15",
+      "source": "block_card.block_card__block_card",
+      "target": "block_card.block_card__route",
+      "policySource": []
+    },
+    {
+      "id": "e16",
+      "source": "block_card.block_card__route",
+      "target": "block_card.block_card__reissue_card",
+      "condition": {
+        "variable": "block_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "4.1"
+      ]
+    },
+    {
+      "id": "e17",
+      "source": "block_card.block_card__route",
+      "target": "block_card.block_card_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "4.1"
+      ]
+    },
+    {
+      "id": "e18",
+      "source": "block_card.block_card__reissue_card",
+      "target": "block_card.block_card__reissue_card__route",
+      "policySource": []
+    },
+    {
+      "id": "e19",
+      "source": "block_card.block_card__reissue_card__route",
+      "target": "block_card.done",
+      "condition": {
+        "variable": "reissue_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "4.1"
+      ]
+    },
+    {
+      "id": "e20",
+      "source": "block_card.block_card__reissue_card__route",
+      "target": "block_card.block_card_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "4.1"
+      ]
+    },
+    {
+      "source": "core.greet",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "4.1"
+      ],
+      "handoff": true,
+      "id": "e21"
+    },
+    {
+      "source": "core.verify",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "4.1"
+      ],
+      "handoff": true,
+      "id": "e22"
+    }
+  ]
+}

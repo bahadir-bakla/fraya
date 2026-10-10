@@ -1,0 +1,70 @@
+BUILD THE BUILDER - local setup
+
+Repository: skill-creator-skill-lift/
+Original branch: agent-forge; development branch: codex/builder-contract
+Initial commit: 355f471
+Python: 3.11.9, repository-local .venv
+
+Verified on 2026-10-10:
+  Initial baseline: 195 passed, 2 skipped (optional Pipecat integrations).
+  Updated source/API contract suite: 230 passed, 2 skipped.
+  Freya MCP bridge: 18 passed; 22 tools discovered via real stdio MCP.
+  Live Freya authenticated health/list/dry-run verified. Isolated baseline
+  saved+published and PUB-01 practice simulation started; latest evidence
+  is under local-runs/mcp-smoke/. This is not a generated general builder agent.
+  Three offline example builds exited successfully with zero final failures,
+  no uncovered exam clauses, and no unreachable exported tools.
+  99 generated JSON files parsed; 17 workflow graphs passed check_workflow.
+  That checker validates the legacy emitter format. The v3 compatibility
+  review found that those graphs are not official Freya deployment payloads.
+  The initial CP1254 read error is resolved by Python UTF-8 mode.
+
+From this workspace root:
+  .\forge.ps1 --help
+  .\forge.ps1 build agent_forge/examples/sop_tr_bank_collections.md ../local-runs/tr_bank --quiet
+  .\forge.ps1 build agent_forge/examples/sop_en_insurance_premium.md ../local-runs/en_insurance --quiet
+  .\forge.ps1 build agent_forge/examples/sop_tr_card_inbound.md ../local-runs/tr_card --quiet
+
+The launcher resolves relative SOP/output paths from the cloned repository.
+It enables Python UTF-8 mode for Turkish text on Windows.
+
+Tests (from the cloned repository):
+  .\.venv\Scripts\python.exe -X utf8 -m pytest -c agent_forge/pytest.ini agent_forge/tests voice_contract/tests -q
+
+Recreate dependencies (from the cloned repository):
+  python -m venv .venv
+  .\.venv\Scripts\python.exe -m pip install -r ../requirements-local.txt
+
+Generated evidence: local-runs/{tr_bank,en_insurance,tr_card}/report.json
+Workflow JSON: local-runs/<scenario>/freya_multiagent_workflow.json
+These are offline examples. The v3 kit requires a platform-exported
+<brief>.workflow.json plus builder code and one builder trace per final brief.
+
+Scope and next input:
+  Initial kit v3 received and reviewed on 2026-10-10.
+  Source: competition-v3/build-the-builder/
+  Review and machine-readable contract: analysis/REVIEW_TR.txt and
+  analysis/competition-contract.json
+  Official training Brief A/B, tool API, judging criteria and export process
+  are known. Unseen final briefs and their own OpenAPI files are pending.
+  The source reader now preserves every A/B numbered rule and source lines.
+  The OpenAPI contract reader distinguishes operation names from reason codes.
+  New inspect command emits this inventory. Semantic compiler and the official
+  Freya emitter/independent oracle are still pending; old build remains legacy.
+  The prior 195 passing tests cover the old examples, not the competition kit.
+  Build persona and edge-case evaluations against the official requirements.
+  No live LLM-generated general builder agent or final submission is claimed.
+
+Optional integrations:
+  Pipecat is not installed; its integration tests may be skipped.
+  Claude CLI was not found on PATH. --llm requires a signed-in Claude CLI,
+  or the anthropic package plus ANTHROPIC_API_KEY. Offline builds need no key.
+  z3-solver is installed for static policy checks.
+
+The cloned source now includes reviewed development edits. Private shareable
+source snapshot: fraya/; GitHub https://github.com/bahadir-bakla/fraya.
+Run setup.ps1 then register-mcp.ps1 on a fresh clone. Inject your own API key
+and stable bank team key through environment; credentials are excluded.
+Friend guide/research merge: analysis/guide-merge.txt and literature-review.txt.
+Public/final benchmark and implementation stages: analysis/benchmark-plan.txt.
+MiroFish and Kestra have not been installed or run.

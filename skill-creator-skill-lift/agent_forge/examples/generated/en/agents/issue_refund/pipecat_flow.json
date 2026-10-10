@@ -1,0 +1,363 @@
+{
+  "initial_node": "verify",
+  "nodes": {
+    "verify": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Verify the caller's identity"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_dob",
+            "description": "To verify your identity, could you tell me your date of birth?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_id_last4",
+            "description": "Could you tell me the last four digits of your policy number?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id_last4"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "verify_identity",
+            "description": "Call when dob, id_last4 are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                },
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob",
+                "id_last4"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=2"
+        },
+        {
+          "to": "issue_refund",
+          "when": "event:identity_verified"
+        },
+        {
+          "to": "verify",
+          "when": "tool_failed"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "issue_refund": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# issue_refund: Handle: If the policyholder asks for a refund of a premium already paid, for refunds over $500 the agent must get approval from the team lead with approve_lead and then from the manager with approve_manager; only if every approval is positive is the refund issued with issue_refund. If any approval is declined, the call is transferred to a human agent.  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `request_amount` (amount): What amount are you asking for?\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Handle: If the policyholder asks for a refund of a premium already paid, for refunds over $500 the agent must get approval from the team lead with approve_lead and then from the manager with approve_manager; only if every approval is positive is the refund issued with issue_refund. If any approval is declined, the call is transferred to a human agent."
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_request_amount",
+            "description": "What amount are you asking for?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "request_amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "request_amount"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "issue_refund__approve_lead",
+          "when": "slot:request_amount>500"
+        },
+        {
+          "to": "issue_refund__direct",
+          "when": "slots_filled"
+        },
+        {
+          "to": "human_agent",
+          "when": "intent:escalate"
+        }
+      ]
+    },
+    "issue_refund__approve_lead": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# issue_refund__approve_lead: Run approve_lead  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Tool\n- Call `approve_lead(request_amount)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Run approve_lead"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "approve_lead",
+            "description": "Call when request_amount are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "request_amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "request_amount"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "issue_refund__approve_manager",
+          "when": "event:approve_lead_done"
+        },
+        {
+          "to": "human_agent",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "issue_refund__approve_manager": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# issue_refund__approve_manager: Run approve_manager after approve_lead  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Tool\n- Call `approve_manager(request_amount)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Run approve_manager after approve_lead"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "approve_manager",
+            "description": "Call when request_amount are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "request_amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "request_amount"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "issue_refund__issue_refund",
+          "when": "event:approve_manager_done"
+        },
+        {
+          "to": "human_agent",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "issue_refund__issue_refund": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# issue_refund__issue_refund: Run issue_refund only if approve_lead, approve_manager all succeeded  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Tool\n- Call `issue_refund(request_amount)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Run issue_refund only if approve_lead, approve_manager all succeeded"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "issue_refund",
+            "description": "Call when request_amount are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "request_amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "request_amount"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "done",
+          "when": "event:issue_refund_done"
+        },
+        {
+          "to": "human_agent",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "issue_refund__direct": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# issue_refund__direct: Run issue_refund: no approval needed at this amount  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Tool\n- Call `issue_refund(request_amount)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Run issue_refund: no approval needed at this amount"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "issue_refund",
+            "description": "Call when request_amount are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "request_amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "request_amount"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "done",
+          "when": "event:issue_refund_done"
+        },
+        {
+          "to": "human_agent",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "done": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# done: Close the call  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded that, thank you. Goodbye.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Close the call Say: I have recorded that, thank you. Goodbye."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "human_agent": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# human_agent: Hand the call to a human agent  [§2.3, §5.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI am transferring you to a colleague now.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Hand the call to a human agent Say: I am transferring you to a colleague now."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    }
+  }
+}

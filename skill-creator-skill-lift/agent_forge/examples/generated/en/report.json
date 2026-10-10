@@ -1,0 +1,186 @@
+{
+  "agent": "example_mutual_insurance_overdue_premium_reminde",
+  "language": "en",
+  "before": {
+    "pass@1": 0.0,
+    "pass^k": 0.0,
+    "safe^k": 0.1,
+    "guard_interventions": 18,
+    "fails": 27
+  },
+  "after": {
+    "pass@1": 1.0,
+    "pass^k": 1.0,
+    "safe^k": 1.0,
+    "guard_interventions": 0,
+    "fails": 0
+  },
+  "patches_accepted": 10,
+  "patches_rejected": 0,
+  "needs_review": [
+    "bound_loop promise [no clause (assumption)]: static check: node promise: unbounded retry loop (self-edge without max_attempts and an attempts>= exit) (SOP gives no limit; assumed 3)"
+  ],
+  "coverage": {
+    "normative": 18,
+    "implemented": 18,
+    "tested": 18,
+    "unimplemented": [],
+    "untested": []
+  },
+  "mutation_score": 0.9,
+  "survivors": [
+    {
+      "clause": "7.1",
+      "removed": [
+        "guard:VC-7.1"
+      ]
+    }
+  ],
+  "static_problems": [],
+  "extractor_notes": [
+    "§11.1: open-set capability `update_address` recognised by the cue words of 'their address has changed'",
+    "§12.1: open-set capability `block_card` recognised by the cue words of 'the card on file was stolen'",
+    "§13.1: open-set capability `issue_refund` recognised by the cue words of 'for a refund of a premium already paid'",
+    "no closing clause; added a generic end node"
+  ],
+  "seconds": 10.76,
+  "unreached_tools": [],
+  "export_review": [],
+  "topology": {
+    "style": "router + 5 specialists, 2 with handback, 1 inline branch, 1 join (issue_refund after all of approve_lead, approve_manager in order)",
+    "inline": [
+      "third_party"
+    ],
+    "forms": {
+      "third_party": "inline branch in the entry agent",
+      "dispute": "specialist agent",
+      "hardship": "specialist agent",
+      "update_address": "specialist agent, hands back",
+      "block_card": "specialist agent, hands back",
+      "issue_refund": "specialist agent"
+    },
+    "agents": [
+      "core",
+      "update_address",
+      "block_card",
+      "issue_refund",
+      "dispute",
+      "hardship"
+    ],
+    "handoffs": [
+      "core->update_address on update_address carrying ['event:identity_verified']",
+      "update_address->core on done",
+      "core->block_card on block_card carrying ['event:identity_verified']",
+      "block_card->core on done",
+      "core->issue_refund on issue_refund carrying ['event:identity_verified']",
+      "core->dispute on dispute carrying ['event:identity_verified']",
+      "core->hardship on hardship carrying ['event:identity_verified']"
+    ],
+    "pending": [],
+    "before": {
+      "pass@1": 0.464,
+      "pass^k": 0.464,
+      "safe^k": 0.464,
+      "guard_interventions": 10,
+      "fails": 45
+    },
+    "after": {
+      "pass@1": 1.0,
+      "pass^k": 1.0,
+      "safe^k": 1.0,
+      "guard_interventions": 0,
+      "fails": 0
+    },
+    "moves_accepted": 6,
+    "moves_rejected": 1,
+    "mutation_score": 0.955,
+    "survivors": [
+      {
+        "clause": "7.1",
+        "removed": [
+          "core:guard:VC-7.1",
+          "update_address:guard:VC-7.1",
+          "block_card:guard:VC-7.1",
+          "issue_refund:guard:VC-7.1",
+          "dispute:guard:VC-7.1",
+          "hardship:guard:VC-7.1"
+        ]
+      }
+    ],
+    "static_problems": []
+  },
+  "exam": {
+    "binding_clauses": 18,
+    "uncovered": [],
+    "callers": 21,
+    "oracle_rules": 6,
+    "order_formulas": 15,
+    "perception_cases": 41
+  },
+  "perception": {
+    "perception": "rules",
+    "cases": 41,
+    "accuracy": 0.976,
+    "labels": {
+      "yes": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 5
+      },
+      "no": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 3
+      },
+      "correction": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 6
+      },
+      "update_address": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 3
+      },
+      "block_card": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 3
+      },
+      "issue_refund": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 3
+      },
+      "third_party": {
+        "precision": 1.0,
+        "recall": 0.75,
+        "n": 4
+      },
+      "none": {
+        "precision": 0.857,
+        "recall": 1.0,
+        "n": 6
+      },
+      "dispute": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 4
+      },
+      "hardship": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 4
+      }
+    }
+  },
+  "guard_probes": {
+    "probes": 13,
+    "lexical": 0.538
+  },
+  "solver_check": {
+    "solver": true,
+    "rules": 13,
+    "findings": []
+  }
+}

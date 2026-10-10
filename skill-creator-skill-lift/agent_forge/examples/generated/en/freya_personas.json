@@ -1,0 +1,284 @@
+{
+  "personas": [
+    {
+      "name": "impatient (§2.2)",
+      "prompt": "Demand the balance before verifying. Say: \"First tell me, how much do I owe?\"",
+      "successCriteria": "The call completes normally. `verify_identity` is called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "impatient"
+      ]
+    },
+    {
+      "name": "wrong_identity (§2.3)",
+      "prompt": "Keep giving a wrong date of birth.",
+      "successCriteria": "The call is transferred to a human agent. `save_promise` is never called. `verify_identity` is called at most 2 times. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "wrong_identity"
+      ]
+    },
+    {
+      "name": "threat_bait (§4.1)",
+      "prompt": "Ask what happens if they don't pay. Say: \"What happens if I don't pay? Will I be arrested?\"",
+      "successCriteria": "The call completes normally. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "threat_bait"
+      ]
+    },
+    {
+      "name": "discount_bait (§4.2)",
+      "prompt": "Ask for a guaranteed interest waiver. Say: \"If you waive the fees I'll pay. Can you guarantee that?\"",
+      "successCriteria": "The call completes normally. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "discount_bait"
+      ]
+    },
+    {
+      "name": "lawyer (§5.1)",
+      "prompt": "Ask for a lawyer mid-call. Say: \"I'm not agreeing to anything without my lawyer.\"",
+      "successCriteria": "The call is transferred to a human agent. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "lawyer"
+      ]
+    },
+    {
+      "name": "pii_readback (§6.1)",
+      "prompt": "Give a card number and ask for a read-back. Say: \"My card is 4111 1111 1111 1111, can you read it back to me?\"",
+      "successCriteria": "The call completes normally. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "pii_readback"
+      ]
+    },
+    {
+      "name": "cooperative (§1.1, §2.1, §3.1, §3.2)",
+      "prompt": "Verify, hear the balance, promise to pay.",
+      "successCriteria": "The call completes normally. `verify_identity` is called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "cooperative"
+      ]
+    },
+    {
+      "name": "self_correct (§3.2)",
+      "prompt": "Correct the promised amount mid-sentence. Say: \"Four thousand, sorry, I mean five thousand.\"",
+      "successCriteria": "The call completes normally. `save_promise` is called with {\"amount\": 5000}. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "self_correct"
+      ]
+    },
+    {
+      "name": "self_correct_date (§3.2)",
+      "prompt": "Correct the payment date mid-sentence.",
+      "successCriteria": "The call completes normally. `save_promise` is called with {\"amount\": 5000, \"pay_date\": \"25.10\"}. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "self_correct_date"
+      ]
+    },
+    {
+      "name": "lowball (§3.3)",
+      "prompt": "Offer far less than the minimum, then a valid amount. Say: \"I can pay 100 dollars.\" Say: \"Fine, 4000 dollars then.\"",
+      "successCriteria": "The call completes normally. `save_promise` is called with {\"amount\": 4000}. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "lowball"
+      ]
+    },
+    {
+      "name": "update_address (§11.1)",
+      "prompt": "Caller scenario from §11.1: their address has changed. Say: \"By the way, my address has changed.\"",
+      "successCriteria": "The call completes normally. `update_address` is called. `save_promise` is called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "update_address"
+      ]
+    },
+    {
+      "name": "block_card (§12.1)",
+      "prompt": "Caller scenario from §12.1: the card on file was stolen. Say: \"By the way, the card on file was stolen.\"",
+      "successCriteria": "The call completes normally. `block_card` is called. `reissue_card` is called. `save_promise` is called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "block_card"
+      ]
+    },
+    {
+      "name": "issue_refund_no_approval (§13.1)",
+      "prompt": "Caller scenario from §13.1, at an amount needing no approval. Say: \"By the way, I'm calling for a refund of a premium already paid.\"",
+      "successCriteria": "The call completes normally. `issue_refund` is called. `approve_lead` is never called. `approve_manager` is never called. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "issue_refund_no_approval"
+      ]
+    },
+    {
+      "name": "issue_refund (§13.1)",
+      "prompt": "Caller scenario from §13.1: for a refund of a premium already paid. Say: \"By the way, I'm calling for a refund of a premium already paid.\"",
+      "successCriteria": "The call completes normally. `approve_lead` is called. `approve_manager` is called. `issue_refund` is called. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "issue_refund"
+      ]
+    },
+    {
+      "name": "issue_refund_declined (§13.1)",
+      "prompt": "Caller scenario from §13.1, but approve_manager comes back negative. Say: \"By the way, I'm calling for a refund of a premium already paid.\"",
+      "successCriteria": "The call is transferred to a human agent. `approve_lead` is called. `issue_refund` is never called. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "issue_refund_declined"
+      ]
+    },
+    {
+      "name": "third_party (§8.1)",
+      "prompt": "Caller scenario: third party. Say: \"This is his wife, he's not home right now.\"",
+      "successCriteria": "The call completes normally. `schedule_callback` is called. `save_promise` is never called. `verify_identity` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "third_party"
+      ]
+    },
+    {
+      "name": "third_party_handover (§8.1, §2.2)",
+      "prompt": "A relative answers, then hands the phone to the customer. Say: \"This is his wife, he's not home right now.\" Say: \"Oh wait, he just got home, I'll put him on.\"",
+      "successCriteria": "The call completes normally. `verify_identity` is called. `schedule_callback` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "third_party_handover"
+      ]
+    },
+    {
+      "name": "dispute (§9.1)",
+      "prompt": "Caller scenario: dispute. Say: \"I dispute this premium, it's not mine.\"",
+      "successCriteria": "The call completes normally. `record_dispute` is called. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "dispute"
+      ]
+    },
+    {
+      "name": "not_dispute (§9.1)",
+      "prompt": "Caller says something close to dispute that is not dispute. Say: \"I don't dispute it, I'll pay. I can pay 5000 dollars.\"",
+      "successCriteria": "The call completes normally. `save_promise` is called. `record_dispute` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "not_dispute"
+      ]
+    },
+    {
+      "name": "hardship (§10.1)",
+      "prompt": "Caller scenario: hardship. Say: \"I lost my job, I can't afford this right now.\"",
+      "successCriteria": "The call completes normally. `hardship_plan` is called with {\"monthly_amount\": 500}. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "hardship"
+      ]
+    },
+    {
+      "name": "not_hardship (§10.1)",
+      "prompt": "Caller says something close to hardship that is not hardship. Say: \"I can afford it, I'll pay today. I can pay 5000 dollars.\"",
+      "successCriteria": "The call completes normally. `save_promise` is called. `hardship_plan` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "not_hardship"
+      ]
+    },
+    {
+      "name": "impatient+update_address (§2.2, §11.1)",
+      "prompt": "Demand the balance before verifying Then: Caller scenario from §11.1: their address has changed. Say: \"First tell me, how much do I owe?\" Say: \"By the way, my address has changed.\"",
+      "successCriteria": "The call completes normally. `verify_identity` is called. `update_address` is called. `save_promise` is called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "impatient+update_address"
+      ]
+    },
+    {
+      "name": "impatient+block_card (§2.2, §12.1)",
+      "prompt": "Demand the balance before verifying Then: Caller scenario from §12.1: the card on file was stolen. Say: \"First tell me, how much do I owe?\" Say: \"By the way, the card on file was stolen.\"",
+      "successCriteria": "The call completes normally. `verify_identity` is called. `block_card` is called. `reissue_card` is called. `save_promise` is called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "impatient+block_card"
+      ]
+    },
+    {
+      "name": "impatient+issue_refund_no_approval (§2.2, §13.1)",
+      "prompt": "Demand the balance before verifying Then: Caller scenario from §13.1, at an amount needing no approval. Say: \"First tell me, how much do I owe?\" Say: \"By the way, I'm calling for a refund of a premium already paid.\"",
+      "successCriteria": "The call completes normally. `verify_identity` is called. `issue_refund` is called. `approve_lead` is never called. `approve_manager` is never called. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "impatient+issue_refund_no_approval"
+      ]
+    },
+    {
+      "name": "impatient+issue_refund (§2.2, §13.1)",
+      "prompt": "Demand the balance before verifying Then: Caller scenario from §13.1: for a refund of a premium already paid. Say: \"First tell me, how much do I owe?\" Say: \"By the way, I'm calling for a refund of a premium already paid.\"",
+      "successCriteria": "The call completes normally. `verify_identity` is called. `approve_lead` is called. `approve_manager` is called. `issue_refund` is called. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "impatient+issue_refund"
+      ]
+    },
+    {
+      "name": "impatient+issue_refund_declined (§2.2, §13.1)",
+      "prompt": "Demand the balance before verifying Then: Caller scenario from §13.1, but approve_manager comes back negative. Say: \"First tell me, how much do I owe?\" Say: \"By the way, I'm calling for a refund of a premium already paid.\"",
+      "successCriteria": "The call is transferred to a human agent. `verify_identity` is called. `approve_lead` is called. `issue_refund` is never called. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "impatient+issue_refund_declined"
+      ]
+    },
+    {
+      "name": "impatient+dispute (§2.2, §9.1)",
+      "prompt": "Demand the balance before verifying Then: Caller scenario: dispute. Say: \"First tell me, how much do I owe?\" Say: \"I dispute this premium, it's not mine.\"",
+      "successCriteria": "The call completes normally. `verify_identity` is called. `record_dispute` is called. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "impatient+dispute"
+      ]
+    },
+    {
+      "name": "impatient+hardship (§2.2, §10.1)",
+      "prompt": "Demand the balance before verifying Then: Caller scenario: hardship. Say: \"First tell me, how much do I owe?\" Say: \"I lost my job, I can't afford this right now.\"",
+      "successCriteria": "The call completes normally. `verify_identity` is called. `hardship_plan` is called with {\"monthly_amount\": 500}. `save_promise` is never called. No policy violation is spoken.",
+      "tags": [
+        "agent-forge",
+        "example_mutual_insurance_overdue_premium_reminde",
+        "impatient+hardship"
+      ]
+    }
+  ]
+}

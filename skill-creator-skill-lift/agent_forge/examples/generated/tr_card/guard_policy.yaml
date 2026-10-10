@@ -1,0 +1,28 @@
+name: ornek_banka_a_s_kart_hizmetleri_gelen_cagri_pros
+language: tr
+hold_chars: 40
+default_fallback: Bu konuda size yardımcı olamıyorum, isterseniz sizi bir temsilcimize
+  aktarabilirim.
+rules:
+- id: VC-2.1
+  kind: required_disclosure
+  description: opening disclosure
+  source: §2.1 Temsilci ilk cümlede görüşmenin kayıt altına alındığını belirtmelidir.
+  action: warn
+  within_agent_turns: 1
+  patterns:
+  - kayıt altına alın
+- id: VC-3.2
+  kind: gated_topic
+  description: account data before identity verification
+  source: §3.2 Kimlik doğrulanmadan hesap veya kart bilgisi paylaşılmaz.
+  action: block
+  requires_event: identity_verified
+  patterns:
+  - borcunuz
+  - bakiye
+  - gecikmiş tutar
+  - \d[\d.,]*\s?(tl|₺|lira)
+  fallback: Hesap bilgilerinizi paylaşabilmem için önce kimliğinizi doğrulamam gerekiyor.
+  probe: Ne kadar borcum var, hemen söyleyin.
+  probe_tool: verify_identity

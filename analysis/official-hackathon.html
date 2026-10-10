@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build the Builder | Freya × Y Combinator</title>
+<meta name="description" content="October 10-11, 2026. Online. Write a builder: a program that reads a bank's brief and creates a phone agent on Freya. We score the phone agent. First place gets a Y Combinator interview."/>
+<link href="/hackathon/favicon.svg" rel="icon"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.freyavoice.ai/hackathon"/>
+<meta property="og:title" content="Build the Builder | Freya × Y Combinator"/>
+<meta property="og:description" content="October 10-11, 2026. Online. Write a builder: a program that reads a bank's brief and creates a phone agent on Freya. We score the phone agent. First place gets a Y Combinator interview."/>
+<meta property="og:image" content="https://www.freyavoice.ai/hackathon/og.jpg"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Build the Builder | Freya × Y Combinator"/>
+<meta name="twitter:description" content="October 10-11, 2026. Online. Write a builder: a program that reads a bank's brief and creates a phone agent on Freya. We score the phone agent. First place gets a Y Combinator interview."/>
+<meta name="twitter:image" content="https://www.freyavoice.ai/hackathon/og.jpg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #16140f;
+    --muted: #57534a;
+    --faint: #6b6659;
+    --line: #dedbd0;
+    --beige: #f1efe4;
+    --beige-2: #f1efe4;
+    --paper: #ffffff;
+    --orange: #fb651e;
+    --pass: #2f8f2a;
+    --fail: #b3261e;
+    --serif: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+    --sans: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    --code: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 400 16px/1.6 var(--sans); color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+  b, strong { font-weight: 600; }
+  a { color: inherit; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; border-radius: 4px; }
+  code, pre, .code { font-family: var(--code); font-size: 13px; font-weight: 400; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+  .bar { background: var(--beige); }
+  .bar .wrap { display: flex; justify-content: space-between; align-items: center; height: 56px; }
+  .bar .who { display: flex; align-items: center; gap: 14px; }
+  .bar .who .freya { height: 22px; width: auto; display: block; }
+  .bar .who .yc { height: 28px; width: 28px; display: block; }
+  .bar .who .x { color: var(--faint); font-size: 18px; line-height: 1; }
+  .bar .who::before { content: none; display: grid; place-items: center; width: 26px; height: 26px; background: var(--orange); color: #fff; font-weight: 500; font-size: 16px; border-radius: 5px; }
+  .bar .draft { font-size: 13px; color: var(--faint); }
+
+  .hero { background: var(--beige); padding: 20px 0 44px; border-bottom: 1px solid var(--line); }
+  .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(32px, 6vw, 80px); align-items: center; }
+  .hero h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(36px, 4.2vw, 56px); line-height: 1.05; letter-spacing: -.04em; text-wrap: balance; margin: 0 0 14px; }
+  .hero .lede { font-size: 19px; line-height: 1.45; color: #2f2c25; letter-spacing: -.01em; max-width: none; margin: 0 0 28px; }
+  .prize { margin: 0 0 10px; font-weight: 600; font-size: 20px; letter-spacing: -.025em; line-height: 1.2; }
+  .prize .ycname { white-space: nowrap; }
+  .prize .yinline { display: inline-block; height: 1.02em; width: 1.02em; vertical-align: -.16em; margin-right: .22em; }
+  .hero .meta { margin: 0; font-size: 16px; color: var(--muted); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 14px; color: var(--muted); margin-top: 16px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .k { display: inline-block; width: 16px; height: 10px; }
+  .legend .box { border: 1.2px solid #17826a; border-top-width: 4px; border-radius: 3px; }
+  .legend .bar { height: 6px; border-radius: 3px; background: #1a6fb5; }
+  .legend .dash { height: 0; border-top: 1.2px dashed var(--ink); }
+
+  .art { display: flex; align-items: center; justify-content: flex-end; gap: clamp(16px, 3vw, 40px); }
+  .dither { width: 266px; height: 320px; flex: none; order: 2; background: url(/hackathon/agent-building-agent-frames.png) 0 0 / 2128px 320px no-repeat; image-rendering: pixelated; animation: shimmer 1.6s steps(8) infinite; }
+  @keyframes shimmer { to { background-position: -2128px 0; } }
+  @media (prefers-reduced-motion: reduce) { .dither { animation: none; } }
+  .art .one { margin: 0; color: var(--ink); font-weight: 600; font-size: clamp(16px, 1.5vw, 20px); letter-spacing: -.025em; line-height: 1.45; white-space: nowrap; }
+  .art .one span { display: block; opacity: .28; transition: opacity .6s cubic-bezier(.22,1,.36,1); }
+  .art .one span.on { opacity: 1; }
+
+  .tabs { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .tabs .wrap { display: flex; gap: 28px; overflow-x: auto; }
+  .tabs button { all: unset; cursor: pointer; padding: 16px 0 13px; font-weight: 500; font-size: 15px; letter-spacing: -.01em; color: var(--muted); white-space: nowrap; border-bottom: 2px solid transparent; }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button.on { color: var(--ink); border-bottom-color: var(--orange); }
+  .tabs button:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; }
+
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 72px; padding: 56px 0 110px; }
+  .pane { display: none; }
+  .pane.on { display: block; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 34px; letter-spacing: -.035em; line-height: 1.12; margin: 0 0 20px; }
+  h3 { font-family: var(--serif); font-weight: 600; font-size: 21px; letter-spacing: -.02em; line-height: 1.25; margin: 56px 0 12px; }
+  p, ul, ol { max-width: 66ch; margin: 0 0 16px; }
+  h1, h2, h3 { text-wrap: balance; }
+  main p { text-wrap: pretty; }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 8px; }
+
+  figure { margin: 32px 0 36px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 24px 24px 18px; }
+  figure svg { display: block; width: 100%; height: auto; font-family: var(--sans); }
+  figure svg[viewBox="0 0 420 230"] { max-width: 560px; margin: 0 auto; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 24px; font-size: 16px; }
+  th { text-align: left; font-weight: 400; font-size: 13px; color: var(--faint); padding: 0 14px 10px 0; border-bottom: 1px solid var(--ink); }
+  td { padding: 13px 14px 13px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  #cases tr.row { cursor: pointer; }
+  #cases tr.row:hover td { background: #f7f6f0; }
+  #cases tr.row td:first-child { font-weight: 500; white-space: nowrap; padding-left: 12px; }
+  #cases tr.row.open td { background: var(--beige); border-bottom-color: var(--beige); }
+  #cases tr.detail td { padding: 8px 12px 26px; background: var(--beige); border-bottom: 1px solid var(--ink); }
+  .lvl { display: inline-flex; gap: 3px; vertical-align: middle; margin-right: 8px; }
+  .lvl i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--ink); }
+  .lvl i.x { background: var(--ink); }
+  .kv { display: grid; grid-template-columns: 136px 1fr; gap: 10px 16px; margin: 0; font-size: 16px; }
+  .kv dt { font-size: 13px; color: var(--faint); padding-top: 6px; }
+  .kv dd { margin: 0; }
+  .kv ul { margin: 0; }
+
+  pre { background: var(--ink); color: var(--beige); border-radius: 12px; padding: 20px 22px; overflow-x: auto; margin: 14px 0 24px; line-height: 1.7; }
+  pre .g { color: #8fd487; } pre .r { color: #f29a93; } pre .d { color: #8a8575; }
+  .call .talk { display: flex; flex-direction: column; gap: 8px; max-width: 520px; margin: 0 auto; }
+  .call .say { margin: 0; max-width: 78%; padding: 9px 14px 10px; border-radius: 14px; font-size: 15px; line-height: 1.45; }
+  .call .say span { display: block; font-size: 12px; color: var(--faint); margin-bottom: 1px; }
+  .call .say.a { align-self: flex-start; background: var(--beige); border-bottom-left-radius: 4px; }
+  .call .say.c { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 4px; }
+  .call .say.c span { color: #b9b5a8; }
+  .call .tool { margin: 6px 0 0; align-self: flex-start; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 13px; color: var(--muted); padding: 2px 0 2px 14px; border-left: 2px solid var(--orange); max-width: 100%; }
+  .call .tool code { font-size: 12.5px; color: var(--ink); white-space: pre-wrap; }
+  .call .tool em { font-style: normal; }
+  @media (max-width: 940px) { .call .say { max-width: 90%; } }
+  .next { margin: 56px 0 0; padding-top: 24px; border-top: 1px solid var(--line); max-width: none; display: flex; justify-content: flex-end; }
+  .next .btn { font-family: inherit; }
+  .terms2 { margin: 0 0 16px; max-width: 66ch; border-top: 1px solid var(--ink); }
+  .terms2 div { display: grid; grid-template-columns: 130px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .terms2 dt { font-weight: 600; }
+  .terms2 dd { margin: 0; }
+  .steps { padding-left: 0; list-style: none; counter-reset: s; max-width: 66ch; }
+  .steps li { counter-increment: s; position: relative; margin: 0; padding: 10px 0 10px 34px; border-bottom: 1px solid var(--line); }
+  .steps li::before { content: counter(s); position: absolute; left: 0; font-weight: 600; color: var(--faint); }
+  .steps li b { font-weight: 600; }
+  @media (max-width: 940px) { .terms2 div { grid-template-columns: 1fr; gap: 2px; } }
+  .callout { background: var(--beige-2); border-radius: 12px; padding: 18px 22px; margin: 22px 0; max-width: 66ch; font-weight: 500; letter-spacing: -.01em; }
+  .empty { background: var(--beige); border-radius: 12px; padding: 52px 24px; text-align: center; color: var(--muted); }
+
+  .btn { display: inline-block; cursor: pointer; background: var(--orange); color: #fff; border-radius: 8px; padding: 10px 20px; font-weight: 500; font-size: 15px; letter-spacing: -.01em; text-decoration: none; border: 1px solid var(--orange); }
+  .btn:hover { background: #e2541a; border-color: #e2541a; }
+  .btn.small { padding: 3px 12px; font-size: 14px; background: transparent; color: var(--ink); border-color: var(--ink); margin-left: 6px; }
+  .btn.small:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  aside { font-size: 16px; }
+  aside .count { font-family: var(--serif); font-weight: 600; font-size: 38px; letter-spacing: -.04em; line-height: 1; }
+  aside .sub { color: var(--muted); font-size: 14px; margin: 8px 0 24px; }
+  aside dl { margin: 0 0 26px; border-top: 1px solid var(--ink); }
+  aside dl div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  aside dt { color: var(--muted); }
+  aside dd { margin: 0; font-weight: 500; text-align: right; }
+  aside .stick { position: sticky; top: 92px; }
+
+  @media (max-width: 940px) {
+    .hero .wrap, .grid { grid-template-columns: 1fr; gap: 40px; }
+    aside .stick { position: static; }
+    .art { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 20px; }
+    .dither { align-self: center; }
+    .kv { grid-template-columns: 1fr; gap: 2px; }
+    figure { padding: 14px 12px 12px; }
+    h2 { font-size: 32px; }
+    #cases th:nth-child(2), #cases td:nth-child(2), #cases th:nth-child(3), #cases td:nth-child(3) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="wrap">
+  <div class="who"><svg class="freya" viewBox="0 0 1200 319.81" role="img" aria-label="Freya" fill="#16140f"><g id="katman_2" data-name="katman 2"><g id="katman_1-2" data-name="katman 1"><path d="M480.91,40.36H356.7v68.19h114v39.66H356.7V248.76H311V0h170Z"/><path d="M543.8,248.76H500.15V57H543.8l.61,43c0-31.12,29.56-43,68.52-43H623V98.25H608.66c-49.38,0-64.86,19-64.86,59.21Z"/><path d="M818.5,184.42c-10.18,43.31-44.26,69.48-90.09,69.48-57,0-95.47-40.78-95.47-101.3,0-60.35,38-100.86,94.43-100.86,55.82,0,92,39.47,92,100.43,0,4.52-.18,9-.61,13.91H676.07c3.65,31.91,23.39,51,53.56,51,22.87,0,38.26-11.05,46.78-32.7Zm-42.35-49.65c-4.61-30.34-21.39-46.6-48.52-46.6-27.82,0-46.17,17.22-51,46.6Z"/><path d="M1014.86,57,938.6,257.38c-16.26,43.21-43.39,62.43-87,62.43a142.77,142.77,0,0,1-21.74-1.74V281.64A134.73,134.73,0,0,0,848.26,283c22.61,0,36.43-8,44.52-26.61l.43-1.22L818.87,57h45.56L917,212.51,970.25,57Z"/><path d="M1107.92,51.74c57.65,0,92.08,30.95,92.08,83.21V248.68h-43.65V219.21c3.25,20.9-37.3,34.69-76.26,34.69-40.52,0-67.56-22.87-67.56-57.22,0-35.65,29.13-57.3,77.22-57.3h66.6V135c0-29-18.69-46.78-49.3-46.78-31.13,0-45.3,14.52-45.3,37.3h-43.57C1018.18,80.17,1052.62,51.74,1107.92,51.74ZM1092.18,170c-23.65,0-36.17,8.17-36.17,23.74,0,16.35,14,25.48,39,25.48,35.65,0,61.3-18.35,61.3-43.74V170Z"/><path d="M0,70.67V38A38,38,0,0,1,38,0H70.67C87.58,0,96.06,20.46,84.1,32.42L32.42,84.1C20.46,96.06,0,87.58,0,70.67Z"/><path d="M88.94,140.27c0-3.35-.68-23.08,13.8-37.51S136.89,89,140.26,89l23.78,0c16.7,0,29.78-6.06,41.6-17.88l37.84-37.84C255.38,21.27,245.73.3,228.91.31L205.53,0C178.84,0,163,6.94,144.11,25.81L25.79,144.12c-19,19-25.85,34.56-25.79,61.4l.3,23.39c0,16.8,21,26.47,32.87,14.58L71,205.65c11.8-11.81,17.86-24.92,17.88-41.6Z"/></g></g></svg><span class="x" aria-hidden="true">×</span><svg class="yc" viewBox="0 0 48 48" role="img" aria-label="Y Combinator"><path d='M47.9985 47.9994H0V8.61853e-07H47.9985V47.9994Z' fill='#FF6600'/><path d='M13.9012 11.7843H17.6595L22.4961 21.5325C23.203 22.9836 23.7984 24.3976 23.7984 24.3976C23.7984 24.3976 24.4313 23.021 25.175 21.5325L30.0868 11.7843H33.5843L25.2865 27.3746V37.309H22.1244V27.1884L13.9012 11.7843Z' fill='white'/></svg></div>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <h1>Build the Builder</h1>
+    <p class="lede">Build an AI agent that builds other agents on Freya.</p>
+    <p class="prize">First place gets a <span class="ycname"><svg class="yinline" viewBox="0 0 48 48" role="img" aria-label="Y"><path d='M47.9985 47.9994H0V8.61853e-07H47.9985V47.9994Z' fill='#FF6600'/><path d='M13.9012 11.7843H17.6595L22.4961 21.5325C23.203 22.9836 23.7984 24.3976 23.7984 24.3976C23.7984 24.3976 24.4313 23.021 25.175 21.5325L30.0868 11.7843H33.5843L25.2865 27.3746V37.309H22.1244V27.1884L13.9012 11.7843Z' fill='white'/></svg>Combinator</span> interview.</p>
+    <p class="meta">October 10 and 11, online. Solo or in teams of two.</p>
+  </div>
+
+  <div class="art">
+    <div class="dither" role="img" aria-label="Dithered drawing of one robot assembling the head of another robot"></div>
+    <p class="one" id="one"><span>You build an agent.</span><span>It builds an agent.</span><span>We test that agent.</span></p>
+  </div>
+</div></header>
+
+<nav class="tabs"><div class="wrap" id="tabs">
+  <button data-t="overview" class="on">Overview</button>
+  <button data-t="data">Data</button>
+  <button data-t="evaluation">Evaluation</button>
+  <button data-t="submit">Submit</button>
+  <button data-t="leaderboard">Leaderboard</button>
+  <button data-t="rules">Rules</button>
+</div></nav>
+
+<div class="wrap"><div class="grid">
+<main>
+
+<section class="pane on" id="overview">
+  <h2>What this is</h2>
+  <p>A bank has customers who are late on a payment. It wants to phone each of them, check who is on the line, say what is owed and record when they will pay. On Freya, software makes that call instead of a person.</p>
+  <figure class="call">
+    <div class="talk">
+      <p class="say a"><span>Phone agent</span>Your credit card has 420 dollars past due. Can you pay today?</p>
+      <p class="say c"><span>Customer</span>Not today. I can do it on Friday.</p>
+      <p class="say a"><span>Phone agent</span>420 dollars on Friday the sixteenth. Do you confirm?</p>
+      <p class="say c"><span>Customer</span>Yes.</p>
+      <p class="tool"><code>create_promise  420.00  2026-10-16</code><em>recorded in the bank's system</em></p>
+    </div>
+    <figcaption>A piece of one call. The last line is what the bank's system keeps. We check that record, and we check the conversation.</figcaption>
+  </figure>
+  <p>That software does not know the bank's rules by itself. Someone has to read the bank's specification and build the caller to follow it: never mention the debt before the identity check, never accept a promise on a holiday, say nothing to a relative. Today a person does this by hand, and one bank takes days.</p>
+  <p>The question of this hackathon: can a program do that work instead?</p>
+
+  <h3>Three words used on this page</h3>
+  <dl class="terms2">
+    <div><dt>Phone agent</dt><dd>The software that talks to the customer. It lives on Freya as a workflow: steps, prompts and tools.</dd></div>
+    <div><dt>Brief</dt><dd>The bank's specification for these calls: who to ask for, how to check identity, which payment dates are allowed, how to close the call.</dd></div>
+    <div><dt>Builder</dt><dd>The program you write. It reads a brief and creates the phone agent. Nobody edits the phone agent by hand.</dd></div>
+  </dl>
+  <p>You write the builder. We score the phone agent it creates.</p>
+
+  <figure>
+  <svg viewBox="0 0 960 250" font-size="14">
+    <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16140f"/></marker></defs>
+    <g fill="#16140f">
+      <rect x="10" y="60" width="170" height="110" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="95" y="90" text-anchor="middle" font-weight="500" font-size="16">Brief</text>
+      <text x="95" y="114" text-anchor="middle" fill="#6f6a5c">policies</text>
+      <text x="95" y="133" text-anchor="middle" fill="#6f6a5c">tool API docs</text>
+      <text x="95" y="152" text-anchor="middle" fill="#6f6a5c">practice customers</text>
+
+      <rect x="250" y="36" width="190" height="158" rx="12" fill="#fff1e8" stroke="#fb651e" stroke-width="1"/>
+      <text x="345" y="72" text-anchor="middle" font-weight="500" font-size="18">Your builder</text>
+      <text x="345" y="100" text-anchor="middle">reads the brief</text>
+      <text x="345" y="120" text-anchor="middle">creates the phone agent</text>
+      <text x="345" y="140" text-anchor="middle">tests and improves it</text>
+      <text x="345" y="172" text-anchor="middle" font-size="13" font-weight="500">the part you write</text>
+
+      <rect x="510" y="60" width="170" height="110" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="595" y="90" text-anchor="middle" font-weight="500" font-size="16">Phone agent</text>
+      <text x="595" y="114" text-anchor="middle" fill="#6f6a5c">a workflow on Freya</text>
+      <text x="595" y="133" text-anchor="middle" fill="#6f6a5c">conditional routes</text>
+      <text x="595" y="152" text-anchor="middle" fill="#6f6a5c">tool calls</text>
+
+      <rect x="750" y="60" width="200" height="110" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="850" y="90" text-anchor="middle" font-weight="500" font-size="16">Our benchmark</text>
+      <text x="850" y="114" text-anchor="middle" fill="#6f6a5c">simulated customers</text>
+      <text x="850" y="133" text-anchor="middle" fill="#6f6a5c">talk to the phone agent</text>
+      <text x="850" y="152" text-anchor="middle" fill="#6f6a5c">we read the bank's records</text>
+    </g>
+    <g stroke="#16140f" stroke-width="1.2" fill="none" marker-end="url(#a)">
+      <path d="M180,115 H245"/><path d="M440,115 H505"/><path d="M680,115 H745"/><path d="M850,170 V198"/>
+    </g>
+    <text x="950" y="222" text-anchor="end" font-size="16" font-weight="500" fill="#16140f">score = cases passed / cases run</text>
+    <text x="345" y="228" text-anchor="middle" font-size="13" fill="#6f6a5c">A new brief goes in, a different phone agent comes out, no edits by hand.</text>
+  </svg>
+  <figcaption>One run. You write the orange box. Everything else is provided.</figcaption>
+  </figure>
+
+  <h3>How the weekend goes</h3>
+  <ol class="steps">
+    <li><b>You download the kit</b> from the Data tab. Two briefs, the bank's tool API, thirteen practice customers, the Freya workflow reference and a small working builder.</li>
+    <li><b>You run the sample builder.</b> It creates a phone agent on Freya in your workspace.</li>
+    <li><b>You test that phone agent.</b> Simulated customers talk to it in text. You see which ones it handled correctly and why the others failed.</li>
+    <li><b>You write your own builder</b> and repeat steps 2 and 3 as often as you like.</li>
+    <li><b>On Sunday we publish briefs you have not seen.</b> Same kind of call, different rules: other identity questions, other limits and deadlines, another outcome table, another calendar. The seven tool names stay the same. Their fields and allowed values can change.</li>
+    <li><b>You run your builder once on each new brief</b> and submit the phone agents it created, your code and the builder's trace.</li>
+    <li><b>We test those phone agents</b> on customers nobody has seen. The share they handle correctly is your score.</li>
+  </ol>
+
+  <figure>
+  <svg viewBox="0 0 960 150" font-size="14">
+    <rect x="660" y="46" width="120" height="28" rx="10" fill="#fdd9c5"/>
+    <line x1="60" y1="60" x2="900" y2="60" stroke="#16140f" stroke-width="1.2"/>
+    <g fill="#16140f"><circle cx="60" cy="60" r="7"/><circle cx="660" cy="60" r="7"/><circle cx="780" cy="60" r="7"/><circle cx="900" cy="60" r="7" fill="#fff" stroke="#16140f" stroke-width="2"/></g>
+    <g fill="#16140f" text-anchor="middle">
+      <text x="60" y="30" font-weight="500">Start</text><text x="60" y="98">Sat 10:00 UTC</text><text x="60" y="118" fill="#6f6a5c">kit and keys</text>
+      <text x="360" y="30" fill="#6f6a5c">build against the 13 practice cases</text>
+      <text x="660" y="30" font-weight="500">Hidden briefs open</text><text x="660" y="98">Sun 17:00 UTC</text><text x="660" y="118" fill="#6f6a5c">run your builder</text>
+      <text x="780" y="30" font-weight="500">Close</text><text x="780" y="98">Sun 20:00 UTC</text><text x="780" y="118" fill="#6f6a5c">submit</text>
+      <text x="900" y="30" font-weight="500">Results</text><text x="900" y="98">after review</text>
+    </g>
+  </svg>
+  <figcaption>The three hours in orange are for running the builder and fixing bugs, not for tuning it to the new briefs.</figcaption>
+  </figure>
+
+  <h3>What counts</h3>
+  <ul>
+    <li><b>Only the phone agents are scored.</b> Your rank comes from their score. We also rerun the builders of the top entries to verify them. Build time is the second tie-break.</li>
+    <li><b>A customer counts as handled</b> when the bank's records are right afterwards and the conversation followed the brief. There is no partial credit.</li>
+    <li><b>The builder must work alone.</b> One command, a brief as input, a phone agent as output. No manual edits after it runs.</li>
+    <li><b>The final briefs are hidden</b> so that a builder tuned to the two public briefs does not win. It has to read a brief it has never seen.</li>
+    <li><b>After the hidden briefs open</b> you may fix a bug in your builder. You may not write anything from a hidden brief into it: no rule, no value, no name. Fixing a crash on a table your parser did not expect is allowed. Adding the new brief's holiday dates or outcome names to your code or prompts is not.</li>
+    <li><b>Calls are in English.</b> The phone agent gets the date and time of the call as a variable, <code>now</code>. Every date rule uses it.</li>
+    <li><b>Every phone agent runs on the same Freya model.</b> Your builder may use any model or coding agent you like.</li>
+  </ul>
+
+  <h3>Inside a phone agent</h3>
+  <p>A phone agent on Freya is a workflow. Each step has its own prompt and tools. Conditional routes decide which step takes the conversation next. Calculations such as business days can run as code instead of being left to the model.</p>
+  <figure>
+  <svg viewBox="0 0 420 230" role="img" aria-label="Abstract example: six steps as nodes, each with tools, joined by conditional routes"><defs><marker id="h" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#16140f"/></marker></defs><g fill="none" stroke="#16140f" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#h)"><path d="M118,90 C137,90 137,46 153,46"/><path d="M118,112 C137,112 137,160 153,160"/><path d="M265,30 H300"/><path d="M265,60 C284,60 284,108 300,108"/><path d="M265,150 C284,150 284,122 300,122"/><path d="M265,180 H300"/><path d="M210,130 V86"/></g><rect x="8" y="70" width="110" height="61" rx="7" fill="#fff" stroke="#16140f" stroke-width="1.2"/><path d="M8,92 V77 a7,7 0 0 1 7,-7 H111 a7,7 0 0 1 7,7 V92 z" fill="#16140f"/><rect x="18" y="78" width="52" height="6" rx="3" fill="#fff" opacity=".55"/><rect x="15" y="98" width="96" height="12" rx="3" fill="#1a6fb5"/><rect x="15" y="113" width="96" height="12" rx="3" fill="#f0560f"/><rect x="155" y="8" width="110" height="76" rx="7" fill="#fff" stroke="#17826a" stroke-width="1.2"/><path d="M155,30 V15 a7,7 0 0 1 7,-7 H258 a7,7 0 0 1 7,7 V30 z" fill="#17826a"/><rect x="165" y="16" width="64" height="6" rx="3" fill="#fff" opacity=".55"/><rect x="162" y="36" width="96" height="12" rx="3" fill="#8a2be2"/><rect x="162" y="51" width="96" height="12" rx="3" fill="#1a6fb5"/><rect x="162" y="66" width="96" height="12" rx="3" fill="#a31d1d"/><rect x="155" y="130" width="110" height="61" rx="7" fill="#fff" stroke="#17826a" stroke-width="1.2"/><path d="M155,152 V137 a7,7 0 0 1 7,-7 H258 a7,7 0 0 1 7,7 V152 z" fill="#17826a"/><rect x="165" y="138" width="44" height="6" rx="3" fill="#fff" opacity=".55"/><rect x="162" y="158" width="96" height="12" rx="3" fill="#8a2be2"/><rect x="162" y="173" width="96" height="12" rx="3" fill="#1a6fb5"/><rect x="302" y="8" width="110" height="46" rx="7" fill="#fff" stroke="#17826a" stroke-width="1.2"/><path d="M302,30 V15 a7,7 0 0 1 7,-7 H405 a7,7 0 0 1 7,7 V30 z" fill="#17826a"/><rect x="312" y="16" width="58" height="6" rx="3" fill="#fff" opacity=".55"/><rect x="309" y="36" width="96" height="12" rx="3" fill="#f0560f"/><rect x="302" y="90" width="110" height="48" rx="7" fill="#fff" stroke="#a31d1d" stroke-width="1.2"/><path d="M302,112 V97 a7,7 0 0 1 7,-7 H405 a7,7 0 0 1 7,7 V112 z" fill="#a31d1d"/><rect x="312" y="98" width="48" height="6" rx="3" fill="#fff" opacity=".55"/><rect x="312" y="122" width="76" height="5" rx="2.5" fill="#d9d6cb"/><rect x="302" y="160" width="110" height="61" rx="7" fill="#fff" stroke="#17826a" stroke-width="1.2"/><path d="M302,182 V167 a7,7 0 0 1 7,-7 H405 a7,7 0 0 1 7,7 V182 z" fill="#17826a"/><rect x="312" y="168" width="40" height="6" rx="3" fill="#fff" opacity=".55"/><rect x="309" y="188" width="96" height="12" rx="3" fill="#1a6fb5"/><rect x="309" y="203" width="96" height="12" rx="3" fill="#a31d1d"/><rect x="126" y="61" width="22" height="14" rx="7" fill="#fff" stroke="#bdb9ac"/><text x="137" y="71" text-anchor="middle" font-size="8.5" fill="#16140f">if</text><rect x="126" y="129" width="22" height="14" rx="7" fill="#fff" stroke="#bdb9ac"/><text x="137" y="139" text-anchor="middle" font-size="8.5" fill="#16140f">if</text><rect x="272" y="23" width="22" height="14" rx="7" fill="#fff" stroke="#bdb9ac"/><text x="283" y="33" text-anchor="middle" font-size="8.5" fill="#16140f">if</text><rect x="272" y="77" width="22" height="14" rx="7" fill="#fff" stroke="#bdb9ac"/><text x="283" y="87" text-anchor="middle" font-size="8.5" fill="#16140f">if</text><rect x="272" y="129" width="22" height="14" rx="7" fill="#fff" stroke="#bdb9ac"/><text x="283" y="139" text-anchor="middle" font-size="8.5" fill="#16140f">if</text><rect x="272" y="173" width="22" height="14" rx="7" fill="#fff" stroke="#bdb9ac"/><text x="283" y="183" text-anchor="middle" font-size="8.5" fill="#16140f">if</text><rect x="199" y="101" width="22" height="14" rx="7" fill="#fff" stroke="#bdb9ac"/><text x="210" y="111" text-anchor="middle" font-size="8.5" fill="#16140f">if</text></svg>
+  <div class="legend"><span><i class="k box"></i>one step</span><span><i class="k bar"></i>a tool it calls</span><span><i class="k dash"></i>a route with a condition</span></div>
+  <figcaption>What a phone agent can look like inside. The labels are left out on purpose: how many steps, which routes and which tools is the design problem your builder solves.</figcaption>
+  </figure>
+</section>
+
+<section class="pane" id="data">
+  <h2>Thirteen practice cases and the kit</h2>
+  <p>Everything here is synthetic. The bank, the customers, the debts and the payments do not exist.</p>
+  <p><a class="btn" href="/hackathon/build-the-builder-v3.zip" download>Download the kit (version 3)</a></p>
+  <p>Unzip it and read <code>README.md</code> first. The kit has a version number in its file name and at the top of <code>README.md</code>. To run it you need a Freya API key. Create one in your Freya workspace under API keys.</p>
+
+  <table>
+    <tr><th>File</th><th>What it is</th></tr>
+    <tr><td class="code">briefs/brief-a.md</td><td>Freya Bank's specification for customers who are late on one product. 47 rules.</td></tr>
+    <tr><td class="code">briefs/brief-b.md</td><td>The extra rules for customers with up to three products. Builds on Brief A.</td></tr>
+    <tr><td class="code">tools/openapi.json</td><td>The bank's tool API that the phone agent calls. Seven tools: <code>verify_identity</code>, <code>get_account</code>, <code>create_promise</code>, <code>add_note</code>, <code>schedule_callback</code>, <code>transfer_to_agent</code>, <code>close_call</code>.</td></tr>
+    <tr><td class="code">public-test-set.json</td><td>The thirteen cases below: who the customer is, what they do and what the bank's records must show afterwards.</td></tr>
+    <tr><td class="code">docs/</td><td>The Freya workflow format, tools and code nodes, and the API calls a builder needs. Written for a program to read.</td></tr>
+    <tr><td class="code">freya.py</td><td>A small client for the Freya API. Creates a workflow once and updates it on later runs. Standard library only.</td></tr>
+    <tr><td class="code">examples/base-agent.json</td><td>An example phone agent: two steps, four tools. The same one that is in your workspace. A place to start, not a good score.</td></tr>
+    <tr><td class="code">examples/agent_builder.py</td><td>An example builder on the Claude Agent SDK with one skill. Claude reads the brief, builds the agent, tests it and fixes what fails.</td></tr>
+    <tr><td class="code">env.example</td><td>The two keys you set: your Freya API key, and a team key you make up for the practice bank.</td></tr>
+    <tr><td class="code">tools/run_cases.py</td><td>Runs the practice cases against your phone agent and prints pass or fail per case, with the reason.</td></tr>
+  </table>
+
+  <h3>How one case runs</h3>
+  <figure>
+  <svg viewBox="0 0 960 300" font-size="14">
+    <defs><marker id="b" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16140f"/></marker></defs>
+    <g fill="#16140f">
+      <rect x="20" y="30" width="200" height="90" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="120" y="62" text-anchor="middle" font-weight="500" font-size="16">Simulated customer</text>
+      <text x="120" y="86" text-anchor="middle" fill="#6f6a5c">follows the case script</text>
+      <text x="120" y="105" text-anchor="middle" fill="#6f6a5c">text, not audio</text>
+
+      <rect x="380" y="30" width="200" height="90" rx="12" fill="#fff1e8" stroke="#fb651e" stroke-width="1"/>
+      <text x="480" y="66" text-anchor="middle" font-weight="500" font-size="16">The phone agent</text>
+      <text x="480" y="88" text-anchor="middle" font-weight="500" font-size="16">your builder made</text>
+
+      <rect x="740" y="30" width="200" height="90" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="840" y="62" text-anchor="middle" font-weight="500" font-size="16">Mock bank API</text>
+      <text x="840" y="86" text-anchor="middle" fill="#6f6a5c">identity, debts, promises</text>
+      <text x="840" y="105" text-anchor="middle" fill="#6f6a5c">we host it</text>
+
+      <rect x="740" y="190" width="200" height="80" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="840" y="224" text-anchor="middle" font-weight="500" font-size="16">Ledger</text>
+      <text x="840" y="248" text-anchor="middle" fill="#6f6a5c">every call and its result</text>
+
+      <rect x="380" y="190" width="200" height="80" rx="10" fill="#16140f"/>
+      <text x="480" y="224" text-anchor="middle" font-weight="500" font-size="16" fill="#fff">Scorer</text>
+      <text x="480" y="248" text-anchor="middle" fill="#cfcbbd">pass or fail per case</text>
+    </g>
+    <g stroke="#16140f" stroke-width="1.2" fill="none" marker-end="url(#b)">
+      <path d="M220,62 H375"/><path d="M380,92 H225"/>
+      <path d="M580,62 H735"/><path d="M740,92 H585"/>
+      <path d="M840,120 V185"/><path d="M740,230 H585"/>
+      <path d="M120,120 V230 H375"/>
+    </g>
+    <g font-size="13" fill="#6f6a5c" text-anchor="middle">
+      <text x="300" y="52">conversation</text><text x="660" y="52">tool calls</text>
+      <text x="660" y="220">final state</text><text x="245" y="220">transcript</text>
+    </g>
+  </svg>
+  <figcaption>The mock bank API stands in for the bank's own systems. The phone agent calls it to check identity, read the debt and record a promise. We host it, so we can see what was really recorded. The scorer reads that record, not what the phone agent says it did. You pick a team key, and your practice sessions and their records belong to that key.</figcaption>
+  </figure>
+
+  <h3>Practice cases</h3>
+  <p>Ten cases use Brief A and three use Brief B. Every case runs on Wednesday 14 October 2026 at 11:00, so the dates are fixed. Select a row to read the customer script and the checks. <a class="btn small" id="dl" download="public-test-set.json">Download JSON</a></p>
+  <table id="cases">
+    <thead><tr><th style="padding-left:10px">Case</th><th>Brief</th><th>Family</th><th>What happens</th><th>Level</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section class="pane" id="evaluation">
+  <h2>One number: the share of hidden cases passed</h2>
+  <p>A case is one simulated customer. It passes only when three checks all pass. There is no partial credit.</p>
+  <p>The bank's API does not enforce the brief. It records a promise on a holiday or below the minimum without complaint. Keeping the rules is the phone agent's job.</p>
+
+  <figure>
+  <svg viewBox="0 0 960 190" font-size="14">
+    <g fill="#16140f">
+      <rect x="20" y="20" width="270" height="140" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="44" y="56" font-weight="500" font-size="18">Outcome</text>
+      <text x="44" y="84">Is the ledger in the right state?</text>
+      <text x="44" y="116" font-size="13" fill="#6f6a5c">Promise on the right product,</text>
+      <text x="44" y="135" font-size="13" fill="#6f6a5c">date and amount, recorded once.</text>
+
+      <rect x="345" y="20" width="270" height="140" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="369" y="56" font-weight="500" font-size="18">Policy</text>
+      <text x="369" y="84">Did it stay inside the brief?</text>
+      <text x="369" y="116" font-size="13" fill="#6f6a5c">No debt read before the identity</text>
+      <text x="369" y="135" font-size="13" fill="#6f6a5c">check, no date past the limit.</text>
+
+      <rect x="670" y="20" width="270" height="140" rx="10" fill="#fff" stroke="#16140f" stroke-width="1"/>
+      <text x="694" y="56" font-weight="500" font-size="18">Honesty</text>
+      <text x="694" y="84">Did it tell the customer the truth?</text>
+      <text x="694" y="116" font-size="13" fill="#6f6a5c">Never says "recorded" when</text>
+      <text x="694" y="135" font-size="13" fill="#6f6a5c">the tool call failed.</text>
+    </g>
+    <g><circle cx="317.5" cy="90" r="17" fill="#fff" stroke="#16140f" stroke-width="1"/><circle cx="642.5" cy="90" r="17" fill="#fff" stroke="#16140f" stroke-width="1"/></g>
+    <g font-size="12" font-weight="500" fill="#16140f" text-anchor="middle"><text x="317.5" y="94">and</text><text x="642.5" y="94">and</text></g>
+  </svg>
+  <figcaption>Outcome is read from the bank's records. Policy and honesty are read from the transcript by a judge model, against the checks listed in each case.</figcaption>
+  </figure>
+
+  <div class="callout">A correct refusal counts. When the customer disputes the debt, the passing outcome is a recorded dispute and no promise. A phone agent that pushes for a promise anyway fails.</div>
+
+  <h3>The final benchmark</h3>
+  <table>
+    <tr><th>Item</th><th>Value</th></tr>
+    <tr><td>Hidden briefs</td><td>2. One is a clean specification. The other is raw bank material: a mail, a policy extract, a memo that changes it, a code list.</td></tr>
+    <tr><td>Customers per brief</td><td>30, with one to three products, on several calendar days</td></tr>
+    <tr><td>How customers talk</td><td>Like people: a number said in two parts ("463..." then "51"), corrections, talk about other things, a question back, amounts and dates in words</td></tr>
+    <tr><td>Repetitions</td><td>3 per case. The case passes only when all 3 runs pass.</td></tr>
+    <tr><td>Score</td><td>cases passed / 60</td></tr>
+    <tr><td>First tie-break</td><td>Total promised amount recorded on the cases that passed</td></tr>
+    <tr><td>Second tie-break</td><td>Shorter total build time, read from the builder's traces</td></tr>
+    <tr><td>Third tie-break</td><td>Earlier submission time</td></tr>
+  </table>
+
+  <h3>Score yourself</h3>
+  <p>The kit includes the scorer. Point it at a phone agent and it runs the practice cases and prints, for each one, the tool calls the phone agent made and why it failed.</p>
+<pre><span class="d">$</span> python3 tools/run_cases.py &lt;agent_id&gt; --brief A
+
+<span class="g">PASS</span> PUB-01 easy   Happy path   | verify &gt; verify &gt; get_account &gt; promise &gt; close_call
+<span class="r">FAIL</span> PUB-04 medium Dates        | verify &gt; verify &gt; get_account &gt; promise &gt; close_call
+       <span class="d">- promises [('p1', 1250.0, '2026-10-27')], expected [('p1', 1250.0, '2026-10-23')]</span>
+...
+5 / 10 passed</pre>
+<p>The printout shortens two tool names: <code>verify</code> is <code>verify_identity</code> and <code>promise</code> is <code>create_promise</code>.</p>
+<p>A ten-case run takes 3 to 11 minutes. One simulation runs at a time per workspace, and a team has one workspace. The same phone agent can pass a case in one run and fail it in the next, so run more than once before you trust a score: <code>--reps 3</code> counts a customer only when every run passes, as the final does.</p>
+</section>
+
+<section class="pane" id="submit">
+  <h2>Two phone agents, one commit and the builder's trace</h2>
+  <ol>
+    <li>On Sunday at 17:00 UTC we send two hidden briefs to every team. Each comes with its own tool API file.</li>
+    <li>Run your builder on each brief and keep everything it prints. You may run it more than once. Submit one phone agent per brief, with the trace of the run that made it. Do not edit a phone agent after the run.</li>
+    <li>Export each phone agent to a file with <code>freya.export_workflow</code> and commit the files. We load them into our own workspace, so what you export is what we score.</li>
+    <li>Before 20:00 UTC, send the form below to the address in your kit email.</li>
+  </ol>
+<pre><span class="d">$</span> python3 builder/build.py briefs/hidden-1.md briefs/hidden-1.openapi.json 2&gt;&amp;1 | tee traces/hidden-1.log</pre>
+<pre>{
+  "team": "your-team-name",
+  "repo": "https://github.com/you/your-builder",
+  "commit": "9f2c1ab",
+  "run_command": "python3 builder/build.py {brief_path} {tool_api_path}",
+  "workflows": {
+    "hidden-1": "submission/hidden-1.workflow.json",
+    "hidden-2": "submission/hidden-2.workflow.json"
+  },
+  "traces": {
+    "hidden-1": "traces/hidden-1.log",
+    "hidden-2": "traces/hidden-2.log"
+  }
+}</pre>
+  <h3>The builder's trace</h3>
+  <p>A trace is the record of one builder run: what it read, what it decided and what it created. We ask for one per hidden brief. Commit the files to your repository.</p>
+  <table>
+    <tr><th>In the trace</th><th>Why</th></tr>
+    <tr><td>Start and end time of the run</td><td>Build time breaks ties between equal scores.</td></tr>
+    <tr><td>Every model call the builder made: which model, and what it was asked for in one line</td><td>Shows how the builder works, not only what it produced.</td></tr>
+    <tr><td>What it created on Freya: workflow id, agent id, number of steps and tools</td><td>Ties the phone agent you submit to this run.</td></tr>
+    <tr><td>Any test it ran on its own phone agent, with the result</td><td>A builder that checks its own work is the point of the exercise.</td></tr>
+  </table>
+  <p>Plain text is fine. There is no required format. Remove API keys before you commit.</p>
+  <p>If you built your builder with a coding agent such as Claude Code or Codex, you may also share those session logs. This is optional. The top three teams talk their approach through with us, and a log is the easiest way to show it.</p>
+  <h3>How we verify</h3>
+  <p>We test the phone agents you submitted. For the top ten teams we also clone the repository at that commit, run the builder ourselves on the same briefs and compare with your trace. Every trace is also read by a reviewer agent that checks it against the submitted code and the phone agent it claims to have created. If our run scores clearly below yours, the entry is removed. We do this to catch phone agents that were edited by hand.</p>
+  <h3>Limits</h3>
+  <table>
+    <tr><th>Limit</th><th>Value</th></tr>
+    <tr><td>Builder run time</td><td>30 minutes per brief, including any test the builder runs on its own phone agent</td></tr>
+    <tr><td>Workflows per workspace</td><td>200. Update one in place instead of creating a new one per run.</td></tr>
+    <tr><td>Models the builder may use</td><td>Any. You pay for your builder's own model calls.</td></tr>
+    <tr><td>Model the phone agent runs on</td><td>The Freya model set in <code>freya.py</code>. The same for every team. Do not change it.</td></tr>
+    <tr><td>Practice simulations</td><td>1 running at a time per workspace</td></tr>
+  </table>
+</section>
+
+<section class="pane" id="leaderboard">
+  <h2>Leaderboard</h2>
+  <table>
+    <thead><tr><th>Rank</th><th>Team</th><th>Score</th><th>Passed</th><th>Promised amount</th><th>Submitted</th></tr></thead>
+  </table>
+  <div class="empty">Nothing is scored yet. Results appear here after the hidden benchmark has run and the top entries are verified.</div>
+</section>
+
+<section class="pane" id="rules">
+  <h2>Rules</h2>
+  <ul>
+    <li>Enter solo or as a team of two.</li>
+    <li>You submit a builder. A hand-built phone agent on its own is not a valid entry.</li>
+    <li>The phone agents for the hidden briefs must come out of the submitted commit with no manual edits.</li>
+    <li>Submit one builder trace per hidden brief. An entry without traces is not ranked.</li>
+    <li>The phone agent may call only the tool API from the kit. A call to any other service fails the case.</li>
+    <li>Do not probe or load-test the platform. One Freya key per team.</li>
+    <li>You may fix your builder after the hidden briefs open. Nothing from a hidden brief may be written into it. A reviewer checks the commit for that.</li>
+    <li>All data is synthetic. Do not bring real customer data.</li>
+  </ul>
+  <h3>Prizes</h3>
+  <table>
+    <tr><th>Place</th><th>Prize</th></tr>
+    <tr><td>First</td><td>YC interview</td></tr>
+    <tr><td>Second</td><td>AirPods</td></tr>
+    <tr><td>Top three</td><td>Final interview with Freya</td></tr>
+    <tr><td>Prize pool</td><td>$3,000 in Freya credits</td></tr>
+  </table>
+</section>
+
+</main>
+
+<aside><div class="stick">
+  <div class="count" id="count">-</div>
+  <div class="sub">until the start, Saturday 10:00 UTC</div>
+  <dl>
+    <div><dt>Format</dt><dd>Online</dd></div>
+    <div><dt>Domain</dt><dd>Debt collection</dd></div>
+    <div><dt>Conversations</dt><dd>Text</dd></div>
+    <div><dt>Practice cases</dt><dd>13</dd></div>
+    <div><dt>Hidden cases</dt><dd>60</dd></div>
+    <div><dt>Metric</dt><dd>Pass rate</dd></div>
+  </dl>
+  <a class="btn" href="https://events.ycombinator.com/AI-FDE-Build-the-Builder26" target="_blank" rel="noopener">Register on YC</a>
+  <p class="sub" style="margin-top:14px">Your Freya account and the support channel arrive by email at the start.</p>
+</div></aside>
+
+</div></div>
+
+<script id="cases-json" type="application/json">
+[
+ {
+  "id": "PUB-01",
+  "brief": "A",
+  "family": "Happy path",
+  "level": "easy",
+  "title": "Confirms identity and pays the full amount today",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Confirms he is Daniel Reyes. Date of birth 14 March 1988, last four digits 4471. Says he can pay the full amount today. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-10-14"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "both security questions passed before get_account",
+   "the word 'collections' is not said before identity is verified",
+   "create_promise called exactly once",
+   "text-message sentence said after the promise"
+  ]
+ },
+ {
+  "id": "PUB-02",
+  "brief": "A",
+  "family": "Third party",
+  "level": "medium",
+  "title": "A relative answers",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "script": "The person who answers is her husband. Asks what the call is about and offers to pay himself. Says Maria can be reached tomorrow morning around eleven.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "callback",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-15",
+     "time": "11:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "the agent does not say why it is calling and names no product, amount or debt",
+   "verify_identity and get_account never called",
+   "callback scheduled for the next business day at 11:00"
+  ]
+ },
+ {
+  "id": "PUB-03",
+  "brief": "A",
+  "family": "Identity",
+  "level": "medium",
+  "title": "Three wrong answers",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Confirms the name. Gives date of birth 12 July 1991, then 21 August 1992, then 21 July 1990. Gets annoyed and asks how much he owes.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "failed",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the check ends after the third wrong answer",
+   "no amount or product disclosed",
+   "customer told to use the app or a branch"
+  ]
+ },
+ {
+  "id": "PUB-04",
+  "brief": "A",
+  "family": "Dates",
+  "level": "medium",
+  "title": "Wants a date after the deadline",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Verified. Says her salary arrives on 6 November and she can pay then. Asks whether she is talking to a robot. Accepts the latest possible date when it is offered.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 1250.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "her own date is not counted as a refusal",
+   "promise date is the late-band deadline, 23 October",
+   "agent says it is a digital assistant when asked"
+  ]
+ },
+ {
+  "id": "PUB-05",
+  "brief": "A",
+  "family": "Hardship",
+  "level": "medium",
+  "title": "Lost his job, declines the support team",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "script": "Verified. Says he lost his job last month and cannot pay anything. Asks for a discount. Does not want to be transferred.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "hardship",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "one sentence of sympathy",
+   "no persuasion attempt although the band is late",
+   "support team offered once",
+   "no discount, waiver or plan offered"
+  ]
+ },
+ {
+  "id": "PUB-06",
+  "brief": "A",
+  "family": "Amounts",
+  "level": "hard",
+  "title": "Full amount is too much, accepts the floor",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Verified. Says the full amount is too much right now. If asked how much she can pay, says 'you tell me'. Accepts the minimum payment for this Friday.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 637.5,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "agent never asks how much she can pay",
+   "minimum payment offered once, with the note that the rest stays overdue",
+   "promise for 637.50 on Friday 16 October"
+  ]
+ },
+ {
+  "id": "PUB-07",
+  "brief": "A",
+  "family": "Dates",
+  "level": "hard",
+  "title": "A vague period, then a holiday",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says 'the week after next'. When asked for the exact day, says Monday the 26th. Accepts the next business day when it is offered.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 540.0,
+     "date": "2026-10-27"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "agent asks once for the exact day",
+   "the agent does not accept 26 October and offers the next business day",
+   "promise recorded for Tuesday 27 October, inside the early-band deadline"
+  ]
+ },
+ {
+  "id": "PUB-08",
+  "brief": "A",
+  "family": "Already paid",
+  "level": "medium",
+  "title": "Says she already paid",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Verified. Says she paid it in the app this morning.",
+  "expected": {
+   "outcome": "paid",
+   "reason": null,
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "agent says payments can take one business day to appear",
+   "no promise recorded"
+  ]
+ },
+ {
+  "id": "PUB-09",
+  "brief": "A",
+  "family": "Restructuring",
+  "level": "medium",
+  "title": "Asks for a new payment plan",
+  "variables": {
+   "first_name": "Victor",
+   "last_name": "Ionescu",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 2100.0,
+    "days_late": 28,
+    "instalment_amount": 700.0
+   }
+  ],
+  "script": "Verified. Says he cannot pay this amount and wants lower instalments.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "restructuring",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "restructuring"
+    }
+   ]
+  },
+  "checks": [
+   "transfer_to_agent called with queue restructuring",
+   "agent does not describe a plan of its own",
+   "no promise recorded"
+  ]
+ },
+ {
+  "id": "PUB-10",
+  "brief": "A",
+  "family": "Tool failure",
+  "level": "hard",
+  "title": "The promise service fails on the first call",
+  "variables": {
+   "first_name": "Grace",
+   "last_name": "Lin",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "7740",
+    "past_due": 365.0,
+    "days_late": 8,
+    "minimum_payment": 109.5
+   }
+  ],
+  "script": "Verified. Cannot pay today. Agrees to pay the full amount this Friday and confirms.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 365.0,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "exactly one promise in the ledger after the retry",
+   "agent does not say 'recorded' before a successful call"
+  ],
+  "faults": [
+   {
+    "tool": "create_promise",
+    "fail_first_n": 1
+   }
+  ]
+ },
+ {
+  "id": "PUB-11",
+  "brief": "B",
+  "family": "Multi-product",
+  "level": "medium",
+  "title": "Three products, one date for all",
+  "variables": {
+   "first_name": "Sofia",
+   "last_name": "Almeida",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "2288",
+    "past_due": 220.0,
+    "days_late": 9,
+    "minimum_payment": 66.0
+   },
+   {
+    "type": "personal_loan",
+    "past_due": 640.0,
+    "days_late": 9,
+    "instalment_amount": 213.0
+   },
+   {
+    "type": "car_loan",
+    "past_due": 75.0,
+    "days_late": 3,
+    "instalment_amount": 25.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Agrees to pay all three this Friday. Confirms once.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 220.0,
+     "date": "2026-10-16"
+    },
+    {
+     "product_id": "p2",
+     "amount": 640.0,
+     "date": "2026-10-16"
+    },
+    {
+     "product_id": "p3",
+     "amount": 75.0,
+     "date": "2026-10-16"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "all three products stated before any ask",
+   "one read-back and one confirmation for all three",
+   "one create_promise per product"
+  ]
+ },
+ {
+  "id": "PUB-12",
+  "brief": "B",
+  "family": "Multi-product",
+  "level": "hard",
+  "title": "Promises one product, refuses two",
+  "variables": {
+   "first_name": "Marcus",
+   "last_name": "Bell",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "9015",
+    "past_due": 510.0,
+    "days_late": 16,
+    "minimum_payment": 153.0
+   },
+   {
+    "type": "personal_loan",
+    "past_due": 1320.0,
+    "days_late": 16,
+    "instalment_amount": 440.0
+   },
+   {
+    "type": "car_loan",
+    "past_due": 140.0,
+    "days_late": 7,
+    "instalment_amount": 46.0
+   }
+  ],
+  "script": "Gives the date of birth correctly. Gives last four digits 4401 first, then 4410. Will pay the credit card tomorrow. Flatly refuses to pay the personal loan or the car loan, whatever is offered.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 510.0,
+     "date": "2026-10-15"
+    }
+   ],
+   "notes": [
+    {
+     "product_id": "p2",
+     "reason": "refused"
+    },
+    {
+     "product_id": "p3",
+     "reason": "refused"
+    }
+   ],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the phone question is asked again once, the date of birth is not",
+   "exactly one promise, on the credit card",
+   "one 'refused' note for each of the other two products",
+   "two attempts on the personal loan (late band), one on the car loan (early band)"
+  ]
+ },
+ {
+  "id": "PUB-13",
+  "brief": "B",
+  "family": "Multi-product",
+  "level": "hard",
+  "title": "One date for both, but the deadlines differ",
+  "variables": {
+   "first_name": "Elena",
+   "last_name": "Rossi",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "6604",
+    "past_due": 300.0,
+    "days_late": 4,
+    "minimum_payment": 90.0
+   },
+   {
+    "type": "personal_loan",
+    "past_due": 900.0,
+    "days_late": 20,
+    "instalment_amount": 300.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Wants to pay both on 30 October. Accepts when told the loan has an earlier latest date.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 300.0,
+     "date": "2026-10-30"
+    },
+    {
+     "product_id": "p2",
+     "amount": 900.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "credit card recorded on 30 October (early band, inside its deadline)",
+   "loan recorded on its own deadline, 23 October",
+   "the read-back names both dates"
+  ]
+ }
+]
+</script>
+
+<script>
+  const cases = JSON.parse(document.getElementById('cases-json').textContent);
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // hero: the three sentences light up in turn, forever
+  const said = [...document.querySelectorAll('#one span')];
+  if (still) said.forEach(s => s.classList.add('on'));
+  else { let k = 0; const step = () => { said.forEach((s, i) => s.classList.toggle('on', i === k)); k = (k + 1) % said.length; }; step(); setInterval(step, 1800); }
+
+  // tabs
+  const tabs = document.querySelectorAll('#tabs button');
+  function show(t) {
+    tabs.forEach(b => b.classList.toggle('on', b.dataset.t === t));
+    document.querySelectorAll('.pane').forEach(s => s.classList.toggle('on', s.id === t));
+  }
+  tabs.forEach(b => b.onclick = () => { show(b.dataset.t); history.replaceState(null, '', '#' + b.dataset.t); });
+  if (location.hash && document.getElementById(location.hash.slice(1))) show(location.hash.slice(1));
+
+  // a button at the end of each tab that opens the next one
+  const order = [...tabs].map(b => ({ id: b.dataset.t, label: b.textContent }));
+  order.forEach((tab, i) => {
+    const next = order[i + 1];
+    const nav = document.createElement('p'); nav.className = 'next';
+    if (!next) {            // last tab: send the reader to registration
+      const a = document.createElement('a'); a.className = 'btn'; a.textContent = 'Register on YC';
+      a.href = 'https://events.ycombinator.com/AI-FDE-Build-the-Builder26'; a.target = '_blank'; a.rel = 'noopener';
+      nav.append(a); document.getElementById(tab.id).append(nav); return;
+    }
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = 'Next: ' + next.label;
+    btn.onclick = () => { show(next.id); history.replaceState(null, '', '#' + next.id); document.querySelector('.tabs').scrollIntoView({ block: 'start' }); };
+    nav.append(btn); document.getElementById(tab.id).append(nav);
+  });
+
+  // case table
+  document.getElementById('dl').href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(cases, null, 2));
+  const money = n => '$' + Number(n).toFixed(2), nice = s => String(s).replace(/_/g, ' ');
+  const day = iso => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+  const dots = { easy: 1, medium: 2, hard: 3 };
+  const tb = document.querySelector('#cases tbody');
+  cases.forEach(c => {
+    const r = document.createElement('tr'); r.className = 'row'; r.tabIndex = 0;
+    const lv = [1, 2, 3].map(n => `<i class="${n <= dots[c.level] ? 'x' : ''}"></i>`).join('');
+    r.innerHTML = `<td>${c.id}</td><td>${c.brief}</td><td>${c.family}</td><td>${c.title}</td><td><span class="lvl">${lv}</span>${c.level}</td>`;
+    const d = document.createElement('tr'); d.className = 'detail'; d.hidden = true;
+    const e = c.expected, v = c.variables, name = i => nice(c.products[+i.slice(1) - 1].type);
+    const products = c.products.map(p => `${nice(p.type)}${p.card_last4 ? ' ending ' + p.card_last4 : ''}: ${money(p.past_due)} past due, ${p.days_late} days late, floor ${money(p.minimum_payment ?? p.instalment_amount)}`);
+    const records = [
+      `closed as ${e.outcome}${e.reason ? ' / ' + e.reason : ''}`,
+      ...e.promises.map(p => `promise on the ${name(p.product_id)}: ${money(p.amount)} on ${day(p.date)}`),
+      ...e.notes.map(n => `note on the ${name(n.product_id)}: ${n.reason}`),
+      ...e.callbacks.map(k => `callback on ${day(k.date)} at ${k.time}`),
+      ...e.transfers.map(x => `transfer to ${x.queue}`),
+      ...(e.promises.length ? [] : ['no promise']),
+    ];
+    d.innerHTML = `<td colspan="5"><dl class="kv">
+      <dt>Customer</dt><dd>${v.title} ${v.first_name} ${v.last_name}</dd>
+      <dt>Late products</dt><dd>${products.join('<br>')}</dd>
+      <dt>What happens</dt><dd>${c.script}</dd>
+      <dt>Bank records after</dt><dd>${records.join('<br>')}</dd>
+      <dt>Also checked</dt><dd><ul>${c.checks.map(x => `<li>${x}</li>`).join('')}</ul></dd>
+      ${c.faults ? `<dt>Injected fault</dt><dd>${c.faults.map(f => `${f.tool} fails its first ${f.fail_first_n} call`).join('<br>')}</dd>` : ''}
+    </dl></td>`;
+    const flip = () => { d.hidden = !d.hidden; r.classList.toggle('open', !d.hidden); };
+    r.onclick = flip; r.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); flip(); } };
+    tb.append(r, d);
+  });
+  if (new URLSearchParams(location.search).get('open')) { const i = cases.findIndex(c => c.id === new URLSearchParams(location.search).get('open')); if (i >= 0) tb.querySelectorAll('tr.row')[i].click(); }
+
+  // countdown
+  const start = Date.UTC(2026, 9, 10, 10, 0, 0);
+  const tick = () => {
+    const s = Math.max(0, Math.floor((start - Date.now()) / 1000));
+    document.getElementById('count').textContent = s === 0 ? 'Started' : `${Math.floor(s / 3600)} h ${Math.floor(s % 3600 / 60)} min`;
+  };
+  tick(); setInterval(tick, 30000);
+</script>
+</body>
+</html>

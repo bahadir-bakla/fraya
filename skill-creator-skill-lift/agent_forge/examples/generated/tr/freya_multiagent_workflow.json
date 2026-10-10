@@ -1,0 +1,3001 @@
+{
+  "$comment": "Multi-agent topology as one Freya workflow. Node types as in freya_workflow.json; the write schema is not public, so this is a mapping, not a verified payload.",
+  "name": "ornek_banka_a_s_gecikmis_kredi_karti_borcu_tahsi",
+  "agents": [
+    {
+      "id": "core",
+      "role": "entry",
+      "policySource": [
+        "2.1",
+        "3.1",
+        "4.1",
+        "4.2",
+        "8.1",
+        "3.3",
+        "6.1",
+        "9.1"
+      ]
+    },
+    {
+      "id": "update_address",
+      "role": "specialist",
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "block_card",
+      "role": "specialist",
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "extend_due_date",
+      "role": "specialist",
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "dispute",
+      "role": "specialist",
+      "policySource": [
+        "10.1"
+      ]
+    },
+    {
+      "id": "hardship",
+      "role": "specialist",
+      "policySource": [
+        "11.1"
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "name": "dob",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "id_last4",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "amount",
+      "type": "number",
+      "scope": "global"
+    },
+    {
+      "name": "pay_date",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "callback_time",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "identity_verified",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "promise_saved",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "schedule_callback_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "intent",
+      "type": "string",
+      "scope": "global",
+      "enum": [
+        "ask_info",
+        "ask_consequence",
+        "ask_guarantee",
+        "escalate",
+        "ask_readback",
+        "third_party",
+        "right_party",
+        "update_address",
+        "block_card",
+        "extend_due_date",
+        "dispute",
+        "hardship",
+        "none"
+      ]
+    },
+    {
+      "name": "last_call_ok",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "verify_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "promise_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "overdue",
+      "type": "number",
+      "scope": "input"
+    },
+    {
+      "name": "due_date",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_dob",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_id_last4",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "details",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "update_address_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "block_card_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "reissue_card_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "check_income_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "check_risk_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "extend_due_date_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "dispute_reason",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "record_dispute_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "monthly_amount",
+      "type": "number",
+      "scope": "global"
+    },
+    {
+      "name": "hardship_plan_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "returnTo",
+      "type": "string",
+      "scope": "global"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "core.greet",
+      "type": "agent",
+      "data": {
+        "prompt": "# greet: Open the call with the required disclosure  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nMerhaba, Örnek Banka'dan arıyorum. Bu görüşme kayıt altına alınmaktadır; tahsilat amacıyla arıyoruz.\n",
+        "collect": [
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "extend_due_date",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.greet__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "extend_due_date",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.inform",
+      "type": "agent",
+      "data": {
+        "prompt": "# inform: Tell the verified caller the overdue amount and due date  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nGecikmiş tutarınız {overdue} TL, son ödeme tarihi {due_date}.\n",
+        "collect": [
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "extend_due_date",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "4.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.inform__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.promise",
+      "type": "agent",
+      "data": {
+        "prompt": "# promise: Collect a payment promise (amount and date) and record it  [§4.2]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## In this step\n- Tutarı sormadan önce kabul edilebilecek en düşük ödeme sözü tutarını söyle. [§4.3]\n\n## Collect\n- `amount` (amount): Ne kadarlık bir ödeme yapabilirsiniz? Read it back and get a yes before using it [§4.2].\n- `pay_date` (date): Ödemeyi hangi tarihte yapabilirsiniz? Read it back and get a yes before using it [§4.2].\n\n## Tool\n- Call `save_promise(amount, pay_date)` once every value is collected.\n- Only call it when amount >= 0.1 × overdue [§4.3].\n",
+        "collect": [
+          {
+            "name": "amount",
+            "type": "number"
+          },
+          {
+            "name": "pay_date",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "extend_due_date",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "4.2"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.promise__save_promise",
+      "type": "function",
+      "data": {
+        "function": "save_promise",
+        "args": {
+          "amount": "{{amount}}",
+          "pay_date": "{{pay_date}}"
+        },
+        "preconditions": [
+          "amount >= 0.1 × overdue"
+        ],
+        "outputs": {
+          "promise_saved": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "promise_attempts"
+      },
+      "policySource": [
+        "4.2"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.promise__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.close",
+      "type": "agent",
+      "data": {
+        "prompt": "# close: Summarise the promise and thank the caller  [§8.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÖdeme sözünüzü {amount} TL, {pay_date} olarak kaydettim. Teşekkür ederim, iyi günler.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "8.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party",
+      "type": "agent",
+      "data": {
+        "prompt": "# third_party: Handle: Telefona müşteri dışında biri çıkarsa borçtan bahsedilmez; müşteriye ulaşmak için uygun bir geri arama zamanı alınır ve schedule_callback ile kaydedilir.  [§9.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `callback_time` (text): Anlıyorum. Kendisine ne zaman ulaşabiliriz?\n\n## Tool\n- Call `schedule_callback(callback_time)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "callback_time",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "extend_due_date",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "9.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party__schedule_callback",
+      "type": "function",
+      "data": {
+        "function": "schedule_callback",
+        "args": {
+          "callback_time": "{{callback_time}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "schedule_callback_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "9.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# third_party_declined: Tell the caller the request could not go ahead  [§9.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, bu işlemi şu an tamamlayamadım.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "9.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party_done",
+      "type": "agent",
+      "data": {
+        "prompt": "# third_party_done: Close the call  [§9.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nTeşekkür ederim, belirttiğiniz zamanda tekrar arayacağız. İyi günler.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "9.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3",
+        "6.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "update_address.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.update_address",
+      "type": "agent",
+      "data": {
+        "prompt": "# update_address: Handle: Müşteri adresinin değiştiğini belirtirse yeni adres alınır, update_address ile kaydedilir ve görüşmeye kaldığı yerden devam edilir.  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `details` (text): Anlıyorum. Bunun detaylarını söyler misiniz?\n\n## Tool\n- Call `update_address(details)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.update_address__update_address",
+      "type": "function",
+      "data": {
+        "function": "update_address",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "update_address_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.update_address__route",
+      "type": "condition",
+      "data": {},
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.update_address_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# update_address_declined: Tell the caller the request could not go ahead  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, bu işlemi şu an tamamlayamadım.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Hand the call back to the agent it came from  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nKaydettim, teşekkür ederim.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3",
+        "6.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "block_card.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card",
+      "type": "agent",
+      "data": {
+        "prompt": "# block_card: Handle: Müşteri kartının çalındığını bildirirse önce kart block_card ile bloke edilir, ardından reissue_card ile yeni kart talep edilir ve görüşmeye kaldığı yerden devam edilir.  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `details` (text): Anlıyorum. Bunun detaylarını söyler misiniz?\n\n## Tool\n- Call `block_card(details)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__block_card",
+      "type": "function",
+      "data": {
+        "function": "block_card",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "block_card_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__reissue_card",
+      "type": "function",
+      "data": {
+        "function": "reissue_card",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "reissue_card_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__reissue_card__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# block_card_declined: Tell the caller the request could not go ahead  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, bu işlemi şu an tamamlayamadım.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Hand the call back to the agent it came from  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nKaydettim, teşekkür ederim.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3",
+        "6.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "extend_due_date.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date",
+      "type": "agent",
+      "data": {
+        "prompt": "# extend_due_date: Handle: Müşteri ödeme süresinin uzatılmasını isterse gelir kontrolü check_income ve risk kontrolü check_risk yapılır; ikisi de olumluysa extend_due_date ile yeni vade kaydedilir, biri olumsuzsa talebin onaylanamadığı bildirilir ve görüşmeye kaldığı yerden devam edilir.  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `details` (text): Anlıyorum. Bunun detaylarını söyler misiniz?\n\n## Tool\n- Call `check_income(details)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "14.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date__check_income",
+      "type": "function",
+      "data": {
+        "function": "check_income",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "check_income_done": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "parallel": true
+      },
+      "policySource": [
+        "14.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date__route",
+      "type": "condition",
+      "data": {},
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date__check_risk",
+      "type": "function",
+      "data": {
+        "function": "check_risk",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "check_risk_done": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "parallel": true
+      },
+      "policySource": [
+        "14.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date__check_risk__route",
+      "type": "condition",
+      "data": {},
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date__extend_due_date",
+      "type": "function",
+      "data": {
+        "function": "extend_due_date",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "extend_due_date_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "14.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date__extend_due_date__route",
+      "type": "condition",
+      "data": {},
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# extend_due_date_declined: Tell the caller the request could not go ahead  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, talebiniz şu an onaylanamadı.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "14.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Hand the call back to the agent it came from  [§14.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nKaydettim, teşekkür ederim.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "14.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3",
+        "6.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "extend_due_date.extend_due_date__extend_due_date__join",
+      "type": "condition",
+      "data": {
+        "join": "all",
+        "waitsOn": [
+          "check_income",
+          "check_risk"
+        ],
+        "parallel": true
+      },
+      "policySource": [
+        "14.1"
+      ],
+      "agent": "extend_due_date"
+    },
+    {
+      "id": "dispute.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.dispute",
+      "type": "agent",
+      "data": {
+        "prompt": "# dispute: Handle: Müşteri borca itiraz ederse itiraz gerekçesi alınır ve record_dispute ile kaydedilir; itiraz kaydedildikten sonra ödeme talep edilmez.  [§10.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dispute_reason` (text): İtirazınızın sebebini kısaca anlatır mısınız?\n\n## Tool\n- Call `record_dispute(dispute_reason)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dispute_reason",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "10.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.dispute__record_dispute",
+      "type": "function",
+      "data": {
+        "function": "record_dispute",
+        "args": {
+          "dispute_reason": "{{dispute_reason}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "record_dispute_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "10.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.dispute__route",
+      "type": "condition",
+      "data": {},
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.dispute_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# dispute_declined: Tell the caller the request could not go ahead  [§10.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, bu işlemi şu an tamamlayamadım.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "10.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Close the call  [§10.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nİtirazınızı kaydettim; inceleme sonuçlanana kadar sizden ödeme talep etmeyeceğiz. İyi günler.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "10.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3",
+        "6.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "hardship.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.hardship",
+      "type": "agent",
+      "data": {
+        "prompt": "# hardship: Handle: Müşteri iş kaybı, hastalık veya benzeri bir maddi zorluk belirtirse ayda ödeyebileceği tutar sorulur ve yapılandırma talebi hardship_plan ile kaydedilir.  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Collect\n- `monthly_amount` (amount): Ayda ne kadar ödeyebilirsiniz?\n\n## Tool\n- Call `hardship_plan(monthly_amount)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "monthly_amount",
+            "type": "number"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "11.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.hardship__hardship_plan",
+      "type": "function",
+      "data": {
+        "function": "hardship_plan",
+        "args": {
+          "monthly_amount": "{{monthly_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "hardship_plan_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "11.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.hardship__route",
+      "type": "condition",
+      "data": {},
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.hardship_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# hardship_declined: Tell the caller the request could not go ahead  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nÜzgünüm, bu işlemi şu an tamamlayamadım.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "11.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Close the call  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n- Haciz, hapis, polis gibi tehdit veya yaptırım ifadesi kullanma; ödeme planına yönlendir. [§5.1]\n- Faiz silme veya indirim garantisi verme. [§5.2]\n- Kart numarası, T.C. kimlik numarası veya IBAN'ı asla sesli tekrar etme; istense bile. [§7.1]\n\n## Say on entry\nYapılandırma talebinizi aylık {monthly_amount} TL olarak kaydettim. İyi günler.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "11.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+      },
+      "policySource": [
+        "3.3",
+        "6.1"
+      ],
+      "agent": "hardship"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "core.greet",
+      "policySource": []
+    },
+    {
+      "id": "e2",
+      "source": "core.greet",
+      "target": "core.greet__route",
+      "policySource": []
+    },
+    {
+      "id": "e3",
+      "source": "core.greet__route",
+      "target": "core.verify",
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e4",
+      "source": "core.greet",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e5",
+      "source": "core.greet",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e6",
+      "source": "core.verify",
+      "target": "core.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e7",
+      "source": "core.verify__verify_identity",
+      "target": "core.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e8",
+      "source": "core.verify__route",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e9",
+      "source": "core.verify__route",
+      "target": "core.inform",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e10",
+      "source": "core.verify__route",
+      "target": "core.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e11",
+      "source": "core.verify",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e12",
+      "source": "core.verify",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e13",
+      "source": "core.inform",
+      "target": "core.inform__route",
+      "policySource": []
+    },
+    {
+      "id": "e14",
+      "source": "core.inform__route",
+      "target": "core.promise",
+      "policySource": [
+        "4.1"
+      ]
+    },
+    {
+      "id": "e15",
+      "source": "core.inform",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e16",
+      "source": "core.inform",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e17",
+      "source": "core.promise",
+      "target": "core.promise__save_promise",
+      "policySource": []
+    },
+    {
+      "id": "e18",
+      "source": "core.promise__save_promise",
+      "target": "core.promise__route",
+      "policySource": []
+    },
+    {
+      "id": "e19",
+      "source": "core.promise__route",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "promise_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": []
+    },
+    {
+      "id": "e20",
+      "source": "core.promise__route",
+      "target": "core.close",
+      "condition": {
+        "variable": "promise_saved",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "4.2"
+      ]
+    },
+    {
+      "id": "e21",
+      "source": "core.promise__route",
+      "target": "core.promise",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "4.2"
+      ]
+    },
+    {
+      "id": "e22",
+      "source": "core.promise",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e23",
+      "source": "core.promise",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e24",
+      "source": "core.third_party",
+      "target": "core.third_party__schedule_callback",
+      "policySource": []
+    },
+    {
+      "id": "e25",
+      "source": "core.third_party__schedule_callback",
+      "target": "core.third_party__route",
+      "policySource": []
+    },
+    {
+      "id": "e26",
+      "source": "core.third_party__route",
+      "target": "core.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "right_party"
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e27",
+      "source": "core.third_party__route",
+      "target": "core.third_party_done",
+      "condition": {
+        "variable": "schedule_callback_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e28",
+      "source": "core.third_party__route",
+      "target": "core.third_party_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e29",
+      "source": "core.third_party",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e30",
+      "source": "core.third_party",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e31",
+      "source": "update_address.verify",
+      "target": "update_address.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e32",
+      "source": "update_address.verify__verify_identity",
+      "target": "update_address.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e33",
+      "source": "update_address.verify__route",
+      "target": "update_address.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e34",
+      "source": "update_address.verify__route",
+      "target": "update_address.update_address",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e35",
+      "source": "update_address.verify__route",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e36",
+      "source": "update_address.verify",
+      "target": "update_address.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e37",
+      "source": "update_address.update_address",
+      "target": "update_address.update_address__update_address",
+      "policySource": []
+    },
+    {
+      "id": "e38",
+      "source": "update_address.update_address__update_address",
+      "target": "update_address.update_address__route",
+      "policySource": []
+    },
+    {
+      "id": "e39",
+      "source": "update_address.update_address__route",
+      "target": "update_address.done",
+      "condition": {
+        "variable": "update_address_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e40",
+      "source": "update_address.update_address__route",
+      "target": "update_address.update_address_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e41",
+      "source": "update_address.update_address",
+      "target": "update_address.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e42",
+      "source": "block_card.verify",
+      "target": "block_card.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e43",
+      "source": "block_card.verify__verify_identity",
+      "target": "block_card.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e44",
+      "source": "block_card.verify__route",
+      "target": "block_card.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e45",
+      "source": "block_card.verify__route",
+      "target": "block_card.block_card",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e46",
+      "source": "block_card.verify__route",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e47",
+      "source": "block_card.verify",
+      "target": "block_card.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e48",
+      "source": "block_card.block_card",
+      "target": "block_card.block_card__block_card",
+      "policySource": []
+    },
+    {
+      "id": "e49",
+      "source": "block_card.block_card__block_card",
+      "target": "block_card.block_card__route",
+      "policySource": []
+    },
+    {
+      "id": "e50",
+      "source": "block_card.block_card__route",
+      "target": "block_card.block_card__reissue_card",
+      "condition": {
+        "variable": "block_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e51",
+      "source": "block_card.block_card__route",
+      "target": "block_card.block_card_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e52",
+      "source": "block_card.block_card",
+      "target": "block_card.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e53",
+      "source": "block_card.block_card__reissue_card",
+      "target": "block_card.block_card__reissue_card__route",
+      "policySource": []
+    },
+    {
+      "id": "e54",
+      "source": "block_card.block_card__reissue_card__route",
+      "target": "block_card.done",
+      "condition": {
+        "variable": "reissue_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e55",
+      "source": "block_card.block_card__reissue_card__route",
+      "target": "block_card.block_card_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e56",
+      "source": "extend_due_date.verify",
+      "target": "extend_due_date.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e57",
+      "source": "extend_due_date.verify__verify_identity",
+      "target": "extend_due_date.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e58",
+      "source": "extend_due_date.verify__route",
+      "target": "extend_due_date.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e59",
+      "source": "extend_due_date.verify__route",
+      "target": "extend_due_date.extend_due_date",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e60",
+      "source": "extend_due_date.verify__route",
+      "target": "extend_due_date.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e61",
+      "source": "extend_due_date.verify",
+      "target": "extend_due_date.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e62",
+      "source": "extend_due_date.extend_due_date",
+      "target": "extend_due_date.extend_due_date__check_income",
+      "policySource": []
+    },
+    {
+      "id": "e63",
+      "source": "extend_due_date.extend_due_date__check_income",
+      "target": "extend_due_date.extend_due_date__route",
+      "policySource": []
+    },
+    {
+      "id": "e64",
+      "source": "extend_due_date.extend_due_date__route",
+      "target": "extend_due_date.extend_due_date__check_risk",
+      "condition": {
+        "variable": "check_income_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e65",
+      "source": "extend_due_date.extend_due_date__route",
+      "target": "extend_due_date.extend_due_date_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e66",
+      "source": "extend_due_date.extend_due_date",
+      "target": "extend_due_date.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e67",
+      "source": "extend_due_date.extend_due_date__check_risk",
+      "target": "extend_due_date.extend_due_date__check_risk__route",
+      "policySource": []
+    },
+    {
+      "id": "e68",
+      "source": "extend_due_date.extend_due_date__check_risk__route",
+      "target": "extend_due_date.extend_due_date__extend_due_date__join",
+      "condition": {
+        "variable": "check_risk_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e69",
+      "source": "extend_due_date.extend_due_date__check_risk__route",
+      "target": "extend_due_date.extend_due_date_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e70",
+      "source": "extend_due_date.extend_due_date__extend_due_date",
+      "target": "extend_due_date.extend_due_date__extend_due_date__route",
+      "policySource": []
+    },
+    {
+      "id": "e71",
+      "source": "extend_due_date.extend_due_date__extend_due_date__route",
+      "target": "extend_due_date.done",
+      "condition": {
+        "variable": "extend_due_date_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e72",
+      "source": "extend_due_date.extend_due_date__extend_due_date__route",
+      "target": "extend_due_date.extend_due_date_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e73",
+      "source": "extend_due_date.extend_due_date__extend_due_date__join",
+      "target": "extend_due_date.extend_due_date__extend_due_date",
+      "condition": {
+        "operator": "all",
+        "conditions": [
+          {
+            "variable": "check_income_done",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "variable": "check_risk_done",
+            "operator": "equals",
+            "value": true
+          }
+        ]
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e74",
+      "source": "extend_due_date.extend_due_date__extend_due_date__join",
+      "target": "extend_due_date.extend_due_date_declined",
+      "condition": {
+        "operator": "not_all",
+        "conditions": [
+          {
+            "variable": "check_income_done",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "variable": "check_risk_done",
+            "operator": "equals",
+            "value": true
+          }
+        ]
+      },
+      "policySource": [
+        "14.1"
+      ]
+    },
+    {
+      "id": "e75",
+      "source": "dispute.verify",
+      "target": "dispute.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e76",
+      "source": "dispute.verify__verify_identity",
+      "target": "dispute.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e77",
+      "source": "dispute.verify__route",
+      "target": "dispute.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e78",
+      "source": "dispute.verify__route",
+      "target": "dispute.dispute",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e79",
+      "source": "dispute.verify__route",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e80",
+      "source": "dispute.verify",
+      "target": "dispute.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e81",
+      "source": "dispute.dispute",
+      "target": "dispute.dispute__record_dispute",
+      "policySource": []
+    },
+    {
+      "id": "e82",
+      "source": "dispute.dispute__record_dispute",
+      "target": "dispute.dispute__route",
+      "policySource": []
+    },
+    {
+      "id": "e83",
+      "source": "dispute.dispute__route",
+      "target": "dispute.done",
+      "condition": {
+        "variable": "record_dispute_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "10.1"
+      ]
+    },
+    {
+      "id": "e84",
+      "source": "dispute.dispute__route",
+      "target": "dispute.dispute_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "10.1"
+      ]
+    },
+    {
+      "id": "e85",
+      "source": "dispute.dispute",
+      "target": "dispute.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e86",
+      "source": "hardship.verify",
+      "target": "hardship.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e87",
+      "source": "hardship.verify__verify_identity",
+      "target": "hardship.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e88",
+      "source": "hardship.verify__route",
+      "target": "hardship.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": [
+        "3.3"
+      ]
+    },
+    {
+      "id": "e89",
+      "source": "hardship.verify__route",
+      "target": "hardship.hardship",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e90",
+      "source": "hardship.verify__route",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e91",
+      "source": "hardship.verify",
+      "target": "hardship.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "e92",
+      "source": "hardship.hardship",
+      "target": "hardship.hardship__hardship_plan",
+      "policySource": []
+    },
+    {
+      "id": "e93",
+      "source": "hardship.hardship__hardship_plan",
+      "target": "hardship.hardship__route",
+      "policySource": []
+    },
+    {
+      "id": "e94",
+      "source": "hardship.hardship__route",
+      "target": "hardship.done",
+      "condition": {
+        "variable": "hardship_plan_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "e95",
+      "source": "hardship.hardship__route",
+      "target": "hardship.hardship_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "e96",
+      "source": "hardship.hardship",
+      "target": "hardship.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "6.1"
+      ]
+    },
+    {
+      "source": "core.greet",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.greet"
+      },
+      "id": "e97"
+    },
+    {
+      "source": "core.verify",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.verify"
+      },
+      "id": "e98"
+    },
+    {
+      "source": "core.inform",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.inform"
+      },
+      "id": "e99"
+    },
+    {
+      "source": "core.promise",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.promise"
+      },
+      "id": "e100"
+    },
+    {
+      "source": "core.third_party",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.third_party"
+      },
+      "id": "e101"
+    },
+    {
+      "source": "update_address.update_address_declined",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "12.1"
+      ],
+      "condition": {
+        "variable": "update_address_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e102"
+    },
+    {
+      "source": "update_address.done",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "12.1"
+      ],
+      "condition": {
+        "variable": "update_address_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e103"
+    },
+    {
+      "source": "core.greet",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.greet"
+      },
+      "id": "e104"
+    },
+    {
+      "source": "core.verify",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.verify"
+      },
+      "id": "e105"
+    },
+    {
+      "source": "core.inform",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.inform"
+      },
+      "id": "e106"
+    },
+    {
+      "source": "core.promise",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.promise"
+      },
+      "id": "e107"
+    },
+    {
+      "source": "core.third_party",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.third_party"
+      },
+      "id": "e108"
+    },
+    {
+      "source": "block_card.block_card_declined",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "13.1"
+      ],
+      "condition": {
+        "variable": "reissue_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e109"
+    },
+    {
+      "source": "block_card.done",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "13.1"
+      ],
+      "condition": {
+        "variable": "reissue_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e110"
+    },
+    {
+      "source": "core.greet",
+      "target": "extend_due_date.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "extend_due_date"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "14.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.greet"
+      },
+      "id": "e111"
+    },
+    {
+      "source": "core.verify",
+      "target": "extend_due_date.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "extend_due_date"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "14.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.verify"
+      },
+      "id": "e112"
+    },
+    {
+      "source": "core.inform",
+      "target": "extend_due_date.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "extend_due_date"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "14.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.inform"
+      },
+      "id": "e113"
+    },
+    {
+      "source": "core.promise",
+      "target": "extend_due_date.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "extend_due_date"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "14.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.promise"
+      },
+      "id": "e114"
+    },
+    {
+      "source": "core.third_party",
+      "target": "extend_due_date.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "extend_due_date"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "14.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.third_party"
+      },
+      "id": "e115"
+    },
+    {
+      "source": "extend_due_date.extend_due_date_declined",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "14.1"
+      ],
+      "condition": {
+        "variable": "extend_due_date_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e116"
+    },
+    {
+      "source": "extend_due_date.done",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "14.1"
+      ],
+      "condition": {
+        "variable": "extend_due_date_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e117"
+    },
+    {
+      "source": "core.greet",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e118"
+    },
+    {
+      "source": "core.verify",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e119"
+    },
+    {
+      "source": "core.inform",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e120"
+    },
+    {
+      "source": "core.promise",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e121"
+    },
+    {
+      "source": "core.third_party",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e122"
+    },
+    {
+      "source": "core.greet",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "id": "e123"
+    },
+    {
+      "source": "core.verify",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "id": "e124"
+    },
+    {
+      "source": "core.inform",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "id": "e125"
+    },
+    {
+      "source": "core.promise",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "id": "e126"
+    },
+    {
+      "source": "core.third_party",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "id": "e127"
+    }
+  ]
+}

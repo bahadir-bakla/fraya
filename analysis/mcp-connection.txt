@@ -1,0 +1,56 @@
+Freya MCP bridge ready for parent integration (2026-10-10).
+
+Location: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/skill-creator-skill-lift/integrations/freya-mcp
+Server: freya_mcp/server.py; launcher: run.ps1; pinned runtime: .venv.
+
+Verification: 18/18 tests passed (17 mock/config tests + real MCP SDK initialize/list/offline calls).
+Packaged PowerShell launcher also passed initialize, tools/list (22 tools), health, public cases and local workflow validation.
+Health was unconfigured; live_connected=false. This worker made no authenticated remote API call, no remote dry-run, no publication and no simulation.
+Python asyncio's local Windows socketpair blocks in the restricted sandbox; approved non-sandbox offline tests passed.
+
+Official Freya MCP endpoint: none discovered in official-domain searches or published docs index. Built only over documented kit/API routes, without endpoint probing.
+Sources: https://docs.freyavoice.ai/llms.txt and https://docs.freyavoice.ai/api-reference/openapi.json
+Codex stdio/project configuration: https://developers.openai.com/codex/mcp
+
+INSTALL (runtime already installed and pip check passed):
+powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\skill-creator-skill-lift\integrations\freya-mcp\install.ps1"
+
+REGISTER (parent applies only trusted project config):
+Merge integration/codex-mcp.toml into project .codex/config.toml, preserving existing settings.
+The parent can substitute its DPAPI credential-injection launcher; run.ps1 inherits FREYA_API_KEY/FREYA_BANK_TEAM_KEY unchanged.
+Do not run plain codex mcp add here: it writes global user config.
+codex -C "C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER" mcp list
+Reload/open a fresh chat, then verify tool discovery.
+
+AUTH:
+API key was delivered privately to the parent and is absent from this worker's process.
+Credential values belong only in injected environment or an explicitly selected --env-file; no discovery.
+Set FREYA_WORKSPACE_ID when multiple remote workspaces are visible.
+Practice needs FREYA_BANK_TEAM_KEY (16+ characters), supplied privately by parent.
+${FREYA_BANK_TEAM_KEY} injected only into save/update/start payloads in memory. Dry-run does not need bank key.
+
+FIRST AUTHENTICATED CHECKS (parent):
+freya_health(live=true), freya_list_workspaces(), freya_validate_workflow(..., remote=true).
+Dry-run stores nothing. It can schema-check a bank-key placeholder without a bank key.
+
+TOOLS:
+Health/configuration; workspaces; workflow list/read/dry-run/save/update/publish/export/bind slot;
+persona list/create; simulation list/start/status; iterations/runs; call transcript;
+public practice cases; synthetic session creation/preparation; practice ledger and official kit score.
+Simulation start is bounded and returns an ID; later status calls fetch once. One run per remote workspace enforced by state/OS lock/remote running check and platform cap. No destructive delete tools.
+Exports/state/errors/transcripts redact secrets. Export reports redaction; redacted submission exports require authorized credential restoration before use.
+
+OPTIONAL PLUGIN:
+Local plugin package and scoped marketplace are under integration/plugin/.
+README contains exact supported CLI commands for isolated local registration; do not enable plugin and standalone route together.
+Global settings and original kit were not edited. Other workers' files were preserved.
+
+
+
+PARENT SON DURUM — 2026-10-10
+Canlı MCP auth/list/dry-run/save/publish/practice/simulation/transcript/ledger/export doğrulandı.
+PUB-01 referans baseline ledger geçti, conversation SMS teyidi eksikliği nedeniyle kaldı.
+Kaynak/API suite 230 geçti, 2 skip; bridge 18 geçti, 22 MCP araç.
+Genel semantic compiler, official Freya emitter ve bağımsız oracle henüz tamamlanmadı.
+Private repo: github.com/bahadir-bakla/fraya; yusuf-said write daveti oluşturuldu.
+Güncel tam plan ve kanıt: benchmark-plan.txt, competition-contract.json ve local-runs/mcp-smoke.

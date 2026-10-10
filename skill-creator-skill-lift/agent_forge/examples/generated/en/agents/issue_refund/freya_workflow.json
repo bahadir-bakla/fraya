@@ -1,0 +1,599 @@
+{
+  "$comment": "Node types from docs.freyavoice.ai Workflow Builder (Agent, Function, Condition, Transfer, Wait, Loop). Freya's workflow write schema is not public; field names are a mapping, not a verified payload. check_workflow() verifies reachability and that every condition reads a declared variable some node sets.",
+  "name": "example_mutual_insurance_overdue_premium_reminde__issue_refund",
+  "variables": [
+    {
+      "name": "dob",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "id_last4",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "request_amount",
+      "type": "number",
+      "scope": "global"
+    },
+    {
+      "name": "identity_verified",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "approve_lead_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "approve_manager_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "issue_refund_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "intent",
+      "type": "string",
+      "scope": "global",
+      "enum": [
+        "ask_info",
+        "ask_consequence",
+        "ask_guarantee",
+        "escalate",
+        "ask_readback",
+        "none"
+      ]
+    },
+    {
+      "name": "last_call_ok",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "verify_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "overdue",
+      "type": "number",
+      "scope": "input"
+    },
+    {
+      "name": "due_date",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_dob",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_id_last4",
+      "type": "string",
+      "scope": "input"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "verify__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "issue_refund",
+      "type": "agent",
+      "data": {
+        "prompt": "# issue_refund: Handle: If the policyholder asks for a refund of a premium already paid, for refunds over $500 the agent must get approval from the team lead with approve_lead and then from the manager with approve_manager; only if every approval is positive is the refund issued with issue_refund. If any approval is declined, the call is transferred to a human agent.  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `request_amount` (amount): What amount are you asking for?\n",
+        "collect": [
+          {
+            "name": "request_amount",
+            "type": "number"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "issue_refund__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "issue_refund__approve_lead",
+      "type": "function",
+      "data": {
+        "function": "approve_lead",
+        "args": {
+          "request_amount": "{{request_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "approve_lead_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "issue_refund__approve_lead__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "issue_refund__approve_manager",
+      "type": "function",
+      "data": {
+        "function": "approve_manager",
+        "args": {
+          "request_amount": "{{request_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "approve_manager_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "issue_refund__approve_manager__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "issue_refund__issue_refund",
+      "type": "function",
+      "data": {
+        "function": "issue_refund",
+        "args": {
+          "request_amount": "{{request_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "issue_refund_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "issue_refund__issue_refund__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "issue_refund__direct",
+      "type": "function",
+      "data": {
+        "function": "issue_refund",
+        "args": {
+          "request_amount": "{{request_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "issue_refund_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "issue_refund__direct__route",
+      "type": "condition",
+      "data": {}
+    },
+    {
+      "id": "done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Close the call  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded that, thank you. Goodbye.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "I am transferring you to a colleague now."
+      },
+      "policySource": [
+        "2.3",
+        "5.1"
+      ]
+    },
+    {
+      "id": "issue_refund__issue_refund__join",
+      "type": "condition",
+      "data": {
+        "join": "all",
+        "waitsOn": [
+          "approve_lead",
+          "approve_manager"
+        ],
+        "parallel": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "verify",
+      "policySource": []
+    },
+    {
+      "id": "e2",
+      "source": "verify",
+      "target": "verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e3",
+      "source": "verify__verify_identity",
+      "target": "verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e4",
+      "source": "verify__route",
+      "target": "human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 2
+      },
+      "policySource": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "e5",
+      "source": "verify__route",
+      "target": "issue_refund",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e6",
+      "source": "verify__route",
+      "target": "verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e7",
+      "source": "verify",
+      "target": "human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e8",
+      "source": "issue_refund",
+      "target": "issue_refund__route",
+      "policySource": []
+    },
+    {
+      "id": "e9",
+      "source": "issue_refund__route",
+      "target": "issue_refund__approve_lead",
+      "condition": {
+        "variable": "request_amount",
+        "operator": "gt",
+        "value": 500.0
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e10",
+      "source": "issue_refund__route",
+      "target": "issue_refund__direct",
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e11",
+      "source": "issue_refund",
+      "target": "human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e12",
+      "source": "issue_refund__approve_lead",
+      "target": "issue_refund__approve_lead__route",
+      "policySource": []
+    },
+    {
+      "id": "e13",
+      "source": "issue_refund__approve_lead__route",
+      "target": "issue_refund__approve_manager",
+      "condition": {
+        "variable": "approve_lead_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e14",
+      "source": "issue_refund__approve_lead__route",
+      "target": "human_agent",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e15",
+      "source": "issue_refund__approve_manager",
+      "target": "issue_refund__approve_manager__route",
+      "policySource": []
+    },
+    {
+      "id": "e16",
+      "source": "issue_refund__approve_manager__route",
+      "target": "issue_refund__issue_refund__join",
+      "condition": {
+        "variable": "approve_manager_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e17",
+      "source": "issue_refund__approve_manager__route",
+      "target": "human_agent",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e18",
+      "source": "issue_refund__issue_refund",
+      "target": "issue_refund__issue_refund__route",
+      "policySource": []
+    },
+    {
+      "id": "e19",
+      "source": "issue_refund__issue_refund__route",
+      "target": "done",
+      "condition": {
+        "variable": "issue_refund_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e20",
+      "source": "issue_refund__issue_refund__route",
+      "target": "human_agent",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e21",
+      "source": "issue_refund__direct",
+      "target": "issue_refund__direct__route",
+      "policySource": []
+    },
+    {
+      "id": "e22",
+      "source": "issue_refund__direct__route",
+      "target": "done",
+      "condition": {
+        "variable": "issue_refund_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e23",
+      "source": "issue_refund__direct__route",
+      "target": "human_agent",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e24",
+      "source": "issue_refund__issue_refund__join",
+      "target": "issue_refund__issue_refund",
+      "condition": {
+        "operator": "all",
+        "conditions": [
+          {
+            "variable": "approve_lead_done",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "variable": "approve_manager_done",
+            "operator": "equals",
+            "value": true
+          }
+        ]
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e25",
+      "source": "issue_refund__issue_refund__join",
+      "target": "human_agent",
+      "condition": {
+        "operator": "not_all",
+        "conditions": [
+          {
+            "variable": "approve_lead_done",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "variable": "approve_manager_done",
+            "operator": "equals",
+            "value": true
+          }
+        ]
+      },
+      "policySource": [
+        "13.1"
+      ]
+    }
+  ]
+}

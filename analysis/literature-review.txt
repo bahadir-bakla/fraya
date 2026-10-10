@@ -1,0 +1,341 @@
+First research pass: generic brief-to-voice-agent builder
+Date: 2026-10-10
+Workspace: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER
+
+Status: Focused first pass complete. Analysis only; no implementation or live Freya experiments.
+Primary sources: 10 (nine papers and one official documentation family).
+
+EVIDENCE LABELS
+[supported_finding] A directly inspected official-kit requirement or an author-reported method/result. It is not independent replication or proof of effectiveness here.
+[inference] A reasoned architectural transfer or proposed acceptance criterion; no competition-specific measured gain is claimed.
+[unverified_idea] An additional hypothesis requiring bounded local validation before adoption.
+[access_limitation] A documented source-access constraint; unavailable evidence is not invented.
+
+ASSESSMENT
+[inference] The best-supported design direction is constrained compilation: a provenance-linked policy representation and normalized tool contract, deterministic guards for consequential actions, a shared ordered product ledger, and separately derived state and temporal checks. A few conversation phases can realize the flow while preserving state. Automatic extraction completeness and runtime interruption behavior remain the main unresolved engineering questions.
+First implementation slice: Before expanding search or persona complexity, make source coverage, identity/confirmation gates, calendar calculations, per-product commitment state and transfer/closing precedence inspectable in a local mock. Coordinate implementation and cases with their existing owners.
+These are architectural recommendations, not measured competition improvements.
+Evidence anchors: S01: https://arxiv.org/pdf/2406.12045; S02: https://arxiv.org/pdf/2502.14345v1; S08: https://docs.livekit.io/agents/logic/workflows/; S09: https://doi.org/10.1109/TSE.1986.6312924; S10: https://arxiv.org/pdf/2404.13050v1
+
+METHOD AND ACCESS LIMITS
+Requested paper: Closely read the requested τ-bench PDF main body, evaluation details and consequential appendix examples; cross-checked with arXiv v1 full HTML. Abstract-only reading was not used.
+PDF skill: C:/Users/9bakl/.codex/plugins/cache/openai-primary-runtime/pdf/26.1007.11041/skills/pdf/SKILL.md
+Page convention: All PDF locators are one-based physical pages of the explicitly linked version, not printed journal pagination. For institutional manuscripts, covers and appendices can change numbering. HTML section locators are used when PDF pages are unavailable.
+Visual access: PDF text and full HTML were available. Requested page screenshots were rejected because the web screenshot facility was disabled; no visual render verification is claimed. The reports are plain text/JSON, so no PDF artifact was authored.
+Selection: Sources were chosen for policy-constrained execution, constrained workflow generation, bounded agent design, user-simulator fidelity, assertion-based state checking, oracle independence, mutation/metamorphic testing and stateful voice orchestration.
+- This is a focused first pass, not a systematic review or exhaustive search.
+- Reported benchmark results are attributed to their authors and are not independently reproduced.
+- SimulatorArena PDF fetches exceeded the browser size limit; verified HTML sections are cited without fabricated page numbers.
+- LiveKit is rolling, undated documentation; its access date is reported rather than assigning a publication year.
+- No reviewed source proves complete automatic compilation of unseen, amended collections briefs.
+- No live agent, simulator, policy mutation or runtime/exporter experiment was run in this literature task.
+
+OFFICIAL COMPETITION GROUNDING
+G01 [supported_finding] The final run must automatically read unseen material, derive changed rule values and tool fields, and finish within 30 minutes including tests. Final-brief content cannot be manually inserted into builder code or prompts. A build trace is required.
+  Evidence: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/competition-v3/build-the-builder/README.md (lines 71-91).
+
+G02 [supported_finding] Scoring requires exact bank records, policy adherence and honesty, with no partial credit. Hidden customers run three times and count only if all three pass; calendar days vary.
+  Evidence: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/competition-v3/build-the-builder/README.md (lines 57-76).
+
+G03 [supported_finding] Identity, disclosure, refusal and retry rules are stateful. Calendar calculations use the injected now; holidays, amount floors, bands and deadlines come from the brief.
+  Evidence: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/competition-v3/build-the-builder/briefs/brief-a.md (§§2-9, rules 1-33; lines 20-84).
+
+G04 [supported_finding] A promise requires a read-back and clear confirmation, can be corrected before recording, cannot be changed after recording, and can be described as recorded only after ok:true. Failed recording is retried once.
+  Evidence: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/competition-v3/build-the-builder/briefs/brief-a.md (§10, rules 34-38; lines 88-92).
+
+G05 [supported_finding] Brief B overrides A selectively: attempts/deadlines are per product, account order matters, all proposed promises share a read-back and confirmation, and each product is recorded separately. Partial recording success is retained.
+  Evidence: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/competition-v3/build-the-builder/briefs/brief-b.md (rules 1-9 and 11; lines 5-19).
+
+G06 [supported_finding] Any Brief B transfer prohibits all add_note calls before or after transfer. Restructuring retains recorded promises but discards agreements not recorded. Without transfer, unresolved products require notes; closing follows the stated reduction over account order.
+  Evidence: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/competition-v3/build-the-builder/briefs/brief-b.md (rules 8,10,11; Closing; lines 16-23).
+
+G07 [supported_finding] close_call occurs exactly once as the last tool call after goodbye. In Brief A, transfer overrides a recorded promise. Hardship takes priority over persuasion and restructuring rules.
+  Evidence: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/competition-v3/build-the-builder/briefs/brief-a.md (rule 32; §12, rules 46-47; lines 83,106-121).
+
+G08 [supported_finding] Customers fragment numbers, correct values, ask questions back, use verbal amounts/dates and digress. Tests serialize per workspace; long silent turns can cause hangs or customer abandonment.
+  Evidence: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/competition-v3/build-the-builder/README.md (lines 78,88-100).
+
+CLOSE READING AND SOURCE REGISTER
+S01. τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains
+Authors: Shunyu Yao; Noah Shinn; Pedram Razavi; Karthik Narasimhan
+Year: 2024
+Primary URL: https://arxiv.org/pdf/2406.12045
+html_url: https://arxiv.org/html/2406.12045v1
+Version/page basis: arXiv:2406.12045v1 (17 June 2024)
+PDF page count: 50
+Read scope: Main text §§1-6, PDF pp.1-9; Appendix A p.13; B.1 API and policy examples pp.13-19; selected B.2/C.1 construction examples pp.20-24; C.2.1-C.2.3 annotations and consequential trajectory steps pp.25-42. Long inventory dumps were inspected selectively, not reproduced.
+[supported_finding] Deterministic database tools and hidden user goals form a partially observed environment. Reward checks database equality and required response substrings; it can miss confirmation violations.
+  Exact evidence: §3, Reward; Figure 2; PDF page(s) 3-4. https://arxiv.org/pdf/2406.12045#page=4
+[supported_finding] Pass^k requires all k trials to succeed. Its estimator averages C(c_i,k)/C(n_i,k) over tasks.
+  Exact evidence: §3, Pass^k metric and equation; PDF page(s) 4-5. https://arxiv.org/pdf/2406.12045#page=5
+[supported_finding] GPT-4o function calling scores 61.2% retail, 35.2% airline, 48.2% domain-weighted average; retail pass^8 falls below 25%.
+  Exact evidence: §5.1; Table 2; Figure 4; PDF page(s) 7. https://arxiv.org/pdf/2406.12045#page=7
+[supported_finding] Of 40 audited failures, four involved annotation issues; among 36 agent failures, argument/information errors comprise about 55%, decisions 25%, compound requests 19%.
+  Exact evidence: §5.2; Figure 5; PDF page(s) 7-8. https://arxiv.org/pdf/2406.12045#page=8
+[supported_finding] Native function calling beats text-formatted baselines; adding a think function did not improve their tested agents.
+  Exact evidence: §5.1, Method comparison; PDF page(s) 7. https://arxiv.org/pdf/2406.12045#page=7
+[supported_finding] Task curation targets unique outcomes and uses human refinement. Simulator reasoning, memory, instruction fidelity and curation bias remain limitations.
+  Exact evidence: §4 Stage III; §6; PDF page(s) 5,9. https://arxiv.org/pdf/2406.12045#page=9
+[supported_finding] Examples show a premature single-item exchange and omitted updates to other orders.
+  Exact evidence: C.2.1; C.2.3; PDF page(s) 25-30,36-42. https://arxiv.org/pdf/2406.12045#page=36
+[supported_finding] Limitation: Table 3 prints an airline baseline of 33.2%, whereas Table 2 prints 35.2%; do not silently reconcile them. https://arxiv.org/pdf/2406.12045#page=8
+[inference] Limitation: These 2024 text-agent baselines do not establish today's fixed Freya model performance, voice latency, or the efficacy of our proposed compiler.
+[inference] Builder implication: Use bank-state assertions plus temporal conversation checks; optimize repeated consistency and complete per-product obligations. Move numerical and calendar policy execution into generated code where the platform permits it.
+
+S02. FlowAgent: Achieving Compliance and Flexibility for Workflow Agents
+Authors: Yuchen Shi; Siqi Cai; Zihan Xu; Yulei Qin; Gang Li; Hang Shao; Jiawei Chen; Deqing Yang; Ke Li; Xing Sun
+Year: 2025
+Primary URL: https://arxiv.org/pdf/2502.14345v1
+html_url: https://arxiv.org/html/2502.14345v1
+Version/page basis: arXiv:2502.14345v1 (20 February 2025)
+Read scope: §§3-6 methods, evaluation, result tables and controller ablation; §8 limitations; appendix PDL example and workflow representation.
+[supported_finding] PDL combines API/ANSWER node prerequisites with natural language and pseudocode. Pre-decision guidance and post-decision checks constrain dependencies and repeated actions.
+  Exact evidence: §§4.1-4.2; Algorithm 1; PDF page(s) 4-6. https://arxiv.org/pdf/2502.14345v1#page=4
+[supported_finding] GPT-4o in-house success is 67.72% versus 62.50% for ReAct-NL; OOW success is 32.01% versus 18.03%. On ordinary SGD, FlowAgent's 32.79% is below ReAct-NL's 34.62%.
+  Exact evidence: §6.2; Tables 3-4; PDF page(s) 7. https://arxiv.org/pdf/2502.14345v1#page=7
+[supported_finding] Removing controllers reduces success in the reported OOW ablation.
+  Exact evidence: §6.4; Table 5; PDF page(s) 8. https://arxiv.org/pdf/2502.14345v1#page=8
+[supported_finding] Evaluation uses LLM-simulated users and an LLM judge. Workflows are manually constructed; automated workflow generation is explicitly outside the study.
+  Exact evidence: §6.1; §8; PDF page(s) 7,9. https://arxiv.org/pdf/2502.14345v1#page=9
+[inference] Limitation: The prose claim of universal superiority is stronger than Table 3 supports. This is an execution design reference, not evidence that arbitrary briefs can be compiled correctly.
+[inference] Limitation: A procedural graph alone does not model Freya's calendar arithmetic, future transfer constraints, or irreversible partial commits.
+[inference] Builder implication: Represent policy as explicit predicates and guarded actions, while allowing bounded question answering and corrections between steps. Generate the guards from the brief instead of copying a fixed PDL workflow.
+
+S03. Automated Design of Agentic Systems
+Authors: Shengran Hu; Cong Lu; Jeff Clune
+Year: 2024
+Primary URL: https://arxiv.org/pdf/2408.08435v1
+html_url: https://arxiv.org/html/2408.08435v1
+Version/page basis: arXiv:2408.08435v1 (15 August 2024); later ICLR 2025 publication exists
+Read scope: §§2-4, code-space search, refinement and evaluation protocol, held-out results and transfer table.
+[supported_finding] Meta Agent Search generates agent code, refines proposals, evaluates validation data, and archives designs with metrics and bootstrap confidence intervals.
+  Exact evidence: §3; PDF page(s) 5. https://arxiv.org/pdf/2408.08435v1#page=5
+[supported_finding] Table 1 reports DROP F1 79.4 versus best listed manual baseline 65.8; MGSM accuracy 53.4% versus 39.0%. These are held-out results after 30 search iterations.
+  Exact evidence: §4.2; Table 1; PDF page(s) 8. https://arxiv.org/pdf/2408.08435v1#page=8
+[supported_finding] ARC uses 20 validation and 60 test questions, repeated five times, and 25 search iterations.
+  Exact evidence: §4.1; PDF page(s) 6-7. https://arxiv.org/pdf/2408.08435v1#page=6
+[inference] Limitation: Static reasoning benchmarks and permissive code search do not validate live banking policy adherence. Their search budget does not fit a 30-minute Freya build with serialized simulations.
+[inference] Limitation: Repeated validation-driven selection can overfit the practice suite; the paper's held-out evaluation matters more than discovery-archive rankings.
+[inference] Builder implication: Adopt a bounded build-check-repair loop with structured feedback and a retained best valid candidate. Search within a validated policy schema and permitted workflow primitives, not arbitrary live agent designs.
+
+S04. τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment
+Authors: Victor Barres; Honghua Dong; Soham Ray; Xujie Si; Karthik Narasimhan
+Year: 2025
+Primary URL: https://arxiv.org/pdf/2506.07982v1
+html_url: https://arxiv.org/html/2506.07982v1
+Version/page basis: arXiv:2506.07982v1 (9 June 2025)
+Read scope: §§3-4 task construction, assertion-based evaluation, ablations, simulator audit; Appendix A.1 personas.
+[supported_finding] Atomic tasks separate initialization, solution and final-state assertions; compositions are checked by executing solutions and verifying assertions.
+  Exact evidence: §3.2, Stage 3; PDF page(s) 5-6. https://arxiv.org/pdf/2506.07982v1#page=5
+[supported_finding] No-user versus dual-control ablations distinguish reasoning from communication/coordination difficulties.
+  Exact evidence: §§4.1-4.2; PDF page(s) 6-8. https://arxiv.org/pdf/2506.07982v1#page=6
+[supported_finding] Two annotators audit trajectories. Telecom has 8/50 simulator-error conversations, including 3/50 critical errors; retail has 20/50, including 6/50 critical errors.
+  Exact evidence: §4.3; Table 2; PDF page(s) 10. https://arxiv.org/pdf/2506.07982v1#page=10
+[supported_finding] Table 2's caption says no critical telecom errors, but its row and nearby prose report three (6%).
+  Exact evidence: §4.3; Table 2; PDF page(s) 10. https://arxiv.org/pdf/2506.07982v1#page=10
+[inference] Limitation: Cross-domain error rates are not a controlled causal estimate of tool-constrained simulation. Customer agency in telecom differs from a collections call.
+[inference] Limitation: Task assertions establish correctness relative to their encoded model, not independently against an original banking brief.
+[inference] Builder implication: Keep persona facts separate from speech style and audit scenario fidelity. Diagnose deterministic policy logic with tool mocks separately from conversational realization; do not let the agent's own claimed success decide the oracle.
+
+S05. SimulatorArena: Are User Simulators Reliable Proxies for Multi-Turn Evaluation of AI Assistants?
+Authors: Yao Dou; Michel Galley; Baolin Peng; Chris Kedzie; Weixin Cai; Alan Ritter; Chris Quirk; Wei Xu; Jianfeng Gao
+Year: 2025
+Primary URL: https://arxiv.org/html/2510.05444v1
+publication_url: https://aclanthology.org/2025.emnlp-main.1786/
+Version/page basis: arXiv:2510.05444v1 (6 October 2025); EMNLP 2025 metadata verified
+Read scope: Full relevant HTML §§2-5, simulator profile construction, human study, rating alignment and behavioral-attribute failures.
+[supported_finding] The benchmark contains 909 conversations from 107 participants on math tutoring and document creation.
+  Exact evidence: §§3.1-3.2; HTML/official documentation section (no PDF page asserted). https://arxiv.org/html/2510.05444v1#S3
+[supported_finding] Profiles improve reported human-rating Spearman correlation from 0.61 to 0.77 in tutoring and 0.55 to 0.70 in document creation.
+  Exact evidence: §1; §5; Figure 6; HTML/official documentation section (no PDF page asserted). https://arxiv.org/html/2510.05444v1#S5
+[supported_finding] Richer profiles can reduce fulfillment of interaction-style attributes; optimal profiles differ between tasks.
+  Exact evidence: §5; Figures 8-9; HTML/official documentation section (no PDF page asserted). https://arxiv.org/html/2510.05444v1#S5
+[supported_finding] Limitation: Messages are also assessed by an LLM judge; the study covers two text tasks. https://arxiv.org/html/2510.05444v1#S4
+[inference] Limitation: These correlations are not per-call agreement rates or evidence of banking-policy coverage. Do not import real participant data into this synthetic-data competition.
+[access_limitation] Limitation: Publisher and arXiv PDFs exceeded the browser fetch size limit. Exact HTML sections are verified; PDF page numbers are deliberately omitted.
+[inference] Builder implication: Use a small number of enforceable behavioral attributes. Check whether a simulated customer actually corrects, fragments or asks back as requested; persona labels alone do not establish test coverage.
+
+S06. How Effectively Does Metamorphic Testing Alleviate the Oracle Problem?
+Authors: Huai Liu; Fei-Ching Kuo; Dave Towey; Tsong Yueh Chen
+Year: 2014
+Primary URL: https://vuir.vu.edu.au/33046/1/TSEmt.pdf
+doi_url: https://doi.org/10.1109/TSE.2013.46
+Version/page basis: Author manuscript in institutional repository; one repository cover page precedes manuscript page 1
+Read scope: Study design and expert relation validation; §VI-B results and Figure 2; threat and generalization discussion.
+[supported_finding] Trainers and co-authors validate proposed relations before testing, discarding invalid relations.
+  Exact evidence: Metamorphic-relation identification protocol; PDF page(s) 5. https://vuir.vu.edu.au/33046/1/TSEmt.pdf#page=5
+[supported_finding] Across five algorithmic programs, three to six relations on average recover at least 90% of the fault-detection improvement from random testing to random testing with an oracle.
+  Exact evidence: §VI-B; Figure 2; PDF page(s) 11,13. https://vuir.vu.edu.au/33046/1/TSEmt.pdf#page=11
+[supported_finding] Some individual testers' relation sets remain statistically less effective than the complete oracle.
+  Exact evidence: §VI-B; PDF page(s) 12. https://vuir.vu.edu.au/33046/1/TSEmt.pdf#page=12
+[inference] Limitation: The 90% measure is a fraction of an improvement gap, not 90% of all faults. Controlled algorithm/mutant studies do not establish the same effect for stochastic conversations.
+[inference] Limitation: A metamorphic relation is only valid where the policy makes its proposed invariance necessary; common wrong behavior can satisfy a relation.
+[inference] Builder implication: Use policy-preserving transformations to expose parser and runtime defects, but retain direct expected-state and temporal checks. Validate each relation against source requirements before using it.
+
+S07. Are Mutants a Valid Substitute for Real Faults in Software Testing?
+Authors: René Just; Darioush Jalali; Laura Inozemtseva; Michael D. Ernst; Reid Holmes; Gordon Fraser
+Year: 2014
+Primary URL: https://homes.cs.washington.edu/~mernst/pubs/mutation-effectiveness-fse2014.pdf
+doi_url: https://doi.org/10.1145/2635868.2635929
+Version/page basis: FSE 2014 author PDF; published pp.654-665
+Read scope: §2 methodology; §3 results, mutation coupling, coverage controls and threats.
+[supported_finding] The study uses 357 real faults in five applications totaling 321,000 lines, developer/generated suites and approximately 230,000 mutants.
+  Exact evidence: §§1-2; PDF page(s) 1-2. https://homes.cs.washington.edu/~mernst/pubs/mutation-effectiveness-fse2014.pdf#page=2
+[supported_finding] Mutant detection correlates with real-fault detection beyond statement coverage. Reported coupling covers 73% of faults; 10% need stronger/new operators and 17% are not coupled.
+  Exact evidence: §3; introductory contribution summary; PDF page(s) 2,6-8. https://homes.cs.washington.edu/~mernst/pubs/mutation-effectiveness-fse2014.pdf#page=6
+[supported_finding] Fault selection and available mutation operators limit generalization.
+  Exact evidence: §3, threats to validity; PDF page(s) 9. https://homes.cs.washington.edu/~mernst/pubs/mutation-effectiveness-fse2014.pdf#page=9
+[inference] Limitation: Mutation score is a fault-detection proxy, not a correctness certificate. Java syntactic mutations do not represent all omitted policy clauses or voice misunderstandings.
+[inference] Builder implication: Evaluate the local oracle with targeted policy mutants: bypass confirmation, include holidays, change retry limits, omit a product note, remove transfer precedence, or confuse proposed with recorded promises. Report survivors by obligation, including unreachable/equivalent mutants.
+
+S08. Workflows; Agents and handoffs (LiveKit Agents documentation)
+Authors: LiveKit documentation maintainers
+Year: undated; Undated rolling official documentation, accessed 10 October 2026
+Primary URL: https://docs.livekit.io/agents/logic/workflows/
+Related official URL: https://docs.livekit.io/agents/logic/agents-handoffs/
+Read scope: Core constructs, Choosing a pattern, Best practices; agent handoff and Passing state sections.
+[supported_finding] Documentation distinguishes persistent session control, typed short-lived tasks, ordered task groups and full agent handoffs.
+  Exact evidence: Workflows: Core constructs and Choosing a pattern; HTML/official documentation section (no PDF page asserted). https://docs.livekit.io/agents/logic/workflows/
+[supported_finding] It recommends starting with one agent; added patterns introduce latency or context-management overhead, and splits should address concrete limitations.
+  Exact evidence: Workflows: Choosing a pattern; HTML/official documentation section (no PDF page asserted). https://docs.livekit.io/agents/logic/workflows/
+[supported_finding] Session userdata stores typed shared state; handoffs require explicit handling of conversation context.
+  Exact evidence: Agents and handoffs: Passing state and Context preservation; HTML/official documentation section (no PDF page asserted). https://docs.livekit.io/agents/logic/agents-handoffs/
+[inference] Limitation: These are product capabilities and guidance, not controlled score or latency measurements. LiveKit abstractions are not Freya exporter capabilities; no LiveKit runtime migration is recommended here.
+[inference] Builder implication: Compile a small number of conversation phases with one authoritative typed call state. Preserve partial identity answers, confirmation snapshots, retry counters and committed records across phase changes; minimize unnecessary conversational handoffs.
+
+S09. An Experimental Evaluation of the Assumption of Independence in Multi-Version Programming
+Authors: John C. Knight; Nancy G. Leveson
+Year: 1986
+Primary URL: https://doi.org/10.1109/TSE.1986.6312924
+pdf_url: https://people.cs.rutgers.edu/~uli/cs673/papers/EvaluationMultiVersionProgramming86.pdf
+Version/page basis: Institutional-hosted manuscript/technical-report layout with appendix; PDF locators below refer to that 47-page file
+Read scope: §§1-5 experimental independence and results; §6 examples of correlated faults; §7 external-validity discussion.
+[supported_finding] Twenty-seven independently developed versions from two universities undergo one million tests; 1,255 inputs make multiple versions fail. The independence model is rejected.
+  Exact evidence: §5, Model of independence; PDF page(s) 13-15. https://people.cs.rutgers.edu/~uli/cs673/papers/EvaluationMultiVersionProgramming86.pdf#page=15
+[supported_finding] Shared numerical and geometric misunderstandings cause correlated faults despite separate implementations.
+  Exact evidence: §6, Analysis of faults; PDF page(s) 16-19. https://people.cs.rutgers.edu/~uli/cs673/papers/EvaluationMultiVersionProgramming86.pdf#page=17
+[supported_finding] The programs are small and authors discuss student-participant and industrial-generalization limitations.
+  Exact evidence: §7, Discussion; PDF page(s) 19-20. https://people.cs.rutgers.edu/~uli/cs673/papers/EvaluationMultiVersionProgramming86.pdf#page=19
+[inference] Limitation: This is evidence about human-written software, not measured LLM error correlations. It supports caution about assumed independence; it does not quantify benefits of using different models.
+[inference] Builder implication: Have the checker derive obligations directly from source spans and use a separately implemented reference calculator. Different prompts/models are useful diversity but not proof of oracle independence; a shared mistaken policy extraction can invalidate both.
+
+S10. FlowMind: Automatic Workflow Generation with LLMs
+Authors: Zhen Zeng; William Watson; Nicole Cho; Saba Rahimi; Shayleen Reynolds; Tucker Balch; Manuela Veloso
+Year: 2023; ICAIF 2023 publication; arXiv v1 deposited in 2024
+Primary URL: https://arxiv.org/pdf/2404.13050v1
+doi_url: https://doi.org/10.1145/3604237.3626908
+Version/page basis: arXiv:2404.13050v1
+Read scope: §3 two-stage workflow generation; §4 dataset, API grounding, ablations, result table and feedback example.
+[supported_finding] A context/API/code lecture precedes generated workflow code. API declarations describe arguments and outputs; execution uses the provided functions.
+  Exact evidence: §§3.1-3.2; Figure 2; PDF page(s) 3. https://arxiv.org/pdf/2404.13050v1#page=3
+[supported_finding] On 600 financial QA questions, no-feedback accuracy is 99.5%, 99.0%, 89.5% for easy/intermediate/hard versus 63.5%, 28.0%, 8.5% for context retrieval.
+  Exact evidence: §§4.1,4.4; Table 1; PDF page(s) 4,6. https://arxiv.org/pdf/2404.13050v1#page=6
+[supported_finding] The retrieval baseline truncates context; human feedback further improves accuracy, and semantically poor API descriptions harm generation.
+  Exact evidence: §§4.3.1,4.3.3,4.4; PDF page(s) 5-6. https://arxiv.org/pdf/2404.13050v1#page=6
+[inference] Limitation: This compiles information-query workflows, not dense amended SOPs or ongoing voice policies. Its large gain partly reflects the constrained API setup and weak truncated baseline.
+[inference] Limitation: The human-feedback branch cannot be part of the competition's final no-manual-step run. Proprietary-data isolation is an architectural claim, not a security proof.
+[inference] Builder implication: Give the builder a normalized tool catalog derived from each supplied API, including fields, enums, success indicators and side effects. Generate against a constrained contract and verify bindings before emitting a workflow.
+
+RANKED ACTIONABLE RECOMMENDATIONS
+1. R01 (P0) [inference] Compile briefs into an evidence-linked policy representation before generating the agent.
+Action: Extract atomic rules, definitions, tables, exceptions, precedence and amendments into a typed intermediate representation. Each record should carry original source spans, scope (call/product), conditions, obligations, numeric/calendar parameters and matching tool-schema fields. Resolve B-over-A and memo-over-policy precedence explicitly. Preserve unresolved conflicts rather than silently inventing a rule.
+Competition reason: This gives the generic builder a place to detect skipped rules and separates reusable compiler behavior from brief-specific values.
+Evidence: https://arxiv.org/pdf/2502.14345v1#page=4; https://arxiv.org/pdf/2404.13050v1#page=3 (S02, S10).
+Official grounding: G01, G03, G05; see exact local locators above.
+Proposed acceptance criterion: Every normative source clause is covered by an IR record or explicitly accounted for; every parameter and tool enum traces to the input; amendment resolution has a provenance trail. Different values, identity questions and outcome labels require no source-code change.
+Uncertainty: No reviewed paper demonstrates complete automatic extraction of this competition's unseen, amended bank briefs. This is the central engineering hypothesis, not a solved literature result.
+
+2. R02 (P0) [inference] Use a deterministic policy kernel for consequential decisions.
+Action: Generate calendar arithmetic, amount checks, retry counters, identity gates, per-product attempts, permissible tool arguments and closing reduction as code or guards. Let the language model extract typed user events and render required speech; let code determine legal transitions and writes. Gate debt information until identity completes and success claims until the backend result permits them.
+Competition reason: A correct-looking dialogue still fails if one date, product, reason or tool ordering is wrong.
+Evidence: https://arxiv.org/pdf/2406.12045#page=8; https://arxiv.org/pdf/2502.14345v1#page=4 (S01, S02).
+Official grounding: G02, G03, G04, G07; see exact local locators above.
+Proposed acceptance criterion: For a supplied typed event, the next legal action set and policy state are reproducible. Boundary calculations use the call's now and extracted calendar; invalid actions are rejected before execution.
+Uncertainty: Natural-language interpretation remains fallible. Code guards do not prove the parser, transcription or rule extraction correct.
+
+3. R03 (P0) [inference] Track proposed, confirmed and recorded promises separately and defer note writes.
+Action: Maintain an ordered product ledger with proposed amount/date, confirmation revision, recorded result, failure count and unresolved reason. A correction invalidates the relevant confirmation snapshot. Commit only confirmed values, retain successful product writes on later failures, and never retry a successful write. Keep prospective notes in local state until a non-transfer closing path is fixed; then write notes and close. Transfer paths discard pending notes and unrecorded agreements.
+Competition reason: Brief B forbids notes even before a later transfer and distinguishes recorded promises from verbal agreements; eager note writes create an irreversible policy breach.
+Evidence: https://arxiv.org/pdf/2406.12045#page=25; https://docs.livekit.io/agents/logic/agents-handoffs/ (S01, S08).
+Official grounding: G04, G05, G06, G07; see exact local locators above.
+Proposed acceptance criterion: A mock run with one successful product, one failed product and a subsequent transfer keeps the successful promise, creates no notes and selects transfer closure. No product is omitted and no successful promise is duplicated.
+Uncertainty: The finalization boundary and interruption behavior must be checked by the runtime/exporter owner. Deferral is a proposed solution, not a verified Freya behavior. A transfer arriving while final writes execute remains a runtime race to audit.
+
+4. R04 (P0) [inference] Build the oracle from the source requirements through a separate implementation path.
+Action: Have a checker independently read source spans and compile expected records and invariants; do not import the runtime's result-producing helpers as the expected-answer calculator. Combine final-state checks with tool-event ordering and transcript obligations. Give any language-model judge explicit rule IDs and evidence spans, then retain its rationale and uncertainty.
+Competition reason: The runtime and checker can agree on the same wrongly extracted holiday, threshold or precedence. State equality alone also misses disclosure, confirmation and honest failure reporting.
+Evidence: https://arxiv.org/pdf/2406.12045#page=4; https://people.cs.rutgers.edu/~uli/cs673/papers/EvaluationMultiVersionProgramming86.pdf#page=15 (S01, S09).
+Official grounding: G02, G04, G06, G07; see exact local locators above.
+Proposed acceptance criterion: An intentionally wrong calendar or confirmation gate is rejected by the checker even if runtime state looks internally consistent. Final-state, temporal-policy and speech checks report separately.
+Uncertainty: Different models or prompts do not establish statistical independence. Source-based independent checking reduces one form of common error but cannot eliminate all shared interpretations.
+
+5. R05 (P1) [inference] Measure whether the oracle detects realistic policy mutations.
+Action: Seed targeted local mutants that bypass confirmation, mishandle holidays, alter retry/attempt bounds, suppress an unresolved-product note, lose product order, remove transfer precedence or assert recorded success after a failed tool. Evaluate whether existing tests reject them. Separate uncovered, unreachable and behaviorally equivalent mutants.
+Competition reason: Rule and line coverage can look complete while a checker never notices missing obligations.
+Evidence: https://homes.cs.washington.edu/~mernst/pubs/mutation-effectiveness-fse2014.pdf#page=6; https://vuir.vu.edu.au/33046/1/TSEmt.pdf#page=11 (S07, S06).
+Official grounding: G02, G03, G04, G06; see exact local locators above.
+Proposed acceptance criterion: The local test owner reports killed and surviving mutants by source obligation, and a passing baseline fails when each selected critical fault is injected.
+Uncertainty: Mutation scores do not predict a hidden customer pass rate; policy omission and speech-understanding faults need dedicated operators.
+
+6. R06 (P1) [inference] Use metamorphic checks with explicit preconditions.
+Action: Test opaque-ID renaming with consistent backend remapping; table/prose rewrites and reordered independent paragraphs; equivalent amount/date wording; and irrelevant digressions that do not change policy-relevant facts. Compare canonical bank results and obligations, not verbatim transcripts. Treat corrections and reordered products as controlled changes where the expected answer may change.
+Competition reason: Final material can change form, and final customers preserve facts while changing delivery. These transformations test generic parsing and state continuity.
+Evidence: https://vuir.vu.edu.au/33046/1/TSEmt.pdf#page=11; https://arxiv.org/pdf/2406.12045#page=5 (S06, S01).
+Official grounding: G01, G03, G05, G08; see exact local locators above.
+Proposed acceptance criterion: Each relation states why semantics are preserved and which output is compared. A paragraph-order relation excludes chronology-dependent amendments. A date-shift relation, if added, shifts all temporal data and preserves weekday/calendar structure.
+Uncertainty: Brief B product permutation is not an invariance: first unresolved non-paid product and negotiation order can change. Extra refusals or post-confirmation corrections are not harmless paraphrases.
+
+7. R07 (P1) [inference] Evaluate repeated consistency and simulator fidelity together.
+Action: Keep semantic scenario facts fixed across style variants and reruns. Require customer facts and behavioral attributes to remain faithful to the intended scenario; flag simulator errors separately. Track per-case triples, rule failures, product count and style, alongside single-run success. Reserve independent held-out practice variations for candidate selection.
+Competition reason: The final counts all-three-pass customers. One green run cannot justify reliability, and simulator drift can distort diagnosis.
+Evidence: https://arxiv.org/pdf/2406.12045#page=5; https://arxiv.org/pdf/2506.07982v1#page=10; https://arxiv.org/html/2510.05444v1#S5 (S01, S04, S05).
+Official grounding: G02, G08; see exact local locators above.
+Proposed acceptance criterion: A customer passes a local triple only after three valid passing trajectories. Simulator failures remain visible rather than being silently discarded; official scorer results remain authoritative.
+Uncertainty: Synthetic personas are stress tests, not proof of human realism. Three successes are a selection observation, not a precise estimate of true reliability. Repeats across dates/styles need stratified reporting, not an unjustified IID assumption.
+
+8. R08 (P1) [inference] Give each conversation phase scoped instructions and shared authoritative state.
+Action: Start with a few phases such as opening, identity, account/negotiation, confirmation/recording and closure, plus a common event dispatcher for questions and transfers. Carry all counters and product state across phase transitions. Accumulate partial numeric answers and apply corrections before emitting completed typed values; resume the pending question after permitted answers back.
+Competition reason: Briefs require one-at-a-time identity questions and natural customer interruptions, while long silent turns can lose calls.
+Evidence: https://arxiv.org/pdf/2502.14345v1#page=6; https://docs.livekit.io/agents/logic/workflows/ (S02, S08).
+Official grounding: G03, G04, G05, G08; see exact local locators above.
+Proposed acceptance criterion: Phase changes preserve identity status, remaining attempts, candidate values and committed records. A question back does not reset progress, consume an attempt incorrectly or trigger a premature write.
+Uncertainty: There is no measured basis here for a specific optimal node count. Physical turn detection and Freya route semantics belong to the runtime owner's validation.
+
+9. R09 (P1) [inference] Bound build-check-repair search by the competition clock.
+Action: Do source/IR/schema checks and local deterministic checks before an authorized live practice run. Repair the highest-impact diagnosed defect, rerun only when a new change justifies it, and retain the last valid candidate. Record each model call's purpose and timing. Reserve time to finalize the result and trace; use local tests to avoid spending the budget on repeated full simulations.
+Competition reason: One simulation runs at a time, practice runs can take 3-11 minutes, and all work must fit the 30-minute cap.
+Evidence: https://arxiv.org/pdf/2408.08435v1#page=5; https://arxiv.org/pdf/2404.13050v1#page=3 (S03, S10).
+Official grounding: G01, G08; see exact local locators above.
+Proposed acceptance criterion: The builder uses elapsed-time checks and a bounded retry count, always produces a trace, and does not schedule a test that would consume its finalization reserve.
+Uncertainty: ADAS's 25-30 search iterations and FlowMind's human-feedback improvements do not transfer directly. Optimal time allocation must be measured locally.
+
+10. R10 (P2) [unverified_idea] Use a second extraction view to find omitted or conflicting rules.
+Action: Compare a source-order rule extraction with a separate extraction organized around tool preconditions, outcomes and forbidden actions. Ask the checker to identify disagreements by source span rather than vote on a preferred answer. Maintain a capability registry for requirements that cannot yet be represented.
+Competition reason: Raw bank emails, memos and code lists may express exceptions indirectly or amend earlier rules.
+Evidence: https://people.cs.rutgers.edu/~uli/cs673/papers/EvaluationMultiVersionProgramming86.pdf#page=17; https://arxiv.org/pdf/2502.14345v1#page=9 (S09, S02).
+Official grounding: G01, G03, G06; see exact local locators above.
+Proposed acceptance criterion: A deliberately omitted exception or contradictory amendment is surfaced with both source spans before workflow generation.
+Uncertainty: This has no competition-specific measured result. Run it only if bounded cost and extraction-recall improvements justify the extra model call.
+
+PROPOSED ARCHITECTURE
+1. [inference] Input normalization: Brief/amendment source spans and an API contract with fields, enums, return values and side effects. (R01).
+2. [inference] Policy compilation: Typed rules with call/product scope, precedence, parameters, required speech, forbidden actions and unresolved conflicts. (R01, R10).
+3. [inference] Guarded call state: Deterministic calendar and amount logic, identity and retry state, ordered product ledger, confirmation snapshots and allowed tool actions. (R02, R03).
+4. [inference] Conversation realization: Scoped phase instructions; typed interpretation of fragments/corrections; question answering and resumption; shared authoritative state. (R08).
+5. [inference] Independent verification: Source-derived expected records, temporal event checks, speech obligations, policy mutations, validated metamorphic relations and simulator-fidelity annotations. (R04, R05, R06, R07).
+6. [inference] Bounded repair and delivery: Diagnosed fixes within the elapsed-time budget, retained last valid candidate and full build trace. (R09).
+This describes interfaces and responsibilities for the builder owners. It does not specify or verify Freya export syntax, generate a test corpus or propose an alternative runtime.
+
+INTERPRETATION CAUTIONS
+[inference] Policy extraction, runtime and oracle must not share one unexamined interpretation of a brief. Distinct model names or prompts are not evidence of statistical independence.
+  Evidence: S09: https://doi.org/10.1109/TSE.1986.6312924; related recommendations R04, R10.
+[inference] Database equality is necessary but not sufficient where permission, disclosure, ordering and truthful speech are scored. Keep these failure classes inspectable.
+  Evidence: S01: https://arxiv.org/pdf/2406.12045; related recommendations R04; official grounding G02, G04, G07.
+[inference] Repeated success should be recorded per scenario. Cubing an aggregate single-run pass rate is not a justified estimate of the official all-three score: scenario heterogeneity and correlated trials matter.
+  Evidence: S01: https://arxiv.org/pdf/2406.12045; related recommendations R07; official grounding G02.
+[inference] A policy-preserving transformation requires explicit preconditions. Product order, a new refusal, chronology-dependent amendments or a post-confirmation correction can change the correct outcome.
+  Evidence: S06: https://vuir.vu.edu.au/33046/1/TSEmt.pdf; related recommendations R06; official grounding G05, G08.
+[inference] Persona labels and more nodes do not establish coverage or realism. Prefer observable scenario fidelity and specific state-preservation checks.
+  Evidence: S05: https://arxiv.org/html/2510.05444v1; S08: https://docs.livekit.io/agents/logic/workflows/; related recommendations R07, R08.
+[unverified_idea] A second rule-extraction view may reveal omissions, but its benefit and cost need measurement before it consumes the final-run budget.
+  Evidence: S09: https://doi.org/10.1109/TSE.1986.6312924; related recommendations R10.

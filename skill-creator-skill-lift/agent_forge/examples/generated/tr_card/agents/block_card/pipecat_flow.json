@@ -1,0 +1,262 @@
+{
+  "initial_node": "verify",
+  "nodes": {
+    "verify": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# verify: Verify the caller's identity  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Collect\n- `dob` (date): Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?\n- `id_last4` (digits4): T.C. kimlik numaranızın son dört hanesini söyler misiniz?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Verify the caller's identity"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_dob",
+            "description": "Kimliğinizi doğrulamak için doğum tarihinizi söyler misiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_id_last4",
+            "description": "T.C. kimlik numaranızın son dört hanesini söyler misiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id_last4"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "verify_identity",
+            "description": "Call when dob, id_last4 are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "dob": {
+                  "type": "string"
+                },
+                "id_last4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dob",
+                "id_last4"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=3"
+        },
+        {
+          "to": "block_card",
+          "when": "event:identity_verified"
+        },
+        {
+          "to": "verify",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "block_card": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# block_card: Handle: Müşteri kartının çalındığını bildirirse önce kart block_card ile bloke edilir, ardından reissue_card ile yeni kart talep edilir.  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Collect\n- `details` (text): Anlıyorum. Bunun detaylarını söyler misiniz?\n\n## Tool\n- Call `block_card(details)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Handle: Müşteri kartının çalındığını bildirirse önce kart block_card ile bloke edilir, ardından reissue_card ile yeni kart talep edilir."
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "collect_details",
+            "description": "Anlıyorum. Bunun detaylarını söyler misiniz?",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "block_card",
+            "description": "Call when details are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "block_card__reissue_card",
+          "when": "event:block_card_done"
+        },
+        {
+          "to": "block_card_declined",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "block_card__reissue_card": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# block_card__reissue_card: Run reissue_card after block_card  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Tool\n- Call `reissue_card(details)` once every value is collected.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Run reissue_card after block_card"
+        }
+      ],
+      "functions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "reissue_card",
+            "description": "Call when details are collected",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "details"
+              ]
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "to": "done",
+          "when": "event:reissue_card_done"
+        },
+        {
+          "to": "block_card_declined",
+          "when": "tool_failed"
+        }
+      ]
+    },
+    "block_card_declined": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# block_card_declined: Tell the caller the request could not go ahead  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Say on entry\nÜzgünüm, bu işlemi şu an tamamlayamadım.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Tell the caller the request could not go ahead Say: Üzgünüm, bu işlemi şu an tamamlayamadım."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "done": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# done: Close the call  [§4.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Say on entry\nKaydettim, teşekkür ederim. İyi günler.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Close the call Say: Kaydettim, teşekkür ederim. İyi günler."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    },
+    "human_agent": {
+      "role_messages": [
+        {
+          "role": "system",
+          "content": "# human_agent: Hand the call to a human agent  [§3.3]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Kimlik doğrulanmadan borç tutarı, bakiye veya hesap bilgisi söyleme; önce doğrulamayı tamamla. [§3.2]\n\n## Say on entry\nSizi şimdi bir müşteri temsilcimize aktarıyorum.\n"
+        }
+      ],
+      "task_messages": [
+        {
+          "role": "system",
+          "content": "Hand the call to a human agent Say: Sizi şimdi bir müşteri temsilcimize aktarıyorum."
+        }
+      ],
+      "functions": [],
+      "transitions": [],
+      "post_actions": [
+        {
+          "type": "end_conversation"
+        }
+      ]
+    }
+  }
+}

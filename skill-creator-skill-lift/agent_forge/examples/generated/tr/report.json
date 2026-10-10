@@ -1,0 +1,203 @@
+{
+  "agent": "ornek_banka_a_s_gecikmis_kredi_karti_borcu_tahsi",
+  "language": "tr",
+  "before": {
+    "pass@1": 0.0,
+    "pass^k": 0.0,
+    "safe^k": 0.091,
+    "guard_interventions": 21,
+    "fails": 30
+  },
+  "after": {
+    "pass@1": 1.0,
+    "pass^k": 1.0,
+    "safe^k": 1.0,
+    "guard_interventions": 0,
+    "fails": 0
+  },
+  "patches_accepted": 10,
+  "patches_rejected": 0,
+  "needs_review": [
+    "bound_loop promise [no clause (assumption)]: static check: node promise: unbounded retry loop (self-edge without max_attempts and an attempts>= exit) (SOP gives no limit; assumed 3)"
+  ],
+  "coverage": {
+    "normative": 20,
+    "implemented": 20,
+    "tested": 20,
+    "unimplemented": [],
+    "untested": []
+  },
+  "mutation_score": 0.818,
+  "survivors": [
+    {
+      "clause": "7.2",
+      "removed": [
+        "guard:VC-7.2"
+      ]
+    },
+    {
+      "clause": "8.2",
+      "removed": [
+        "guard:VC-8.2"
+      ]
+    }
+  ],
+  "static_problems": [],
+  "extractor_notes": [
+    "§12.1: open-set capability `update_address` recognised by the cue words of 'adresinin degistigini'",
+    "§13.1: open-set capability `block_card` recognised by the cue words of 'kartinin calindigini'",
+    "§14.1: open-set capability `extend_due_date` recognised by the cue words of 'odeme suresinin uzatilmasini'"
+  ],
+  "seconds": 17.17,
+  "unreached_tools": [],
+  "export_review": [],
+  "topology": {
+    "style": "router + 5 specialists, 3 with handback, 1 inline branch, 1 join (extend_due_date after all of check_income, check_risk)",
+    "inline": [
+      "third_party"
+    ],
+    "forms": {
+      "third_party": "inline branch in the entry agent",
+      "dispute": "specialist agent",
+      "hardship": "specialist agent",
+      "update_address": "specialist agent, hands back",
+      "block_card": "specialist agent, hands back",
+      "extend_due_date": "specialist agent, hands back"
+    },
+    "agents": [
+      "core",
+      "update_address",
+      "block_card",
+      "extend_due_date",
+      "dispute",
+      "hardship"
+    ],
+    "handoffs": [
+      "core->update_address on update_address carrying ['event:identity_verified']",
+      "update_address->core on done",
+      "core->block_card on block_card carrying ['event:identity_verified']",
+      "block_card->core on done",
+      "core->extend_due_date on extend_due_date carrying ['event:identity_verified']",
+      "extend_due_date->core on done",
+      "core->dispute on dispute carrying ['event:identity_verified']",
+      "core->hardship on hardship carrying ['event:identity_verified']"
+    ],
+    "pending": [],
+    "before": {
+      "pass@1": 0.424,
+      "pass^k": 0.424,
+      "safe^k": 0.424,
+      "guard_interventions": 3,
+      "fails": 57
+    },
+    "after": {
+      "pass@1": 1.0,
+      "pass^k": 1.0,
+      "safe^k": 1.0,
+      "guard_interventions": 0,
+      "fails": 0
+    },
+    "moves_accepted": 6,
+    "moves_rejected": 1,
+    "mutation_score": 0.905,
+    "survivors": [
+      {
+        "clause": "7.2",
+        "removed": [
+          "core:guard:VC-7.2",
+          "update_address:guard:VC-7.2",
+          "block_card:guard:VC-7.2",
+          "extend_due_date:guard:VC-7.2",
+          "dispute:guard:VC-7.2",
+          "hardship:guard:VC-7.2"
+        ]
+      },
+      {
+        "clause": "8.2",
+        "removed": [
+          "core:guard:VC-8.2",
+          "update_address:guard:VC-8.2",
+          "block_card:guard:VC-8.2",
+          "extend_due_date:guard:VC-8.2",
+          "dispute:guard:VC-8.2",
+          "hardship:guard:VC-8.2"
+        ]
+      }
+    ],
+    "static_problems": []
+  },
+  "exam": {
+    "binding_clauses": 20,
+    "uncovered": [],
+    "callers": 21,
+    "oracle_rules": 7,
+    "order_formulas": 11,
+    "perception_cases": 41
+  },
+  "perception": {
+    "perception": "rules",
+    "cases": 41,
+    "accuracy": 1.0,
+    "labels": {
+      "yes": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 5
+      },
+      "no": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 3
+      },
+      "correction": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 6
+      },
+      "update_address": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 3
+      },
+      "block_card": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 3
+      },
+      "extend_due_date": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 3
+      },
+      "third_party": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 4
+      },
+      "none": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 6
+      },
+      "dispute": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 4
+      },
+      "hardship": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "n": 4
+      }
+    }
+  },
+  "guard_probes": {
+    "probes": 13,
+    "lexical": 0.462
+  },
+  "solver_check": {
+    "solver": true,
+    "rules": 11,
+    "findings": []
+  }
+}

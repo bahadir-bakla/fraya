@@ -1,0 +1,3033 @@
+{
+  "$comment": "Multi-agent topology as one Freya workflow. Node types as in freya_workflow.json; the write schema is not public, so this is a mapping, not a verified payload.",
+  "name": "example_mutual_insurance_overdue_premium_reminde",
+  "agents": [
+    {
+      "id": "core",
+      "role": "entry",
+      "policySource": [
+        "1.1",
+        "2.1",
+        "3.1",
+        "3.2",
+        "13.1",
+        "2.3",
+        "5.1",
+        "8.1"
+      ]
+    },
+    {
+      "id": "update_address",
+      "role": "specialist",
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "block_card",
+      "role": "specialist",
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "issue_refund",
+      "role": "specialist",
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "dispute",
+      "role": "specialist",
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "hardship",
+      "role": "specialist",
+      "policySource": [
+        "10.1"
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "name": "dob",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "id_last4",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "amount",
+      "type": "number",
+      "scope": "global"
+    },
+    {
+      "name": "pay_date",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "callback_time",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "identity_verified",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "promise_saved",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "schedule_callback_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "intent",
+      "type": "string",
+      "scope": "global",
+      "enum": [
+        "ask_info",
+        "ask_consequence",
+        "ask_guarantee",
+        "escalate",
+        "ask_readback",
+        "third_party",
+        "right_party",
+        "update_address",
+        "block_card",
+        "issue_refund",
+        "dispute",
+        "hardship",
+        "none"
+      ]
+    },
+    {
+      "name": "last_call_ok",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "verify_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "promise_attempts",
+      "type": "number",
+      "scope": "global",
+      "default": 0
+    },
+    {
+      "name": "overdue",
+      "type": "number",
+      "scope": "input"
+    },
+    {
+      "name": "due_date",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_dob",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "crm_id_last4",
+      "type": "string",
+      "scope": "input"
+    },
+    {
+      "name": "details",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "update_address_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "block_card_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "reissue_card_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "request_amount",
+      "type": "number",
+      "scope": "global"
+    },
+    {
+      "name": "approve_lead_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "approve_manager_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "issue_refund_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "dispute_reason",
+      "type": "string",
+      "scope": "global"
+    },
+    {
+      "name": "record_dispute_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "monthly_amount",
+      "type": "number",
+      "scope": "global"
+    },
+    {
+      "name": "hardship_plan_done",
+      "type": "boolean",
+      "scope": "global"
+    },
+    {
+      "name": "returnTo",
+      "type": "string",
+      "scope": "global"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "core.greet",
+      "type": "agent",
+      "data": {
+        "prompt": "# greet: Open the call with the required disclosure  [§1.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nHello, this is Example Mutual Insurance. This call is recorded; we are calling about your overdue premium.\n",
+        "collect": [
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "issue_refund",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "1.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.greet__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "issue_refund",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.inform",
+      "type": "agent",
+      "data": {
+        "prompt": "# inform: Tell the verified caller the overdue amount and due date  [§3.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nYour overdue premium is {overdue} dollars, due on {due_date}.\n",
+        "collect": [
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "issue_refund",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.inform__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.promise",
+      "type": "agent",
+      "data": {
+        "prompt": "# promise: Collect a payment promise (amount and date) and record it  [§3.2]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## In this step\n- Before asking for an amount, state the minimum promise that can be accepted. [§3.3]\n\n## Collect\n- `amount` (amount): How much would you be able to pay? Read it back and get a yes before using it [§3.2].\n- `pay_date` (date): On what date can you make the payment? Read it back and get a yes before using it [§3.2].\n\n## Tool\n- Call `save_promise(amount, pay_date)` once every value is collected.\n- Only call it when amount >= 0.25 × overdue [§3.3].\n",
+        "collect": [
+          {
+            "name": "amount",
+            "type": "number"
+          },
+          {
+            "name": "pay_date",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "issue_refund",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "3.2"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.promise__save_promise",
+      "type": "function",
+      "data": {
+        "function": "save_promise",
+        "args": {
+          "amount": "{{amount}}",
+          "pay_date": "{{pay_date}}"
+        },
+        "preconditions": [
+          "amount >= 0.25 × overdue"
+        ],
+        "outputs": {
+          "promise_saved": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "promise_attempts"
+      },
+      "policySource": [
+        "3.2"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.promise__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.close",
+      "type": "agent",
+      "data": {
+        "prompt": "# close: End the call  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded your promise of {amount} dollars on {pay_date}. Thank you, goodbye.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party",
+      "type": "agent",
+      "data": {
+        "prompt": "# third_party: Handle: If someone other than the policyholder answers, the agent must not mention the premium; it asks when the policyholder can be reached and records it with schedule_callback.  [§8.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `callback_time` (text): I understand. When can we reach them?\n\n## Tool\n- Call `schedule_callback(callback_time)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "callback_time",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "update_address",
+              "block_card",
+              "issue_refund",
+              "dispute",
+              "hardship",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "8.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party__schedule_callback",
+      "type": "function",
+      "data": {
+        "function": "schedule_callback",
+        "args": {
+          "callback_time": "{{callback_time}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "schedule_callback_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "8.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party__route",
+      "type": "condition",
+      "data": {},
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# third_party_declined: Tell the caller the request could not go ahead  [§8.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI'm sorry, I could not complete that just now.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "8.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.third_party_done",
+      "type": "agent",
+      "data": {
+        "prompt": "# third_party_done: Close the call  [§8.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nThank you, we will call back then. Goodbye.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "8.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "core.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "I am transferring you to a colleague now."
+      },
+      "policySource": [
+        "2.3",
+        "5.1"
+      ],
+      "agent": "core"
+    },
+    {
+      "id": "update_address.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.update_address",
+      "type": "agent",
+      "data": {
+        "prompt": "# update_address: Handle: If the policyholder says their address has changed, the agent must collect the new address, record it with update_address and continue where the call left off.  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `details` (text): I see. Could you give me the details?\n\n## Tool\n- Call `update_address(details)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "11.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.update_address__update_address",
+      "type": "function",
+      "data": {
+        "function": "update_address",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "update_address_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "11.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.update_address__route",
+      "type": "condition",
+      "data": {},
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.update_address_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# update_address_declined: Tell the caller the request could not go ahead  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI'm sorry, I could not complete that just now.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "11.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Hand the call back to the agent it came from  [§11.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded that, thank you.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "11.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "update_address.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "I am transferring you to a colleague now."
+      },
+      "policySource": [
+        "2.3",
+        "5.1"
+      ],
+      "agent": "update_address"
+    },
+    {
+      "id": "block_card.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card",
+      "type": "agent",
+      "data": {
+        "prompt": "# block_card: Handle: If the policyholder says the card on file was stolen, the agent must block it with block_card before ordering a replacement with reissue_card, then continue where the call left off.  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `details` (text): I see. Could you give me the details?\n\n## Tool\n- Call `block_card(details)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__block_card",
+      "type": "function",
+      "data": {
+        "function": "block_card",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "block_card_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__reissue_card",
+      "type": "function",
+      "data": {
+        "function": "reissue_card",
+        "args": {
+          "details": "{{details}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "reissue_card_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card__reissue_card__route",
+      "type": "condition",
+      "data": {},
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.block_card_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# block_card_declined: Tell the caller the request could not go ahead  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI'm sorry, I could not complete that just now.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Hand the call back to the agent it came from  [§12.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded that, thank you.\n",
+        "endCall": false
+      },
+      "policySource": [
+        "12.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "block_card.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "I am transferring you to a colleague now."
+      },
+      "policySource": [
+        "2.3",
+        "5.1"
+      ],
+      "agent": "block_card"
+    },
+    {
+      "id": "issue_refund.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund",
+      "type": "agent",
+      "data": {
+        "prompt": "# issue_refund: Handle: If the policyholder asks for a refund of a premium already paid, for refunds over $500 the agent must get approval from the team lead with approve_lead and then from the manager with approve_manager; only if every approval is positive is the refund issued with issue_refund. If any approval is declined, the call is transferred to a human agent.  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `request_amount` (amount): What amount are you asking for?\n",
+        "collect": [
+          {
+            "name": "request_amount",
+            "type": "number"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__route",
+      "type": "condition",
+      "data": {},
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__approve_lead",
+      "type": "function",
+      "data": {
+        "function": "approve_lead",
+        "args": {
+          "request_amount": "{{request_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "approve_lead_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__approve_lead__route",
+      "type": "condition",
+      "data": {},
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__approve_manager",
+      "type": "function",
+      "data": {
+        "function": "approve_manager",
+        "args": {
+          "request_amount": "{{request_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "approve_manager_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__approve_manager__route",
+      "type": "condition",
+      "data": {},
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__issue_refund",
+      "type": "function",
+      "data": {
+        "function": "issue_refund",
+        "args": {
+          "request_amount": "{{request_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "issue_refund_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__issue_refund__route",
+      "type": "condition",
+      "data": {},
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__direct",
+      "type": "function",
+      "data": {
+        "function": "issue_refund",
+        "args": {
+          "request_amount": "{{request_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "issue_refund_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__direct__route",
+      "type": "condition",
+      "data": {},
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Close the call  [§13.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded that, thank you. Goodbye.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "I am transferring you to a colleague now."
+      },
+      "policySource": [
+        "2.3",
+        "5.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "issue_refund.issue_refund__issue_refund__join",
+      "type": "condition",
+      "data": {
+        "join": "all",
+        "waitsOn": [
+          "approve_lead",
+          "approve_manager"
+        ],
+        "parallel": false
+      },
+      "policySource": [
+        "13.1"
+      ],
+      "agent": "issue_refund"
+    },
+    {
+      "id": "dispute.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.dispute",
+      "type": "agent",
+      "data": {
+        "prompt": "# dispute: Handle: If the policyholder disputes the premium, the agent must record the reason with record_dispute and must not ask for payment afterwards.  [§9.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dispute_reason` (text): Could you briefly tell me why you dispute it?\n\n## Tool\n- Call `record_dispute(dispute_reason)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dispute_reason",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "9.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.dispute__record_dispute",
+      "type": "function",
+      "data": {
+        "function": "record_dispute",
+        "args": {
+          "dispute_reason": "{{dispute_reason}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "record_dispute_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "9.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.dispute__route",
+      "type": "condition",
+      "data": {},
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.dispute_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# dispute_declined: Tell the caller the request could not go ahead  [§9.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI'm sorry, I could not complete that just now.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "9.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Close the call  [§9.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded your dispute; we won't ask for payment while it is reviewed. Goodbye.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "9.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "dispute.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "I am transferring you to a colleague now."
+      },
+      "policySource": [
+        "2.3",
+        "5.1"
+      ],
+      "agent": "dispute"
+    },
+    {
+      "id": "hardship.verify",
+      "type": "agent",
+      "data": {
+        "prompt": "# verify: Verify the caller's identity  [§2.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `dob` (date): To verify your identity, could you tell me your date of birth?\n- `id_last4` (digits4): Could you tell me the last four digits of your policy number?\n\n## Tool\n- Call `verify_identity(dob, id_last4)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "dob",
+            "type": "string"
+          },
+          {
+            "name": "id_last4",
+            "type": "string"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.verify__verify_identity",
+      "type": "function",
+      "data": {
+        "function": "verify_identity",
+        "args": {
+          "dob": "{{dob}}",
+          "id_last4": "{{id_last4}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "identity_verified": "boolean",
+          "last_call_ok": "boolean"
+        },
+        "increment": "verify_attempts"
+      },
+      "policySource": [
+        "2.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.verify__route",
+      "type": "condition",
+      "data": {},
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.hardship",
+      "type": "agent",
+      "data": {
+        "prompt": "# hardship: Handle: If the policyholder mentions job loss, illness or other financial hardship, the agent must ask what they can pay per month and record it with hardship_plan.  [§10.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Collect\n- `monthly_amount` (amount): How much could you pay per month?\n\n## Tool\n- Call `hardship_plan(monthly_amount)` once every value is collected.\n",
+        "collect": [
+          {
+            "name": "monthly_amount",
+            "type": "number"
+          },
+          {
+            "name": "intent",
+            "type": "string",
+            "enum": [
+              "ask_info",
+              "ask_consequence",
+              "ask_guarantee",
+              "escalate",
+              "ask_readback",
+              "third_party",
+              "right_party",
+              "none"
+            ],
+            "description": "Which listed situation the caller's last turn is in; none if unsure."
+          }
+        ]
+      },
+      "policySource": [
+        "10.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.hardship__hardship_plan",
+      "type": "function",
+      "data": {
+        "function": "hardship_plan",
+        "args": {
+          "monthly_amount": "{{monthly_amount}}"
+        },
+        "preconditions": [],
+        "outputs": {
+          "hardship_plan_done": "boolean",
+          "last_call_ok": "boolean"
+        }
+      },
+      "policySource": [
+        "10.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.hardship__route",
+      "type": "condition",
+      "data": {},
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.hardship_declined",
+      "type": "agent",
+      "data": {
+        "prompt": "# hardship_declined: Tell the caller the request could not go ahead  [§10.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI'm sorry, I could not complete that just now.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "10.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.done",
+      "type": "agent",
+      "data": {
+        "prompt": "# done: Close the call  [§10.1]\n\nYou are a voice agent on a phone call. Speak briefly; one question at a time.\n\n## Always\n- Do not state any amount, balance or account detail before identity is verified. [§2.2]\n- Never threaten legal action, police or arrest; steer to a payment plan. [§4.1]\n- Never guarantee a waiver or discount. [§4.2]\n- Never read a card number, ID number or IBAN back aloud, even when asked. [§6.1]\n\n## Say on entry\nI have recorded a hardship plan of {monthly_amount} dollars per month. Goodbye.\n",
+        "endCall": true
+      },
+      "policySource": [
+        "10.1"
+      ],
+      "agent": "hardship"
+    },
+    {
+      "id": "hardship.human_agent",
+      "type": "transfer",
+      "data": {
+        "target": "human_agent",
+        "message": "I am transferring you to a colleague now."
+      },
+      "policySource": [
+        "2.3",
+        "5.1"
+      ],
+      "agent": "hardship"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "core.greet",
+      "policySource": []
+    },
+    {
+      "id": "e2",
+      "source": "core.greet",
+      "target": "core.greet__route",
+      "policySource": []
+    },
+    {
+      "id": "e3",
+      "source": "core.greet__route",
+      "target": "core.verify",
+      "policySource": [
+        "1.1"
+      ]
+    },
+    {
+      "id": "e4",
+      "source": "core.greet",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e5",
+      "source": "core.greet",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "8.1"
+      ]
+    },
+    {
+      "id": "e6",
+      "source": "core.verify",
+      "target": "core.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e7",
+      "source": "core.verify__verify_identity",
+      "target": "core.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e8",
+      "source": "core.verify__route",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 2
+      },
+      "policySource": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "e9",
+      "source": "core.verify__route",
+      "target": "core.inform",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e10",
+      "source": "core.verify__route",
+      "target": "core.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e11",
+      "source": "core.verify",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e12",
+      "source": "core.verify",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "8.1"
+      ]
+    },
+    {
+      "id": "e13",
+      "source": "core.inform",
+      "target": "core.inform__route",
+      "policySource": []
+    },
+    {
+      "id": "e14",
+      "source": "core.inform__route",
+      "target": "core.promise",
+      "policySource": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "e15",
+      "source": "core.inform",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e16",
+      "source": "core.inform",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "8.1"
+      ]
+    },
+    {
+      "id": "e17",
+      "source": "core.promise",
+      "target": "core.promise__save_promise",
+      "policySource": []
+    },
+    {
+      "id": "e18",
+      "source": "core.promise__save_promise",
+      "target": "core.promise__route",
+      "policySource": []
+    },
+    {
+      "id": "e19",
+      "source": "core.promise__route",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "promise_attempts",
+        "operator": "gte",
+        "value": 3
+      },
+      "policySource": []
+    },
+    {
+      "id": "e20",
+      "source": "core.promise__route",
+      "target": "core.close",
+      "condition": {
+        "variable": "promise_saved",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "3.2"
+      ]
+    },
+    {
+      "id": "e21",
+      "source": "core.promise__route",
+      "target": "core.promise",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "3.2"
+      ]
+    },
+    {
+      "id": "e22",
+      "source": "core.promise",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e23",
+      "source": "core.promise",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "8.1"
+      ]
+    },
+    {
+      "id": "e24",
+      "source": "core.third_party",
+      "target": "core.third_party__schedule_callback",
+      "policySource": []
+    },
+    {
+      "id": "e25",
+      "source": "core.third_party__schedule_callback",
+      "target": "core.third_party__route",
+      "policySource": []
+    },
+    {
+      "id": "e26",
+      "source": "core.third_party__route",
+      "target": "core.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "right_party"
+      },
+      "policySource": [
+        "8.1"
+      ]
+    },
+    {
+      "id": "e27",
+      "source": "core.third_party__route",
+      "target": "core.third_party_done",
+      "condition": {
+        "variable": "schedule_callback_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "8.1"
+      ]
+    },
+    {
+      "id": "e28",
+      "source": "core.third_party__route",
+      "target": "core.third_party_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "8.1"
+      ]
+    },
+    {
+      "id": "e29",
+      "source": "core.third_party",
+      "target": "core.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e30",
+      "source": "core.third_party",
+      "target": "core.third_party",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "third_party"
+      },
+      "policySource": [
+        "8.1"
+      ]
+    },
+    {
+      "id": "e31",
+      "source": "update_address.verify",
+      "target": "update_address.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e32",
+      "source": "update_address.verify__verify_identity",
+      "target": "update_address.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e33",
+      "source": "update_address.verify__route",
+      "target": "update_address.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 2
+      },
+      "policySource": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "e34",
+      "source": "update_address.verify__route",
+      "target": "update_address.update_address",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e35",
+      "source": "update_address.verify__route",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e36",
+      "source": "update_address.verify",
+      "target": "update_address.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e37",
+      "source": "update_address.update_address",
+      "target": "update_address.update_address__update_address",
+      "policySource": []
+    },
+    {
+      "id": "e38",
+      "source": "update_address.update_address__update_address",
+      "target": "update_address.update_address__route",
+      "policySource": []
+    },
+    {
+      "id": "e39",
+      "source": "update_address.update_address__route",
+      "target": "update_address.done",
+      "condition": {
+        "variable": "update_address_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "e40",
+      "source": "update_address.update_address__route",
+      "target": "update_address.update_address_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "11.1"
+      ]
+    },
+    {
+      "id": "e41",
+      "source": "update_address.update_address",
+      "target": "update_address.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e42",
+      "source": "block_card.verify",
+      "target": "block_card.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e43",
+      "source": "block_card.verify__verify_identity",
+      "target": "block_card.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e44",
+      "source": "block_card.verify__route",
+      "target": "block_card.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 2
+      },
+      "policySource": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "e45",
+      "source": "block_card.verify__route",
+      "target": "block_card.block_card",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e46",
+      "source": "block_card.verify__route",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e47",
+      "source": "block_card.verify",
+      "target": "block_card.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e48",
+      "source": "block_card.block_card",
+      "target": "block_card.block_card__block_card",
+      "policySource": []
+    },
+    {
+      "id": "e49",
+      "source": "block_card.block_card__block_card",
+      "target": "block_card.block_card__route",
+      "policySource": []
+    },
+    {
+      "id": "e50",
+      "source": "block_card.block_card__route",
+      "target": "block_card.block_card__reissue_card",
+      "condition": {
+        "variable": "block_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e51",
+      "source": "block_card.block_card__route",
+      "target": "block_card.block_card_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e52",
+      "source": "block_card.block_card",
+      "target": "block_card.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e53",
+      "source": "block_card.block_card__reissue_card",
+      "target": "block_card.block_card__reissue_card__route",
+      "policySource": []
+    },
+    {
+      "id": "e54",
+      "source": "block_card.block_card__reissue_card__route",
+      "target": "block_card.done",
+      "condition": {
+        "variable": "reissue_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e55",
+      "source": "block_card.block_card__reissue_card__route",
+      "target": "block_card.block_card_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "12.1"
+      ]
+    },
+    {
+      "id": "e56",
+      "source": "issue_refund.verify",
+      "target": "issue_refund.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e57",
+      "source": "issue_refund.verify__verify_identity",
+      "target": "issue_refund.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e58",
+      "source": "issue_refund.verify__route",
+      "target": "issue_refund.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 2
+      },
+      "policySource": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "e59",
+      "source": "issue_refund.verify__route",
+      "target": "issue_refund.issue_refund",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e60",
+      "source": "issue_refund.verify__route",
+      "target": "issue_refund.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e61",
+      "source": "issue_refund.verify",
+      "target": "issue_refund.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e62",
+      "source": "issue_refund.issue_refund",
+      "target": "issue_refund.issue_refund__route",
+      "policySource": []
+    },
+    {
+      "id": "e63",
+      "source": "issue_refund.issue_refund__route",
+      "target": "issue_refund.issue_refund__approve_lead",
+      "condition": {
+        "variable": "request_amount",
+        "operator": "gt",
+        "value": 500.0
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e64",
+      "source": "issue_refund.issue_refund__route",
+      "target": "issue_refund.issue_refund__direct",
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e65",
+      "source": "issue_refund.issue_refund",
+      "target": "issue_refund.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e66",
+      "source": "issue_refund.issue_refund__approve_lead",
+      "target": "issue_refund.issue_refund__approve_lead__route",
+      "policySource": []
+    },
+    {
+      "id": "e67",
+      "source": "issue_refund.issue_refund__approve_lead__route",
+      "target": "issue_refund.issue_refund__approve_manager",
+      "condition": {
+        "variable": "approve_lead_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e68",
+      "source": "issue_refund.issue_refund__approve_lead__route",
+      "target": "issue_refund.human_agent",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e69",
+      "source": "issue_refund.issue_refund__approve_manager",
+      "target": "issue_refund.issue_refund__approve_manager__route",
+      "policySource": []
+    },
+    {
+      "id": "e70",
+      "source": "issue_refund.issue_refund__approve_manager__route",
+      "target": "issue_refund.issue_refund__issue_refund__join",
+      "condition": {
+        "variable": "approve_manager_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e71",
+      "source": "issue_refund.issue_refund__approve_manager__route",
+      "target": "issue_refund.human_agent",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e72",
+      "source": "issue_refund.issue_refund__issue_refund",
+      "target": "issue_refund.issue_refund__issue_refund__route",
+      "policySource": []
+    },
+    {
+      "id": "e73",
+      "source": "issue_refund.issue_refund__issue_refund__route",
+      "target": "issue_refund.done",
+      "condition": {
+        "variable": "issue_refund_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e74",
+      "source": "issue_refund.issue_refund__issue_refund__route",
+      "target": "issue_refund.human_agent",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e75",
+      "source": "issue_refund.issue_refund__direct",
+      "target": "issue_refund.issue_refund__direct__route",
+      "policySource": []
+    },
+    {
+      "id": "e76",
+      "source": "issue_refund.issue_refund__direct__route",
+      "target": "issue_refund.done",
+      "condition": {
+        "variable": "issue_refund_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e77",
+      "source": "issue_refund.issue_refund__direct__route",
+      "target": "issue_refund.human_agent",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e78",
+      "source": "issue_refund.issue_refund__issue_refund__join",
+      "target": "issue_refund.issue_refund__issue_refund",
+      "condition": {
+        "operator": "all",
+        "conditions": [
+          {
+            "variable": "approve_lead_done",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "variable": "approve_manager_done",
+            "operator": "equals",
+            "value": true
+          }
+        ]
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e79",
+      "source": "issue_refund.issue_refund__issue_refund__join",
+      "target": "issue_refund.human_agent",
+      "condition": {
+        "operator": "not_all",
+        "conditions": [
+          {
+            "variable": "approve_lead_done",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "variable": "approve_manager_done",
+            "operator": "equals",
+            "value": true
+          }
+        ]
+      },
+      "policySource": [
+        "13.1"
+      ]
+    },
+    {
+      "id": "e80",
+      "source": "dispute.verify",
+      "target": "dispute.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e81",
+      "source": "dispute.verify__verify_identity",
+      "target": "dispute.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e82",
+      "source": "dispute.verify__route",
+      "target": "dispute.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 2
+      },
+      "policySource": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "e83",
+      "source": "dispute.verify__route",
+      "target": "dispute.dispute",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e84",
+      "source": "dispute.verify__route",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e85",
+      "source": "dispute.verify",
+      "target": "dispute.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e86",
+      "source": "dispute.dispute",
+      "target": "dispute.dispute__record_dispute",
+      "policySource": []
+    },
+    {
+      "id": "e87",
+      "source": "dispute.dispute__record_dispute",
+      "target": "dispute.dispute__route",
+      "policySource": []
+    },
+    {
+      "id": "e88",
+      "source": "dispute.dispute__route",
+      "target": "dispute.done",
+      "condition": {
+        "variable": "record_dispute_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e89",
+      "source": "dispute.dispute__route",
+      "target": "dispute.dispute_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "9.1"
+      ]
+    },
+    {
+      "id": "e90",
+      "source": "dispute.dispute",
+      "target": "dispute.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e91",
+      "source": "hardship.verify",
+      "target": "hardship.verify__verify_identity",
+      "policySource": []
+    },
+    {
+      "id": "e92",
+      "source": "hardship.verify__verify_identity",
+      "target": "hardship.verify__route",
+      "policySource": []
+    },
+    {
+      "id": "e93",
+      "source": "hardship.verify__route",
+      "target": "hardship.human_agent",
+      "condition": {
+        "variable": "verify_attempts",
+        "operator": "gte",
+        "value": 2
+      },
+      "policySource": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "e94",
+      "source": "hardship.verify__route",
+      "target": "hardship.hardship",
+      "condition": {
+        "variable": "identity_verified",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e95",
+      "source": "hardship.verify__route",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "e96",
+      "source": "hardship.verify",
+      "target": "hardship.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "id": "e97",
+      "source": "hardship.hardship",
+      "target": "hardship.hardship__hardship_plan",
+      "policySource": []
+    },
+    {
+      "id": "e98",
+      "source": "hardship.hardship__hardship_plan",
+      "target": "hardship.hardship__route",
+      "policySource": []
+    },
+    {
+      "id": "e99",
+      "source": "hardship.hardship__route",
+      "target": "hardship.done",
+      "condition": {
+        "variable": "hardship_plan_done",
+        "operator": "equals",
+        "value": true
+      },
+      "policySource": [
+        "10.1"
+      ]
+    },
+    {
+      "id": "e100",
+      "source": "hardship.hardship__route",
+      "target": "hardship.hardship_declined",
+      "condition": {
+        "variable": "last_call_ok",
+        "operator": "equals",
+        "value": false
+      },
+      "policySource": [
+        "10.1"
+      ]
+    },
+    {
+      "id": "e101",
+      "source": "hardship.hardship",
+      "target": "hardship.human_agent",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "escalate"
+      },
+      "policySource": [
+        "5.1"
+      ]
+    },
+    {
+      "source": "core.greet",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.greet"
+      },
+      "id": "e102"
+    },
+    {
+      "source": "core.verify",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.verify"
+      },
+      "id": "e103"
+    },
+    {
+      "source": "core.inform",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.inform"
+      },
+      "id": "e104"
+    },
+    {
+      "source": "core.promise",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.promise"
+      },
+      "id": "e105"
+    },
+    {
+      "source": "core.third_party",
+      "target": "update_address.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "update_address"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "11.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.third_party"
+      },
+      "id": "e106"
+    },
+    {
+      "source": "update_address.update_address_declined",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "11.1"
+      ],
+      "condition": {
+        "variable": "update_address_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e107"
+    },
+    {
+      "source": "update_address.done",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "11.1"
+      ],
+      "condition": {
+        "variable": "update_address_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e108"
+    },
+    {
+      "source": "core.greet",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.greet"
+      },
+      "id": "e109"
+    },
+    {
+      "source": "core.verify",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.verify"
+      },
+      "id": "e110"
+    },
+    {
+      "source": "core.inform",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.inform"
+      },
+      "id": "e111"
+    },
+    {
+      "source": "core.promise",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.promise"
+      },
+      "id": "e112"
+    },
+    {
+      "source": "core.third_party",
+      "target": "block_card.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "block_card"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "12.1"
+      ],
+      "handoff": true,
+      "setVariables": {
+        "returnTo": "core.third_party"
+      },
+      "id": "e113"
+    },
+    {
+      "source": "block_card.block_card_declined",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "12.1"
+      ],
+      "condition": {
+        "variable": "reissue_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e114"
+    },
+    {
+      "source": "block_card.done",
+      "targetVariable": "returnTo",
+      "handback": true,
+      "policySource": [
+        "12.1"
+      ],
+      "condition": {
+        "variable": "reissue_card_done",
+        "operator": "equals",
+        "value": true
+      },
+      "id": "e115"
+    },
+    {
+      "source": "core.greet",
+      "target": "issue_refund.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "issue_refund"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "id": "e116"
+    },
+    {
+      "source": "core.verify",
+      "target": "issue_refund.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "issue_refund"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "id": "e117"
+    },
+    {
+      "source": "core.inform",
+      "target": "issue_refund.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "issue_refund"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "id": "e118"
+    },
+    {
+      "source": "core.promise",
+      "target": "issue_refund.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "issue_refund"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "id": "e119"
+    },
+    {
+      "source": "core.third_party",
+      "target": "issue_refund.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "issue_refund"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "13.1"
+      ],
+      "handoff": true,
+      "id": "e120"
+    },
+    {
+      "source": "core.greet",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "9.1"
+      ],
+      "handoff": true,
+      "id": "e121"
+    },
+    {
+      "source": "core.verify",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "9.1"
+      ],
+      "handoff": true,
+      "id": "e122"
+    },
+    {
+      "source": "core.inform",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "9.1"
+      ],
+      "handoff": true,
+      "id": "e123"
+    },
+    {
+      "source": "core.promise",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "9.1"
+      ],
+      "handoff": true,
+      "id": "e124"
+    },
+    {
+      "source": "core.third_party",
+      "target": "dispute.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "dispute"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "9.1"
+      ],
+      "handoff": true,
+      "id": "e125"
+    },
+    {
+      "source": "core.greet",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e126"
+    },
+    {
+      "source": "core.verify",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e127"
+    },
+    {
+      "source": "core.inform",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e128"
+    },
+    {
+      "source": "core.promise",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e129"
+    },
+    {
+      "source": "core.third_party",
+      "target": "hardship.verify",
+      "condition": {
+        "variable": "intent",
+        "operator": "equals",
+        "value": "hardship"
+      },
+      "context": [
+        "event:identity_verified"
+      ],
+      "policySource": [
+        "10.1"
+      ],
+      "handoff": true,
+      "id": "e130"
+    }
+  ]
+}

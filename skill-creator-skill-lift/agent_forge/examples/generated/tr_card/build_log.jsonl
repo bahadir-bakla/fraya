@@ -1,0 +1,18 @@
+{"seq": 1, "depth": 0, "actor": "architect", "action": "read_sop", "clauses": 7, "binding": 6}
+{"seq": 2, "depth": 0, "actor": "architect", "action": "draft_agent", "agent": "core", "nodes": 4, "rules": 2, "capabilities": ["block_card"]}
+{"seq": 3, "depth": 1, "actor": "examiner", "action": "write_exam", "sees": "clauses only", "callers": 4, "oracle_rules": 2, "order_formulas": 2, "perception_cases": 3, "uncovered": []}
+{"seq": 4, "depth": 1, "actor": "examiner", "action": "score_perception", "perception": "rules", "accuracy": 1.0, "misses": 0}
+{"seq": 5, "depth": 1, "actor": "simulator", "action": "run_suite", "agent": "core", "pass@1": 0.333, "pass^k": 0.333, "safe^k": 0.667, "fails": 3}
+{"seq": 6, "depth": 1, "actor": "repairer", "action": "bound_loop", "target": "verify", "clauses": ["3.3"], "evidence": ["*static*", "wrong_identity"], "accepted": true, "why": "accepted", "needs_review": false, "pass@1": 0.667, "pass^k": 0.667, "safe^k": 1.0, "fails": 0}
+{"seq": 7, "depth": 1, "actor": "repairer", "action": "instruct", "target": "*", "clauses": ["3.2"], "evidence": ["impatient"], "accepted": true, "why": "accepted", "needs_review": false, "pass@1": 1.0, "pass^k": 1.0, "safe^k": 1.0, "fails": 0}
+{"seq": 8, "depth": 1, "actor": "mutator", "action": "ablate", "agent": "core", "clauses": ["2.1"], "killed": true, "by": ["cooperative", "impatient", "wrong_identity"]}
+{"seq": 9, "depth": 1, "actor": "mutator", "action": "ablate", "agent": "core", "clauses": ["3.2"], "killed": true, "by": ["impatient"]}
+{"seq": 10, "depth": 1, "actor": "mutator", "action": "ablate", "agent": "core", "clauses": ["3.3"], "killed": true, "by": ["wrong_identity"]}
+{"seq": 11, "depth": 1, "actor": "simulator", "action": "run_topology", "agents": ["core"], "pass@1": 0.75, "pass^k": 0.75, "safe^k": 0.75, "fails": 3}
+{"seq": 12, "depth": 0, "actor": "architect", "action": "spawn_agent", "target": "block_card", "clauses": ["4.1"], "evidence": ["block_card"], "detail": {}, "accepted": true, "why": "accepted", "pass@1": 1.0, "pass^k": 1.0, "safe^k": 1.0, "fails": 0}
+{"seq": 13, "depth": 1, "actor": "mutator", "action": "ablate", "agent": "topology", "clauses": ["2.1"], "killed": true, "by": ["block_card", "cooperative", "impatient", "wrong_identity"]}
+{"seq": 14, "depth": 1, "actor": "mutator", "action": "ablate", "agent": "topology", "clauses": ["3.2"], "killed": true, "by": ["impatient"]}
+{"seq": 15, "depth": 1, "actor": "mutator", "action": "ablate", "agent": "topology", "clauses": ["3.3"], "killed": true, "by": ["wrong_identity"]}
+{"seq": 16, "depth": 1, "actor": "mutator", "action": "ablate", "agent": "topology", "clauses": ["4.1"], "killed": true, "by": ["block_card"]}
+{"seq": 17, "depth": 1, "actor": "mutator", "action": "ablate", "agent": "topology", "clauses": ["4.1"], "killed": true, "by": ["block_card"]}
+{"seq": 18, "depth": 0, "actor": "architect", "action": "compile", "agents": ["core", "block_card"], "handoffs": ["core->block_card"], "runtime": "static workflow, no runtime spawning"}

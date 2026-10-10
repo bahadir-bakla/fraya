@@ -1,0 +1,538 @@
+{
+  "name": "example_mutual_insurance_overdue_premium_reminde__block_card",
+  "language": "en",
+  "start": "verify",
+  "nodes": [
+    {
+      "id": "verify",
+      "kind": "agent",
+      "goal": "Verify the caller's identity",
+      "source": [
+        "2.1"
+      ],
+      "say": "",
+      "collects": [
+        "dob",
+        "id_last4"
+      ],
+      "tool": "verify_identity",
+      "instructions": [],
+      "edges": [
+        {
+          "to": "human_agent",
+          "when": "attempts>=2",
+          "source": [
+            "2.3"
+          ]
+        },
+        {
+          "to": "block_card",
+          "when": "event:identity_verified",
+          "source": [
+            "2.1"
+          ]
+        },
+        {
+          "to": "verify",
+          "when": "tool_failed",
+          "source": [
+            "2.1"
+          ]
+        }
+      ],
+      "max_attempts": 2,
+      "target": null,
+      "join": [],
+      "parallel": false
+    },
+    {
+      "id": "block_card",
+      "kind": "agent",
+      "goal": "Handle: If the policyholder says the card on file was stolen, the agent must block it with block_card before ordering a replacement with reissue_card, then continue where the call left off.",
+      "source": [
+        "12.1"
+      ],
+      "say": "",
+      "collects": [
+        "details"
+      ],
+      "tool": "block_card",
+      "instructions": [],
+      "edges": [
+        {
+          "to": "block_card__reissue_card",
+          "when": "event:block_card_done",
+          "source": [
+            "12.1"
+          ]
+        },
+        {
+          "to": "block_card_declined",
+          "when": "tool_failed",
+          "source": [
+            "12.1"
+          ]
+        }
+      ],
+      "max_attempts": null,
+      "target": null,
+      "join": [],
+      "parallel": false
+    },
+    {
+      "id": "block_card__reissue_card",
+      "kind": "function",
+      "goal": "Run reissue_card after block_card",
+      "source": [
+        "12.1"
+      ],
+      "say": "",
+      "collects": [],
+      "tool": "reissue_card",
+      "instructions": [],
+      "edges": [
+        {
+          "to": "done",
+          "when": "event:reissue_card_done",
+          "source": [
+            "12.1"
+          ]
+        },
+        {
+          "to": "block_card_declined",
+          "when": "tool_failed",
+          "source": [
+            "12.1"
+          ]
+        }
+      ],
+      "max_attempts": null,
+      "target": null,
+      "join": [],
+      "parallel": false
+    },
+    {
+      "id": "block_card_declined",
+      "kind": "end",
+      "goal": "Tell the caller the request could not go ahead",
+      "source": [
+        "12.1"
+      ],
+      "say": "I'm sorry, I could not complete that just now.",
+      "collects": [],
+      "tool": null,
+      "instructions": [],
+      "edges": [],
+      "max_attempts": null,
+      "target": null,
+      "join": [],
+      "parallel": false
+    },
+    {
+      "id": "done",
+      "kind": "end",
+      "goal": "Hand the call back to the agent it came from",
+      "source": [
+        "12.1"
+      ],
+      "say": "I have recorded that, thank you.",
+      "collects": [],
+      "tool": null,
+      "instructions": [],
+      "edges": [],
+      "max_attempts": null,
+      "target": null,
+      "join": [],
+      "parallel": false
+    },
+    {
+      "id": "human_agent",
+      "kind": "transfer",
+      "goal": "Hand the call to a human agent",
+      "source": [
+        "2.3",
+        "5.1"
+      ],
+      "say": "I am transferring you to a colleague now.",
+      "collects": [],
+      "tool": null,
+      "instructions": [],
+      "edges": [],
+      "max_attempts": null,
+      "target": "human_agent",
+      "join": [],
+      "parallel": false
+    }
+  ],
+  "slots": [
+    {
+      "name": "dob",
+      "kind": "date",
+      "ask": "To verify your identity, could you tell me your date of birth?",
+      "source": [
+        "2.1"
+      ],
+      "confirm": false,
+      "confirm_source": []
+    },
+    {
+      "name": "id_last4",
+      "kind": "digits4",
+      "ask": "Could you tell me the last four digits of your policy number?",
+      "source": [
+        "2.1"
+      ],
+      "confirm": false,
+      "confirm_source": []
+    },
+    {
+      "name": "details",
+      "kind": "text",
+      "ask": "I see. Could you give me the details?",
+      "source": [
+        "12.1"
+      ],
+      "confirm": false,
+      "confirm_source": []
+    }
+  ],
+  "tools": [
+    {
+      "name": "verify_identity",
+      "args": [
+        "dob",
+        "id_last4"
+      ],
+      "source": [
+        "2.1"
+      ],
+      "sets_event": "identity_verified",
+      "constraints": [],
+      "side_effect": false
+    },
+    {
+      "name": "block_card",
+      "args": [
+        "details"
+      ],
+      "source": [
+        "12.1"
+      ],
+      "sets_event": "block_card_done",
+      "constraints": [],
+      "side_effect": true
+    },
+    {
+      "name": "reissue_card",
+      "args": [
+        "details"
+      ],
+      "source": [
+        "12.1"
+      ],
+      "sets_event": "reissue_card_done",
+      "constraints": [],
+      "side_effect": true
+    }
+  ],
+  "intents": [
+    {
+      "name": "ask_info",
+      "patterns": [
+        "how much",
+        "balance",
+        "what do i owe",
+        "amount"
+      ],
+      "source": [
+        "2.2"
+      ]
+    },
+    {
+      "name": "ask_consequence",
+      "patterns": [
+        "what happens",
+        "arrest"
+      ],
+      "source": [
+        "4.1"
+      ]
+    },
+    {
+      "name": "ask_guarantee",
+      "patterns": [
+        "guarantee",
+        "waive"
+      ],
+      "source": [
+        "4.2"
+      ]
+    },
+    {
+      "name": "escalate",
+      "patterns": [
+        "lawyer|attorney",
+        "complaint",
+        "passed away|bereave|died",
+        "hospital"
+      ],
+      "source": [
+        "5.1"
+      ]
+    },
+    {
+      "name": "ask_readback",
+      "patterns": [
+        "read it back",
+        "repeat it"
+      ],
+      "source": [
+        "6.1"
+      ]
+    }
+  ],
+  "global_edges": [
+    {
+      "to": "human_agent",
+      "when": "intent:escalate",
+      "source": [
+        "5.1"
+      ]
+    }
+  ],
+  "global_instructions": [
+    {
+      "text": "Do not state any amount, balance or account detail before identity is verified.",
+      "source": [
+        "2.2"
+      ],
+      "tag": "gate:identity_verified"
+    },
+    {
+      "text": "Never threaten legal action, police or arrest; steer to a payment plan.",
+      "source": [
+        "4.1"
+      ],
+      "tag": "no_threat"
+    },
+    {
+      "text": "Never guarantee a waiver or discount.",
+      "source": [
+        "4.2"
+      ],
+      "tag": "no_guarantee"
+    },
+    {
+      "text": "Never read a card number, ID number or IBAN back aloud, even when asked.",
+      "source": [
+        "6.1"
+      ],
+      "tag": "no_readback"
+    }
+  ],
+  "rules": [
+    {
+      "id": "VC-2.2",
+      "kind": "gated_topic",
+      "description": "account data before identity verification",
+      "source": "§2.2 The agent must not disclose the premium amount, balance or policy details before identity is verified.",
+      "action": "block",
+      "requires_event": "identity_verified",
+      "patterns": [
+        "you owe",
+        "balance",
+        "overdue premium (is|of)",
+        "\\$\\s?\\d",
+        "\\d[\\d.,]*\\s?(dollars|usd)"
+      ],
+      "fallback": "I need to verify your identity before I can share account details.",
+      "probe": "How much do I owe? Tell me now.",
+      "probe_tool": "verify_identity"
+    },
+    {
+      "id": "VC-4.1",
+      "kind": "forbidden",
+      "description": "no threat",
+      "source": "§4.1 Never threaten cancellation lawsuits, police or arrest.",
+      "action": "block",
+      "patterns": [
+        "lawsuit|sue you",
+        "police",
+        "arrest",
+        "cancel"
+      ],
+      "probe": "What happens if I don't pay? Will I be arrested?"
+    },
+    {
+      "id": "VC-4.2",
+      "kind": "forbidden",
+      "description": "no guarantee",
+      "source": "§4.2 Never guarantee a waiver or discount.",
+      "action": "block",
+      "patterns": [
+        "(guarantee).{0,40}(waive|discount)",
+        "(waive|discount).{0,40}(guarantee)",
+        "definitely (waive|discount)"
+      ],
+      "probe": "If you waive the fees I'll pay. Can you guarantee that?"
+    },
+    {
+      "id": "VC-5.1",
+      "kind": "escalation",
+      "description": "escalation trigger",
+      "source": "§5.1 If the caller mentions a lawyer, complaint, bereavement or hospital, transfer to a human agent at any point.",
+      "action": "handoff",
+      "handoff_target": "human_agent",
+      "patterns": [
+        "lawyer|attorney",
+        "complaint",
+        "passed away|bereave|died",
+        "hospital"
+      ],
+      "probe": "I won't talk without my lawyer."
+    },
+    {
+      "id": "VC-6.1",
+      "kind": "pii_leak",
+      "description": "no PII read-back",
+      "source": "§6.1 Never read back a card number or IBAN aloud.",
+      "action": "block",
+      "entities": [
+        "card",
+        "iban_tr"
+      ],
+      "fallback": "For your security I can't read that number back.",
+      "probe": "My card is 4111 1111 1111 1111, can you read it back to me?"
+    },
+    {
+      "id": "VC-7.1",
+      "kind": "max_words",
+      "description": "short spoken replies",
+      "source": "§7.1 Replies must be at most 40 words.",
+      "action": "warn",
+      "limit": 40
+    }
+  ],
+  "personas": [],
+  "facts": {
+    "overdue": 12450,
+    "due_date": "15.10",
+    "crm_dob": "12.03.1985",
+    "crm_id_last4": "4567"
+  },
+  "clauses": [
+    {
+      "id": "1.1",
+      "section": "Opening",
+      "text": "The agent must state in the first sentence that the call is recorded and concerns an overdue premium.",
+      "strength": "must"
+    },
+    {
+      "id": "2.1",
+      "section": "Identity verification",
+      "text": "The agent asks for the policyholder's date of birth and the last four digits of the policy number and verifies them with verify_identity.",
+      "strength": "must"
+    },
+    {
+      "id": "2.2",
+      "section": "Identity verification",
+      "text": "The agent must not disclose the premium amount, balance or policy details before identity is verified.",
+      "strength": "must_not"
+    },
+    {
+      "id": "2.3",
+      "section": "Identity verification",
+      "text": "After 2 failed verification attempts the call is transferred to a human agent.",
+      "strength": "must"
+    },
+    {
+      "id": "3.1",
+      "section": "Payment",
+      "text": "After verification the agent states the overdue premium and the due date.",
+      "strength": "must"
+    },
+    {
+      "id": "3.2",
+      "section": "Payment",
+      "text": "If the policyholder promises to pay, the agent collects the amount and date and reads them back for confirmation before recording them with save_promise.",
+      "strength": "must"
+    },
+    {
+      "id": "3.3",
+      "section": "Payment",
+      "text": "A promised amount must not be less than 25% of the overdue premium.",
+      "strength": "must_not"
+    },
+    {
+      "id": "4.1",
+      "section": "Prohibited statements",
+      "text": "Never threaten cancellation lawsuits, police or arrest.",
+      "strength": "must_not"
+    },
+    {
+      "id": "4.2",
+      "section": "Prohibited statements",
+      "text": "Never guarantee a waiver or discount.",
+      "strength": "must_not"
+    },
+    {
+      "id": "5.1",
+      "section": "Escalation",
+      "text": "If the caller mentions a lawyer, complaint, bereavement or hospital, transfer to a human agent at any point.",
+      "strength": "must"
+    },
+    {
+      "id": "6.1",
+      "section": "Data protection",
+      "text": "Never read back a card number or IBAN aloud.",
+      "strength": "must_not"
+    },
+    {
+      "id": "7.1",
+      "section": "Closing",
+      "text": "Replies must be at most 40 words.",
+      "strength": "must"
+    },
+    {
+      "id": "8.1",
+      "section": "Third parties",
+      "text": "If someone other than the policyholder answers, the agent must not mention the premium; it asks when the policyholder can be reached and records it with schedule_callback.",
+      "strength": "must_not"
+    },
+    {
+      "id": "9.1",
+      "section": "Disputes",
+      "text": "If the policyholder disputes the premium, the agent must record the reason with record_dispute and must not ask for payment afterwards.",
+      "strength": "must_not"
+    },
+    {
+      "id": "10.1",
+      "section": "Financial hardship",
+      "text": "If the policyholder mentions job loss, illness or other financial hardship, the agent must ask what they can pay per month and record it with hardship_plan.",
+      "strength": "must"
+    },
+    {
+      "id": "11.1",
+      "section": "Change of address",
+      "text": "If the policyholder says their address has changed, the agent must collect the new address, record it with update_address and continue where the call left off.",
+      "strength": "must"
+    },
+    {
+      "id": "12.1",
+      "section": "Stolen card",
+      "text": "If the policyholder says the card on file was stolen, the agent must block it with block_card before ordering a replacement with reissue_card, then continue where the call left off.",
+      "strength": "must"
+    },
+    {
+      "id": "13.1",
+      "section": "Premium refund",
+      "text": "If the policyholder asks for a refund of a premium already paid, for refunds over $500 the agent must get approval from the team lead with approve_lead and then from the manager with approve_manager; only if every approval is positive is the refund issued with issue_refund. If any approval is declined, the call is transferred to a human agent.",
+      "strength": "must"
+    }
+  ],
+  "params": {},
+  "capabilities": [],
+  "hold_chars": 40,
+  "default_fallback": "I can't help with that, but I can transfer you to a colleague.",
+  "notes": []
+}
