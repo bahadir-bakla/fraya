@@ -120,7 +120,7 @@ class FakeClient:
             return {"simulation": {"id": sid}}
         if path == "/api/v2/simulations":
             if self.extra_workspace_page and params["offset"] == 0:
-                return {"simulations": [{"id": f"historic_{i}", "status": "completed"} for i in range(100)]}
+                return {"simulations": [{"id": f"historic_{i}", "status": "completed"} for i in range(params["limit"])]}
             if self.external_status:
                 return {"simulations": [{"id": "someone_else", "status": self.external_status}]}
             return {"simulations": [{"id": sid, "status": "completed"} for sid in self.simulations]}
@@ -346,7 +346,9 @@ class RunnerTests(unittest.TestCase):
         client = FakeClient(rows()); client.extra_workspace_page = True; client.external_status = "pending"
         result, _, client = self.execute(client=client)
         self.assertEqual(result["error_code"], "workspace_not_idle")
-        self.assertEqual([params["offset"] for _, path, _, params in client.requests if path == "/api/v2/simulations"], [0, 100])
+        pages = [params for _, path, _, params in client.requests if path == "/api/v2/simulations"]
+        self.assertEqual([params["offset"] for params in pages], [0, 25])
+        self.assertEqual([params["limit"] for params in pages], [25, 25])
         self.assertEqual(client.starts, [])
 
     def test_timeout_global_not_per_batch_preserves_owned_simulation(self):
@@ -451,6 +453,28 @@ class RunnerTests(unittest.TestCase):
             client=r.OfficialClient(b.KIT,r.Budget(2,self.clock.clock,self.clock.sleep))
             with self.assertRaisesRegex(r.RunnerError,'^http_response_error_500$'):
                 client.bank('/v1/practice/sessions',{'case':'PUB-01'})
+
+    def test_isolated_original_client_recovers_get_503_with_same_budget(self):
+        error = r.urllib.error.HTTPError('https://test.invalid', 503, 'unavailable', {}, io.BytesIO(b'PRIVATE_BODY'))
+        response = io.BytesIO(b'{"customer_id":"opaque"}')
+        with patch.dict(os.environ, {'FREYA_BANK_TEAM_KEY': 'UNIT_TEST_NAMESPACE'}, clear=True), \
+                patch('urllib.request.urlopen', side_effect=[error, response]) as opener:
+            client = r.OfficialClient(b.KIT, r.Budget(60, self.clock.clock, self.clock.sleep))
+            self.assertEqual(client.bank('/v1/practice/ledger/opaque'), {'customer_id': 'opaque'})
+        self.assertEqual(opener.call_count, 2)
+        self.assertEqual(self.clock.waits, [10])
+        self.assertEqual([args[0].get_method() for args, _ in opener.call_args_list], ['GET', 'GET'])
+
+    def test_isolated_original_client_never_retries_unknown_post_503(self):
+        error = r.urllib.error.HTTPError('https://test.invalid', 503, 'unavailable', {}, io.BytesIO(b'PRIVATE_BODY'))
+        with patch.dict(os.environ, {'FREYA_BANK_TEAM_KEY': 'UNIT_TEST_NAMESPACE'}, clear=True), \
+                patch('urllib.request.urlopen', side_effect=error) as opener:
+            client = r.OfficialClient(b.KIT, r.Budget(60, self.clock.clock, self.clock.sleep))
+            with self.assertRaisesRegex(r.RunnerError, '^http_response_error_503$'):
+                client.bank('/v1/practice/sessions', {'case': 'PUB-01'})
+        self.assertEqual(opener.call_count, 1)
+        self.assertEqual(self.clock.waits, [])
+        self.assertEqual(opener.call_args.args[0].get_method(), 'POST')
 
 
 if __name__ == "__main__":

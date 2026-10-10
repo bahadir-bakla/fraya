@@ -1,0 +1,714 @@
+A3 PINNED COMPLETED VERSION 3 LOCAL REGRESSION VERIFICATION
+Run 20261010-230126-a87851; completed 2026-10-10T20:04:39.108232+00:00; version 3
+Workflow 092bb06d-a735-43b3-b411-c2c7138b0c1f; agent 37b17600-df9a-4934-854e-a3de8f2e7987
+Export competition\runs\20261010-230126-a87851\codex-stress-a.workflow.json
+Export SHA256 ba68b1e22a5d28ea35e3dc3fe27eb6e011f1f30e8bfd875d761f650e67328653
+Elapsed 382.460s; <=10min=True; audit_abort=None
+COUNTS
+{"classifications": {"literal_producer_example": 30, "nonconforming_missing_field_injection": 3, "nonconforming_semantic_fault_injection": 2, "nonconforming_syntax_fault_injection": 7, "producer_conforming_completion_probe": 4, "producer_conforming_control": 38, "synthetic_receipt_pipeline_control": 4, "transport_fault_injection": 18, "transport_fault_pipeline_control": 2}, "conforming_observation_rows": 72, "conforming_unmatched_rows": 4, "decoder_bootstrap_invocations": 2, "decoder_helper_aborts": 5, "decoder_helper_completed": 15, "decoder_helper_expected_rejections": 5, "decoder_helper_invocations": 20, "dispatch_caught_safe_failure": 0, "dispatch_invocations": 116, "expected_control_count": 108, "expected_observations_matched": 104, "expected_observations_unmatched": 4, "extractor_model_calls": 0, "git_commands": 0, "hosted_tests": 0, "local_synthetic_requests": 23, "network_requests": 0, "policy_pass_count": null, "post_hook_invocations": 23, "pre_hook_invocations": 23, "request_operations": {"close_call": 5, "create_promise": 5, "get_account": 5, "verify_identity": 8}, "snippet_aborts": 0, "snippet_completed": 164, "snippet_invocations": 164, "unique_executed_snippet_pointers": 9}
+Observation matches include injections; not policy pass/scoring rates.
+A2 REGRESSIONS
+{"id": "unfinished-date-fragment", "a2_input": {"event": "k=change;c=0;END", "raw": "Yes, but make it Mon...", "trace_ids": [94]}, "a2_matched": false, "a3_input": {"event": "k=change;c=0;u=date;END", "raw": "Yes, but make it Mon...", "trace_ids": [39]}, "a3_matched": true, "adaptation": "Required u added for c=0 only; raw speech and expected component semantics retained."}
+{"id": "unfinished-amount-with-date", "a2_input": {"event": "k=proposal;c=0;d=this Friday;END", "raw": "Actually I will pay two hundred and... this Friday", "trace_ids": [97]}, "a2_matched": false, "a3_input": {"event": "k=proposal;c=0;u=amount;d=this Friday;END", "raw": "Actually I will pay two hundred and... this Friday", "trace_ids": [41]}, "a3_matched": true, "adaptation": "Required u added for c=0 only; raw speech and expected component semantics retained."}
+{"id": "unfinished-amount-date-only-reply", "a2_input": {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Next Monday.", "trace_ids": [96]}, "a2_matched": false, "a3_input": {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Next Monday.", "trace_ids": [42]}, "a3_matched": true, "adaptation": "Unchanged complete literal row."}
+{"id": "unfinished-named-date", "a2_input": {"event": "k=change;c=0;END", "raw": "Actually change the date to...", "trace_ids": [90]}, "a2_matched": true, "a3_input": {"event": "k=change;c=0;u=date;END", "raw": "Actually change the date to...", "trace_ids": [38]}, "a3_matched": true, "adaptation": "Required u added for c=0 only; raw speech and expected component semantics retained."}
+{"id": "unfinished-named-amount", "a2_input": {"event": "k=change;c=0;END", "raw": "Actually change the amount to...", "trace_ids": [95]}, "a2_matched": true, "a3_input": {"event": "k=change;c=0;u=amount;END", "raw": "Actually change the amount to...", "trace_ids": [40]}, "a3_matched": true, "adaptation": "Required u added for c=0 only; raw speech and expected component semantics retained."}
+{"id": "complete-date-correction", "a2_input": {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Yes, but make it next Monday instead.", "trace_ids": [88]}, "a2_matched": true, "a3_input": {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Yes, but make it next Monday instead.", "trace_ids": [44]}, "a3_matched": true, "adaptation": "Unchanged complete literal row."}
+{"id": "complete-amount-correction", "a2_input": {"event": "k=proposal;c=1;a=250;END", "raw": "Actually make the amount 250.", "trace_ids": [89]}, "a2_matched": true, "a3_input": {"event": "k=proposal;c=1;a=250;END", "raw": "Actually make the amount 250.", "trace_ids": [45]}, "a3_matched": true, "adaptation": "Unchanged complete literal row."}
+ACTIONABLE CONFORMING LOCAL FAULTS
+A3-01: Both/unknown unfinished components require simultaneous repetition of newly complete facts
+Rows: both-then-date, both-then-amount, unknown-then-date, unknown-then-amount
+Source: /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default lines 120,121,122,123,283,284,286,287,289,290,291,292,293
+Exact line 289:                         resolved=(missing=='amount' and 'a' in e) or (missing=='date' and 'd' in e and q.get('date')) or (missing in ('both','unknown') and 'a' in e and 'd' in e and q.get('date'))
+Action: Track unresolved components individually; clear each after its newly explicit complete value. Once both required facts are complete, issue fresh full readback and require later confirmation.
+Local consumer liveness fault, not a consent bypass or observed extractor failure. Both facts together in one reply is a passing control.
+GOOD CONTROLS
+unfinished-named-date, unfinished-date-fragment, unfinished-named-amount, unfinished-amount-with-date, unfinished-amount-date-only-reply, complete-date-correction, complete-amount-correction, both-complete-together, unknown-complete-together, security-dob-literal, security-phone-literal, confirm-recovery-null, confirm-later-null, exact-confirm-body-null, voluntary-126, voluntary-200, voluntary-420, hardship-voluntary-partial, compound-too-much-proposal, merge-identity-pipeline, full-store-merge-pipeline
+METHOD
+A2 audit.py/followup.py copied into owned scratch; exact .a2-copy bytes preserved. Only owned copies retargeted. Original A2 scripts/report never executed or written.
+Pinned exported dispatch and API pre/post code execute unchanged. Actual schema defaults, response mappings and ordered transitions applied. Config body rendered before pre-hook and hook-mutated body retained. Synthetic receipts only; no HTTP.
+Per snippet deep-copy persistent store into vars, then store.update(snapshot). Locally deleted keys remain persisted unless explicitly reset. Extraction is a merge patch; omitted event preserves prior value. Trace records before/after persisted snapshots.
+Synthetic single returned product/call facts; state initialized by actual dispatch and synthetic verification/account responses; verified=True never forced.
+Advertised literal examples and authored latest-reply conforming rows, including required c=0 u=amount/date/both/unknown; independent structural checks and stated semantic basis. No extractor model call.
+Increment before compile/exec. Outer exceptions count as snippet_aborts; exported catches to safe_failure counted separately. Decoder helper calls/aborts separate. Setup/bootstrap/hooks/receipt dispatches included. Helper aborts include five expected invalid-grammar rejections; they are not exported snippet aborts. Initial 133 plus followup 31 snippets is the complete actual execution count.
+Shared globals/locals scaffolding inherited from A2. No strict-split probe performed and no assertion about undocumented platform namespace behavior.
+No voice/dialogue renderer, global scheduler, ASR/TTS, hosted timing/backend/idempotency/scoring emulation. Export global_nodes is empty.
+ROWS
+literal-decode-01 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=recipient;c=1;END", "description_offset": 2172, "helper_id": 1}
+Depends on rows:
+Observed: {"decoded": [{"k": "recipient", "c": "1"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-02 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=security;c=1;v=14 October 1980;END", "description_offset": 2192, "helper_id": 2}
+Depends on rows:
+Observed: {"decoded": [{"k": "security", "c": "1", "v": "14 October 1980"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-03 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=security;c=1;v=1234;END", "description_offset": 2229, "helper_id": 3}
+Depends on rows:
+Observed: {"decoded": [{"k": "security", "c": "1", "v": "1234"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-04 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=proposal;c=1;p=credit card;a=120;d=next Friday;END", "description_offset": 2255, "helper_id": 4}
+Depends on rows:
+Observed: {"decoded": [{"k": "proposal", "c": "1", "p": "credit card", "a": "120", "d": "next Friday"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-05 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=agree;c=1;p=personal loan;END", "description_offset": 2308, "helper_id": 5}
+Depends on rows:
+Observed: {"decoded": [{"k": "agree", "c": "1", "p": "personal loan"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-06 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=confirm;c=1;END", "description_offset": 2340, "helper_id": 6}
+Depends on rows:
+Observed: {"decoded": [{"k": "confirm", "c": "1"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-07 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=proposal;c=0;p=car loan;u=date;a=50;END", "description_offset": 2358, "helper_id": 7}
+Depends on rows:
+Observed: {"decoded": [{"k": "proposal", "c": "0", "p": "car loan", "u": "date", "a": "50"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-08 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=callback;c=1;d=tomorrow;t=15:00;END", "description_offset": 2400, "helper_id": 8}
+Depends on rows:
+Observed: {"decoded": [{"k": "callback", "c": "1", "d": "tomorrow", "t": "15:00"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-09 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=proposal;c=1;p=credit card;a=120;d=next Friday;END", "description_offset": 2255, "helper_id": 9}
+Depends on rows:
+Observed: {"decoded": [{"k": "proposal", "c": "1", "p": "credit card", "a": "120", "d": "next Friday"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-10 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=refuse;c=1;p=personal loan;END", "description_offset": 2491, "helper_id": 10}
+Depends on rows:
+Observed: {"decoded": [{"k": "refuse", "c": "1", "p": "personal loan"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-11 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=paid;c=1;p=car loan;END", "description_offset": 2524, "helper_id": 11}
+Depends on rows:
+Observed: {"decoded": [{"k": "paid", "c": "1", "p": "car loan"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-12 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=change;c=0;u=date;END", "description_offset": 3143, "helper_id": 12}
+Depends on rows:
+Observed: {"decoded": [{"k": "change", "c": "0", "u": "date"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-13 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=proposal;c=0;u=amount;d=this Friday;END", "description_offset": 3167, "helper_id": 13}
+Depends on rows:
+Observed: {"decoded": [{"k": "proposal", "c": "0", "u": "amount", "d": "this Friday"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-14 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=change;c=0;u=amount;END", "description_offset": 3209, "helper_id": 14}
+Depends on rows:
+Observed: {"decoded": [{"k": "change", "c": "0", "u": "amount"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-decode-15 | literal_producer_example | matched=True | conforming=True
+Expected: Advertised literal example decodes
+Input: {"event": "k=change;c=0;u=unknown;END", "description_offset": 3235, "helper_id": 15}
+Depends on rows:
+Observed: {"decoded": [{"k": "change", "c": "0", "u": "unknown"}], "exception": null}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-01 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=recipient;c=1;END", "raw": "Speaking.", "trace_ids": [23], "precondition_state": {"phase": "recipient", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please tell me your date of birth, with the month as a word.", "phase": "dob", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 1, "security_field": null, "security_answer": null, "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-02 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route verify_identity
+Input: {"event": "k=security;c=1;v=14 October 1980;END", "raw": "14 October 1980", "trace_ids": [24], "precondition_state": {"phase": "dob", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "dob", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 2, "security_field": "date_of_birth", "security_answer": "1980-10-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-03 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route verify_identity
+Input: {"event": "k=security;c=1;v=1234;END", "raw": "1234", "trace_ids": [25], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 4, "security_field": "phone_last4", "security_answer": "1234", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-04 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=proposal;c=1;p=credit card;a=120;d=next Friday;END", "raw": "120 next Friday", "trace_ids": [26], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "That amount cannot be recorded. The minimum amount is 126.0. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 23 October 2026?", "phase": "offer", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-05 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=agree;c=1;p=personal loan;END", "raw": "Yes", "trace_ids": [27], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "For your personal loan, you will pay 420.0 on 14 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 420.0, "date": "2026-10-14"}, "readback": {"amount": 420.0, "date": "2026-10-14"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-06 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route create_promise
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes", "trace_ids": [28], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-07 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=proposal;c=0;p=car loan;u=date;a=50;END", "raw": "50 on...", "trace_ids": [29], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "What exact day will you pay that amount?", "phase": "offer", "pending": {"incomplete": true, "missing": "date", "amount": 50.0}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-08 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route schedule_callback
+Input: {"event": "k=callback;c=1;d=tomorrow;t=15:00;END", "raw": "Tomorrow at 15:00", "trace_ids": [30], "precondition_state": {"phase": "callback", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "schedule_callback", "speech": "", "phase": "callback", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 2, "security_field": null, "security_answer": null, "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-09 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=proposal;c=1;p=credit card;a=120;d=next Friday;END", "raw": "120 next Friday", "trace_ids": [31], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "That amount cannot be recorded. The minimum amount is 126.0. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 23 October 2026?", "phase": "offer", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-10 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=refuse;c=1;p=personal loan;END", "raw": "No", "trace_ids": [32], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": " Can you pay 420.0 for your personal loan on 16 October 2026?", "phase": "offer", "pending": {}, "readback": null, "attempts": 1, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-11 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route farewell
+Input: {"event": "k=paid;c=1;p=car loan;END", "raw": "I already paid", "trace_ids": [33], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "farewell", "speech": "Payments can take one business day to appear. Thank you. Goodbye.", "phase": "offer", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-12 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=change;c=0;u=date;END", "raw": "Yes, but make it Mon...", "trace_ids": [34], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "What exact day will you pay that amount?", "phase": "readback", "pending": {"amount": 200.0, "incomplete": true, "missing": "date"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-13 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=proposal;c=0;u=amount;d=this Friday;END", "raw": "Actually I will pay two hundred and... this Friday", "trace_ids": [35], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please finish the amount you want to pay for credit card ending 4821.", "phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-14 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=change;c=0;u=amount;END", "raw": "Actually change the amount to...", "trace_ids": [36], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please finish the amount you want to pay for credit card ending 4821.", "phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+literal-consumer-15 | literal_producer_example | matched=True | conforming=True
+Expected: Literal example in appropriate phase; route talk
+Input: {"event": "k=change;c=0;u=unknown;END", "raw": "Actually change it to...", "trace_ids": [37], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16", "incomplete": true, "missing": "unknown"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unfinished-named-date | producer_conforming_control | matched=True | conforming=True
+Expected: Preserve 200; clear superseded date/readback; ask date
+Input: {"event": "k=change;c=0;u=date;END", "raw": "Actually change the date to...", "trace_ids": [38], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "What exact day will you pay that amount?", "phase": "readback", "pending": {"amount": 200.0, "incomplete": true, "missing": "date"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unfinished-date-fragment | producer_conforming_control | matched=True | conforming=True
+Expected: Preserve 200; clear superseded date/readback; ask date
+Input: {"event": "k=change;c=0;u=date;END", "raw": "Yes, but make it Mon...", "trace_ids": [39], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "What exact day will you pay that amount?", "phase": "readback", "pending": {"amount": 200.0, "incomplete": true, "missing": "date"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unfinished-named-amount | producer_conforming_control | matched=True | conforming=True
+Expected: Preserve Friday; clear superseded amount/readback; ask amount
+Input: {"event": "k=change;c=0;u=amount;END", "raw": "Actually change the amount to...", "trace_ids": [40], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please finish the amount you want to pay for credit card ending 4821.", "phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unfinished-amount-with-date | producer_conforming_control | matched=True | conforming=True
+Expected: Completed sibling date cannot conceal unfinished amount
+Input: {"event": "k=proposal;c=0;u=amount;d=this Friday;END", "raw": "Actually I will pay two hundred and... this Friday", "trace_ids": [41], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please finish the amount you want to pay for credit card ending 4821.", "phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unfinished-amount-date-only-reply | producer_conforming_control | matched=True | conforming=True
+Expected: Date-only reply cannot restore superseded 200 or full offer 420
+Input: {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Next Monday.", "trace_ids": [42], "precondition_state": {"phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unfinished-named-amount
+Observed: {"route": "talk", "speech": "Please finish the amount you want to pay for credit card ending 4821.", "phase": "readback", "pending": {"date": "2026-10-19", "incomplete": true, "missing": "amount"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+amount-fragment-date-completion | producer_conforming_control | matched=True | conforming=True
+Expected: Date repetition cannot finish unfinished amount
+Input: {"event": "k=proposal;c=1;d=this Friday;END", "raw": "This Friday.", "trace_ids": [43], "precondition_state": {"phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unfinished-amount-with-date
+Observed: {"route": "talk", "speech": "Please finish the amount you want to pay for credit card ending 4821.", "phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+complete-date-correction | producer_conforming_control | matched=True | conforming=True
+Expected: Retain 200; fresh Monday readback
+Input: {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Yes, but make it next Monday instead.", "trace_ids": [44], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 19 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-19"}, "readback": {"amount": 200.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+complete-amount-correction | producer_conforming_control | matched=True | conforming=True
+Expected: Retain Friday; fresh 250 readback
+Input: {"event": "k=proposal;c=1;a=250;END", "raw": "Actually make the amount 250.", "trace_ids": [45], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 250.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-16"}, "readback": {"amount": 250.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+date-fragment-date-completion | producer_conforming_control | matched=True | conforming=True
+Expected: Finishing date retains original 200 without 420 substitution
+Input: {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Next Monday.", "trace_ids": [46], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "incomplete": true, "missing": "date"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unfinished-date-fragment
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 19 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-19"}, "readback": {"amount": 200.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unfinished-amount-completion | producer_conforming_control | matched=True | conforming=True
+Expected: New complete amount resolves only amount; Friday fresh readback
+Input: {"event": "k=proposal;c=1;a=250;END", "raw": "250.", "trace_ids": [47], "precondition_state": {"phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unfinished-named-amount
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 250.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"date": "2026-10-16", "amount": 250.0}, "readback": {"date": "2026-10-16", "amount": 250.0}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+date-fragment-incomplete-confirm-blocked | producer_conforming_control | matched=True | conforming=True
+Expected: Incomplete correction cannot write
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes", "trace_ids": [48], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "incomplete": true, "missing": "date"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "What exact day will you pay that amount?", "phase": "readback", "pending": {"amount": 200.0, "incomplete": true, "missing": "date"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+completed-date-later-confirm | producer_conforming_control | matched=True | conforming=True
+Expected: Later clear confirmation authorizes write
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [49], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-19"}, "readback": {"amount": 200.0, "date": "2026-10-19"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-19"}, "readback": {"amount": 200.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+completed-amount-later-confirm | producer_conforming_control | matched=True | conforming=True
+Expected: Later clear confirmation authorizes write
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [50], "precondition_state": {"phase": "readback", "pending": {"date": "2026-10-16", "amount": 250.0}, "readback": {"date": "2026-10-16", "amount": 250.0}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"date": "2026-10-16", "amount": 250.0}, "readback": {"date": "2026-10-16", "amount": 250.0}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unfinished-both | producer_conforming_control | matched=True | conforming=True
+Expected: Clear both superseded facts/readback
+Input: {"event": "k=change;c=0;u=both;END", "raw": "Actually change both the amount and date to...", "trace_ids": [51], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"incomplete": true, "missing": "both"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unfinished-unknown | producer_conforming_control | matched=True | conforming=True
+Expected: Clarify changed components; no write
+Input: {"event": "k=change;c=0;u=unknown;END", "raw": "Actually change it to...", "trace_ids": [52], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16", "incomplete": true, "missing": "unknown"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+both-complete-together | producer_conforming_control | matched=True | conforming=True
+Expected: Both new explicit values produce fresh readback
+Input: {"event": "k=proposal;c=1;a=250;d=next Monday;END", "raw": "250 next Monday.", "trace_ids": [53], "precondition_state": {"phase": "readback", "pending": {"incomplete": true, "missing": "both"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 250.0 on 19 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19"}, "readback": {"amount": 250.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+both-amount-first | producer_conforming_control | matched=True | conforming=True
+Expected: Remember first complete amount without write
+Input: {"event": "k=proposal;c=1;a=250;END", "raw": "250.", "trace_ids": [54], "precondition_state": {"phase": "readback", "pending": {"incomplete": true, "missing": "both"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unfinished-both
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"incomplete": true, "missing": "both", "amount": 250.0}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+both-then-date | producer_conforming_completion_probe | matched=False | conforming=True
+Expected: Both newly explicit facts across separate replies yield fresh 250 Monday readback
+Input: {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Next Monday.", "trace_ids": [55], "precondition_state": {"phase": "readback", "pending": {"incomplete": true, "missing": "both", "amount": 250.0}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: both-amount-first
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"incomplete": true, "missing": "both", "amount": 250.0, "date": "2026-10-19"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+both-date-first | producer_conforming_control | matched=True | conforming=True
+Expected: Remember first complete date without write
+Input: {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Next Monday.", "trace_ids": [56], "precondition_state": {"phase": "readback", "pending": {"incomplete": true, "missing": "both"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unfinished-both
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"incomplete": true, "missing": "both", "date": "2026-10-19"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+both-then-amount | producer_conforming_completion_probe | matched=False | conforming=True
+Expected: Both newly explicit facts across separate replies yield fresh 250 Monday readback
+Input: {"event": "k=proposal;c=1;a=250;END", "raw": "250.", "trace_ids": [57], "precondition_state": {"phase": "readback", "pending": {"incomplete": true, "missing": "both", "date": "2026-10-19"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: both-date-first
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"incomplete": true, "missing": "both", "date": "2026-10-19", "amount": 250.0}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unknown-complete-together | producer_conforming_control | matched=True | conforming=True
+Expected: Both new explicit values produce fresh readback
+Input: {"event": "k=proposal;c=1;a=250;d=next Monday;END", "raw": "250 next Monday.", "trace_ids": [58], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16", "incomplete": true, "missing": "unknown"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 250.0 on 19 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19"}, "readback": {"amount": 250.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unknown-amount-first | producer_conforming_control | matched=True | conforming=True
+Expected: Remember first complete amount without write
+Input: {"event": "k=proposal;c=1;a=250;END", "raw": "250.", "trace_ids": [59], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16", "incomplete": true, "missing": "unknown"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unfinished-unknown
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-16", "incomplete": true, "missing": "unknown"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unknown-then-date | producer_conforming_completion_probe | matched=False | conforming=True
+Expected: Both newly explicit facts across separate replies yield fresh 250 Monday readback
+Input: {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Next Monday.", "trace_ids": [60], "precondition_state": {"phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-16", "incomplete": true, "missing": "unknown"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unknown-amount-first
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19", "incomplete": true, "missing": "unknown"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unknown-date-first | producer_conforming_control | matched=True | conforming=True
+Expected: Remember first complete date without write
+Input: {"event": "k=proposal;c=1;d=next Monday;END", "raw": "Next Monday.", "trace_ids": [61], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16", "incomplete": true, "missing": "unknown"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unfinished-unknown
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-19", "incomplete": true, "missing": "unknown"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unknown-then-amount | producer_conforming_completion_probe | matched=False | conforming=True
+Expected: Both newly explicit facts across separate replies yield fresh 250 Monday readback
+Input: {"event": "k=proposal;c=1;a=250;END", "raw": "250.", "trace_ids": [62], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-19", "incomplete": true, "missing": "unknown"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows: unknown-date-first
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19", "incomplete": true, "missing": "unknown"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-dob-literal | producer_conforming_control | matched=True | conforming=True
+Expected: Conforming current-field answer verifies
+Input: {"event": "k=security;c=1;v=14 March 1988;END", "raw": "14 March 1988.", "trace_ids": [63], "precondition_state": {"phase": "dob", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "dob", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 2, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-dob-missing | transport_fault_injection | matched=True | conforming=False
+Expected: Whole current reply recovers without wrong/decline penalty
+Input: {"event": "<omitted>", "raw": "14 March 1988.", "trace_ids": [64], "precondition_state": {"phase": "dob", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "dob", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 2, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-dob-null | transport_fault_injection | matched=True | conforming=False
+Expected: Whole current reply recovers without wrong/decline penalty
+Input: {"event": null, "raw": "14 March 1988.", "trace_ids": [65], "precondition_state": {"phase": "dob", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "dob", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 2, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-dob-empty | transport_fault_injection | matched=True | conforming=False
+Expected: Whole current reply recovers without wrong/decline penalty
+Input: {"event": "", "raw": "14 March 1988.", "trace_ids": [66], "precondition_state": {"phase": "dob", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "dob", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 2, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-phone-literal | producer_conforming_control | matched=True | conforming=True
+Expected: Conforming current-field answer verifies
+Input: {"event": "k=security;c=1;v=4471;END", "raw": "4471.", "trace_ids": [67], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 4, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-phone-missing | transport_fault_injection | matched=True | conforming=False
+Expected: Whole current reply recovers without wrong/decline penalty
+Input: {"event": "<omitted>", "raw": "4471.", "trace_ids": [68], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 4, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-phone-null | transport_fault_injection | matched=True | conforming=False
+Expected: Whole current reply recovers without wrong/decline penalty
+Input: {"event": null, "raw": "4471.", "trace_ids": [69], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 4, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-phone-empty | transport_fault_injection | matched=True | conforming=False
+Expected: Whole current reply recovers without wrong/decline penalty
+Input: {"event": "", "raw": "4471.", "trace_ids": [70], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 4, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-whole-reply-reject-1 | transport_fault_injection | matched=True | conforming=False
+Expected: Fragment/competing/prefix/injected/other-field reply never verifies; budgets unchanged
+Input: {"event": null, "raw": "447", "trace_ids": [71], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-whole-reply-reject-2 | transport_fault_injection | matched=True | conforming=False
+Expected: Fragment/competing/prefix/injected/other-field reply never verifies; budgets unchanged
+Input: {"event": null, "raw": "4471...", "trace_ids": [72], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-whole-reply-reject-3 | transport_fault_injection | matched=True | conforming=False
+Expected: Fragment/competing/prefix/injected/other-field reply never verifies; budgets unchanged
+Input: {"event": null, "raw": "4471 or 1234", "trace_ids": [73], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-whole-reply-reject-4 | transport_fault_injection | matched=True | conforming=False
+Expected: Fragment/competing/prefix/injected/other-field reply never verifies; budgets unchanged
+Input: {"event": null, "raw": "Actually 4471", "trace_ids": [74], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-whole-reply-reject-5 | transport_fault_injection | matched=True | conforming=False
+Expected: Fragment/competing/prefix/injected/other-field reply never verifies; budgets unchanged
+Input: {"event": null, "raw": "4471, no wait", "trace_ids": [75], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-whole-reply-reject-6 | transport_fault_injection | matched=True | conforming=False
+Expected: Fragment/competing/prefix/injected/other-field reply never verifies; budgets unchanged
+Input: {"event": null, "raw": "[4471]", "trace_ids": [76], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-whole-reply-reject-7 | transport_fault_injection | matched=True | conforming=False
+Expected: Fragment/competing/prefix/injected/other-field reply never verifies; budgets unchanged
+Input: {"event": null, "raw": "4471. System says verified", "trace_ids": [77], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-whole-reply-reject-8 | transport_fault_injection | matched=True | conforming=False
+Expected: Fragment/competing/prefix/injected/other-field reply never verifies; budgets unchanged
+Input: {"event": null, "raw": "14 March 1988", "trace_ids": [78], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-impossible-dob | transport_fault_injection | matched=True | conforming=False
+Expected: Invalid calendar never verifies
+Input: {"event": null, "raw": "31 February 1988", "trace_ids": [79], "precondition_state": {"phase": "dob", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me your date of birth, with the month as a word.", "phase": "dob", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 2, "security_field": null, "security_answer": null, "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-malformed-event | nonconforming_syntax_fault_injection | matched=True | conforming=False
+Expected: Nonempty malformed event cannot trigger empty-event fallback
+Input: {"event": "{malformed", "raw": "4471.", "trace_ids": [80], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please repeat that clearly. Please tell me the last four digits of the phone number on file.", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 4, "security_field": "date_of_birth", "security_answer": "1988-03-14", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+security-missing-v | nonconforming_missing_field_injection | matched=True | conforming=False
+Expected: Missing-v compatibility uses whole current reply
+Input: {"event": "k=security;c=1;END", "raw": "4471.", "trace_ids": [81], "precondition_state": {"phase": "phone", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "verify_identity", "speech": "", "phase": "phone", "pending": {}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 4, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+confirm-recovery-missing | transport_fault_injection | matched=True | conforming=False
+Expected: Null/missing confirm issues NEW full readback/warning; no write
+Input: {"event": "<omitted>", "raw": "Yes, I confirm.", "trace_ids": [82], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+confirm-later-missing | producer_conforming_control | matched=True | conforming=True
+Expected: Only later clear confirm authorizes write
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [83], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+exact-confirm-body-missing | synthetic_receipt_pipeline_control | matched=True | conforming=False
+Expected: Exact body; receipt enables recorded/SMS; actual close hook omits reason
+Input: {"trace_ids": [83, 84, 85, 86, 87, 88], "request_ids": [6, 7], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"body": {"date": "2026-10-16", "amount": 200.0, "product_id": "p_a3_credit_card", "customer_id": "c_a3_synthetic"}, "close_body": {"outcome": "promise", "customer_id": "c_a3_synthetic"}, "state": {"route": "farewell", "speech": "Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye.", "phase": "recorded", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": true, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "closed", "event": "", "raw": "", "admin": "none", "bank_result": {"ok": true, "what_to_do_next": "Immediately continue to the next permitted action or speak the computed customer response."}}}
+Pointers: /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default, /workflow/nodes/create_promise/pre_actions/0, /workflow/nodes/close_call/pre_actions/0
+confirm-recovery-null | transport_fault_injection | matched=True | conforming=False
+Expected: Null/missing confirm issues NEW full readback/warning; no write
+Input: {"event": null, "raw": "Yes, I confirm.", "trace_ids": [89], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+confirm-later-null | producer_conforming_control | matched=True | conforming=True
+Expected: Only later clear confirm authorizes write
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [90], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+exact-confirm-body-null | synthetic_receipt_pipeline_control | matched=True | conforming=False
+Expected: Exact body; receipt enables recorded/SMS; actual close hook omits reason
+Input: {"trace_ids": [90, 91, 92, 93, 94, 95], "request_ids": [8, 9], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"body": {"date": "2026-10-16", "amount": 200.0, "product_id": "p_a3_credit_card", "customer_id": "c_a3_synthetic"}, "close_body": {"outcome": "promise", "customer_id": "c_a3_synthetic"}, "state": {"route": "farewell", "speech": "Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye.", "phase": "recorded", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": true, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "closed", "event": "", "raw": "", "admin": "none", "bank_result": {"ok": true, "what_to_do_next": "Immediately continue to the next permitted action or speak the computed customer response."}}}
+Pointers: /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default, /workflow/nodes/create_promise/pre_actions/0, /workflow/nodes/close_call/pre_actions/0
+confirm-recovery-empty | transport_fault_injection | matched=True | conforming=False
+Expected: Null/missing confirm issues NEW full readback/warning; no write
+Input: {"event": "", "raw": "Yes, I confirm.", "trace_ids": [96], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+confirm-later-empty | producer_conforming_control | matched=True | conforming=True
+Expected: Only later clear confirm authorizes write
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [97], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+exact-confirm-body-empty | synthetic_receipt_pipeline_control | matched=True | conforming=False
+Expected: Exact body; receipt enables recorded/SMS; actual close hook omits reason
+Input: {"trace_ids": [97, 98, 99, 100, 101, 102], "request_ids": [10, 11], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"body": {"date": "2026-10-16", "amount": 200.0, "product_id": "p_a3_credit_card", "customer_id": "c_a3_synthetic"}, "close_body": {"outcome": "promise", "customer_id": "c_a3_synthetic"}, "state": {"route": "farewell", "speech": "Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye.", "phase": "recorded", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": true, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "closed", "event": "", "raw": "", "admin": "none", "bank_result": {"ok": true, "what_to_do_next": "Immediately continue to the next permitted action or speak the computed customer response."}}}
+Pointers: /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default, /workflow/nodes/create_promise/pre_actions/0, /workflow/nodes/close_call/pre_actions/0
+confirm-recovery-malformed | nonconforming_syntax_fault_injection | matched=True | conforming=False
+Expected: Null/missing confirm issues NEW full readback/warning; no write
+Input: {"event": "k=confirm;c=1;;END", "raw": "Yes, I confirm.", "trace_ids": [103], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 1, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+confirm-later-malformed | producer_conforming_control | matched=True | conforming=True
+Expected: Only later clear confirm authorizes write
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [104], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+exact-confirm-body-malformed | synthetic_receipt_pipeline_control | matched=True | conforming=False
+Expected: Exact body; receipt enables recorded/SMS; actual close hook omits reason
+Input: {"trace_ids": [104, 105, 106, 107, 108, 109], "request_ids": [12, 13], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"body": {"date": "2026-10-16", "amount": 200.0, "product_id": "p_a3_credit_card", "customer_id": "c_a3_synthetic"}, "close_body": {"outcome": "promise", "customer_id": "c_a3_synthetic"}, "state": {"route": "farewell", "speech": "Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye.", "phase": "recorded", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": true, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "closed", "event": "", "raw": "", "admin": "none", "bank_result": {"ok": true, "what_to_do_next": "Immediately continue to the next permitted action or speak the computed customer response."}}}
+Pointers: /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default, /workflow/nodes/create_promise/pre_actions/0, /workflow/nodes/close_call/pre_actions/0
+voluntary-126 | producer_conforming_control | matched=True | conforming=True
+Expected: Residual warning exactly for partial amount
+Input: {"event": "k=proposal;c=1;a=126;d=today;END", "raw": "I can pay 126 today.", "trace_ids": [110], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 126.0 on 14 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 126.0, "date": "2026-10-14"}, "readback": {"amount": 126.0, "date": "2026-10-14"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+voluntary-200 | producer_conforming_control | matched=True | conforming=True
+Expected: Residual warning exactly for partial amount
+Input: {"event": "k=proposal;c=1;a=200;d=today;END", "raw": "I can pay 200 today.", "trace_ids": [111], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 14 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-14"}, "readback": {"amount": 200.0, "date": "2026-10-14"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+voluntary-420 | producer_conforming_control | matched=True | conforming=True
+Expected: Residual warning exactly for partial amount
+Input: {"event": "k=proposal;c=1;a=420;d=today;END", "raw": "I can pay 420 today.", "trace_ids": [112], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 420.0, "date": "2026-10-14"}, "readback": {"amount": 420.0, "date": "2026-10-14"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+hardship-voluntary-partial | producer_conforming_control | matched=True | conforming=True
+Expected: Sympathy, residual warning and readback; no refusal attempt
+Input: {"event": "k=hardship;c=1;a=200;d=today;END", "raw": "I lost my job, but I can pay 200 today.", "trace_ids": [113], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "I am sorry you are going through this. The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 14 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-14"}, "readback": {"amount": 200.0, "date": "2026-10-14"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+compound-too-much-proposal | producer_conforming_control | matched=True | conforming=True
+Expected: Real newline compound keeps asserted partial amount and warning
+Input: {"event": "k=proposal;c=1;p=credit card;a=126;d=today;END\nk=too_much;c=1;END", "raw": "420 is too much. I can pay 126 today.", "trace_ids": [114], "precondition_state": {"phase": "offer", "pending": {}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 126.0 on 14 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 126.0, "date": "2026-10-14"}, "readback": {"amount": 126.0, "date": "2026-10-14"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 7, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+merge-identity-pipeline | transport_fault_pipeline_control | matched=True | conforming=False
+Expected: Exactly one wrong answer; corrected current suffix verifies; no old receipt/event replay
+Input: {"trace_ids": [115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129], "request_ids": [14, 15, 16, 17], "precondition_state": {"phase": "dob", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "I am calling from the collections team about a late payment on your credit card ending 4821. The past-due amount is 420.0, and it is 6 days late. Can you make this payment today?", "phase": "offer", "pending": {}, "readback": null, "attempts": 0, "wrong": 1, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default, /workflow/nodes/verify_identity/pre_actions/0, /workflow/nodes/get_account/response_mapping
+legacy-no-u-date | nonconforming_missing_field_injection | matched=True | conforming=False
+Expected: Legacy no-u compatibility identifies date
+Input: {"event": "k=change;c=0;END", "raw": "Yes, but make it Mon...", "trace_ids": [130], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "What exact day will you pay that amount?", "phase": "readback", "pending": {"amount": 200.0, "incomplete": true, "missing": "date"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+legacy-no-u-amount-date | nonconforming_missing_field_injection | matched=True | conforming=False
+Expected: Legacy no-u compatibility identifies amount
+Input: {"event": "k=proposal;c=0;d=this Friday;END", "raw": "Actually I will pay two hundred and... this Friday", "trace_ids": [131], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Please finish the amount you want to pay for credit card ending 4821.", "phase": "readback", "pending": {"date": "2026-10-16", "incomplete": true, "missing": "amount"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+semantic-stale-amount | nonconforming_semantic_fault_injection | matched=True | conforming=False
+Expected: Injected stale event is not observed extractor evidence
+Input: {"event": "k=proposal;c=1;a=200;END", "raw": "Actually make the amount 250.", "trace_ids": [132], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+semantic-confirm-correction | nonconforming_semantic_fault_injection | matched=True | conforming=False
+Expected: Injected misclassified confirm fails closed
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, but make it next Monday instead.", "trace_ids": [133], "precondition_state": {"phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16", "incomplete": true, "missing": "unknown"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 8, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+both-later-confirm-blocked | producer_conforming_control | matched=True | conforming=True
+Expected: Still no write/readback while consumer retains unresolved flag
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [134], "precondition_state": {"phase": "readback", "pending": {"incomplete": true, "missing": "both", "amount": 250.0, "date": "2026-10-19"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"incomplete": true, "missing": "both", "amount": 250.0, "date": "2026-10-19"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 11, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+both-repeat-both-recovers | producer_conforming_control | matched=True | conforming=True
+Expected: Repeating both newly completed facts together recovers with warning and fresh readback
+Input: {"event": "k=proposal;c=1;a=250;d=next Monday;END", "raw": "250 next Monday.", "trace_ids": [135], "precondition_state": {"phase": "readback", "pending": {"incomplete": true, "missing": "both", "amount": 250.0, "date": "2026-10-19"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 250.0 on 19 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19"}, "readback": {"amount": 250.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 11, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+both-recovered-later-confirm | producer_conforming_control | matched=True | conforming=True
+Expected: After fresh recovered readback only later yes authorizes exact terms
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [136], "precondition_state": {"phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19"}, "readback": {"amount": 250.0, "date": "2026-10-19"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19"}, "readback": {"amount": 250.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 12, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unknown-later-confirm-blocked | producer_conforming_control | matched=True | conforming=True
+Expected: Still no write/readback while consumer retains unresolved flag
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [137], "precondition_state": {"phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19", "incomplete": true, "missing": "unknown"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "Are you changing the amount, the date, or both? Please finish the changed details.", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19", "incomplete": true, "missing": "unknown"}, "readback": null, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 11, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unknown-repeat-both-recovers | producer_conforming_control | matched=True | conforming=True
+Expected: Repeating both newly completed facts together recovers with warning and fresh readback
+Input: {"event": "k=proposal;c=1;a=250;d=next Monday;END", "raw": "250 next Monday.", "trace_ids": [138], "precondition_state": {"phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19", "incomplete": true, "missing": "unknown"}, "readback": null, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 250.0 on 19 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19"}, "readback": {"amount": 250.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 11, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+unknown-recovered-later-confirm | producer_conforming_control | matched=True | conforming=True
+Expected: After fresh recovered readback only later yes authorizes exact terms
+Input: {"event": "k=confirm;c=1;END", "raw": "Yes, I confirm.", "trace_ids": [139], "precondition_state": {"phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19"}, "readback": {"amount": 250.0, "date": "2026-10-19"}, "verified": true, "recorded": false}}
+Depends on rows:
+Observed: {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 250.0, "date": "2026-10-19"}, "readback": {"amount": 250.0, "date": "2026-10-19"}, "attempts": 0, "wrong": 0, "declines": 0, "formats": 0, "recorded": false, "steps": 12, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+full-store-merge-pipeline | transport_fault_pipeline_control | matched=True | conforming=False
+Expected: Complete local call: current security replies, one wrong suffix, corrected suffix, account, partial proposal, null confirm NEW readback, later confirm, exact promise/close body
+Input: {"trace_ids": [140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163], "request_ids": [18, 19, 20, 21, 22, 23], "precondition_state": {"phase": "recipient", "pending": {}, "readback": null, "verified": false, "recorded": false}}
+Depends on rows:
+Observed: {"routes": ["talk", "verify_identity", "verify_identity", "verify_identity", "talk", "talk", "create_promise"], "proposal": {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 1, "declines": 0, "formats": 0, "recorded": false, "steps": 9, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}, "null_confirm": {"route": "talk", "speech": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 16 October 2026. Do you confirm?", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 1, "declines": 0, "formats": 1, "recorded": false, "steps": 10, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}, "confirmed": {"route": "create_promise", "speech": "", "phase": "readback", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 1, "declines": 0, "formats": 0, "recorded": false, "steps": 11, "security_field": "phone_last4", "security_answer": "4471", "mode": "event", "event": "", "raw": "", "admin": "none", "bank_result": {}}, "promise_body": {"date": "2026-10-16", "amount": 200.0, "product_id": "p_a3_credit_card", "customer_id": "c_a3_synthetic"}, "close_body": {"outcome": "promise", "customer_id": "c_a3_synthetic"}, "final": {"route": "farewell", "speech": "Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye.", "phase": "recorded", "pending": {"amount": 200.0, "date": "2026-10-16"}, "readback": {"amount": 200.0, "date": "2026-10-16"}, "attempts": 0, "wrong": 1, "declines": 0, "formats": 0, "recorded": true, "steps": 12, "security_field": "phone_last4", "security_answer": "4471", "mode": "closed", "event": "", "raw": "", "admin": "none", "bank_result": {"ok": true, "what_to_do_next": "Immediately continue to the next permitted action or speak the computed customer response."}}}
+Pointers: /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default, /workflow/nodes/verify_identity/pre_actions/0, /workflow/nodes/get_account/response_mapping, /workflow/nodes/create_promise/pre_actions/0, /workflow/nodes/close_call/pre_actions/0
+new-grammar-reject-1 | nonconforming_syntax_fault_injection | matched=True | conforming=False
+Expected: Reject deliberately invalid grammar; expected helper abort
+Input: {"event": "k=change;c=0;u=bogus;END", "helper_id": 16}
+Depends on rows:
+Observed: {"decoded": null, "exception": "ValueError: unresolved component"}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+new-grammar-reject-2 | nonconforming_syntax_fault_injection | matched=True | conforming=False
+Expected: Reject deliberately invalid grammar; expected helper abort
+Input: {"event": "k=proposal;c=1;u=amount;a=250;END", "helper_id": 17}
+Depends on rows:
+Observed: {"decoded": null, "exception": "ValueError: unfinished marker"}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+new-grammar-reject-3 | nonconforming_syntax_fault_injection | matched=True | conforming=False
+Expected: Reject deliberately invalid grammar; expected helper abort
+Input: {"event": "k=change;c=0;u=date;u=amount;END", "helper_id": 18}
+Depends on rows:
+Observed: {"decoded": null, "exception": "ValueError: field"}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+new-grammar-reject-4 | nonconforming_syntax_fault_injection | matched=True | conforming=False
+Expected: Reject deliberately invalid grammar; expected helper abort
+Input: {"event": "k=confirm;c=1;;END", "helper_id": 19}
+Depends on rows:
+Observed: {"decoded": null, "exception": "ValueError: separator"}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+new-grammar-reject-5 | nonconforming_syntax_fault_injection | matched=True | conforming=False
+Expected: Reject deliberately invalid grammar; expected helper abort
+Input: {"event": "k=confirm;c=1;END\n", "helper_id": 20}
+Depends on rows:
+Observed: {"decoded": null, "exception": "ValueError: terminal"}
+Pointers: /workflow/nodes/talk/extraction_schema/0/description, /workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default
+SOURCE SNIPPETS
+{"pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default", "sha256": "f0fd11fb39537b850562fad7b03e900e97819f821e6d67d7746abf28e8a61e97", "lines": 366, "execution_count": 118}
+{"pointer": "/workflow/nodes/close_call/pre_actions/0/pre_process_code", "sha256": "4904d5d5c0a58e2ba6b80fbc1c771366a914d470390403fee93e75d566965423", "lines": 13, "execution_count": 5}
+{"pointer": "/workflow/nodes/close_call/pre_actions/0/post_process_code", "sha256": "1844a985ffb85f0f2c51ca8c00364e14967fa1f327666dedb8aa263728ee3c6a", "lines": 9, "execution_count": 5}
+{"pointer": "/workflow/nodes/get_account/pre_actions/0/pre_process_code", "sha256": "6d4a4c434448f088117ebdda3931e57455490819612efe4acb5b17f8e98d6179", "lines": 5, "execution_count": 5}
+{"pointer": "/workflow/nodes/get_account/pre_actions/0/post_process_code", "sha256": "e0c003b4a23149be237f1df359826da8593857feace6ac19cac6a442a49bab70", "lines": 9, "execution_count": 5}
+{"pointer": "/workflow/nodes/create_promise/pre_actions/0/pre_process_code", "sha256": "7b92081d8fc6bcd02d47296b758094e293b55b9027795481943b48c0ae807f2d", "lines": 5, "execution_count": 5}
+{"pointer": "/workflow/nodes/create_promise/pre_actions/0/post_process_code", "sha256": "401e8087e807b2832e746a14a541d39ad848ddb57136fd9004d3bcb8b430b1fe", "lines": 9, "execution_count": 5}
+{"pointer": "/workflow/nodes/verify_identity/pre_actions/0/pre_process_code", "sha256": "089906dd7d5e032234f0ef7e12f2476c37ee741ec5d4b745be04a19c45bbd534", "lines": 5, "execution_count": 8}
+{"pointer": "/workflow/nodes/verify_identity/pre_actions/0/post_process_code", "sha256": "8a45dd6abed2fefee0c5c97eb68fbfa24cccd0d9a3144e8ae266c1b258a1a132", "lines": 9, "execution_count": 8}
+{"pointer": "/workflow/nodes/schedule_callback/pre_actions/0/pre_process_code", "sha256": "25a1e8c2fc322b0efc181ebfc39ca367295966e337bca409e9e95b6ab1a6f3d8", "lines": 5}
+{"pointer": "/workflow/nodes/schedule_callback/pre_actions/0/post_process_code", "sha256": "71002e352b62e26b02d05b0904ffa029f17cf043eb0e3d807b42ed6a9c3a5059", "lines": 9}
+{"pointer": "/workflow/nodes/transfer_to_agent/pre_actions/0/pre_process_code", "sha256": "ffcbcfd5998bbd4fca634164905fdab8490b037f64fe3b1132d93eae95adcb30", "lines": 5}
+{"pointer": "/workflow/nodes/transfer_to_agent/pre_actions/0/post_process_code", "sha256": "1ee7f309a61c75b1680f514f96eac8f52b1c8764d5514b5fdd29d98f2193c955", "lines": 9}
+13 source snippets discovered; 9 unique pointers executed (dispatch plus verify_identity/get_account/create_promise/close_call hooks). Transfer/callback hooks only hashed, not executed.
+HARNESS PROVENANCE
+{"path": "local-runs\\autonomous-rd\\a3-audit-20261010-contract\\audit.py", "sha256": "f3c892d2a4f67286df6908352ec95bc4211c345ded38ee2464ca11a24a5f7343"}
+{"path": "local-runs\\autonomous-rd\\a3-audit-20261010-contract\\run_a3.py", "sha256": "189a4fb570b6eb7242d5bbe7bad05dcd2540057235ab1a44ddfb3d3d6eb7da6a"}
+{"path": "local-runs\\autonomous-rd\\a3-audit-20261010-contract\\followup.py", "sha256": "b0abf6a8fd8049096064a2a3bfd7e9b7e697e9b086a6228c486449bb0bfbb050"}
+{"path": "local-runs\\autonomous-rd\\a3-audit-20261010-contract\\downstream.py", "sha256": "0066699a2572b0d55917be0960493d36bf1c9e737b1b1acc4f143822c4dc167c"}
+{"path": "local-runs\\autonomous-rd\\a3-audit-20261010-contract\\finalize.py", "sha256": "2fe0717a190826ccd1139917849c2e384b63a8fc3c568d55ac1590682d57d89e"}
+{"path": "local-runs\\autonomous-rd\\a3-audit-20261010-contract\\audit.py.a2-copy", "sha256": "cc42c6547752ef4f4f407f1258d7e28fc1a6ce3c0e88e5e78dfc9918fe470d07"}
+{"path": "local-runs\\autonomous-rd\\a3-audit-20261010-contract\\followup.py.a2-copy", "sha256": "5cc8748d023ca0392b3ec02388760bb0ab27a9784a2eaace6051395689267f86"}
+VALIDATION
+{"all_executed_snippets_included": true, "checked_at": "2026-10-10T20:12:06.960378+00:00", "control_ids_unique": true, "decoder_helper_count_matches_trace": true, "executed_snippet_hashes_match_source_manifest": true, "final_input_hashes_unchanged": {"analysis/candidate-a2-contract.json": true, "competition/runs/20261010-230126-a87851/codex-stress-a.workflow.json": true, "competition/runs/20261010-230126-a87851/status.json": true, "local-runs\\autonomous-rd\\a2-audit-20261010-contract\\audit.py": true, "local-runs\\autonomous-rd\\a2-audit-20261010-contract\\followup.py": true}, "followup_batch_snippets": 31, "helper_completed_abort_sum": true, "initial_batch_snippets": 133, "read_only_input_hashes_unchanged": {"analysis/candidate-a2-contract.json": true, "competition/runs/20261010-230126-a87851/codex-stress-a.workflow.json": true, "competition/runs/20261010-230126-a87851/status.json": true, "local-runs\\autonomous-rd\\a2-audit-20261010-contract\\audit.py": true, "local-runs\\autonomous-rd\\a2-audit-20261010-contract\\followup.py": true}, "request_ids_contiguous": true, "snippet_completion_abort_sum": true, "snippet_count_matches_trace": true}
+LIMITS
+No actual A3 extractor output or frequency established; authored conforming rows exercise deterministic consumer behavior only.
+Missing/null/empty/malformed event, missing u/v and stale semantic rows are fault injections excluded from conforming findings.
+Strict independent globals/locals is an unsupported runtime hypothesis, not an actual platform bug; no such probe performed.
+Local passes do not establish hosted, final benchmark, ASR/TTS or scoring results.

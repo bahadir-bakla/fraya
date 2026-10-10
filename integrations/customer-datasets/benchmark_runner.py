@@ -23,6 +23,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
+from read_only_retry import open_with_read_only_retry
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PACK = ROOT / "research/customer-benchmark/hosted-cases.json"
@@ -31,6 +32,7 @@ AGENT_MODEL = {"provider": "experimental-5", "model": "experimental-5"}
 CALL_VARIABLES = {"customer_id", "first_name", "last_name", "title", "now"}
 INACTIVE = {"completed", "failed", "canceled", "cancelled"}
 TERMINAL = {"completed", "failed", "paused"}
+WORKSPACE_PAGE_SIZE = 25
 RUNNER_SOURCE_PIN=hashlib.sha256(Path(__file__).read_bytes().replace(b'\r\n',b'\n')).hexdigest()
 
 
@@ -88,7 +90,8 @@ class OfficialClient:
 
         def urlopen(request, timeout=30):
             try:
-                return urllib.request.urlopen(request, timeout=min(timeout, 30, self.budget.remaining()))
+                return open_with_read_only_retry(request, opener=urllib.request.urlopen,
+                                                 budget=self.budget, timeout=timeout)
             except urllib.error.HTTPError as error:
                 # Do not let the supplied client's JSON decoder hide a plain
                 # transport outage, or expose an error body containing secrets.
@@ -368,7 +371,7 @@ def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
     def idle():
         offset, seen = 0, set()
         while True:
-            page = request("GET", "/api/v2/simulations", workspaceId=manifest["workspace_id"], limit=100, offset=offset)
+            page = request("GET", "/api/v2/simulations", workspaceId=manifest["workspace_id"], limit=WORKSPACE_PAGE_SIZE, offset=offset)
             simulations = items(page, "simulations")
             for simulation in simulations:
                 sid = resource_id(simulation.get("id"))
@@ -380,12 +383,12 @@ def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
                 # Pending/queued/running/draft/paused/unknown states all block.
                 if simulation.get("status") not in INACTIVE:
                     raise RunnerError("workspace_not_idle")
-            if len(simulations) < 100:
+            if len(simulations) < WORKSPACE_PAGE_SIZE:
                 if isinstance(page, dict) and (page.get("hasMore") is True or
                         isinstance(page.get("total"), int) and page["total"] > len(seen)):
                     raise RunnerError("incomplete_workspace_listing")
                 return
-            offset += 100
+            offset += WORKSPACE_PAGE_SIZE
 
     persist()
     try:
