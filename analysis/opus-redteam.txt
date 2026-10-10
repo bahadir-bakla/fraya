@@ -1,0 +1,45 @@
+Claude Opus 5.5 external red-team launch
+Status: blocked_exact_opus_proxy_invocation_rejected
+Requested exact model: claude-opus-5-5
+Actual inference verified: False
+Attacks received from verified Opus inference: 0
+No launcher-written attacks, fallback model, bank calls or Freya hosted calls.
+Provider: authorized_local_cliproxy_openai_chat_completions
+Auth status: {}
+Candidate: complete_policy_ir_only
+Run bound: 420 seconds.
+Verified gap: Authenticated exact claude-opus-5-5 tiny completion was rejected: proxy_http_502; unknown_provider_for_requested_model. No actual Opus inference, substitute model, or red-team attacks were obtained.
+Live authenticated inventory: {"inventory_authenticated": true, "advertised_model_ids": ["codex-auto-review", "gpt-5.5", "gpt-5.6-luna", "gpt-5.6-sol", "gpt-5.6-terra", "gpt-6-astra", "gpt-6-luna", "gpt-6-sol", "gpt-6.1-sol", "gpt-image-1.5", "gpt-image-2"], "exact_model_advertised": false, "claude_model_ids": [], "checked_at_utc": "2026-10-10T13:25:38.787798+00:00"}
+Explicit exact-model tiny invocation: {"requested_model": "claude-opus-5-5", "timeout_seconds": 30, "max_tokens": 32, "prompt": "Reply ready", "tools": [], "tool_choice": "none", "fallback_requested": false, "completion_requested": true, "route_accepted": false, "actual_opus_inference_verified": false, "credential_values_displayed": false, "credential_decrypted_in_request_process_only": true, "failure_code": "proxy_http_502", "http_status": 502, "provider_error_type": "server_error", "provider_error_code": "internal_server_error", "provider_error_classification": "unknown_provider_for_requested_model", "elapsed_seconds": 0.047}
+Previous route attempts:
+{"status": "blocked_claude_auth_not_logged_in", "requested_model": "claude-opus-5-5", "actual_opus_inference_verified": false, "model_inference_attempted": true, "cli_path": "C:\\Users\\9bakl\\.local\\bin\\claude.exe", "cli_version": "2.1.296 (Claude Code)", "cli_sha256": "76de74f7694a5bdc03378a5f837c9e132827bf004c98c276bc4e9094ff06769a", "auth_status": {"exit_code": 1, "status": {"loggedIn": false, "authMethod": "none", "apiProvider": "firstParty", "configDirectory": "C:\\Users\\9bakl\\.claude"}}, "elapsed_seconds": 2.406, "launched_at_utc": "2026-10-10T13:19:26.459433+00:00", "failure_reason": "Official native Claude Code auth status reports loggedIn=false/authMethod=none; exact-model invocation could not authenticate. No Opus inference or attacks were obtained."}
+Read-only designated provider readiness: {"config_path": "C:\\Users\\9bakl\\OneDrive\\Masaüstü\\clıproxy\\bin\\config.yaml", "repository_path": "C:\\Users\\9bakl\\OneDrive\\Masaüstü\\clıproxy\\CLIProxyAPI", "top_level_config_keys": ["host", "port", "remote-management", "auth-dir", "api-keys", "debug", "logging-to-file", "usage-statistics-enabled", "request-retry", "routing"], "auth_directory": "C:\\Users\\9bakl\\.cli-proxy-api", "auth_file_name_class_counts": {"codex_named": 2}, "claude_api_key_section_present": false, "openai_compatible_section_present": false, "oauth_exclusion_section_present": false, "oauth_alias_section_present": false, "auth_file_contents_read": false, "credential_values_inspected_or_displayed": false, "proxy_configuration_modified": false, "existing_service_restarted": false, "limitation": "Filename classes do not establish provider identity for generic auth files or prove token validity. No auth file was opened.", "conclusion": "No existing Claude API-key section or Claude-named auth file was found in the designated normal configuration/auth directory; two Codex-named auth files only. No provider was activated or service configuration changed.", "inspection_stopped_pending_user_reply": true}
+Validation: {"unit_tests": {"command": "python -B -m unittest discover -s integrations/opus-redteam/tests -v", "passed": 17, "failed": 0, "scope": "synthetic launcher fixtures, not model inference or Freya tests"}, "live_proxy_authenticated_inventory": "passed; 11 IDs, none Claude/Opus", "single_exact_model_tiny_completion": "HTTP 502; server_error/internal_server_error; unknown_provider_for_requested_model", "source_snapshot_preparation": "passed; original briefs/runtime/OpenAPI/code plus complete candidate policy IR", "runtime_gitignored": true, "git_diff_check": "passed; task files remain untracked"}
+Changed paths:
+analysis/opus-redteam.json
+analysis/opus-redteam.txt
+integrations/opus-redteam/.gitignore
+integrations/opus-redteam/empty-mcp.json
+integrations/opus-redteam/settings.json
+integrations/opus-redteam/review-instructions.txt
+integrations/opus-redteam/run.py
+integrations/opus-redteam/proxy_provider.py
+integrations/opus-redteam/inspect_proxy.py
+integrations/opus-redteam/source-manifest.json
+integrations/opus-redteam/README.txt
+integrations/opus-redteam/tests/test_launcher.py
+
+Rerun from fraya root:
+  python -B integrations/opus-redteam/run.py run --timeout-seconds 420
+Auto uses the designated local proxy when its metadata exists; --provider claude-cli selects the native CLI.
+Proxy auth uses only the designated DPAPI key in memory; no plaintext key or raw auth response is logged.
+Candidate directories are checked again on each run; builder-rd-a-v4 is preferred, then v3, v2, and the original.
+
+Official sources:
+https://platform.claude.com/docs/en/models/opus-5-5/overview
+https://code.claude.com/docs/en/cli-reference
+https://code.claude.com/docs/en/authentication
+https://code.claude.com/docs/en/setup
+https://github.com/anthropics/claude-agent-sdk-python/blob/main/src/claude_agent_sdk/_internal/transport/subprocess_cli.py
+https://github.com/router-for-me/CLIProxyAPI
+https://github.com/router-for-me/CLIProxyAPI/blob/main/sdk/cliproxy/auth/response_model_rewriter.go

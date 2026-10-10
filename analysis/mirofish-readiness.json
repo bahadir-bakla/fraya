@@ -1,0 +1,779 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-10-10T13:36:23.413411+00:00",
+  "status": "authenticated_graph_and_two_agent_one_round_simulation_completed",
+  "scope": {
+    "project_root": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya",
+    "allowed_writes": [
+      "integrations/mirofish/**",
+      "analysis/mirofish-readiness.json",
+      "analysis/mirofish-readiness.txt",
+      ".local-secrets/cli-proxy-connection.json",
+      ".local-secrets/llm-proxy-key.dpapi"
+    ],
+    "parallel_work": "Installer/readiness and the offline adapter were implemented in disjoint write scopes."
+  },
+  "upstream": {
+    "repository": "https://github.com/666ghj/MiroFish.git",
+    "commit": "7657031ac01184afe2cb220f5ee3545573b5e843",
+    "commit_date": "2026-10-02T02:20:36+08:00",
+    "license": "AGPL-3.0",
+    "checkout": "vendor/MiroFish",
+    "installation": "Locked source dependencies, backend without the optional development group, frontend only; root concurrently dependency is unnecessary for individual service launch.",
+    "sources": [
+      "https://github.com/666ghj/MiroFish/blob/7657031ac01184afe2cb220f5ee3545573b5e843/README.md",
+      "https://github.com/666ghj/MiroFish/blob/7657031ac01184afe2cb220f5ee3545573b5e843/backend/pyproject.toml",
+      "https://github.com/666ghj/MiroFish/blob/7657031ac01184afe2cb220f5ee3545573b5e843/backend/app/config.py",
+      "https://github.com/666ghj/MiroFish/blob/7657031ac01184afe2cb220f5ee3545573b5e843/backend/run.py",
+      "https://github.com/666ghj/MiroFish/blob/7657031ac01184afe2cb220f5ee3545573b5e843/.env.example"
+    ],
+    "detached_head": true,
+    "tracked_vendor_source_modifications": false,
+    "dependencies_ship_with_integration": false,
+    "license_copied_or_relicensed": false
+  },
+  "installation": {
+    "method": "locked_source_deployment_individual_services",
+    "runtimes": {
+      "python": "3.11.9",
+      "node": "24.13.1",
+      "npm": "11.8.0",
+      "uv": "0.11.28"
+    },
+    "compatibility": {
+      "backend_python": ">=3.11,<3.13",
+      "pinned_vite_node": "^20.19.0 || >=22.12.0",
+      "source": "backend/pyproject.toml and installed frontend/node_modules/vite/package.json"
+    },
+    "backend": {
+      "command": "uv sync --locked --no-dev --python <existing Python311/python.exe>",
+      "exit_code": 0,
+      "resolved_lock_packages": 185,
+      "installed_packages": 132,
+      "location": "integrations/mirofish/vendor/MiroFish/backend/.venv",
+      "log": "integrations/mirofish/runtime/backend-install.log"
+    },
+    "frontend": {
+      "command": "npm.cmd ci --no-audit --no-fund",
+      "exit_code": 0,
+      "installed_packages": 107,
+      "location": "integrations/mirofish/vendor/MiroFish/frontend/node_modules"
+    },
+    "omitted": [
+      "Root concurrently package: individual service wrappers do not need it.",
+      "Optional Python development group: excluded by --no-dev; any transitive test packages remain lock-required."
+    ],
+    "docker": {
+      "cli_present": true,
+      "daemon_available": false,
+      "detail": "dockerDesktopLinuxEngine named pipe absent; Docker was not started or installed.",
+      "used": false
+    }
+  },
+  "configuration": {
+    "required_missing": [],
+    "vendor_dotenv_exists": false,
+    "configuration_scope": "MiroFish launcher child environment only; dotenv disabled",
+    "llm": {
+      "base_url": "http://127.0.0.1:8317/v1",
+      "model": "gpt-6-luna",
+      "api_authentication_verified": true,
+      "actual_small_completion_verified": true,
+      "small_completion_max_tokens": 64,
+      "small_completion_usage": {
+        "completion_tokens": 10,
+        "total_tokens": 325,
+        "prompt_tokens": 315,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "key_source": "explicit designated Desktop CLIProxy config; loaded in memory"
+    },
+    "zep": {
+      "api_authentication_verified": true,
+      "graph_create_ingestion_and_read_completed": true,
+      "key_source": ".local-secrets/zep-key.dpapi via scripts/freya_dpapi_server.py.unprotect in memory",
+      "local_zep_replacement_supported": false,
+      "rejected_variable": "ZEP_API_URL"
+    },
+    "plaintext_credentials_created": false,
+    "credential_values_logged": false,
+    "unrelated_credentials_sought": false,
+    "optional": "LLM_BOOST_* removed from the scoped backend environment",
+    "shared_connection_metadata": ".local-secrets/cli-proxy-connection.json",
+    "shared_proxy_key": ".local-secrets/llm-proxy-key.dpapi",
+    "shared_proxy_key_format": "windows_user_dpapi_hex_utf16le"
+  },
+  "startup_and_health": {
+    "commit": "7657031ac01184afe2cb220f5ee3545573b5e843",
+    "credential_mode": "forced_empty_named_MiroFish_keys_and_dotenv_disabled_in_probe_children",
+    "ambient_named_configuration_present": {
+      "LLM_API_KEY": false,
+      "ZEP_API_KEY": false
+    },
+    "vendor_dotenv_exists": false,
+    "simulation_executed": false,
+    "bank_calls": 0,
+    "freya_tests": 0,
+    "locks_sha256": {
+      "backend/uv.lock": "836aa729c48200d6f807fd13f323344c797694ecc61b6c6672f70af2909e2a71",
+      "frontend/package-lock.json": "d87236a13cc28f498f8000686cc526aea334f4b04577be3eaaf9e01038910dc9"
+    },
+    "normal_backend_startup": {
+      "exit_code": 1,
+      "missing_configuration": [
+        "LLM_API_KEY",
+        "ZEP_API_KEY"
+      ],
+      "listener_started": false,
+      "status": "blocked_missing_credentials"
+    },
+    "backend_health_smoke": {
+      "status_code": 200,
+      "body": {
+        "service": "MiroFish Backend",
+        "status": "ok"
+      },
+      "host": "127.0.0.1",
+      "port": 50283,
+      "kind": "credential_free_upstream_app_factory_health_only_http_smoke",
+      "normal_launcher_validation_bypassed_for_smoke": true,
+      "configuration_errors": [
+        "LLM_API_KEY 未配置",
+        "ZEP_API_KEY 未配置"
+      ],
+      "versions": {
+        "mirofish-backend": "0.1.0",
+        "flask": "3.1.2",
+        "openai": "1.109.1",
+        "zep-cloud": "3.25.0",
+        "camel-oasis": "0.2.5",
+        "camel-ai": "0.2.78"
+      },
+      "external_connection_attempts_blocked": 0,
+      "simulation_ready": false
+    },
+    "engine_import_smoke": {
+      "status": "imports_passed",
+      "modules": [
+        "camel.models",
+        "camel.types",
+        "oasis"
+      ],
+      "model_created": false,
+      "simulation_executed": false,
+      "external_connection_attempts_blocked": 0
+    },
+    "frontend_health_smoke": {
+      "kind": "upstream_vite_preview_server_loopback_http_and_built_asset_smoke",
+      "status_code": 200,
+      "port": 57295,
+      "title": [
+        "MiroFish - 预测万物"
+      ],
+      "backend_api_calls": 0,
+      "built_assets": [
+        {
+          "path": "/assets/index-BI-SIsId.js",
+          "status_code": 200,
+          "bytes": 520177
+        },
+        {
+          "path": "/assets/index-Bdmp0FMx.css",
+          "status_code": 200,
+          "bytes": 156103
+        }
+      ],
+      "built_assets_passed": true,
+      "process_exit_code": 0,
+      "stopped_after_probe": true
+    },
+    "all_install_smokes_passed": true,
+    "current_authenticated": {
+      "pid": 13512,
+      "base_url": "http://127.0.0.1:5001",
+      "llm_base_url": "http://127.0.0.1:8317/v1",
+      "llm_model": "gpt-6-luna",
+      "llm_key_source": "designated_desktop_cliproxy_config",
+      "zep_key_source": "explicit_dpapi_in_memory",
+      "plaintext_credential_files_created": false,
+      "upstream_default_launcher": "backend/run.py",
+      "startup_validation_bypassed": false,
+      "normal_launcher_health": {
+        "status": "healthy",
+        "status_code": 200,
+        "body": {
+          "service": "MiroFish Backend",
+          "status": "ok"
+        },
+        "normal_launcher": "backend/run.py",
+        "credential_validation_bypassed": false
+      },
+      "services_left_running_hidden": true
+    },
+    "historical_entries_are_installation_only": true
+  },
+  "probe_history": [
+    {
+      "check": "OASIS/CAMEL import",
+      "initial_attempt": "timed_out_after_60_seconds",
+      "final_attempt": "passed_with_180_second_allowance",
+      "new_dependencies_or_source_patches_needed": false
+    }
+  ],
+  "scenario_adapter": {
+    "status": "scenario_only_not_executed",
+    "stdlib_only": true,
+    "counts": {
+      "official": 13,
+      "synthetic": 50,
+      "total": 63
+    },
+    "catalog": "integrations/mirofish/scenarios/catalog.json",
+    "catalog_sha256": "4cd835cc5c0c0fa812c40c97ab3da3cd483940416795822d465fcf20282cf2b1",
+    "protected_sha256": "7e4c7e2f20df526370d4e7bd167c2d7a4dd69203541adb1e0e98ca28822781bd",
+    "sample_seed": "integrations/mirofish/scenarios/example-seed.txt",
+    "sample_cases": [
+      "official:PUB-01",
+      "synthetic:SYN-048",
+      "synthetic:SYN-049"
+    ],
+    "sample_seed_sha256": "a6a2aaaf97db3c99ec679232dc5301e3f9e30c41d9577a66551751cc299a0747",
+    "source_files_sha256": {
+      "analysis/synthetic-cases.json": "bf3b7356d2059889ccd892272600642de23459e48d71ea9d777e279c6552f807",
+      "competition-v3/build-the-builder/README.md": "45034ae6079693b8c5eb6e6cc3857d47fdf3629b8b1d2a84fd73fb2f51415d58",
+      "competition-v3/build-the-builder/briefs/brief-a.md": "d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7",
+      "competition-v3/build-the-builder/briefs/brief-b.md": "c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550",
+      "competition-v3/build-the-builder/public-test-set.json": "fb7f4c0082eecb724a6faab771b4339bc62655627e49251e6bb2a0cf59a72fcb",
+      "competition-v3/build-the-builder/tools/openapi.json": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+      "competition-v3/build-the-builder/tools/run_cases.py": "c96da9f9189d82850e46bfc551603ff5a62847025b5c50a77b923ad999f3767c",
+      "competition-v3/build-the-builder/tools/score.py": "daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7"
+    },
+    "protected_fields": [
+      "fixture_facts",
+      "fixture_plan",
+      "tool_outcomes",
+      "behavior_intentions",
+      "expected_output",
+      "source/provenance"
+    ],
+    "style_field": "speech_delivery",
+    "styles": [
+      "plain",
+      "pieces",
+      "corrects",
+      "talkative",
+      "asks_back",
+      "in_words"
+    ],
+    "integrity": "Canonical SHA-256 digests plus source-aware reconstruction; recomputing a digest cannot legitimize changed source facts.",
+    "official_oracles": "All 13 expected ledger objects/checks copied exactly.",
+    "synthetic_oracles": "All 50 expectation bases, classifications, source rules, and scoped checks preserved. No final ledger invented from prose; partial/proposed oracles remain scoped.",
+    "output_path_boundary": "Only integrations/mirofish/scenarios; supports JSON catalogs and .txt/.md seeds.",
+    "executed_simulations": 0,
+    "network_requests": 0
+  },
+  "hosted_freya_fixture_limits": {
+    "evidence": [
+      "competition-v3/build-the-builder/tools/run_cases.py:83-90",
+      "competition-v3/build-the-builder/tools/score.py:19-38",
+      "competition-v3/build-the-builder/public-test-set.json"
+    ],
+    "session_creation_request": {
+      "endpoint": "/v1/practice/sessions",
+      "body": {
+        "case": "<registered case_id>"
+      }
+    },
+    "consequence": "The supplied runner sends no identity/product/date/amount/fault override to provision hosted fixture state. Persona/style edits cannot register SYN cases.",
+    "synthetic_fixture_registration_performed": false,
+    "registration_api_assumed": false,
+    "actual_scoring_requires": "Recorded bank-mock ledger and hosted conversation verdict; scenario generation, health checks, or MiroFish reports are not scores.",
+    "hidden_score_estimated": false
+  },
+  "mirofish_role": {
+    "upstream_workflow": [
+      "Seed-document knowledge graph",
+      "Agent personas/configuration",
+      "OASIS Twitter/Reddit-like simulations",
+      "Report and agent interactions"
+    ],
+    "integration_role": "Future scenario exploration and speech-style variation, constrained by preserved local facts/intent/oracles.",
+    "not_implemented": [
+      "Freya workflow execution",
+      "Bank API harness",
+      "Hosted fixture registration"
+    ],
+    "generated_seed_is": "A text planning contract, not a native MiroFish execution request or observed result."
+  },
+  "checks": [
+    {
+      "name": "locked backend install",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "name": "installed dependency consistency",
+      "command": "uv pip check --python .venv/Scripts/python.exe",
+      "result": "passed",
+      "packages": 132
+    },
+    {
+      "name": "frontend production build",
+      "command": "npm.cmd run build",
+      "result": "passed",
+      "modules": 691,
+      "warnings": [
+        "pendingUpload.js is both statically and dynamically imported.",
+        "One minified JavaScript chunk exceeds 500 kB."
+      ]
+    },
+    {
+      "name": "normal backend startup missing-key guard",
+      "command": "run.ps1 -Service backend and upstream run.py",
+      "result": "expected_block",
+      "exit_code": 1,
+      "missing": [
+        "LLM_API_KEY",
+        "ZEP_API_KEY"
+      ],
+      "phase": "historical before authorized credential integration"
+    },
+    {
+      "name": "credential-free backend and frontend HTTP/engine smoke",
+      "command": "python integrations/mirofish/probe_runtime.py --engine-timeout 180",
+      "result": "passed",
+      "exit_code": 0,
+      "important_limit": "Backend app-factory health-only smoke bypasses the standard startup credential validation and does not make simulation ready."
+    },
+    {
+      "name": "adapter unit tests only",
+      "command": "python -B -m unittest discover -s integrations/mirofish/tests -p test_scenario_adapter.py -v",
+      "result": "passed",
+      "tests": 23,
+      "exit_code": 0
+    },
+    {
+      "name": "catalog source-aware verification",
+      "command": "python -B integrations/mirofish/scenario_adapter.py verify",
+      "result": "passed",
+      "cases": 63,
+      "exit_code": 0
+    },
+    {
+      "name": "PowerShell wrappers parse",
+      "result": "passed",
+      "scripts": [
+        "install.ps1",
+        "run.ps1"
+      ]
+    },
+    {
+      "name": "vendor/dependencies/build/env/runtime ignored and absent from parent tracked files",
+      "result": "passed"
+    },
+    {
+      "name": "probe process cleanup",
+      "result": "passed",
+      "remaining_probe_port_listeners": 0
+    },
+    {
+      "name": "Authenticated CLIProxy exact selected-model small completion",
+      "result": "passed",
+      "model": "gpt-6-luna",
+      "http_status": 200,
+      "max_tokens": 64
+    },
+    {
+      "name": "Normal backend startup with scoped credentials and validation intact",
+      "result": "passed",
+      "health_status": 200,
+      "validation_bypassed": false
+    },
+    {
+      "name": "Zep scoped graph ingestion/name/readback",
+      "result": "passed",
+      "graph_id": "mirofish_fdf4bb8dc18d4261",
+      "graph_name": "fraya-rd_20261010T132208Z",
+      "nodes": 4,
+      "edges": 4
+    },
+    {
+      "name": "Actual bounded social simulation",
+      "result": "passed",
+      "active_agents": 2,
+      "completed_rounds": 1,
+      "social_actions_after_seed": 2,
+      "api_counters_used_as_completion_proof": false
+    },
+    {
+      "name": "Offline adapter and authenticated harness tests",
+      "result": "passed",
+      "tests": 36,
+      "network_calls": 0,
+      "command": "vendor backend python -B -m unittest discover -s integrations/mirofish/tests -p test_*.py -q"
+    },
+    {
+      "name": "Authenticated PowerShell wrapper parse",
+      "result": "passed"
+    },
+    {
+      "name": "Shared connection/key and runtime artifacts ignored",
+      "result": "passed"
+    },
+    {
+      "name": "Original proxy config and pinned vendor tracked source unchanged",
+      "result": "passed"
+    }
+  ],
+  "limitations": [
+    "The single-platform Twitter API reports zero current-round/action counters; engine output and SQLite trace provide independent evidence instead.",
+    "Pinned restart validation demands a Reddit profile even for a Twitter-only simulation; the correction created a fresh simulation on the same owned graph.",
+    "A successful bounded synthetic social simulation does not establish Freya policy correctness, bank behavior, competition score, or predictions.",
+    "No report generation, interview, graph-memory update, hosted Freya call, bank request, remote fixture registration, or existing Zep group mutation was performed.",
+    "No Claude/Opus auth exists in the designated proxy configuration/auth directory and exact claude-opus-5-5 is unavailable; separate worker exact request returned HTTP 502 unknown provider.",
+    "First engine use automatically downloaded public recommendation-model weights; engine billing/token usage was not measured.",
+    "No browser interaction test; frontend verification remains production compilation and HTTP serving of built assets.",
+    "Git ignores do not govern arbitrary file exports; exclude vendor/runtime/.local-secrets explicitly."
+  ],
+  "packaging": {
+    "ignored_runtime_paths": [
+      "integrations/mirofish/vendor/MiroFish/.git/HEAD",
+      "integrations/mirofish/vendor/MiroFish/backend/.venv/pyvenv.cfg",
+      "integrations/mirofish/vendor/MiroFish/frontend/node_modules/vite/package.json",
+      "integrations/mirofish/vendor/MiroFish/frontend/dist/index.html",
+      "integrations/mirofish/runtime/probe.json",
+      "integrations/mirofish/vendor/MiroFish/.env"
+    ],
+    "tracked_vendor_or_runtime_files": 0,
+    "vendor_git_retained_only_locally": true,
+    "secrets_created": true,
+    "commit_performed": false,
+    "encrypted_proxy_key_artifact_created": true,
+    "plaintext_key_files_created": false
+  },
+  "changed_paths": [
+    "integrations/mirofish/.gitignore",
+    "integrations/mirofish/README.md",
+    "integrations/mirofish/install.ps1",
+    "integrations/mirofish/mirofish.env.example",
+    "integrations/mirofish/probe_runtime.py",
+    "integrations/mirofish/run.ps1",
+    "integrations/mirofish/scenario_adapter.py",
+    "integrations/mirofish/upstream.json",
+    "integrations/mirofish/scenarios/catalog.json",
+    "integrations/mirofish/scenarios/example-seed.txt",
+    "integrations/mirofish/tests/test_scenario_adapter.py",
+    "analysis/mirofish-readiness.json",
+    "analysis/mirofish-readiness.txt",
+    "integrations/mirofish/authenticated_runtime.py",
+    "integrations/mirofish/inspect_proxy_providers.py",
+    "integrations/mirofish/run_authenticated.ps1",
+    "integrations/mirofish/run_authenticated_smoke.py",
+    "integrations/mirofish/runtime_hooks/sitecustomize.py",
+    "integrations/mirofish/scenarios/authenticated-smoke-seed.txt",
+    "integrations/mirofish/tests/test_authenticated_smoke.py",
+    ".local-secrets/cli-proxy-connection.json",
+    ".local-secrets/llm-proxy-key.dpapi"
+  ],
+  "changed_absolute_paths": [
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\.gitignore",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\README.md",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\install.ps1",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\mirofish.env.example",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\probe_runtime.py",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\run.ps1",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\scenario_adapter.py",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\upstream.json",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\scenarios\\catalog.json",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\scenarios\\example-seed.txt",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\tests\\test_scenario_adapter.py",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\mirofish-readiness.json",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\mirofish-readiness.txt",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\authenticated_runtime.py",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\inspect_proxy_providers.py",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\run_authenticated.ps1",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\run_authenticated_smoke.py",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\runtime_hooks\\sitecustomize.py",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\scenarios\\authenticated-smoke-seed.txt",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\mirofish\\tests\\test_authenticated_smoke.py",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\.local-secrets\\cli-proxy-connection.json",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\.local-secrets\\llm-proxy-key.dpapi"
+  ],
+  "ignored_local_artifacts": [
+    "integrations/mirofish/vendor/MiroFish/** (clone, .git, .venv, node_modules, dist, uploads/logs)",
+    "integrations/mirofish/vendor/runtime/** (installation cache/log)",
+    "integrations/mirofish/runtime/** (probe logs and evidence)"
+  ],
+  "baseline_configuration_before_authentication": {
+    "required_missing": [
+      "LLM_API_KEY",
+      "ZEP_API_KEY"
+    ],
+    "vendor_dotenv_exists": false,
+    "ambient_named_configuration_present": {
+      "LLM_API_KEY": false,
+      "ZEP_API_KEY": false
+    },
+    "llm": {
+      "required": "A valid API key, reachable OpenAI-compatible base URL, and an available model.",
+      "template_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "template_model": "qwen-plus",
+      "api_authentication_verified": false,
+      "note": "Base URL/model have upstream defaults; missing-key checks do not establish provider/model availability."
+    },
+    "zep": {
+      "required": "Valid Zep Cloud API key.",
+      "local_zep_replacement_supported": false,
+      "rejected_variable": "ZEP_API_URL"
+    },
+    "optional": "LLM_BOOST_API_KEY/BASE_URL/MODEL_NAME are not required and should be absent unless intentionally configured.",
+    "template": "integrations/mirofish/mirofish.env.example",
+    "destination": "integrations/mirofish/vendor/MiroFish/.env (ignored)",
+    "unrelated_credentials_sought": false,
+    "placeholder_keys_used": false
+  },
+  "authenticated_proxy": {
+    "base_url": "http://127.0.0.1:8317/v1",
+    "model_ids": [
+      "codex-auto-review",
+      "gpt-5.5",
+      "gpt-5.6-luna",
+      "gpt-5.6-sol",
+      "gpt-5.6-terra",
+      "gpt-6-astra",
+      "gpt-6-luna",
+      "gpt-6-sol",
+      "gpt-6.1-sol",
+      "gpt-image-1.5",
+      "gpt-image-2"
+    ],
+    "selected_model": "gpt-6-luna",
+    "actual_small_completion_verified": true,
+    "provider_inventory": {
+      "checked_at_utc": "2026-10-10T13:25:43.606676+00:00",
+      "base_url": "http://127.0.0.1:8317/v1",
+      "auth_directory_source": "designated_config_auth-dir_only",
+      "provider_enablement": [
+        {
+          "provider": "codex",
+          "enablement": "enabled",
+          "count": 2
+        }
+      ],
+      "auth_file_count": 2,
+      "unreadable_file_count": 0,
+      "status_basis": "persisted enablement metadata; authentication validity not inferred",
+      "claude_auth_file_count": 0,
+      "claude_api_key_entry_count": 0,
+      "model_ids": [
+        "codex-auto-review",
+        "gpt-5.5",
+        "gpt-5.6-luna",
+        "gpt-5.6-sol",
+        "gpt-5.6-terra",
+        "gpt-6-astra",
+        "gpt-6-luna",
+        "gpt-6-sol",
+        "gpt-6.1-sol",
+        "gpt-image-1.5",
+        "gpt-image-2"
+      ],
+      "exact_claude_opus_5_5_available": false,
+      "exact_claude_opus_5_5_completion_verified": false,
+      "supported_enablement_endpoint": "PATCH /v0/management/auth-files/status",
+      "management_secret_configured": true,
+      "management_auth_tested": false,
+      "auth_values_output": false,
+      "proxy_config_modified": false,
+      "auth_files_modified": false,
+      "config_sha256": "db55290a0acb2d59af37fa1ffd4c24f9f2fc1b419caed611ef701c9a9cd573d3",
+      "activation_performed": false,
+      "activation_result": "no_existing_claude_auth_to_enable"
+    },
+    "exact_claude_opus_5_5_available": false,
+    "exact_claude_opus_5_5_completion_verified": false,
+    "opus_alias_verified": false,
+    "separate_opus_worker_probe": {
+      "source": "explicit user/worker handoff; not independently repeated here",
+      "requested_model": "claude-opus-5-5",
+      "max_tokens": 32,
+      "tools_disabled": true,
+      "http_status": 502,
+      "error_type": "server_error",
+      "error_code": "internal_server_error",
+      "sanitized_classification": "unknown_provider_for_requested_model",
+      "actual_opus_inference": false,
+      "fallback_attempted": false
+    },
+    "provenance": {
+      "repository_path": "C:\\Users\\9bakl\\OneDrive\\Masaüstü\\clıproxy\\CLIProxyAPI",
+      "config_path": "C:\\Users\\9bakl\\OneDrive\\Masaüstü\\clıproxy\\bin\\config.yaml",
+      "config_sha256": "db55290a0acb2d59af37fa1ffd4c24f9f2fc1b419caed611ef701c9a9cd573d3",
+      "inventory_endpoint": "http://127.0.0.1:8317/v1/models",
+      "completion_endpoint": "http://127.0.0.1:8317/v1/chat/completions",
+      "model_mapping": "advertised IDs only; underlying provider mapping not independently established"
+    },
+    "original_proxy_config_modified": false,
+    "auth_files_modified": false,
+    "additional_auth_scan_requested_or_performed_after_handoff": false
+  },
+  "authenticated_simulation": {
+    "simulation_completed": true,
+    "synthetic_data_only": true,
+    "graph_name": "fraya-rd_20261010T132208Z",
+    "graph_id": "mirofish_fdf4bb8dc18d4261",
+    "project_id": "proj_fbcb32fd9592",
+    "simulation_id": "sim_2271c4df51b9",
+    "graph_node_count": 4,
+    "graph_edge_count": 4,
+    "participant_agents": 2,
+    "active_agents": 2,
+    "completed_rounds": 1,
+    "platform": "twitter",
+    "social_actions_after_seed_count": 2,
+    "social_actions_after_seed": [
+      {
+        "rowid": 6,
+        "agent_id": 1,
+        "action": "like_post",
+        "info": "{\"post_id\": 1, \"like_id\": 1}"
+      },
+      {
+        "rowid": 7,
+        "agent_id": 0,
+        "action": "create_post",
+        "info": "{\"content\": \"I\\u2019d prefer to keep the usual opening time next Saturday. I travel by bus, and the current bus schedule is fixed, so an earlier bus isn\\u2019t an option for me.\", \"post_id\": 2}"
+      }
+    ],
+    "agent_errors": [],
+    "initial_post_count": 1,
+    "initialization_verified": true,
+    "official_runner_status": "completed",
+    "official_api_current_round": 0,
+    "official_api_action_count": 0,
+    "completion_evidence": "Official terminal process status + independent engine Round 1/1 output + successful social actions after initialization in read-only OASIS SQLite trace. API counters are preserved exactly at zero.",
+    "api_action_counter_limitation": "Pinned single-platform Twitter script does not write actions.jsonl consumed by the official runner monitor.",
+    "bounded_generated_config": {
+      "status": "configured",
+      "agent_count": 2,
+      "maximum_rounds": 1,
+      "active_hour": 0,
+      "seed_posts": 1,
+      "source": "owned generated simulation_config.json; upstream source unchanged",
+      "reason": "Generated evening-only activation would skip the midnight first round"
+    },
+    "first_inactive_attempt": {
+      "run": {
+        "completed_at": "2026-10-10T16:26:54.031351",
+        "current_round": 0,
+        "error": null,
+        "process_pid": 38616,
+        "progress_percent": 0.0,
+        "reddit_actions_count": 0,
+        "reddit_completed": false,
+        "reddit_current_round": 0,
+        "reddit_running": false,
+        "reddit_simulated_hours": 0,
+        "runner_status": "completed",
+        "simulated_hours": 0,
+        "simulation_id": "sim_9ea99d9477a0",
+        "started_at": "2026-10-10T16:23:25.844085",
+        "total_actions_count": 0,
+        "total_rounds": 1,
+        "total_simulation_hours": 24,
+        "twitter_actions_count": 0,
+        "twitter_completed": false,
+        "twitter_current_round": 0,
+        "twitter_running": false,
+        "twitter_simulated_hours": 0,
+        "updated_at": "2026-10-10T16:23:25.844085"
+      },
+      "actions": {
+        "status": "observed",
+        "count": 0,
+        "actions": []
+      },
+      "engine": {
+        "source": "pinned single-platform engine output and read-only OASIS SQLite trace",
+        "completed_rounds": 0,
+        "active_agents": 0,
+        "agent_errors": [],
+        "initialization_verified": true,
+        "actions_after_seed": [],
+        "official_api_action_counters_available": false,
+        "agent_count": 2,
+        "trace_count": 3
+      },
+      "reason": "No first-round activation in generated evening-only schedule",
+      "simulation_id": "sim_9ea99d9477a0",
+      "restart_error": {
+        "status_code": 400,
+        "path": "/api/simulation/start",
+        "response": {
+          "error": "Simulation not ready. Current status: completed. Please call /prepare first.",
+          "success": false
+        }
+      }
+    },
+    "correction": "New simulation on same owned graph; fixed generated local schedule/seed poster only. No upstream source patch.",
+    "budget": {
+      "prepared_agents": 2,
+      "active_inference_rounds": 1,
+      "preliminary_inactive_rounds": 1,
+      "wrapper_phase_timeout_seconds": 240,
+      "harness_maximum_phase_timeout_seconds": 600,
+      "reports_requested": 0,
+      "interviews_requested": 0,
+      "graph_memory_updates_enabled": false,
+      "engine_billing_or_token_usage_measured": false
+    },
+    "graph_name_readback_verified": true,
+    "existing_graph_mutations": 0,
+    "bank_calls": 0,
+    "freya_calls": 0,
+    "environment_closed": {
+      "status": "closed",
+      "message": "环境关闭命令已发送",
+      "result": {
+        "message": "环境即将关闭"
+      },
+      "success": true,
+      "timestamp": "2026-10-10T16:32:44.333879"
+    },
+    "finished_at_utc": "2026-10-10T13:32:48.892643+00:00",
+    "evidence_file": "integrations/mirofish/runtime/authenticated-simulation.json",
+    "evidence_sha256": "209a6921d2809c5397ba7d9bb3de5b9e01a28a38ec57e2e297e35306566ba436",
+    "actual_stages_completed": [
+      "normal_authenticated_startup_health",
+      "authenticated_proxy_completion",
+      "ontology_generation",
+      "zep_graph_creation_and_ingestion",
+      "zep_graph_readback",
+      "two_agent_profile_and_configuration_preparation",
+      "two_agent_one_active_round_llm_simulation",
+      "persisted_social_actions_observation",
+      "owned_environment_close"
+    ]
+  },
+  "final_verification": {
+    "status": "passed",
+    "normal_health_status_code": 200,
+    "normal_launcher_validation_bypassed": false,
+    "simulation_evidence_gate": true,
+    "dpapi_roundtrip_verified": true,
+    "config_sha256_unchanged": true,
+    "vendor_tracked_source_unchanged": true,
+    "secret_value_scan_passed": true,
+    "files_scanned": 69,
+    "plaintext_key_files_created": false,
+    "proxy_auth_files_modified": false,
+    "offline_tests_passed": 36,
+    "powershell_spaced_path_arguments_verified": true
+  }
+}

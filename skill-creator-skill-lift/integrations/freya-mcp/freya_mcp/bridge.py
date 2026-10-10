@@ -141,6 +141,13 @@ class Bridge:
             # Never include request/response repr, URLs, bodies, or library exceptions.
             raise BridgeError("HTTP transport failed; mutation outcome may be unknown. Do not automatically retry writes.") from None
         if response.status_code >= 300:
+            if response.status_code in (400, 422) and path == "/api/v2/workflow" and params == {"dryRun": "true"}:
+                try:
+                    diagnostics = self.scrub(response.json())
+                except ValueError:
+                    diagnostics = {"message": "non-JSON schema rejection"}
+                # Only workflow dry-run feedback is exposed, always credential-redacted and bounded.
+                raise BridgeError(f"HTTP {response.status_code} validation: " + json.dumps(diagnostics, ensure_ascii=False)[:6000])
             if response.status_code in (409, 429):
                 raise BridgeError(f"HTTP {response.status_code}: conflict or capacity limit; check simulation status before retrying.")
             raise BridgeError(f"HTTP {response.status_code}: Freya request rejected (response body withheld).")

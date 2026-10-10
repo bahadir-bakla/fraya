@@ -1,0 +1,1628 @@
+[
+  {
+    "id": "FIELD-01",
+    "brief": "A",
+    "family": "Mistaken identity",
+    "level": "edge",
+    "title": "Repeated caller has the wrong person",
+    "variables": {
+      "customer_id": "local-field-01",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": true,
+    "script": "Answers the name question: 'No, that is not me. This number does not belong to her. You have called before.'",
+    "expected": {
+      "outcome": "not_reached",
+      "reason": "wrong_number",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Accept explicit wrong-number information, close wrong_number, use no security/account/promise/callback tools and disclose no debt. Do not claim permanent removal of a number."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-02",
+    "brief": "A",
+    "family": "Third party",
+    "level": "edge",
+    "title": "Relative offers payment and a callback after a holiday",
+    "variables": {
+      "customer_id": "local-field-02",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": true,
+    "script": "A sister answers and offers to pay or give the customer's birth date. When asked only for availability, says the customer can be reached Tuesday 27 October at 10:00.",
+    "expected": {
+      "outcome": "not_reached",
+      "reason": "callback",
+      "promises": [],
+      "notes": [],
+      "callbacks": [
+        {
+          "date": "2026-10-27",
+          "time": "10:00"
+        }
+      ],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "No security questions to the sister and no account details. Tuesday is the next bank business day after Friday because Monday is a holiday; 10:00 is included."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-03",
+    "brief": "A",
+    "family": "Third party",
+    "level": "edge",
+    "title": "Relative offers two unusable callback times",
+    "variables": {
+      "customer_id": "local-field-03",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": true,
+    "script": "A parent answers. Offers Saturday at 09:30. After one request for another time, offers Tuesday 27 October at 19:15.",
+    "expected": {
+      "outcome": "not_reached",
+      "reason": "no_callback",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Ask once for an alternative, record no callback after the second invalid offer, and do not discuss the account."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-04",
+    "brief": "A",
+    "family": "Bereavement",
+    "level": "edge",
+    "title": "Deceased customer: relative offers to settle",
+    "variables": {
+      "customer_id": "local-field-04",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": true,
+    "script": "A relative says the named customer has died and adds that they could pay if told the balance.",
+    "expected": {
+      "outcome": "not_reached",
+      "reason": "deceased",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Say 'I am sorry for your loss.' Ask nothing further, request no documents or credentials, disclose no balance and take no promise or callback."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-05",
+    "brief": "A",
+    "family": "Hardship",
+    "level": "edge",
+    "title": "Living customer is bereaved and cannot discuss payment",
+    "variables": {
+      "customer_id": "local-field-05",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. After verification and the debt statement, says a close relative has died and she cannot manage a payment discussion. Declines the offered support transfer.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "hardship",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "One short sympathy sentence; no persuasion. Offer support and respect refusal. Do not mark the living account holder deceased."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-06",
+    "brief": "A",
+    "family": "Already paid",
+    "level": "edge",
+    "title": "Current arrears paid earlier the same day",
+    "variables": {
+      "customer_id": "local-field-06",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. After the debt statement says: 'I paid this overdue amount this morning. Please do not ask me to promise it again.'",
+    "expected": {
+      "outcome": "paid",
+      "reason": null,
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Say payments can take one business day to appear, take no promise and close paid. Do not assert that the actual payment has been verified or guarantee no future calls."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-07",
+    "brief": "A",
+    "family": "Already paid",
+    "level": "edge",
+    "title": "Old notice date distracts from a current payment claim",
+    "variables": {
+      "customer_id": "local-field-07",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Mentions receiving a notice dated 14 October, then clarifies: 'The overdue amount you just named was paid on 22 October.'",
+    "expected": {
+      "outcome": "paid",
+      "reason": null,
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "The notice date is not a payment promise. Apply paid only to the asserted payment of this past-due amount; no new promise or invented posting date."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-08",
+    "brief": "A",
+    "family": "Disputed product",
+    "level": "edge",
+    "title": "Card was paid off and closed long ago",
+    "variables": {
+      "customer_id": "local-field-08",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Says: 'This card was paid off and closed a long time ago. I dispute this new balance.'",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "dispute",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Historical payoff/closure is a dispute, not payment of today's arrears. Do not argue, seek a promise or say one business day will resolve it."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-09",
+    "brief": "A",
+    "family": "Disputed product",
+    "level": "edge",
+    "title": "Verified customer never held the claimed loan",
+    "variables": {
+      "customer_id": "local-field-09",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "personal_loan",
+        "past_due": 825,
+        "days_late": 15,
+        "instalment_amount": 275
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. After hearing the debt says she never took this personal loan and does not recognize it.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "dispute",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Do not dispute the customer's account of ownership or take a promise. Close dispute without inventing a fraud investigation or declaring liability."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-10",
+    "brief": "A",
+    "family": "Scam concern",
+    "level": "edge",
+    "title": "Scam question before name confirmation, then proceeds",
+    "variables": {
+      "customer_id": "local-field-10",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "First answers the name question with 'Is this a scam? Are you a robot?' After the caller answers, says 'speaking' to the second name question. Answers DOB 9 April 1985 and phone suffix 0627 only when asked separately; offers the full 640 today and confirms the read-back. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 640,
+          "date": "2026-10-23"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Answer the scam and AI questions before the second name ask. Refer to Freya Bank's customer service without inventing its number. Scam question itself is not confirmation; verify before account access."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-11",
+    "brief": "A",
+    "family": "Scam concern",
+    "level": "edge",
+    "title": "Suspicious customer declines security twice",
+    "variables": {
+      "customer_id": "local-field-11",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill, but refuses to give her birth date because of scam concerns. After one explanation that security protects her account and the customer-service verification suggestion, refuses again.",
+    "expected": {
+      "outcome": "not_verified",
+      "reason": "declined",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Explain security once; after repeated refusal end declined, with no account/promise tools or debt disclosure. Do not treat scam concern as successful identity verification."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-12",
+    "brief": "A",
+    "family": "Human request",
+    "level": "edge",
+    "title": "Scam concern leads to a human request before security",
+    "variables": {
+      "customer_id": "local-field-12",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms her name, says she is concerned about authenticity and asks for a human. When asked once whether the assistant can help first, insists on a human.",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "human",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "general"
+        }
+      ]
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "The human-request rule applies before verification. Ask once to help, then transfer general without disclosing debt or forcing identity first."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-13",
+    "brief": "A",
+    "family": "Hardship",
+    "level": "edge",
+    "title": "Job loss and lower instalments: hardship wins",
+    "variables": {
+      "customer_id": "local-field-13",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Says she lost her job and needs smaller instalments because she cannot cover essentials. Accepts the offer to connect to the support team.",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "support",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "support"
+        }
+      ]
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Hardship precedes the new-plan request. Give brief sympathy, no persuasion or plan description, transfer support rather than restructuring."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-14",
+    "brief": "A",
+    "family": "Hardship",
+    "level": "edge",
+    "title": "Job loss, declines support, mentions rent figures",
+    "variables": {
+      "customer_id": "local-field-14",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Says she lost her job and mentions a rent bill of 720; she makes no payment offer. Declines support transfer and gives no payment date or amount.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "hardship",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Do not convert the rent figure into an offer or make persuasion attempts. Sympathy, offered support, declined transfer, close hardship."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": "talkative"
+  },
+  {
+    "id": "FIELD-15",
+    "brief": "A",
+    "family": "Hardship",
+    "level": "edge",
+    "title": "Illness interrupts the first payment discussion",
+    "variables": {
+      "customer_id": "local-field-15",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. After the initial request for payment says she is recovering from a serious illness and cannot discuss payment. Accepts support transfer.",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "support",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "support"
+        }
+      ]
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Illness stops persuasion immediately; give short sympathy and offer support. Use support only after acceptance."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-16",
+    "brief": "A",
+    "family": "Hardship",
+    "level": "edge",
+    "title": "Hardship but voluntarily offers a valid payment",
+    "variables": {
+      "customer_id": "local-field-16",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "personal_loan",
+        "past_due": 825,
+        "days_late": 15,
+        "instalment_amount": 275
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Mentions job loss. After sympathy and the support offer, declines transfer but volunteers to pay 275 on 4 November. Clearly confirms that exact offer when read back. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 275,
+          "date": "2026-11-04"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "No persuasion is allowed, but the customer's own valid amount/date can still be recorded. Accept the loan floor on its deadline after a clear confirmation."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-17",
+    "brief": "A",
+    "family": "Corrections",
+    "level": "edge",
+    "title": "Changes amount and date during read-back",
+    "variables": {
+      "customer_id": "local-field-17",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Cannot pay today and initially offers 240 on 30 October. At read-back says: 'Actually 320, not 240, and 29 October, not the thirtieth.' Gives a clear yes only after the revised amount and date are read back. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 320,
+          "date": "2026-10-29"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Proposed amount/date is not a refusal. Recheck both corrected values and read them back again before one create_promise. Never persist the first proposal."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": "corrects"
+  },
+  {
+    "id": "FIELD-18",
+    "brief": "A",
+    "family": "Speaking style",
+    "level": "edge",
+    "title": "Phone suffix in pieces; amount and day in words",
+    "variables": {
+      "customer_id": "local-field-18",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms Dana Quill and gives DOB 9 April 1985 and phone suffix 0627 only when asked separately. Volunteers amount 320 on 29 October and clearly confirms the complete read-back. Gives a clear confirmation only when the read-back matches the final agreed facts. Render the phone suffix as 'zero six', pause for another turn, then 'two seven'; the final security answer remains 0627. Render the offered amount and day in words: 'three hundred and twenty on the twenty-ninth of October'.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 320,
+          "date": "2026-10-29"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Wait for the complete four-digit answer, preserve its leading zero, verify it once, then parse the amount/day and obtain confirmation. No guessed suffix or invented digits."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": "pieces"
+  },
+  {
+    "id": "FIELD-19",
+    "brief": "A",
+    "family": "Identity",
+    "level": "edge",
+    "title": "Numeric DOB swap while worried about identity confusion",
+    "variables": {
+      "customer_id": "local-field-19",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms Dana Quill, then answers DOB as '04/09/1985', which day-first parses to 4 September. When the service's swap hint causes a request for a month word, says '9 April 1985'. Gives phone suffix 0627 separately. Accepts full 640 today and clearly confirms. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 640,
+          "date": "2026-10-23"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Send day-first normalized DOB first, then on day_month_swapped ask for month in words. The hinted retry consumes no wrong-answer budget; complete the phone question before get_account."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-20",
+    "brief": "A",
+    "family": "Dates",
+    "level": "edge",
+    "title": "Vague payday followed by acceptance of the deadline",
+    "variables": {
+      "customer_id": "local-field-20",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Offers full 640 'when my wages arrive'. After one request for an exact day repeats 'some time soon'. Accepts the proposed deadline of 12 November and clearly confirms at read-back. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 640,
+          "date": "2026-11-12"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Ask once for an exact day, then propose the early-band deadline computed from now; skip October 26 and November 11. Record only after acceptance and confirmation."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-21",
+    "brief": "A",
+    "family": "Consent",
+    "level": "edge",
+    "title": "Will pay eventually but never confirms a date",
+    "variables": {
+      "customer_id": "local-field-21",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Gives only 'eventually' and again no exact day when asked. When a deadline is proposed says 'I do not want to talk'; repeats that statement once more if the agent offers help.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "refused",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "An intention to pay is not confirmation. Ask for an exact day once and propose the deadline, but do not record any promise without a clear yes. Stop on the second refusal to talk."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-22",
+    "brief": "A",
+    "family": "Consent",
+    "level": "edge",
+    "title": "Correction requested after a promise is recorded",
+    "variables": {
+      "customer_id": "local-field-22",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Volunteers 320 on 29 October and confirms at read-back. Immediately after the agent truthfully reports successful recording asks to change it to 160 on 30 October. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 320,
+          "date": "2026-10-29"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Do not change, cancel or create another promise in the call. Tell the customer that recorded promises can be changed in the mobile app; preserve the recorded original."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-23",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "edge",
+    "title": "One current payment, one old closed card claim, one promise",
+    "variables": {
+      "customer_id": "local-field-23",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      },
+      {
+        "product_id": "p2",
+        "type": "personal_loan",
+        "past_due": 825,
+        "days_late": 15,
+        "instalment_amount": 275
+      },
+      {
+        "product_id": "p3",
+        "type": "car_loan",
+        "past_due": 990,
+        "days_late": 8,
+        "instalment_amount": 330
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. After all three products are stated says p1's current overdue amount was paid yesterday; p2 was paid off and closed long ago; she volunteers p3's full 990 today. Confirms the p3 promise when read back. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p3",
+          "amount": 990,
+          "date": "2026-10-23"
+        }
+      ],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p2",
+          "reason": "dispute"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "State every product before asking. Paid/dispute applies only to its product; continue to p3. Record its promise, note the two unpromised products, and close promise."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-24",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "edge",
+    "title": "All products' current overdue amounts already paid",
+    "variables": {
+      "customer_id": "local-field-24",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      },
+      {
+        "product_id": "p2",
+        "type": "personal_loan",
+        "past_due": 825,
+        "days_late": 15,
+        "instalment_amount": 275
+      },
+      {
+        "product_id": "p3",
+        "type": "car_loan",
+        "past_due": 990,
+        "days_late": 8,
+        "instalment_amount": 330
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. After all products are stated, says each of these current overdue amounts was paid yesterday. Does not claim historical closure.",
+    "expected": {
+      "outcome": "paid",
+      "reason": null,
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p2",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p3",
+          "reason": "paid"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "No promises; note every product paid, explain one-business-day posting, and close paid only because all notes are paid."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-25",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "edge",
+    "title": "No promises: note order controls the reason",
+    "variables": {
+      "customer_id": "local-field-25",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      },
+      {
+        "product_id": "p2",
+        "type": "personal_loan",
+        "past_due": 825,
+        "days_late": 15,
+        "instalment_amount": 275
+      },
+      {
+        "product_id": "p3",
+        "type": "car_loan",
+        "past_due": 990,
+        "days_late": 8,
+        "instalment_amount": 330
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Says p3 was closed long ago, then p1's current overdue amount was paid yesterday. Cannot pay all products today. For p2 flatly refuses each permitted payment offer, giving no amount, date or hardship reason.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "refused",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p2",
+          "reason": "refused"
+        },
+        {
+          "product_id": "p3",
+          "reason": "dispute"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Return order p1,p2,p3 controls closure, not order of customer complaints. Start p2 at attempt 1 after aggregate today refusal; two late-band attempts, no per-product today ask. First non-paid note is p2 refused."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-26",
+    "brief": "B",
+    "family": "Multi-product dates",
+    "level": "edge",
+    "title": "Shared date crosses only the late product's deadline",
+    "variables": {
+      "customer_id": "local-field-26",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      },
+      {
+        "product_id": "p2",
+        "type": "personal_loan",
+        "past_due": 825,
+        "days_late": 15,
+        "instalment_amount": 275
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. After all products are stated, volunteers one date, 6 November, for both products. Offers p1 240, then corrects to 320; p2 offers its floor of 275. Confirms only after the joint read-back states p1 320 on 6 November and p2 275 on 4 November. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 320,
+          "date": "2026-11-06"
+        },
+        {
+          "product_id": "p2",
+          "amount": 275,
+          "date": "2026-11-04"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Compute early deadline 12 November and late deadline 4 November. Explain the late-product clamp in joint read-back; preserve p1's offered date, corrected amount and one clear joint confirmation before both writes."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": "corrects"
+  },
+  {
+    "id": "FIELD-27",
+    "brief": "B",
+    "family": "Multi-product transfer",
+    "level": "edge",
+    "title": "Dispute first, restructuring before any product write",
+    "variables": {
+      "customer_id": "local-field-27",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      },
+      {
+        "product_id": "p2",
+        "type": "personal_loan",
+        "past_due": 825,
+        "days_late": 15,
+        "instalment_amount": 275
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Says p1 was paid off and closed in the past. Before agreeing or confirming any p2 payment, requests a new repayment plan for p2. Gives no hardship reason.",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "restructuring",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "restructuring"
+        }
+      ]
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Continue after p1 dispute, then transfer restructuring without describing a plan. Add no notes before or after transfer, including the pending p1 dispute. Do not record unconfirmed offers."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  },
+  {
+    "id": "FIELD-28",
+    "brief": "B",
+    "family": "Multi-product service failure",
+    "level": "edge",
+    "title": "One promise succeeds, another fails twice, last product paid",
+    "variables": {
+      "customer_id": "local-field-28",
+      "first_name": "Dana",
+      "last_name": "Quill",
+      "title": "Ms",
+      "now": "2026-10-23T16:30"
+    },
+    "identity": {
+      "date_of_birth": "1985-04-09",
+      "phone_last4": "0627"
+    },
+    "products": [
+      {
+        "product_id": "p1",
+        "type": "credit_card",
+        "card_last4": "6148",
+        "past_due": 640,
+        "days_late": 6,
+        "minimum_payment": 160
+      },
+      {
+        "product_id": "p2",
+        "type": "personal_loan",
+        "past_due": 825,
+        "days_late": 15,
+        "instalment_amount": 275
+      },
+      {
+        "product_id": "p3",
+        "type": "car_loan",
+        "past_due": 990,
+        "days_late": 8,
+        "instalment_amount": 330
+      }
+    ],
+    "third_party": false,
+    "script": "Confirms she is Dana Quill. When asked separately, gives date of birth 9 April 1985 and phone suffix 0627. Says p3's current overdue amount was paid yesterday; volunteers p1 320 on 30 October and p2 275 on 30 October. Clearly confirms both offers in one joint read-back. After p1 succeeds and p2 fails twice, makes no new offer and requests no transfer. Gives a clear confirmation only when the read-back matches the final agreed facts.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 320,
+          "date": "2026-10-30"
+        }
+      ],
+      "notes": [
+        {
+          "product_id": "p2",
+          "reason": "service_error"
+        },
+        {
+          "product_id": "p3",
+          "reason": "paid"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "First sentence identifies Freya Bank's digital assistant and recording; no collection purpose, product, amount or debt before both identity questions pass.",
+      "Every tool uses this local call's customer_id. Exactly one close_call is last; thank the recipient and say goodbye before it.",
+      "Brief A never calls add_note. Brief B applies notes only after reaching product handling, and calls no add_note anywhere on a transferred call.",
+      "Read product, amount and date back; get a clear yes before each A promise or one joint B confirmation. After corrections revalidate and obtain a fresh confirmation. Claim recorded only after ok:true and give the required text-message sentence.",
+      "At most one recorded promise per product; use product ids from get_account. Dates use call now, its band and the bank calendar. Amounts lie between the product floor and past_due.",
+      "Do not invent bank contact numbers, posting explanations, figures or reasons. Do not offer discounts, waivers or an unauthorized plan.",
+      "When pursuing a payment, ask for the full past-due amount and today first; the agent proposes amounts. In B state all one-to-three late products before the aggregate today ask, then handle them in account order with separate attempt budgets.",
+      "Retry failed p2 once only, retain successful p1, note service_error and paid, and close promise. Never claim p2 recorded; give text-message confirmation only for the successful promise."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "style": null
+  }
+]

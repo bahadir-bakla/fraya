@@ -1,0 +1,56 @@
+flowchart TD
+  %% Design as of 2026-10-10. Solid edges are the recommended Freya lowering.
+  %% Dashed edge is a deployment-critical composition requiring a parent-owned probe.
+  %% Sources: official workflow-format.md; tools-and-code.md; Briefs A/B.
+  %% Research: FlowAgent 2502.14345; Progent 2504.11703; Vigil 2606.26524.
+  INPUT["Briefs and supplied OpenAPI"] --> IR["Source-linked policy IR<br/>predicates, priorities, parameters, obligations"]
+  IR --> EXC["Extraction compiler<br/>user assertions and raw spans only"]
+  IR --> RTC["Routing compiler<br/>deterministic gates and event priorities"]
+  IR --> DLC["Dialogue compiler<br/>allowed facts and required speech"]
+  IR --> KC["Kernel compiler<br/>calendar, amounts, retries, partial commits"]
+
+  subgraph CALL["One Freya call: cycles are supported"]
+    CLOCK["RuntimeClock<br/>injected call variable now"]
+    USER["User turn"] --> EX["Extraction<br/>fresh ex_ fields"]
+    EX --> RU["code: reduce_user<br/>consume event; invalidate corrected assent"]
+    CLOCK --> RU
+    STATE["JSON state projection<br/>identity and ordered products<br/>proposed / confirmed / recorded"] <--> RU
+    EVENTS["Per-call event trace<br/>user assertions are not backend receipts"] <--> RU
+    RU --> GATE{"Compute next legal capability<br/>and bind exact arguments"}
+    GATE -->|"clarify, explain or negotiate"| DIALOG["conversation: semantic dialogue<br/>safe facts; no arbitrary bank tools"]
+    DIALOG -->|"next user turn"| USER
+    GATE -->|"complete proposal"| RB["conversation: joint readback<br/>wait for fresh clear confirmation"]
+    RB -->|"yes, correction or interrupt"| USER
+    GATE -->|"authorized and no pending call"| API["api_request: one of seven bank endpoints<br/>static endpoint; baked guarded arguments"]
+    API --> RESULT["Actual result<br/>ok true / definite failure / unknown"]
+    RESULT --> RR["code: reduce_result<br/>match action id; preserve partial commits"]
+    RR --> STATE
+    RR --> EVENTS
+    RR -->|"replan after observation"| GATE
+    RESULT -->|"unknown write outcome"| PENDING["Pending action<br/>no duplicate dispatch or success claim"]
+    PENDING -->|"matching late receipt"| RR
+
+    GATE -->|"transfer requested"| TRANSFER["transfer_to_agent<br/>discard unrecorded terms and buffered notes"]
+    TRANSFER -->|"acknowledged"| BYE["Required final speech and goodbye"]
+    GATE -->|"all products resolved"| BYE
+    BYE -.->|"must prove admitted inputs are drained"| CUT["Actual input closure<br/>not merely a terminal flag"]
+    CUT --> FINAL{"Freeze terminal branch"}
+    FINAL -->|"non-transfer Brief B"| NOTES["Flush buffered add_note calls<br/>account order; acknowledge each"]
+    FINAL -->|"transfer or no notes required"| CLOSE["close_call exactly once<br/>computed outcome and reason"]
+    NOTES --> CLOSE
+    CLOSE --> END["end_call<br/>no further bank tool"]
+  end
+
+  EXC --> EX
+  RTC --> GATE
+  DLC --> DIALOG
+  DLC --> RB
+  KC --> RU
+  KC --> RR
+  PENDING -.->|"no late receipt / no reconciliation endpoint"| GAP["Unresolved limitation<br/>cannot guarantee safe completion"]
+  CUT -.->|"platform admission semantics unverified"| GAP
+
+  classDef kernel fill:#d9ecff,stroke:#2b6ca3,color:#102a43
+  classDef limit fill:#fff0d8,stroke:#bd7a12,color:#6b3d00
+  class RU,RR,GATE,STATE,EVENTS,CLOCK,FINAL kernel
+  class CUT,GAP,PENDING limit

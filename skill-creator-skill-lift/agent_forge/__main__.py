@@ -41,8 +41,38 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("briefs", nargs="+")
     i.add_argument("--tool-api", required=True)
     i.add_argument("--out", required=True, help="input contract JSON path")
+    live = sub.add_parser("build-live", help="compile unseen sources, publish and evaluate an official Freya workflow")
+    live.add_argument("briefs", nargs="+")
+    live.add_argument("--tool-api", required=True)
+    live.add_argument("--out", required=True)
+    live.add_argument("--kit", default="../competition-v3/build-the-builder")
+    live.add_argument("--model", default="gpt-6.1-sol")
+    live.add_argument("--budget-seconds", type=int, default=1800)
+    live.add_argument("--slot", default="codex-builder-rd")
+    live.add_argument("--cases", default="", help="comma-separated official case IDs; absent means publish without testing")
+    live.add_argument("--style", default="")
+    live.add_argument("--reps", type=int, default=1)
+    live.add_argument("--repairs", type=int, default=2)
+    live.add_argument("--compile-only", action="store_true")
+    live.add_argument("--policy-checkpoint", default="", help="resume matching policy.json; original start time still counts")
+    live.add_argument("--allow-source-gaps", action="store_true", help="practice development only; preserve source gaps, never suppress concrete critic errors")
+    live.add_argument("--workflow-checkpoint", default="", help="candidate envelope to repair from the same policy checkpoint run")
     a = ap.parse_args(argv)
 
+    if a.cmd == "build-live":
+        from .builder_live import build_live, BuildFailure
+        try:
+            result = build_live(a.briefs, a.tool_api, a.out, root=Path(__file__).resolve().parents[2],
+                                kit=Path(a.kit).resolve(), model=a.model, budget_seconds=a.budget_seconds,
+                                slot=a.slot, case_ids=[c.strip() for c in a.cases.split(",") if c.strip()],
+                                style=a.style, repetitions=a.reps, repairs=a.repairs, compile_only=a.compile_only,
+                                policy_checkpoint=a.policy_checkpoint, allow_source_gaps=a.allow_source_gaps,
+                                workflow_checkpoint=a.workflow_checkpoint)
+        except (BuildFailure, ValueError, OSError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 1 if result["status"] == "practice_failed" else 0
     if a.cmd == "inspect":
         try:
             contract = inspect_inputs(a.briefs, a.tool_api)

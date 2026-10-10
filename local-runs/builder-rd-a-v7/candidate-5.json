@@ -1,0 +1,434 @@
+{
+  "workflow_json": "{\"initial_node\": \"opening_identity\", \"system_prompt\": \"You are Freya Bank's digital assistant. Speak briefly and naturally. Follow the stage instructions and use only supplied tool results for facts. Keep mutable state explicit: identity verified, wrong-answer count, current security field, callback retry count, persuasion attempts, proposed versus confirmed versus recorded promises, recorded product IDs, terminal outcome/reason, and whether farewell was spoken. Never invent account data, dates, amounts, IDs, phone numbers, or customer-service contact details. Dates use call variable now, never the real clock. Sensitive account tools are unavailable before verification. Every call must speak thanks and goodbye before its single final close_call. Never use add_note.\", \"_tool_library\": {\"identity_check\": {\"operation\": \"verify_identity\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"descriptions\": {\"field\": \"Current security question: date_of_birth first, then phone_last4. Choose only those values.\", \"answer\": \"For date_of_birth send YYYY-MM-DD; numeric dates mean day, month, year. For phone_last4 send four digits.\"}, \"description\": \"Call once for each answer, one question at a time. Do not accept self-reported success. Retry wrong answers up to three total across both fields. A day_month_swapped hint requires asking for the month as a word and retrying without increasing the wrong count. Unreadable dates are not wrong answers.\", \"config\": {\"timeoutMs\": 10000, \"maxRetries\": 0}, \"post_process_code\": \"@code:identity_result\"}, \"account_lookup\": {\"operation\": \"get_account\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"description\": \"Call only after both security answers succeeded according to the actual verify_identity result.\", \"config\": {\"timeoutMs\": 10000, \"maxRetries\": 0}, \"post_process_code\": \"@code:account_result\"}, \"promise_write\": {\"operation\": \"create_promise\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"descriptions\": {\"product_id\": \"Exact product_id returned by get_account for the selected product.\", \"amount\": \"Validated amount between the product floor and past_due inclusive.\", \"date\": \"Validated business date, YYYY-MM-DD, from today through the computed deadline.\"}, \"description\": \"Call only after a clear yes to reading back product, amount, and date. Never write a proposed or unconfirmed promise.\", \"config\": {\"timeoutMs\": 10000, \"maxRetries\": 0}, \"post_process_code\": \"@code:promise_result\"}, \"callback_book\": {\"operation\": \"schedule_callback\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"descriptions\": {\"date\": \"Eligible date: today or next business day, later than now.\", \"time\": \"HH:MM from 10:00 through 19:00 inclusive and later than now.\"}, \"description\": \"Schedule only after deterministic validation of date and time against now and the supplied holiday calendar.\", \"config\": {\"timeoutMs\": 10000, \"maxRetries\": 0}, \"post_process_code\": \"@code:action_result\"}, \"handoff_support\": {\"operation\": \"transfer_to_agent\", \"defaults\": {\"customer_id\": \"{{customer_id}}\", \"queue\": \"support\"}, \"description\": \"Call only when the customer accepts a support connection for illness, family death, or job loss.\", \"config\": {\"timeoutMs\": 10000, \"maxRetries\": 0}, \"post_process_code\": \"@code:action_result\"}, \"handoff_restructuring\": {\"operation\": \"transfer_to_agent\", \"defaults\": {\"customer_id\": \"{{customer_id}}\", \"queue\": \"restructuring\"}, \"description\": \"Call for a request for a new payment plan or lower instalments. Do not describe a plan.\", \"config\": {\"timeoutMs\": 10000, \"maxRetries\": 0}, \"post_process_code\": \"@code:action_result\"}, \"handoff_general\": {\"operation\": \"transfer_to_agent\", \"defaults\": {\"customer_id\": \"{{customer_id}}\", \"queue\": \"general\"}, \"description\": \"Call only after a human request and the customer insists after being asked once whether you can help.\", \"config\": {\"timeoutMs\": 10000, \"maxRetries\": 0}, \"post_process_code\": \"@code:action_result\"}, \"final_close\": {\"operation\": \"close_call\", \"defaults\": {\"customer_id\": \"{{customer_id}}\"}, \"descriptions\": {\"outcome\": \"Use only the selected terminal outcome: promise, paid, transferred, no_promise, not_verified, or not_reached.\", \"reason\": \"Required except for promise and paid. Use only the source-defined reason valid for the outcome.\"}, \"description\": \"Exactly one final tool call, only after the customer has been thanked and told goodbye. Do not call any tool afterward.\", \"config\": {\"timeoutMs\": 10000, \"maxRetries\": 0}, \"pre_process_code\": \"@code:close_body\"}}, \"_code_library\": {\"identity_result\": \"try:\\n    d = result.get('data', {}) if isinstance(result, dict) else {}\\n    if not isinstance(d, dict): d = {}\\n    result.pop('header', None) if isinstance(result, dict) else None\\n    if d.get('all_verified') is True or str(d.get('all_verified')).lower() == 'true':\\n        d['next_action'] = 'identity_passed; ask phone_last4 if not yet completed, otherwise account lookup is permitted'\\n    elif d.get('hint') == 'day_month_swapped':\\n        d['next_action'] = 'Ask the customer to say the month as a word; retry this date without incrementing wrong-answer count'\\n    elif d.get('ok') is False:\\n        d['next_action'] = 'The check was not carried out; do not claim failure or success; explain briefly and invite the same answer again'\\n    else:\\n        d['next_action'] = 'This answer did not verify; use actual wrong_answers_left and retry unless three wrong answers have ended verification'\\nexcept Exception:\\n    try: result['data']['next_action'] = 'Verification result unavailable; do not claim success; ask for the answer again'\\n    except Exception: pass\\n\", \"account_result\": \"try:\\n    result.pop('header', None) if isinstance(result, dict) else None\\n    d = result.get('data', {}) if isinstance(result, dict) else {}\\n    if isinstance(d, dict) and d.get('ok') is True:\\n        d['next_action'] = 'Use only returned products and values. State product, past-due amount, and days late; then ask whether full past_due can be paid today.'\\n    else:\\n        if isinstance(d, dict): d['next_action'] = 'Account lookup failed or was negative. Do not state debt or invent product facts; explain information is unavailable and select service_error.'\\nexcept Exception:\\n    try: result['data']['next_action'] = 'Account information unavailable; do not state debt or invent facts.'\\n    except Exception: pass\\n\", \"promise_result\": \"try:\\n    result.pop('header', None) if isinstance(result, dict) else None\\n    d = result.get('data', {}) if isinstance(result, dict) else {}\\n    if isinstance(d, dict) and d.get('ok') is True:\\n        d['next_action'] = 'Promise is recorded. Say exactly: You will receive a text message confirming this promise. Preserve recorded state and product_id.'\\n    else:\\n        if isinstance(d, dict): d['next_action'] = 'Promise was not recorded. Retry create_promise once only with the same confirmed values; after a second failure say unable to record and select no_promise/service_error.'\\nexcept Exception:\\n    try: result['data']['next_action'] = 'Write result uncertain. Do not claim recorded; follow the one explicitly permitted retry only.'\\n    except Exception: pass\\n\", \"action_result\": \"try:\\n    result.pop('header', None) if isinstance(result, dict) else None\\n    d = result.get('data', {}) if isinstance(result, dict) else {}\\n    if isinstance(d, dict) and d.get('ok') is True: d['next_action'] = 'Action succeeded; state only the actual result and prepare the specified terminal outcome.'\\n    elif isinstance(d, dict): d['next_action'] = 'Action failed or is uncertain; do not claim completion or blindly retry; explain the action could not be completed and choose the policy terminal outcome.'\\nexcept Exception:\\n    try: result['data']['next_action'] = 'Action result unavailable; do not claim completion.'\\n    except Exception: pass\\n\", \"close_body\": \"try:\\n    b = config.get('body') if isinstance(config, dict) else None\\n    if isinstance(b, dict) and b.get('outcome') in ('promise', 'paid'): b.pop('reason', None)\\nexcept Exception:\\n    pass\\n\"}, \"nodes\": {\"opening_identity\": {\"name\": \"opening_identity\", \"node_type\": \"conversation\", \"on_enter\": {\"type\": \"tts\", \"text\": \"Hello, I am Freya Bank's digital assistant. This call is recorded. Am I speaking with {{title}} {{last_name}}?\"}, \"on_enter_first_entry_only\": true, \"task_message\": \"Opening and identity only. Before verification do not mention collections, debt, payment, or product. Only yes, that's me, speaking, or the customer's own name confirms identity; hello, go ahead, and who is this do not. Ask once more if unclear. Answer AI/robot questions truthfully: you are Freya Bank's digital assistant. Answer scam concerns: they can verify by phoning Freya Bank customer service; do not invent a number. A question about purpose before identity counts as declining the security check. On first refusal explain once that questions protect the account; on second refusal/question select not_verified/declined. Ask DOB then phone last four, and call identity_check for each answer. Three wrong answers total select not_verified/failed; say use the mobile app or a branch. A swapped-date hint is not a wrong answer. Never verify a relative or disclose account information to them. For another answerer, say no more than the opening sentence, ask when customer can be reached, and use callback rules; wrong number closes wrong_number; reported death: say I am sorry for your loss, ask nothing more, close deceased. If unclear after second identity ask, close unclear. For two refusals to talk, close not_verified/declined. Request for human: ask once whether you can help, and if they insist use handoff_general. Do not claim identity based on speech alone: proceed to account only when tool results confirm both questions.\", \"tools\": [{\"_tool_ref\": \"identity_check\"}, {\"_tool_ref\": \"handoff_general\"}], \"extraction_schema\": [{\"name\": \"security_field\", \"type\": \"string\", \"enum_values\": [\"date_of_birth\", \"phone_last4\"], \"description\": \"Current unanswered security field, DOB first then phone_last4\", \"min_confidence\": 0.7}, {\"name\": \"security_answer\", \"type\": \"string\", \"description\": \"Customer's answer to the current security question\", \"min_confidence\": 0.7}, {\"name\": \"terminal_outcome\", \"type\": \"string\", \"enum_values\": [\"not_verified\", \"not_reached\", \"transferred\"], \"description\": \"Selected opening/identity-stage outcome\", \"min_confidence\": 0.7}, {\"name\": \"terminal_reason\", \"type\": \"string\", \"enum_values\": [\"failed\", \"declined\", \"unclear\", \"callback\", \"no_callback\", \"wrong_number\", \"deceased\", \"human\"], \"description\": \"Reason matching the selected outcome\", \"min_confidence\": 0.7}], \"transitions\": [{\"target_node\": \"verified_account\", \"description\": \"Both identity answers have actually passed according to verify_identity tool result\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"identity_check_response.data.all_verified\", \"operator\": \"equals\", \"operand\": \"true\"}, {\"variable\": \"identity_check_response.data.all_verified\", \"operator\": \"equals\", \"operand\": \"True\"}]}}, {\"target_node\": \"callback\", \"description\": \"Other answerer offered a callback time for deterministic validation\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"Someone other than the customer gives a callback day or time\"}}, {\"target_node\": \"general_handoff\", \"description\": \"Before verification, the customer requests a human, has been asked once whether you can help, and insists\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"The unverified customer has asked for a human, was asked once whether the assistant can help, and now insists on speaking with a person\"}}, {\"target_node\": \"terminal\", \"description\": \"A defined identity-stage terminal result is selected\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"terminal_outcome\", \"operator\": \"is_set\"}]}}, {\"target_node\": \"opening_identity\", \"description\": \"Continue identity dialogue and handle interruption\", \"condition\": {\"operator\": \"always\"}}], \"max_node_turns\": 80}, \"callback\": {\"name\": \"callback\", \"node_type\": \"conversation\", \"task_message\": \"For another answerer only. Do not disclose why the bank called, ask security questions, or accept payment. Validate with supplied now: date is today or next business day (Mon–Fri excluding 2026-10-26, 2026-11-11, 2026-11-26, 2026-12-25, 2027-01-01), and later than now; time is 10:00–19:00 inclusive and later than now. Ask once for another time if offered time/date is invalid; if second is invalid select not_reached/no_callback and do not schedule. For valid time call callback_book. On actual success select not_reached/callback; otherwise do not claim scheduled, explain briefly, and select no_callback. Thank and say goodbye before close_call.\", \"tools\": [{\"_tool_ref\": \"callback_book\"}], \"extraction_schema\": [{\"name\": \"callback_date\", \"type\": \"date\", \"description\": \"Proposed callback calendar date\", \"min_confidence\": 0.7}, {\"name\": \"callback_time\", \"type\": \"string\", \"validation_pattern\": \"^[0-2][0-9]:[0-5][0-9]$\", \"description\": \"Proposed callback local time HH:MM\", \"min_confidence\": 0.7}, {\"name\": \"terminal_outcome\", \"type\": \"string\", \"enum_values\": [\"not_reached\"], \"description\": \"Set after callback resolution\", \"min_confidence\": 0.7}, {\"name\": \"terminal_reason\", \"type\": \"string\", \"enum_values\": [\"callback\", \"no_callback\"], \"description\": \"Set after callback resolution\", \"min_confidence\": 0.7}], \"transitions\": [{\"target_node\": \"terminal\", \"description\": \"Callback result or invalid second offer determines terminal disposition\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"terminal_reason\", \"operator\": \"is_set\"}]}}, {\"target_node\": \"callback\", \"description\": \"Continue callback dialogue\", \"condition\": {\"operator\": \"always\"}}], \"max_node_turns\": 8, \"max_turn_transition\": \"terminal\"}, \"verified_account\": {\"name\": \"verified_account\", \"node_type\": \"conversation\", \"task_message\": \"Verified stage. Call account_lookup only after both security answers have actually passed. Do not discuss debt until the actual account lookup result is positive. Use only returned product IDs and values. Follow Brief A's one-product scope; if the response does not supply one unambiguous product, do not invent or select product data. State collections team, late payment, product in words, past_due and days_late. Ask whether the full past-due amount can be paid today; never ask how much they can pay. Apply the source floor, amount, date, deadline, business-day, retry, confirmation, and sympathy rules. Handle customer statements in this priority: hardship (including support offer and any customer-named date or amount), already paid this past-due amount (explain payments can take one business day to appear; take no promise), dispute including past closure or payoff (do not argue or take a promise), human request (ask once whether you can help; transfer if they insist), restructuring request (transfer without describing a plan), then ordinary promise handling. For accepted transfers call the matching queue tool and close transferred with that queue's reason, including when a promise was already recorded. Preserve recorded promises otherwise. Never use add_note. Thank the customer and say goodbye before terminal close_call.\", \"tools\": [{\"_tool_ref\": \"account_lookup\"}, {\"_tool_ref\": \"promise_write\"}], \"extraction_schema\": [{\"name\": \"terminal_outcome\", \"type\": \"string\", \"enum_values\": [\"promise\", \"paid\", \"transferred\", \"no_promise\"], \"description\": \"Verified-stage terminal outcome; only select after applicable policy resolution\", \"min_confidence\": 0.7}, {\"name\": \"terminal_reason\", \"type\": \"string\", \"enum_values\": [\"support\", \"restructuring\", \"human\", \"refused\", \"hardship\", \"dispute\", \"service_error\"], \"description\": \"Reason valid for selected terminal outcome\", \"min_confidence\": 0.7}, {\"name\": \"product_id\", \"type\": \"string\", \"description\": \"Exact selected product ID returned by get_account\", \"min_confidence\": 0.7}, {\"name\": \"proposed_amount\", \"type\": \"float\", \"description\": \"Customer-proposed amount, to be checked against actual floor and past_due\", \"min_confidence\": 0.7}, {\"name\": \"proposed_date\", \"type\": \"date\", \"description\": \"Customer-proposed date, to validate against now, calendar, and computed deadline\", \"min_confidence\": 0.7}, {\"name\": \"confirmed_promise\", \"type\": \"string\", \"enum_values\": [\"yes\", \"no\", \"unclear\"], \"description\": \"Clear answer to Do you confirm? after read-back; correction invalidates prior confirmation\", \"min_confidence\": 0.7}], \"transitions\": [{\"target_node\": \"support_handoff\", \"description\": \"The verified customer mentions illness, a family death, or job loss and accepts connection to support\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"The customer mentions illness, a death in the family, or job loss and accepts connection to the customer support team\"}}, {\"target_node\": \"general_handoff\", \"description\": \"A verified customer insists on a human after the one offer to help\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"The verified customer requested a human, was asked once whether the assistant can help, and insists on speaking with a person\"}}, {\"target_node\": \"restructuring_handoff\", \"description\": \"A verified customer requests a new payment plan or lower instalments and hardship support does not take priority\", \"condition\": {\"operator\": \"matches_intent\", \"description\": \"The verified customer requests a new payment plan or lower instalments, without mentioning illness, family death, or job loss\"}}, {\"target_node\": \"terminal\", \"description\": \"Terminal outcome selected after required actions and customer farewell\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"terminal_outcome\", \"operator\": \"is_set\"}]}}, {\"target_node\": \"verified_account\", \"description\": \"Continue verified account dialogue\", \"condition\": {\"operator\": \"always\"}}], \"max_node_turns\": 80}, \"terminal\": {\"name\": \"terminal\", \"node_type\": \"conversation\", \"task_message\": \"This is the single terminal stage. Ensure the customer has already been thanked and told goodbye before calling final_close. Then call final_close exactly once with the selected valid outcome/reason. Do not speak a new farewell instead of the required pre-tool farewell. No tool call may follow.\", \"tools\": [{\"_tool_ref\": \"final_close\"}], \"transitions\": [{\"target_node\": \"terminal\", \"description\": \"Wait for final_close result; never call another tool\", \"condition\": {\"operator\": \"always\"}}], \"max_node_turns\": 2, \"max_turn_transition\": \"terminal\"}, \"restructuring_handoff\": {\"name\": \"restructuring_handoff\", \"node_type\": \"conversation\", \"task_message\": \"For a request for a new payment plan or lower instalments, do not describe a plan. Call handoff_restructuring. On tool result, do not claim success unless the result is positive. Thank the customer and say goodbye before the final close_call; use transferred/restructuring. If a promise was already recorded, the transfer outcome still takes precedence. No tool follows close_call.\", \"tools\": [{\"_tool_ref\": \"handoff_restructuring\"}], \"transitions\": [{\"target_node\": \"terminal\", \"description\": \"The restructuring disposition is selected\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"terminal_outcome\", \"operator\": \"equals\", \"operand\": \"transferred\"}]}}]}, \"general_handoff\": {\"name\": \"general_handoff\", \"node_type\": \"conversation\", \"task_message\": \"For a human request, ask once whether you can help first. If the customer insists, call handoff_general. Do not claim success unless the tool result is positive. Thank the customer and say goodbye before final close_call; use transferred/human. If a promise was already recorded, the transfer outcome still takes precedence. No tool follows close_call.\", \"tools\": [{\"_tool_ref\": \"handoff_general\"}], \"transitions\": [{\"target_node\": \"terminal\", \"description\": \"The human-request disposition is selected\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"terminal_outcome\", \"operator\": \"equals\", \"operand\": \"transferred\"}]}}]}, \"support_handoff\": {\"name\": \"support_handoff\", \"node_type\": \"conversation\", \"task_message\": \"For a customer who accepted support after mentioning illness, a family death, or job loss, call handoff_support. Do not make a persuasion attempt. Do not claim transfer success unless the result is positive. Thank the customer and say goodbye before the final close_call; use transferred/support. No tool follows close_call.\", \"tools\": [{\"_tool_ref\": \"handoff_support\"}], \"transitions\": [{\"target_node\": \"terminal\", \"description\": \"Support transfer disposition selected\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"terminal_outcome\", \"operator\": \"equals\", \"operand\": \"transferred\"}]}}]}}}",
+  "coverage": [
+    {
+      "source_id": "brief-a:brief-a-freya-bank-early.p1",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Synthetic-only global policy."
+    },
+    {
+      "source_id": "brief-a:brief-a-freya-bank-early.p2",
+      "node_ids": [
+        "opening_identity",
+        "verified_account"
+      ],
+      "mechanism": "System prompt requires full policy application."
+    },
+    {
+      "source_id": "brief-a:the-job.p1",
+      "node_ids": [
+        "opening_identity",
+        "verified_account",
+        "terminal"
+      ],
+      "mechanism": "Identity gate, account stage, terminal outcome."
+    },
+    {
+      "source_id": "brief-a:call-variables.p1",
+      "node_ids": [
+        "opening_identity",
+        "verified_account"
+      ],
+      "mechanism": "System prompt limits pre-tool facts."
+    },
+    {
+      "source_id": "brief-a:call-variables.p2",
+      "node_ids": [
+        "opening_identity",
+        "callback",
+        "verified_account"
+      ],
+      "mechanism": "customer_id defaults; now-based date constraints."
+    },
+    {
+      "source_id": "brief-a:1",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Fixed opening and disclosure restriction."
+    },
+    {
+      "source_id": "brief-a:2",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Opening asks titled surname."
+    },
+    {
+      "source_id": "brief-a:3",
+      "node_ids": [
+        "opening_identity",
+        "terminal"
+      ],
+      "mechanism": "Allowed not_reached/unclear to be represented by the opening-stage terminal state."
+    },
+    {
+      "source_id": "brief-a:4",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "AI identity answer in stage prompt."
+    },
+    {
+      "source_id": "brief-a:5",
+      "node_ids": [
+        "opening_identity",
+        "callback"
+      ],
+      "mechanism": "Other-answerer privacy and availability."
+    },
+    {
+      "source_id": "brief-a:6",
+      "node_ids": [
+        "callback"
+      ],
+      "mechanism": "Callback eligibility and write tool."
+    },
+    {
+      "source_id": "brief-a:7",
+      "node_ids": [
+        "callback"
+      ],
+      "mechanism": "One invalid-time retry then no_callback."
+    },
+    {
+      "source_id": "brief-a:8",
+      "node_ids": [
+        "opening_identity",
+        "terminal"
+      ],
+      "mechanism": "Allowed not_reached/wrong_number to be represented by the opening-stage terminal state."
+    },
+    {
+      "source_id": "brief-a:9",
+      "node_ids": [
+        "opening_identity",
+        "terminal"
+      ],
+      "mechanism": "Allowed not_reached/deceased to be represented by the opening-stage terminal state."
+    },
+    {
+      "source_id": "brief-a:10",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Relative excluded from verification/disclosure."
+    },
+    {
+      "source_id": "brief-a:11",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "DOB then phone extraction and tool schema."
+    },
+    {
+      "source_id": "brief-a:12",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Three-total-wrong-answer prompt constraint."
+    },
+    {
+      "source_id": "brief-a:13",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "identity_result hook routes swapped date to word-month retry."
+    },
+    {
+      "source_id": "brief-a:14",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "failed outcome and app/branch instruction."
+    },
+    {
+      "source_id": "brief-a:15",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "One account-protection explanation then declined."
+    },
+    {
+      "source_id": "brief-a:16",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Account lookup tool gated by actual verification result."
+    },
+    {
+      "source_id": "brief-a:17",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "account_result directs required debt statement."
+    },
+    {
+      "source_id": "brief-a:dates.p1",
+      "node_ids": [
+        "callback",
+        "verified_account"
+      ],
+      "mechanism": "Holiday calendar embedded in deterministic-policy prompts."
+    },
+    {
+      "source_id": "brief-a:18",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Band-based deadline/attempt rules."
+    },
+    {
+      "source_id": "brief-a:dates.p2",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "12/7 business-day deadline and attempt count."
+    },
+    {
+      "source_id": "brief-a:19",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Promise date validity constraints."
+    },
+    {
+      "source_id": "brief-a:20",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Next-business-day replacement for weekend/holiday."
+    },
+    {
+      "source_id": "brief-a:21",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "One vague-date clarification then deadline."
+    },
+    {
+      "source_id": "brief-a:22",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Calendar-week interpretation stated."
+    },
+    {
+      "source_id": "brief-a:23",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Deadline offer and refusal as flat refusal."
+    },
+    {
+      "source_id": "brief-a:24",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Full amount first; agent proposes amounts."
+    },
+    {
+      "source_id": "brief-a:25",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Product-specific floor source fields."
+    },
+    {
+      "source_id": "brief-a:26",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Floor offer once and remainder-overdue statement."
+    },
+    {
+      "source_id": "brief-a:27",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Inclusive amount range and below-floor handling."
+    },
+    {
+      "source_id": "brief-a:28",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Required pay-today opening question."
+    },
+    {
+      "source_id": "brief-a:29",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Date/amount proposals are not refusals."
+    },
+    {
+      "source_id": "brief-a:30",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Attempt timing and late-band second attempt."
+    },
+    {
+      "source_id": "brief-a:31",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Stop after attempts; refused outcome."
+    },
+    {
+      "source_id": "brief-a:32",
+      "node_ids": [
+        "verified_account",
+        "support_handoff"
+      ],
+      "mechanism": "Verified-stage transfer intents route to dedicated handoff nodes; the duplicate support tool reference is removed from the shared tool list."
+    },
+    {
+      "source_id": "brief-a:33",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Disallows unlisted financial terms."
+    },
+    {
+      "source_id": "brief-a:34",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Confirmed read-back required before promise tool."
+    },
+    {
+      "source_id": "brief-a:35",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Correction invalidates confirmation; revalidate."
+    },
+    {
+      "source_id": "brief-a:36",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "One per product; recorded promise immutable in call."
+    },
+    {
+      "source_id": "brief-a:37",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Explicit one retry; hook distinguishes actual success."
+    },
+    {
+      "source_id": "brief-a:38",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Success hook requires exact text-message sentence."
+    },
+    {
+      "source_id": "brief-a:39",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Added already-paid handling ahead of ordinary promise dialogue."
+    },
+    {
+      "source_id": "brief-a:40",
+      "node_ids": [
+        "verified_account"
+      ],
+      "mechanism": "Added dispute handling ahead of ordinary promise dialogue."
+    },
+    {
+      "source_id": "brief-a:41",
+      "node_ids": [
+        "verified_account",
+        "restructuring_handoff"
+      ],
+      "mechanism": "Verified-stage restructuring requests route to the dedicated handoff node, avoiding a duplicate expanded transfer function."
+    },
+    {
+      "source_id": "brief-a:42",
+      "node_ids": [
+        "verified_account",
+        "general_handoff"
+      ],
+      "mechanism": "Verified-stage insisted human requests route to the dedicated handoff node, avoiding a duplicate expanded transfer function."
+    },
+    {
+      "source_id": "brief-a:43",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Scam verification wording without invented number."
+    },
+    {
+      "source_id": "brief-a:44",
+      "node_ids": [
+        "opening_identity",
+        "verified_account"
+      ],
+      "mechanism": "Unknown facts answered without invention."
+    },
+    {
+      "source_id": "brief-a:45",
+      "node_ids": [
+        "opening_identity",
+        "verified_account"
+      ],
+      "mechanism": "Stage-specific refusal outcomes; human rule persists."
+    },
+    {
+      "source_id": "brief-a:46",
+      "node_ids": [
+        "terminal"
+      ],
+      "mechanism": "Single final close tool with no retry."
+    },
+    {
+      "source_id": "brief-a:closing.p1",
+      "node_ids": [
+        "opening_identity",
+        "callback",
+        "verified_account",
+        "terminal"
+      ],
+      "mechanism": "Outcome/reason enums and stage terminal selection."
+    },
+    {
+      "source_id": "brief-a:closing.p2",
+      "node_ids": [
+        "general_handoff",
+        "restructuring_handoff"
+      ],
+      "mechanism": "Explicitly preserves transfer outcome precedence when a promise was recorded."
+    },
+    {
+      "source_id": "brief-a:closing.p3",
+      "node_ids": [
+        "opening_identity",
+        "verified_account",
+        "terminal"
+      ],
+      "mechanism": "No add_note tool is defined or exposed."
+    },
+    {
+      "source_id": "brief-a:47",
+      "node_ids": [
+        "opening_identity",
+        "callback",
+        "verified_account",
+        "terminal"
+      ],
+      "mechanism": "Prompts require farewell before terminal close."
+    }
+  ],
+  "limitations": [
+    "No workflow tests or platform validation were run; duplicate dispatch ambiguity is addressed in the compact workflow, but the diagnostics were not rerun.",
+    "Date arithmetic, floor validation, revision invalidation, persuasion attempt counting, and callback calendar validation remain prompt-led rather than enforced by deterministic code, leaving policy errors possible.",
+    "Hardship handling where the customer independently names a date or amount while declining support does not have a dedicated route that resumes promise handling."
+  ]
+}

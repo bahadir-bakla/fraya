@@ -1,0 +1,390 @@
+"""Bounded, tools-disabled exact Claude Opus 5.5 launcher; never impersonates it.
+
+Prepare snapshots or launch from fraya root:
+  python -B integrations/opus-redteam/run.py prepare
+  python -B integrations/opus-redteam/run.py run --timeout-seconds 420
+Native Claude Code handles its ordinary authentication. The local proxy helper
+decrypts only the user-designated DPAPI key in request-process memory. Neither
+route dumps credentials, environment values, or uses a fallback model.
+"""
+from __future__ import annotations
+
+import argparse
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import threading
+import time
+import types
+
+HOME = Path.home()
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+RUNTIME = HERE / "runtime"
+MODEL = "claude-opus-5-5"
+SOURCES = {
+    "brief-a": "competition-v3/build-the-builder/briefs/brief-a.md",
+    "brief-b": "competition-v3/build-the-builder/briefs/brief-b.md",
+    "openapi": "competition-v3/build-the-builder/tools/openapi.json",
+    "runtime-api": "competition-v3/build-the-builder/docs/api.md",
+    "runtime-workflow": "competition-v3/build-the-builder/docs/workflow-format.md",
+    "runtime-tools": "competition-v3/build-the-builder/docs/tools-and-code.md",
+    "builder-prompts": "skill-creator-skill-lift/agent_forge/builder_prompts.py",
+    "policy-runtime": "skill-creator-skill-lift/agent_forge/policy_runtime.py",
+    "official-cases": "competition-v3/build-the-builder/public-test-set.json",
+}
+DOCS = {
+    "exact_model": "https://platform.claude.com/docs/en/models/opus-5-5/overview",
+    "cli": "https://code.claude.com/docs/en/cli-reference",
+    "auth": "https://code.claude.com/docs/en/authentication",
+    "install": "https://code.claude.com/docs/en/setup",
+    "canonical_sdk_transport": "https://github.com/anthropics/claude-agent-sdk-python/blob/main/src/claude_agent_sdk/_internal/transport/subprocess_cli.py",
+    "proxy": "https://github.com/router-for-me/CLIProxyAPI",
+    "proxy_model_rewriter": "https://github.com/router-for-me/CLIProxyAPI/blob/main/sdk/cliproxy/auth/response_model_rewriter.go",
+}
+
+
+def json_write(path: Path, value) -> None:
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def find_cli() -> Path:
+    choices = [shutil.which("claude.exe"), HOME / ".local/bin/claude.exe"]
+    choices.extend(sorted((HOME / ".vscode/extensions").glob(
+        "anthropic.claude-code-*/resources/native-binary/claude.exe"), reverse=True))
+    for choice in choices:
+        if choice and Path(choice).is_file() and Path(choice).suffix.lower() == ".exe":
+            return Path(choice).resolve()
+    raise RuntimeError("Official native Claude CLI not found; see the official installation docs")
+
+
+def auth_status(cli: Path, env: dict[str, str]) -> dict:
+    process = subprocess.run([str(cli), "auth", "status", "--json"], capture_output=True,
+                             text=True, encoding="utf-8", env=env, timeout=30)
+    try:
+        value = json.loads(process.stdout)
+    except ValueError:
+        value = {}
+    # Never store raw auth output, identities, tokens, email, organization IDs or stderr.
+    return {"exit_code": process.returncode, "status": {key: value[key] for key in
+            ("loggedIn", "authMethod", "apiProvider", "subscriptionType", "configDirectory") if key in value}}
+
+
+def prepare() -> dict:
+    RUNTIME.mkdir(exist_ok=True)
+    sources = {}
+    for source_id, relative in SOURCES.items():
+        raw = (ROOT / relative).read_bytes()
+        text = raw.decode("utf-8-sig")
+        sources[source_id] = {"path": relative, "sha256": hashlib.sha256(raw).hexdigest(),
+                              "line_count": len(text.splitlines()), "text": text}
+    # Use the original parser without importing agent_forge's unrelated forge/simulation package initializer.
+    package = types.ModuleType("agent_forge")
+    package.__path__ = [str(ROOT / "skill-creator-skill-lift" / "agent_forge")]
+    sys.modules.setdefault("agent_forge", package)
+    from agent_forge.input_contract import inspect_inputs
+    contract = inspect_inputs([ROOT / SOURCES["brief-a"], ROOT / SOURCES["brief-b"]],
+                              ROOT / SOURCES["openapi"])
+    clauses = [clause for document in contract["documents"] for clause in document["clauses"]]
+    from agent_forge.builder_policy import POLICY_SCHEMA
+    from agent_forge.tool_api import validate_json
+    candidates = []
+    directories = ("local-runs/builder-rd-a-v4", "local-runs/builder-rd-a-v3", "local-runs/builder-rd-a-v2", "local-runs/builder-rd-a")
+    # A complete policy IR is a candidate even when workflow generation is pending.
+    # Never read partial model streams or claim a policy is an executable workflow.
+    for directory in directories:
+        for path in sorted((ROOT / directory).rglob("*.json")):
+            if "model-calls" in path.parts or path.name in ("trace.json", "input-contract.json"):
+                continue
+            try:
+                value = json.loads(path.read_text(encoding="utf-8-sig"))
+            except (ValueError, OSError):
+                continue
+            workflow = value.get("workflow", value) if isinstance(value, dict) else None
+            if isinstance(value, dict) and isinstance(value.get("workflow_json"), str):
+                try:
+                    workflow = json.loads(value["workflow_json"])
+                except ValueError:
+                    workflow = None
+            kind = None
+            if isinstance(workflow, dict) and isinstance(workflow.get("nodes"), dict) and workflow.get("initial_node") in workflow["nodes"]:
+                kind = "workflow"
+            elif path.name == "policy.json" and isinstance(value, dict) and not validate_json(POLICY_SCHEMA, value):
+                kind = "policy_ir"
+            if kind:
+                relative = str(path.relative_to(ROOT)).replace("\\", "/")
+                raw = path.read_bytes()
+                candidates.append({"path": relative, "sha256": hashlib.sha256(raw).hexdigest(),
+                                   "kind": kind, "complete_workflow_shape": kind == "workflow",
+                                   "text": raw.decode("utf-8-sig")})
+        if candidates:
+            break
+    qualified_ids = [clause["qualified_id"] for clause in clauses]
+    openapi = json.loads(sources["openapi"]["text"])
+    tool_names = sorted({operation["operationId"] for methods in openapi["paths"].values()
+                         for operation in methods.values() if isinstance(operation, dict) and "operationId" in operation})
+    snapshot = {"requested_model": MODEL, "sources": sources, "canonical_source_clauses": clauses,
+                "qualified_source_ids": qualified_ids, "tool_names": tool_names,
+                "candidate_search_directories": list(directories), "candidates": candidates,
+                "candidate_status": ("complete_workflow_supplied" if any(c["kind"] == "workflow" for c in candidates)
+                                     else "complete_policy_ir_only" if candidates else "no_complete_candidate_available"),
+                "task_limitations": "No bank calls, Freya sessions, workflow edits, or code execution by the review model."}
+    json_write(RUNTIME / "input-snapshot.json", snapshot)
+    instruction = (HERE / "review-instructions.txt").read_text(encoding="utf-8")
+    chunks = [instruction, "\nSOURCE REGISTRY AND CANONICAL QUALIFIED CLAUSES:\n",
+              json.dumps({"clauses": clauses, "tool_names": tool_names}, ensure_ascii=False),
+              "\nSOURCE LINE IDs: <source_id>:L<number>, e.g. policy-runtime:L1. Use only valid supplied lines.\n"]
+    for source_id, source in sources.items():
+        chunks.extend([f"\nSOURCE {source_id} PATH {source['path']} SHA256 {source['sha256']}\n",
+                       "\n".join(f"{source_id}:L{number} {line}" for number, line in enumerate(source["text"].splitlines(), 1)), "\n"])
+    chunks.extend(["\nCANDIDATE STATUS: ", snapshot["candidate_status"], "\n"])
+    for candidate in candidates:
+        chunks.extend(["\nCOMPLETE CANDIDATE " + candidate["kind"] + " " + candidate["path"] + "\n", candidate["text"], "\n"])
+    if candidates and not any(c["kind"] == "workflow" for c in candidates):
+        chunks.append("Only policy IR is supplied. Review its rules, but do not claim workflow-node defects or execution results.\n")
+    if not candidates:
+        chunks.append("No candidate defect may be claimed. Review the actual builder prompts/runtime and provide 15 source-derived attack contracts instead.\n")
+    (RUNTIME / "prompt.txt").write_text("".join(chunks), encoding="utf-8")
+    manifest = {key: value for key, value in snapshot.items() if key not in ("sources", "canonical_source_clauses", "candidates")}
+    manifest["candidates"] = [{k: v for k, v in c.items() if k != "text"} for c in candidates]
+    manifest["sources"] = {key: {k: v for k, v in value.items() if k != "text"} for key, value in sources.items()}
+    manifest["clauses_count"] = len(clauses)
+    manifest["prompt_sha256"] = hashlib.sha256((RUNTIME / "prompt.txt").read_bytes()).hexdigest()
+    json_write(HERE / "source-manifest.json", manifest)
+    return snapshot
+
+
+def cli_arguments(cli: Path) -> list[str]:
+    return [str(cli), "--print", "--safe-mode", "--restricted", "--no-session-persistence",
+            "--tools", "", "--disallowedTools", "*", "--strict-mcp-config",
+            "--mcp-config", str(HERE / "empty-mcp.json"), "--setting-sources", "",
+            "--settings", str(HERE / "settings.json"), "--disable-slash-commands", "--no-chrome",
+            "--permission-mode", "dontAsk", "--permission-prompts", "none",
+            "--model", MODEL, "--effort", "medium", "--max-turns", "1",
+            "--output-format", "stream-json", "--verbose",
+            "--system-prompt", "You are an independent source-grounded red-team reviewer. Use no tools. Output the requested JSON only."]
+
+
+def validate_review(review: dict, snapshot: dict) -> None:
+    if not isinstance(review, dict) or review.get("review_type") != "source_review_not_executed":
+        raise ValueError("Review must explicitly be a source review, not an execution claim")
+    if review.get("candidate_reviewed") is not bool(snapshot["candidates"]):
+        raise ValueError("Candidate review claim does not match supplied candidates")
+    attacks = review.get("attacks")
+    if not isinstance(attacks, list) or len(attacks) != 15 or {a.get("id") for a in attacks} != {f"O55-{n:02d}" for n in range(1, 16)}:
+        raise ValueError("Exactly 15 uniquely identified attack contracts are required")
+    required = {"id", "title", "priority", "assessment", "scenario", "expected_ledger", "expected_speech",
+                "forbidden_bank_calls", "qualified_source_ids", "failure_path", "fix_target"}
+    for attack in attacks:
+        if not required.issubset(attack):
+            raise ValueError("Attack lacks a required concrete contract field")
+        if not snapshot["candidates"] and attack["assessment"] == "candidate_violation":
+            raise ValueError("Candidate violation asserted without a supplied candidate")
+        if attack["scenario"].get("brief") not in ("A", "B"):
+            raise ValueError("Attack needs an explicit brief")
+        if not {"call_variables", "identity_fixture", "products", "customer_turns", "fault_plan"}.issubset(attack["scenario"]):
+            raise ValueError("Attack needs explicit fixture, ordered turns and fault plan")
+        if not isinstance(attack["scenario"]["customer_turns"], list) or not attack["scenario"]["customer_turns"]:
+            raise ValueError("Attack needs nonempty ordered customer turns")
+        if attack["priority"] not in ("P0", "P1", "P2") or attack["assessment"] not in ("candidate_violation", "source_derived_attack", "specification_gap"):
+            raise ValueError("Invalid priority or assessment")
+        if not {"outcome", "reason", "promises", "notes", "callbacks", "transfers", "oracle_scope"}.issubset(attack["expected_ledger"]):
+            raise ValueError("Incomplete expected ledger contract")
+        if not attack["expected_speech"] or not attack["forbidden_bank_calls"] or not attack["qualified_source_ids"]:
+            raise ValueError("Speech, forbidden-call and source contracts cannot be empty")
+        for forbidden in attack["forbidden_bank_calls"]:
+            if forbidden.get("tool") not in snapshot["tool_names"] or not forbidden.get("when") or not forbidden.get("reason"):
+                raise ValueError("Forbidden call must name a supplied bank operation and condition")
+        for source_id in attack["qualified_source_ids"]:
+            if source_id in snapshot["qualified_source_ids"]:
+                continue
+            match = re.fullmatch(r"(.+):L([1-9][0-9]*)", source_id)
+            if not match or match[1] not in snapshot["sources"] or int(match[2]) > snapshot["sources"][match[1]]["line_count"]:
+                raise ValueError("Unknown qualified source ID")
+        if not {"file", "function_or_node", "suggested_change"}.issubset(attack["fix_target"]):
+            raise ValueError("Incomplete fix target")
+        allowed_targets = {SOURCES["builder-prompts"], SOURCES["policy-runtime"]} | {c["path"] for c in snapshot["candidates"]}
+        if attack["fix_target"]["file"] not in allowed_targets:
+            raise ValueError("Fix target outside supplied implementation files")
+
+
+def verify_inference(events: list[dict]) -> dict:
+    initial = [e for e in events if e.get("type") == "system" and e.get("subtype") == "init"]
+    assistant = [e.get("message", {}) for e in events if e.get("type") == "assistant" and not e.get("error")]
+    models = [message.get("model") for message in assistant]
+    results = [e for e in events if e.get("type") == "result"]
+    tool_blocks = [block for message in assistant for block in message.get("content", []) if block.get("type") == "tool_use"]
+    if not initial or initial[-1].get("model") != MODEL:
+        raise ValueError("Requested model not verified in CLI initialization")
+    if initial[-1].get("tools") or initial[-1].get("mcp_servers") or tool_blocks:
+        raise ValueError("Tools/MCP were available or used")
+    if not models or any(model != MODEL for model in models):
+        raise ValueError("No actual exact-model assistant response; initialization alone is not inference evidence")
+    if not results or results[-1].get("is_error") or results[-1].get("subtype") != "success":
+        raise ValueError("CLI did not complete a successful inference")
+    usage_models = set(results[-1].get("modelUsage", {}))
+    if usage_models != {MODEL}:
+        raise ValueError("Model usage does not exclusively confirm the exact requested model")
+    text = "\n".join(block["text"] for message in assistant for block in message.get("content", []) if block.get("type") == "text")
+    return {"models": models, "model_usage": results[-1]["modelUsage"], "text": text, "tool_calls": 0}
+
+
+def write_reports(metadata: dict, review: dict | None = None) -> None:
+    metadata["attacks"] = review["attacks"] if review else []
+    metadata["attack_count"] = len(metadata["attacks"])
+    metadata["no_model_substitution"] = True
+    metadata["bank_calls"] = 0
+    metadata["freya_hosted_calls"] = 0
+    metadata["official_docs"] = DOCS
+    json_write(ROOT / "analysis" / "opus-redteam.json", metadata)
+    lines = ["Claude Opus 5.5 external red-team launch", "Status: " + metadata["status"],
+             "Requested exact model: " + MODEL, "Actual inference verified: " + str(metadata.get("actual_opus_inference_verified", False)),
+             "Attacks received from verified Opus inference: " + str(metadata["attack_count"]),
+             "No launcher-written attacks, fallback model, bank calls or Freya hosted calls.",
+             "Provider: " + str(metadata.get("provider", metadata.get("cli_path", "unavailable"))),
+             "Auth status: " + json.dumps(metadata.get("auth_status", {})),
+             "Candidate: " + metadata.get("candidate_status", "not snapshotted"),
+             "Run bound: " + str(metadata.get("timeout_seconds", "not launched")) + " seconds."]
+    if metadata.get("failure_reason"):
+        lines += ["Verified gap: " + metadata["failure_reason"]]
+    if metadata.get("inventory"):
+        lines += ["Live authenticated inventory: " + json.dumps(metadata["inventory"], ensure_ascii=False)]
+    if metadata.get("exact_route_probe"):
+        lines += ["Explicit exact-model tiny invocation: " + json.dumps(metadata["exact_route_probe"], ensure_ascii=False)]
+    if metadata.get("previous_attempts"):
+        lines += ["Previous route attempts:", *[json.dumps(attempt, ensure_ascii=False) for attempt in metadata["previous_attempts"]]]
+    if metadata.get("proxy_provider_readiness"):
+        lines += ["Read-only designated provider readiness: " + json.dumps(metadata["proxy_provider_readiness"], ensure_ascii=False)]
+    if metadata.get("validation"):
+        lines += ["Validation: " + json.dumps(metadata["validation"], ensure_ascii=False)]
+    if metadata.get("changed_paths"):
+        lines += ["Changed paths:", *metadata["changed_paths"]]
+    if review:
+        lines += ["", "Source-review limitations:", *review.get("limitations", [])]
+        for attack in review["attacks"]:
+            lines += ["", attack["id"] + " " + attack["title"], json.dumps(attack, ensure_ascii=False, indent=2)]
+    lines += ["", "Rerun from fraya root:", "  python -B integrations/opus-redteam/run.py run --timeout-seconds 420",
+              "Auto uses the designated local proxy when its metadata exists; --provider claude-cli selects the native CLI.",
+              "Proxy auth uses only the designated DPAPI key in memory; no plaintext key or raw auth response is logged.",
+              "Candidate directories are checked again on each run; builder-rd-a-v4 is preferred, then v3, v2, and the original.",
+              "", "Official sources:", *DOCS.values()]
+    (ROOT / "analysis" / "opus-redteam.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def run_cli(timeout: int) -> int:
+    if not 300 <= timeout <= 480:
+        raise ValueError("Run bound must be between 300 and 480 seconds")
+    snapshot = prepare()
+    cli = find_cli()
+    env = {key: value for key, value in os.environ.items() if not key.startswith("FREYA_") and key not in ("CLAUDECODE", "CLAUDE_CODE_SESSION_ID")}
+    env.update(DISABLE_AUTOUPDATER="1", CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1", PYTHONUTF8="1")
+    metadata = {"status": "launching", "launched_at_utc": datetime.now(timezone.utc).isoformat(),
+                "provider": "official_claude_cli",
+                "requested_model": MODEL, "launcher_role": "different-model orchestrator; not Claude Opus",
+                "cli_path": str(cli), "cli_version": subprocess.check_output([str(cli), "--version"], env=env, text=True).strip(),
+                "cli_sha256": hashlib.sha256(cli.read_bytes()).hexdigest(), "auth_status": auth_status(cli, env),
+                "credential_files_read_by_launcher": False, "credential_values_displayed": False,
+                "timeout_seconds": timeout, "candidate_status": snapshot["candidate_status"],
+                "candidate_paths": [c["path"] for c in snapshot["candidates"]],
+                "source_manifest": "integrations/opus-redteam/source-manifest.json",
+                "actual_opus_inference_verified": False, "model_inference_attempted": False,
+                "tools_requested": [], "mcp_servers_requested": [], "fallback_requested": False}
+    arguments = cli_arguments(cli)
+    metadata["arguments"] = arguments
+    write_reports(metadata)
+    events, reader_errors = [], []
+    started = time.monotonic()
+    with (RUNTIME / "events.jsonl").open("w", encoding="utf-8") as event_file:
+        process = subprocess.Popen(arguments, cwd=RUNTIME, env=env, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                   stderr=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace")
+        def read_events():
+            try:
+                for line in process.stdout:
+                    value = json.loads(line)
+                    events.append(value)
+                    event_file.write(json.dumps(value, ensure_ascii=False) + "\n")
+                    event_file.flush()
+            except (ValueError, OSError) as exc:
+                reader_errors.append(type(exc).__name__)
+        reader = threading.Thread(target=read_events, daemon=True)
+        reader.start()
+        def feed_prompt():
+            try:
+                process.stdin.write((RUNTIME / "prompt.txt").read_text(encoding="utf-8"))
+                process.stdin.close()
+            except (BrokenPipeError, OSError):
+                pass
+        writer = threading.Thread(target=feed_prompt, daemon=True)
+        try:
+            metadata["model_inference_attempted"] = True
+            writer.start()
+            process.wait(timeout=max(1, timeout - (time.monotonic() - started)))
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=10)
+            metadata.update(status="timed_out", failure_reason="The bounded exact-model CLI attempt exceeded its deadline")
+        except BrokenPipeError:
+            process.wait(timeout=10)
+        finally:
+            writer.join(timeout=5)
+            reader.join(timeout=5)
+            process.stdout.close()
+    metadata.update(exit_code=process.returncode, elapsed_seconds=round(time.monotonic() - started, 3),
+                    event_count=len(events), event_reader_errors=reader_errors)
+    review = None
+    try:
+        if process.returncode or reader_errors:
+            raise ValueError("CLI returned an error or invalid event stream")
+        inference = verify_inference(events)
+        metadata.update(actual_opus_inference_verified=True)
+        text = inference.pop("text")
+        text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text.strip())
+        review = json.loads(text)
+        validate_review(review, snapshot)
+        json_write(RUNTIME / "verified-review.json", review)
+        metadata.update(status="completed_actual_opus_source_review", actual_opus_inference_verified=True,
+                        inference_evidence=inference)
+    except (ValueError, KeyError, TypeError) as exc:
+        results = [e for e in events if e.get("type") == "result"]
+        error_result = str(results[-1].get("result", "")) if results else ""
+        if not metadata["actual_opus_inference_verified"] and ("not logged in" in error_result.lower() or metadata["auth_status"]["status"].get("loggedIn") is False):
+            metadata.update(status="blocked_claude_auth_not_logged_in", failure_reason="Official native Claude Code auth status reports loggedIn=false/authMethod=none; exact-model invocation could not authenticate. No Opus inference or attacks were obtained.")
+        elif metadata["status"] != "timed_out":
+            metadata.update(status="failed_exact_model_or_output_verification", failure_reason=str(exc))
+        metadata["safe_error_summary"] = "Native CLI authentication failed" if "not logged in" in error_result.lower() else "See local ignored CLI events for error evidence; raw stderr is discarded."
+        review = None
+    write_reports(metadata, review)
+    print(json.dumps({key: metadata.get(key) for key in ("status", "requested_model", "actual_opus_inference_verified", "attack_count", "elapsed_seconds", "failure_reason")}, indent=2))
+    return 0 if review else 2
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("command", choices=("prepare", "run", "probe"))
+    parser.add_argument("--timeout-seconds", type=int, default=420)
+    parser.add_argument("--provider", choices=("auto", "claude-cli", "local-proxy"), default="auto")
+    arguments = parser.parse_args()
+    if arguments.command == "probe":
+        from proxy_provider import probe_proxy
+        return probe_proxy(arguments.timeout_seconds)
+    if arguments.command == "prepare":
+        snapshot = prepare()
+        print(json.dumps({"requested_model": MODEL, "candidate_status": snapshot["candidate_status"],
+                          "candidate_count": len(snapshot["candidates"]), "sources": len(snapshot["sources"])}))
+        return 0
+    if not 300 <= arguments.timeout_seconds <= 480:
+        parser.error("Run bound must be between 300 and 480 seconds")
+    if arguments.provider == "local-proxy" or (arguments.provider == "auto" and (ROOT / ".local-secrets/cli-proxy-connection.json").is_file()):
+        from proxy_provider import run_proxy
+        return run_proxy(arguments.timeout_seconds)
+    return run_cli(arguments.timeout_seconds)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,62 @@
+[
+  {
+    "case_id": "PUB-01",
+    "persona_id": "244ef8c7-0e57-41ad-a606-2d51944f6564",
+    "customer_id": "c_c594e4b1-47d",
+    "simulation_id": "ee1aec8b-bceb-479a-9d73-b2ca0a9c8a41",
+    "call_id": "a27a9dbc-9511-41d1-8091-0284147156b9",
+    "repetition": 1,
+    "pass": false,
+    "failed": [
+      "outcome (None, None), expected ('promise', None)",
+      "promises [], expected [('p1', 420.0, '2026-10-14')]",
+      "the call was not closed with close_call",
+      "conversation: The conversation failed to meet the specified success criteria. 1. Identity verification never passed; although the user provided their date of birth, the system events show that the 'verify_identity' function failed repeatedly due to technical errors. 2. Since identity was not verified, the agent never proceeded to create a promise ('create_promise' was not called). 3. The required text-message sentence was never spoken because the promise stage was never reached. The call ended properly with 'customer-ended-call' after the assistant acknowledged the technical difficulties."
+    ],
+    "tools": [
+      "verify_identity",
+      "verify_identity",
+      "verify_identity",
+      "verify_identity"
+    ]
+  },
+  {
+    "case_id": "PUB-02",
+    "persona_id": "17986669-2ebc-491e-967a-3d37f44f9507",
+    "customer_id": "c_22ad294d-ab1",
+    "simulation_id": "ee1aec8b-bceb-479a-9d73-b2ca0a9c8a41",
+    "call_id": "f068c108-8df1-4135-a1bf-0d6f575da915",
+    "repetition": 1,
+    "pass": false,
+    "failed": [
+      "outcome (None, None), expected ('not_reached', 'callback')",
+      "callbacks [], expected [{'date': '2026-10-15', 'time': '11:00'}]",
+      "conversation: The assistant met the content-based criteria: it did not disclose the call's purpose to the third party (Message 2), it did not call 'verify_identity' or 'get_account', and it verbally confirmed a callback for tomorrow at 11:00 AM (Message 4). However, the call failed to end properly. After the conversation concluded at Message 4, the assistant produced redundant turns (Message 5 and Message 6) repeating the goodbye because the 'close_call' function failed multiple times with errors. This violates the requirement that the agent must not keep talking or repeat filler lines once the conversation is over."
+    ],
+    "tools": [
+      "close_call"
+    ]
+  },
+  {
+    "case_id": "PUB-06",
+    "persona_id": "45a0a73e-783b-4d09-9163-c1a7064bb605",
+    "customer_id": "c_96af2175-90e",
+    "simulation_id": "ee1aec8b-bceb-479a-9d73-b2ca0a9c8a41",
+    "call_id": "a1b3ba24-6518-481a-ab8c-be9d427ebd54",
+    "repetition": 1,
+    "pass": false,
+    "failed": [
+      "outcome (None, None), expected ('promise', None)",
+      "promises [], expected [('p1', 637.5, '2026-10-16')]",
+      "the call was not closed with close_call",
+      "conversation: The assistant failed to meet the success criteria because it encountered persistent technical errors during the identity verification process and terminated the call before any discussion regarding payments could occur. Specifically, the minimum payment was never offered, and the required promise for 637.50 on Friday 16 October was not secured."
+    ],
+    "tools": [
+      "verify_identity",
+      "verify_identity",
+      "verify_identity",
+      "verify_identity",
+      "verify_identity"
+    ]
+  }
+]

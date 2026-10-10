@@ -1,0 +1,970 @@
+{
+  "initial_node": "opening_identity",
+  "system_prompt": "You are Freya Bank's digital assistant. Speak briefly and naturally. Follow the stage instructions and use only supplied tool results for facts. Keep mutable state explicit: identity verified, wrong-answer count, current security field, callback retry count, persuasion attempts, proposed versus confirmed versus recorded promises, recorded product IDs, terminal outcome/reason, and whether farewell was spoken. Never invent account data, dates, amounts, IDs, phone numbers, or customer-service contact details. Dates use call variable now, never the real clock. Sensitive account tools are unavailable before verification. Every call must speak thanks and goodbye before its single final close_call. Never use add_note.",
+  "nodes": {
+    "opening_identity": {
+      "name": "opening_identity",
+      "node_type": "conversation",
+      "on_enter": {
+        "type": "tts",
+        "text": "Hello, I am Freya Bank's digital assistant. This call is recorded. Am I speaking with {{title}} {{last_name}}?"
+      },
+      "on_enter_first_entry_only": true,
+      "task_message": "Opening and identity only. Before verification do not mention collections, debt, payment, or product. Only yes, that's me, speaking, or the customer's own name confirms identity; hello, go ahead, and who is this do not. Ask once more if unclear. Answer AI/robot questions truthfully: you are Freya Bank's digital assistant. Answer scam concerns: they can verify by phoning Freya Bank customer service; do not invent a number. A question about purpose before identity counts as declining the security check. On first refusal explain once that questions protect the account; on second refusal/question select not_verified/declined. Ask DOB then phone last four, and call identity_check for each answer. Three wrong answers total select not_verified/failed; say use the mobile app or a branch. A swapped-date hint is not a wrong answer. Never verify a relative or disclose account information to them. For another answerer, say no more than the opening sentence, ask when customer can be reached, and use callback rules; wrong number closes wrong_number; reported death: say I am sorry for your loss, ask nothing more, close deceased. If unclear after second identity ask, close unclear. For two refusals to talk, close not_verified/declined. Request for human: ask once whether you can help, and if they insist use handoff_general. Do not claim identity based on speech alone: proceed to account only when tool results confirm both questions.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "verify_identity",
+            "handler": "__function__:api_call",
+            "description": "Call once for each answer, one question at a time. Do not accept self-reported success. Retry wrong answers up to three total across both fields. A day_month_swapped hint requires asking for the month as a word and retrying without increasing the wrong count. Unreadable dates are not wrong answers.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "field": {
+                      "type": "string",
+                      "enum": [
+                        "date_of_birth",
+                        "phone_last4"
+                      ],
+                      "description": "Current security question: date_of_birth first, then phone_last4. Choose only those values."
+                    },
+                    "answer": {
+                      "type": "string",
+                      "description": "For date_of_birth send YYYY-MM-DD; numeric dates mean day, month, year. For phone_last4 send four digits."
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "field",
+                    "answer"
+                  ]
+                }
+              }
+            }
+          },
+          "post_process_code": "try:\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if not isinstance(d, dict): d = {}\n    result.pop('header', None) if isinstance(result, dict) else None\n    if d.get('all_verified') is True or str(d.get('all_verified')).lower() == 'true':\n        d['next_action'] = 'identity_passed; ask phone_last4 if not yet completed, otherwise account lookup is permitted'\n    elif d.get('hint') == 'day_month_swapped':\n        d['next_action'] = 'Ask the customer to say the month as a word; retry this date without incrementing wrong-answer count'\n    elif d.get('ok') is False:\n        d['next_action'] = 'The check was not carried out; do not claim failure or success; explain briefly and invite the same answer again'\n    else:\n        d['next_action'] = 'This answer did not verify; use actual wrong_answers_left and retry unless three wrong answers have ended verification'\nexcept Exception:\n    try: result['data']['next_action'] = 'Verification result unavailable; do not claim success; ask for the answer again'\n    except Exception: pass\n"
+        },
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "transfer_to_agent",
+            "handler": "__function__:api_call",
+            "description": "Call only after a human request and the customer insists after being asked once whether you can help.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "queue": {
+                      "type": "string",
+                      "enum": [
+                        "restructuring",
+                        "general",
+                        "support"
+                      ],
+                      "default": "general"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "queue"
+                  ]
+                }
+              }
+            }
+          },
+          "post_process_code": "try:\n    result.pop('header', None) if isinstance(result, dict) else None\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if isinstance(d, dict) and d.get('ok') is True: d['next_action'] = 'Action succeeded; state only the actual result and prepare the specified terminal outcome.'\n    elif isinstance(d, dict): d['next_action'] = 'Action failed or is uncertain; do not claim completion or blindly retry; explain the action could not be completed and choose the policy terminal outcome.'\nexcept Exception:\n    try: result['data']['next_action'] = 'Action result unavailable; do not claim completion.'\n    except Exception: pass\n"
+        }
+      ],
+      "extraction_schema": [
+        {
+          "name": "security_field",
+          "type": "string",
+          "enum_values": [
+            "date_of_birth",
+            "phone_last4"
+          ],
+          "description": "Current unanswered security field, DOB first then phone_last4",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "security_answer",
+          "type": "string",
+          "description": "Customer's answer to the current security question",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "terminal_outcome",
+          "type": "string",
+          "enum_values": [
+            "not_verified",
+            "not_reached",
+            "transferred"
+          ],
+          "description": "Selected opening/identity-stage outcome",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "terminal_reason",
+          "type": "string",
+          "enum_values": [
+            "failed",
+            "declined",
+            "unclear",
+            "callback",
+            "no_callback",
+            "wrong_number",
+            "deceased",
+            "human"
+          ],
+          "description": "Reason matching the selected outcome",
+          "min_confidence": 0.7
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "verified_account",
+          "description": "Both identity answers have actually passed according to verify_identity tool result",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "identity_check_response.data.all_verified",
+                "operator": "equals",
+                "operand": "true"
+              },
+              {
+                "variable": "identity_check_response.data.all_verified",
+                "operator": "equals",
+                "operand": "True"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "callback",
+          "description": "Other answerer offered a callback time for deterministic validation",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "Someone other than the customer gives a callback day or time"
+          }
+        },
+        {
+          "target_node": "general_handoff",
+          "description": "Before verification, the customer requests a human, has been asked once whether you can help, and insists",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "The unverified customer has asked for a human, was asked once whether the assistant can help, and now insists on speaking with a person"
+          }
+        },
+        {
+          "target_node": "terminal",
+          "description": "A defined identity-stage terminal result is selected",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "terminal_outcome",
+                "operator": "is_set"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "opening_identity",
+          "description": "Continue identity dialogue and handle interruption",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "max_node_turns": 80,
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "callback": {
+      "name": "callback",
+      "node_type": "conversation",
+      "task_message": "For another answerer only. Do not disclose why the bank called, ask security questions, or accept payment. Validate with supplied now: date is today or next business day (Mon–Fri excluding 2026-10-26, 2026-11-11, 2026-11-26, 2026-12-25, 2027-01-01), and later than now; time is 10:00–19:00 inclusive and later than now. Ask once for another time if offered time/date is invalid; if second is invalid select not_reached/no_callback and do not schedule. For valid time call callback_book. On actual success select not_reached/callback; otherwise do not claim scheduled, explain briefly, and select no_callback. Thank and say goodbye before close_call.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "schedule_callback",
+            "handler": "__function__:api_call",
+            "description": "Schedule only after deterministic validation of date and time against now and the supplied holiday calendar.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/schedule_callback"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Eligible date: today or next business day, later than now."
+                    },
+                    "time": {
+                      "type": "string",
+                      "description": "HH:MM from 10:00 through 19:00 inclusive and later than now."
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "date",
+                    "time"
+                  ]
+                }
+              }
+            }
+          },
+          "post_process_code": "try:\n    result.pop('header', None) if isinstance(result, dict) else None\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if isinstance(d, dict) and d.get('ok') is True: d['next_action'] = 'Action succeeded; state only the actual result and prepare the specified terminal outcome.'\n    elif isinstance(d, dict): d['next_action'] = 'Action failed or is uncertain; do not claim completion or blindly retry; explain the action could not be completed and choose the policy terminal outcome.'\nexcept Exception:\n    try: result['data']['next_action'] = 'Action result unavailable; do not claim completion.'\n    except Exception: pass\n"
+        }
+      ],
+      "extraction_schema": [
+        {
+          "name": "callback_date",
+          "type": "date",
+          "description": "Proposed callback calendar date",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "callback_time",
+          "type": "string",
+          "validation_pattern": "^[0-2][0-9]:[0-5][0-9]$",
+          "description": "Proposed callback local time HH:MM",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "terminal_outcome",
+          "type": "string",
+          "enum_values": [
+            "not_reached"
+          ],
+          "description": "Set after callback resolution",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "terminal_reason",
+          "type": "string",
+          "enum_values": [
+            "callback",
+            "no_callback"
+          ],
+          "description": "Set after callback resolution",
+          "min_confidence": 0.7
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "terminal",
+          "description": "Callback result or invalid second offer determines terminal disposition",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "terminal_reason",
+                "operator": "is_set"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "callback",
+          "description": "Continue callback dialogue",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "max_node_turns": 8,
+      "max_turn_transition": "terminal",
+      "position": {
+        "x": 370,
+        "y": 0
+      }
+    },
+    "verified_account": {
+      "name": "verified_account",
+      "node_type": "conversation",
+      "task_message": "Verified stage. Call account_lookup only after both security answers have actually passed. Do not discuss debt until the actual account lookup result is positive. Use only returned product IDs and values. Follow Brief A's one-product scope; if the response does not supply one unambiguous product, do not invent or select product data. State collections team, late payment, product in words, past_due and days_late. Ask whether the full past-due amount can be paid today; never ask how much they can pay. Apply the source floor, amount, date, deadline, business-day, retry, confirmation, and sympathy rules. Handle customer statements in this priority: hardship (including support offer and any customer-named date or amount), already paid this past-due amount (explain payments can take one business day to appear; take no promise), dispute including past closure or payoff (do not argue or take a promise), human request (ask once whether you can help; transfer if they insist), restructuring request (transfer without describing a plan), then ordinary promise handling. For accepted transfers call the matching queue tool and close transferred with that queue's reason, including when a promise was already recorded. Preserve recorded promises otherwise. Never use add_note. Thank the customer and say goodbye before terminal close_call.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "get_account",
+            "handler": "__function__:api_call",
+            "description": "Call only after both security answers succeeded according to the actual verify_identity result.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id"
+                  ]
+                }
+              }
+            }
+          },
+          "post_process_code": "try:\n    result.pop('header', None) if isinstance(result, dict) else None\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if isinstance(d, dict) and d.get('ok') is True:\n        d['next_action'] = 'Use only returned products and values. State product, past-due amount, and days late; then ask whether full past_due can be paid today.'\n    else:\n        if isinstance(d, dict): d['next_action'] = 'Account lookup failed or was negative. Do not state debt or invent product facts; explain information is unavailable and select service_error.'\nexcept Exception:\n    try: result['data']['next_action'] = 'Account information unavailable; do not state debt or invent facts.'\n    except Exception: pass\n"
+        },
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "create_promise",
+            "handler": "__function__:api_call",
+            "description": "Call only after a clear yes to reading back product, amount, and date. Never write a proposed or unconfirmed promise.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "product_id": {
+                      "type": "string",
+                      "description": "Exact product_id returned by get_account for the selected product."
+                    },
+                    "amount": {
+                      "type": "number",
+                      "description": "Validated amount between the product floor and past_due inclusive."
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Validated business date, YYYY-MM-DD, from today through the computed deadline."
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "product_id",
+                    "amount",
+                    "date"
+                  ]
+                }
+              }
+            }
+          },
+          "post_process_code": "try:\n    result.pop('header', None) if isinstance(result, dict) else None\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if isinstance(d, dict) and d.get('ok') is True:\n        d['next_action'] = 'Promise is recorded. Say exactly: You will receive a text message confirming this promise. Preserve recorded state and product_id.'\n    else:\n        if isinstance(d, dict): d['next_action'] = 'Promise was not recorded. Retry create_promise once only with the same confirmed values; after a second failure say unable to record and select no_promise/service_error.'\nexcept Exception:\n    try: result['data']['next_action'] = 'Write result uncertain. Do not claim recorded; follow the one explicitly permitted retry only.'\n    except Exception: pass\n"
+        }
+      ],
+      "extraction_schema": [
+        {
+          "name": "terminal_outcome",
+          "type": "string",
+          "enum_values": [
+            "promise",
+            "paid",
+            "transferred",
+            "no_promise"
+          ],
+          "description": "Verified-stage terminal outcome; only select after applicable policy resolution",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "terminal_reason",
+          "type": "string",
+          "enum_values": [
+            "support",
+            "restructuring",
+            "human",
+            "refused",
+            "hardship",
+            "dispute",
+            "service_error"
+          ],
+          "description": "Reason valid for selected terminal outcome",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "product_id",
+          "type": "string",
+          "description": "Exact selected product ID returned by get_account",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "proposed_amount",
+          "type": "float",
+          "description": "Customer-proposed amount, to be checked against actual floor and past_due",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "proposed_date",
+          "type": "date",
+          "description": "Customer-proposed date, to validate against now, calendar, and computed deadline",
+          "min_confidence": 0.7
+        },
+        {
+          "name": "confirmed_promise",
+          "type": "string",
+          "enum_values": [
+            "yes",
+            "no",
+            "unclear"
+          ],
+          "description": "Clear answer to Do you confirm? after read-back; correction invalidates prior confirmation",
+          "min_confidence": 0.7
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "support_handoff",
+          "description": "The verified customer mentions illness, a family death, or job loss and accepts connection to support",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "The customer mentions illness, a death in the family, or job loss and accepts connection to the customer support team"
+          }
+        },
+        {
+          "target_node": "general_handoff",
+          "description": "A verified customer insists on a human after the one offer to help",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "The verified customer requested a human, was asked once whether the assistant can help, and insists on speaking with a person"
+          }
+        },
+        {
+          "target_node": "restructuring_handoff",
+          "description": "A verified customer requests a new payment plan or lower instalments and hardship support does not take priority",
+          "condition": {
+            "operator": "matches_intent",
+            "description": "The verified customer requests a new payment plan or lower instalments, without mentioning illness, family death, or job loss"
+          }
+        },
+        {
+          "target_node": "terminal",
+          "description": "Terminal outcome selected after required actions and customer farewell",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "terminal_outcome",
+                "operator": "is_set"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "verified_account",
+          "description": "Continue verified account dialogue",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "max_node_turns": 80,
+      "position": {
+        "x": 370,
+        "y": 230
+      }
+    },
+    "terminal": {
+      "name": "terminal",
+      "node_type": "conversation",
+      "task_message": "This is the single terminal stage. Ensure the customer has already been thanked and told goodbye before calling final_close. Then call final_close exactly once with the selected valid outcome/reason. Do not speak a new farewell instead of the required pre-tool farewell. No tool call may follow.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "close_call",
+            "handler": "__function__:api_call",
+            "description": "Exactly one final tool call, only after the customer has been thanked and told goodbye. Do not call any tool afterward.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "promise",
+                        "paid",
+                        "transferred",
+                        "no_promise",
+                        "not_verified",
+                        "not_reached"
+                      ],
+                      "description": "Use only the selected terminal outcome: promise, paid, transferred, no_promise, not_verified, or not_reached."
+                    },
+                    "reason": {
+                      "type": "string",
+                      "description": "Required except for promise and paid. Use only the source-defined reason valid for the outcome."
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "outcome"
+                  ]
+                }
+              }
+            }
+          },
+          "pre_process_code": "try:\n    b = config.get('body') if isinstance(config, dict) else None\n    if isinstance(b, dict) and b.get('outcome') in ('promise', 'paid'): b.pop('reason', None)\nexcept Exception:\n    pass\n"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "terminal",
+          "description": "Wait for final_close result; never call another tool",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "max_node_turns": 2,
+      "max_turn_transition": "terminal",
+      "position": {
+        "x": 370,
+        "y": 460
+      }
+    },
+    "restructuring_handoff": {
+      "name": "restructuring_handoff",
+      "node_type": "conversation",
+      "task_message": "For a request for a new payment plan or lower instalments, do not describe a plan. Call handoff_restructuring. On tool result, do not claim success unless the result is positive. Thank the customer and say goodbye before the final close_call; use transferred/restructuring. If a promise was already recorded, the transfer outcome still takes precedence. No tool follows close_call.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "transfer_to_agent",
+            "handler": "__function__:api_call",
+            "description": "Call for a request for a new payment plan or lower instalments. Do not describe a plan.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "queue": {
+                      "type": "string",
+                      "enum": [
+                        "restructuring",
+                        "general",
+                        "support"
+                      ],
+                      "default": "restructuring"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "queue"
+                  ]
+                }
+              }
+            }
+          },
+          "post_process_code": "try:\n    result.pop('header', None) if isinstance(result, dict) else None\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if isinstance(d, dict) and d.get('ok') is True: d['next_action'] = 'Action succeeded; state only the actual result and prepare the specified terminal outcome.'\n    elif isinstance(d, dict): d['next_action'] = 'Action failed or is uncertain; do not claim completion or blindly retry; explain the action could not be completed and choose the policy terminal outcome.'\nexcept Exception:\n    try: result['data']['next_action'] = 'Action result unavailable; do not claim completion.'\n    except Exception: pass\n"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "terminal",
+          "description": "The restructuring disposition is selected",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "terminal_outcome",
+                "operator": "equals",
+                "operand": "transferred"
+              }
+            ]
+          }
+        }
+      ],
+      "position": {
+        "x": 740,
+        "y": 0
+      }
+    },
+    "general_handoff": {
+      "name": "general_handoff",
+      "node_type": "conversation",
+      "task_message": "For a human request, ask once whether you can help first. If the customer insists, call handoff_general. Do not claim success unless the tool result is positive. Thank the customer and say goodbye before final close_call; use transferred/human. If a promise was already recorded, the transfer outcome still takes precedence. No tool follows close_call.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "transfer_to_agent",
+            "handler": "__function__:api_call",
+            "description": "Call only after a human request and the customer insists after being asked once whether you can help.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "queue": {
+                      "type": "string",
+                      "enum": [
+                        "restructuring",
+                        "general",
+                        "support"
+                      ],
+                      "default": "general"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "queue"
+                  ]
+                }
+              }
+            }
+          },
+          "post_process_code": "try:\n    result.pop('header', None) if isinstance(result, dict) else None\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if isinstance(d, dict) and d.get('ok') is True: d['next_action'] = 'Action succeeded; state only the actual result and prepare the specified terminal outcome.'\n    elif isinstance(d, dict): d['next_action'] = 'Action failed or is uncertain; do not claim completion or blindly retry; explain the action could not be completed and choose the policy terminal outcome.'\nexcept Exception:\n    try: result['data']['next_action'] = 'Action result unavailable; do not claim completion.'\n    except Exception: pass\n"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "terminal",
+          "description": "The human-request disposition is selected",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "terminal_outcome",
+                "operator": "equals",
+                "operand": "transferred"
+              }
+            ]
+          }
+        }
+      ],
+      "position": {
+        "x": 370,
+        "y": 690
+      }
+    },
+    "support_handoff": {
+      "name": "support_handoff",
+      "node_type": "conversation",
+      "task_message": "For a customer who accepted support after mentioning illness, a family death, or job loss, call handoff_support. Do not make a persuasion attempt. Do not claim transfer success unless the result is positive. Thank the customer and say goodbye before the final close_call; use transferred/support. No tool follows close_call.",
+      "tools": [
+        {
+          "type": "function",
+          "config": {
+            "maxRetries": 0,
+            "timeoutMs": 10000
+          },
+          "function": {
+            "name": "transfer_to_agent",
+            "handler": "__function__:api_call",
+            "description": "Call only when the customer accepts a support connection for illness, family death, or job loss.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{customer_id}}"
+                    },
+                    "queue": {
+                      "type": "string",
+                      "enum": [
+                        "restructuring",
+                        "general",
+                        "support"
+                      ],
+                      "default": "support"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "queue"
+                  ]
+                }
+              }
+            }
+          },
+          "post_process_code": "try:\n    result.pop('header', None) if isinstance(result, dict) else None\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if isinstance(d, dict) and d.get('ok') is True: d['next_action'] = 'Action succeeded; state only the actual result and prepare the specified terminal outcome.'\n    elif isinstance(d, dict): d['next_action'] = 'Action failed or is uncertain; do not claim completion or blindly retry; explain the action could not be completed and choose the policy terminal outcome.'\nexcept Exception:\n    try: result['data']['next_action'] = 'Action result unavailable; do not claim completion.'\n    except Exception: pass\n"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "terminal",
+          "description": "Support transfer disposition selected",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "terminal_outcome",
+                "operator": "equals",
+                "operand": "transferred"
+              }
+            ]
+          }
+        }
+      ],
+      "position": {
+        "x": 740,
+        "y": 230
+      }
+    }
+  }
+}

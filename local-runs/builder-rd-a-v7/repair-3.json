@@ -1,0 +1,53 @@
+{
+  "patches": [
+    {
+      "op": "replace",
+      "path": "/nodes/opening_identity/extraction_schema/2/enum_values",
+      "value_json": "[\"not_verified\", \"not_reached\", \"transferred\"]"
+    },
+    {
+      "op": "replace",
+      "path": "/nodes/opening_identity/extraction_schema/3/enum_values",
+      "value_json": "[\"failed\", \"declined\", \"unclear\", \"callback\", \"no_callback\", \"wrong_number\", \"deceased\", \"human\"]"
+    },
+    {
+      "op": "replace",
+      "path": "/_code_library/identity_result",
+      "value_json": "try:\n    d = result.get('data', {}) if isinstance(result, dict) else {}\n    if not isinstance(d, dict): d = {}\n    result.pop('header', None) if isinstance(result, dict) else None\n    if d.get('all_verified') is True or str(d.get('all_verified')).lower() == 'true':\n        d['next_action'] = 'Both security questions are verified. Account lookup is now permitted.'\n    elif d.get('hint') == 'day_month_swapped':\n        d['next_action'] = 'Ask the customer to say the month as a word; retry the date without incrementing wrong-answer count.'\n    elif d.get('ok') is False:\n        d['next_action'] = 'The check was not carried out; do not claim failure or success. Ask the same security question again.'\n    elif d.get('verified') is True or str(d.get('verified')).lower() == 'true':\n        d['next_action'] = 'This security answer passed, but both questions have not passed. Ask the next unanswered question in order: phone_last4 after date_of_birth. Do not look up the account yet.'\n    else:\n        d['next_action'] = 'This answer did not verify. Use actual wrong_answers_left; retry unless three wrong answers have ended verification.'\nexcept Exception:\n    try: result['data']['next_action'] = 'Verification result unavailable; do not claim success; ask for the same answer again.'\n    except Exception: pass\n"
+    }
+  ],
+  "coverage_updates": [
+    {
+      "source_id": "brief-a:3",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Expanded terminal extraction values to include the source-defined unclear disposition."
+    },
+    {
+      "source_id": "brief-a:8",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Added wrong_number to the opening-stage terminal reason enum."
+    },
+    {
+      "source_id": "brief-a:9",
+      "node_ids": [
+        "opening_identity"
+      ],
+      "mechanism": "Added deceased to the opening-stage terminal reason enum."
+    },
+    {
+      "source_id": "brief-a:11",
+      "node_ids": [
+        "_code_library/identity_result"
+      ],
+      "mechanism": "Tool-result guidance now distinguishes a passed single answer from both questions verified and directs the next unanswered security field."
+    }
+  ],
+  "limitations": [
+    "The brief leaves the terminal outcome ambiguous when a promise has been recorded and the customer later says they already paid or disputes the debt; only transfer precedence is explicit.",
+    "Calendar arithmetic, promise floor/deadline validation, callback validation, and backend-established retry counters are still described in dialogue or tool guidance rather than enforced by deterministic code."
+  ]
+}

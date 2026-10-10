@@ -1,0 +1,2078 @@
+{
+  "version": "1.0.0",
+  "reviewed_on": "2026-10-10",
+  "timezone": "Europe/Istanbul",
+  "kit_version": 3,
+  "objective": "Complaint-inspired independent synthetic edge fixtures and expected outputs, with public evidence separated from policy and architectural inventions.",
+  "ownership": {
+    "allowed": [
+      "research/field-cases/**",
+      "analysis/field-scenario-review.json",
+      "analysis/field-scenario-review.txt"
+    ],
+    "no_changes_elsewhere_by_this_task": true
+  },
+  "summary": {
+    "scenarios": 28,
+    "briefs": {
+      "A": 22,
+      "B": 6
+    },
+    "sources": 16,
+    "platforms": {
+      "Reddit": 8,
+      "Sikayetvar": 8
+    },
+    "reddit_communities": [
+      "r/Debt",
+      "r/DebtAdvice",
+      "r/PersonalFinanceCanada",
+      "r/legaladvice",
+      "r/personalfinance"
+    ],
+    "sikayetvar_financial_service_names": [
+      "Denizbank",
+      "Enpara",
+      "Garanti BBVA",
+      "Hadi - TOMBANK",
+      "Yapi Kredi Bankasi"
+    ],
+    "known_absolute_publication_dates": 9,
+    "unknown_exact_publication_dates": 7,
+    "covered_rule_refs": [
+      "A-calendar",
+      "A-close",
+      "A-vars",
+      "A1",
+      "A10",
+      "A11",
+      "A12",
+      "A13",
+      "A15",
+      "A16",
+      "A17",
+      "A18",
+      "A19",
+      "A2",
+      "A21",
+      "A24",
+      "A25",
+      "A26",
+      "A27",
+      "A28",
+      "A29",
+      "A3",
+      "A30",
+      "A31",
+      "A32",
+      "A33",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A39",
+      "A4",
+      "A40",
+      "A41",
+      "A42",
+      "A43",
+      "A44",
+      "A45",
+      "A46",
+      "A47",
+      "A5",
+      "A6",
+      "A7",
+      "A8",
+      "A9",
+      "B-close",
+      "B1",
+      "B10",
+      "B11",
+      "B2",
+      "B3",
+      "B4",
+      "B5",
+      "B6",
+      "B7",
+      "B8",
+      "B9",
+      "O-close_call",
+      "O-create_promise",
+      "O-get_account",
+      "O-transfer_to_agent",
+      "O-verify_identity",
+      "R-styles"
+    ],
+    "all_official_rules_covered": false
+  },
+  "evidence_method": {
+    "source_selection": "Directly readable original public posts/complaints, balanced between platforms and varied by motif. Not a representative sample or prevalence estimate.",
+    "source_date_policy": "A null publication date means the exact date was not established. Preserve the displayed label; never calculate an absolute publication date from relative age, crawl age, an event date, or a nearby complaint. Indexed absolute Reddit post timestamps are identified separately from page dates.",
+    "source_claim_status": "Unverified first-person allegations; neither the allegations nor reader comments establish bank behavior, law, or Freya policy. Patterns are inspiration only.",
+    "privacy": "Only URLs, neutral titles, publication/access metadata and short paraphrased motifs retained. No usernames, real names, contact details, addresses, account/customer/file identifiers, attachments, screenshots or raw complaint bodies copied into fixtures.",
+    "fact_style_boundary": "facts holds synthetic inputs and semantic event/revision sequences; speaking_style holds delivery. The oracle and sources are not supplied to the agent/customer simulator.",
+    "expectation_independence": "Read kit README, both briefs and OpenAPI, plus existing catalog, runner/scorer and benchmark analysis first. Expected ledger and constraints were authored directly from them, not from generated workflow/policy output, hosted results, forum advice or complaint demands."
+  },
+  "decision_notes": [
+    {
+      "topic": "Current payment vs historical closure",
+      "rule_refs": [
+        "A39",
+        "A40"
+      ],
+      "decision": "Current past-due payment -> paid; historical payoff/closed-product claim -> dispute. Do not replace verification with a complaint's refusal of security."
+    },
+    {
+      "topic": "Deceased borrower vs living bereaved borrower",
+      "rule_refs": [
+        "A9",
+        "A10",
+        "A32"
+      ],
+      "decision": "Relative reporting customer death ends deceased with no further question; living customer's family loss invokes hardship/support, never deceased."
+    },
+    {
+      "topic": "Hardship precedence",
+      "rule_refs": [
+        "A32",
+        "A30",
+        "A41"
+      ],
+      "decision": "Job loss/illness/family death stops persuasion and precedes a lower-instalment request; support requires acceptance. A voluntarily offered valid promise can still be recorded."
+    },
+    {
+      "topic": "Consent and corrections",
+      "rule_refs": [
+        "A34",
+        "A35",
+        "A36",
+        "A37",
+        "A38",
+        "B7"
+      ],
+      "decision": "Before write, revalidate changed values and read back again for clear consent; after successful write, do not edit or cancel in-call. Never claim a failed promise recorded."
+    },
+    {
+      "topic": "B notes and terminal outcome",
+      "rule_refs": [
+        "B8",
+        "B9",
+        "B10",
+        "B11",
+        "B-close"
+      ],
+      "decision": "Per-product paid/dispute continues. Defer final note writes so a later transfer can leave no notes anywhere. Retain successful promises on partial failure; closure otherwise follows account order, with promise/transfer precedence."
+    },
+    {
+      "topic": "Scam concerns",
+      "rule_refs": [
+        "A3",
+        "A4",
+        "A15",
+        "A42",
+        "A43",
+        "A44"
+      ],
+      "decision": "Answer legitimate authenticity questions without inventing a telephone number; they do not verify identity. Repeated security refusal ends declined; an insisted human request can transfer even before verification."
+    },
+    {
+      "topic": "Architectural combinations",
+      "rule_refs": [
+        "R-styles",
+        "A18",
+        "B3",
+        "B6",
+        "B11"
+      ],
+      "decision": "Speech pieces, self-corrections, unrelated numbers, holiday boundaries, multi-product mixes, delayed transfer and deterministic API faults are labeled authored extensions, not attributed to a complaint."
+    }
+  ],
+  "schema_proposal": {
+    "file": "research/field-cases/scenario.schema.json",
+    "small_envelope": [
+      "id",
+      "title",
+      "brief",
+      "facts",
+      "speaking_style",
+      "provenance",
+      "expected",
+      "oracle",
+      "execution"
+    ],
+    "local_runner_input": "research/field-cases/runner-cases.json is a flat kit-compatible list with synthetic FIELD ids. Local mock reads fixtures from scenarios.json. Expected ledger has the exact six official scorer fields; reference tool calls have supplied OpenAPI body shapes.",
+    "execution_limits": "Executable local replay/mock plus actual-trace ledger/selected tool-guard check. Natural-language scenario constraints still require an independent judge. This is not a generated-agent pass or general compiler."
+  },
+  "hosted_mapping": {
+    "mode": "proposal_only_not_executed",
+    "registration_boundary": "FIELD ids are local. run_cases.py --cases does not register fixtures: run_once sends each id to the hosted /v1/practice/sessions service. Never pass runner-cases.json to the hosted runner.",
+    "style_boundary": "Only the registered PUB fixture's own facts/expected ledger apply. Style variants do not reproduce a FIELD scenario, create a new product, alter role, or inject tool faults.",
+    "mappings": [
+      {
+        "field_ids": [
+          "FIELD-02",
+          "FIELD-03"
+        ],
+        "registered_case": "PUB-02",
+        "styles": [
+          "asks_back",
+          "talkative"
+        ],
+        "scope": "Third-party speech/privacy only; PUB-02's original callback facts remain."
+      },
+      {
+        "field_ids": [
+          "FIELD-13",
+          "FIELD-14",
+          "FIELD-16"
+        ],
+        "registered_case": "PUB-05",
+        "styles": [
+          "talkative",
+          "asks_back"
+        ],
+        "scope": "Job-loss motif only; support willingness and absence of a voluntary promise stay as PUB-05."
+      },
+      {
+        "field_ids": [
+          "FIELD-20"
+        ],
+        "registered_case": "PUB-07",
+        "styles": [
+          "in_words",
+          "corrects"
+        ],
+        "scope": "Vague/holiday date parsing only; PUB-07's calendar remains."
+      },
+      {
+        "field_ids": [
+          "FIELD-06",
+          "FIELD-07",
+          "FIELD-24"
+        ],
+        "registered_case": "PUB-08",
+        "styles": [
+          "talkative",
+          "asks_back"
+        ],
+        "scope": "Current-payment claim only; one-product hosted case cannot check B notes."
+      },
+      {
+        "field_ids": [
+          "FIELD-27"
+        ],
+        "registered_case": "PUB-09",
+        "styles": [
+          "in_words",
+          "asks_back"
+        ],
+        "scope": "Restructuring speech only; does not exercise pending dispute/transfer note suppression."
+      },
+      {
+        "field_ids": [
+          "FIELD-28"
+        ],
+        "registered_case": "PUB-10",
+        "styles": [
+          "corrects",
+          "pieces"
+        ],
+        "scope": "Honesty around the registered single first failure only; not B partial success or two failures."
+      },
+      {
+        "field_ids": [
+          "FIELD-26"
+        ],
+        "registered_case": "PUB-13",
+        "styles": [
+          "corrects",
+          "in_words"
+        ],
+        "scope": "Different per-product deadlines only; no imported FIELD amounts/dates."
+      },
+      {
+        "field_ids": [
+          "FIELD-10",
+          "FIELD-17",
+          "FIELD-18",
+          "FIELD-19",
+          "FIELD-22"
+        ],
+        "registered_case": "PUB-01",
+        "styles": [
+          "pieces",
+          "corrects",
+          "in_words"
+        ],
+        "scope": "Delivery parsing only. Does not test scam, DOB swap or post-record correction facts absent from PUB-01."
+      }
+    ],
+    "no_equivalent_hosted_fixture": [
+      "FIELD-01",
+      "FIELD-04",
+      "FIELD-05",
+      "FIELD-08",
+      "FIELD-09",
+      "FIELD-11",
+      "FIELD-12",
+      "FIELD-15",
+      "FIELD-21",
+      "FIELD-23",
+      "FIELD-25"
+    ],
+    "style_caveat": "asks_back can conflict with A15 when its two questions replace security answers. Inspect simulator fidelity; do not silently relax policy or infer its success from a style label."
+  },
+  "existing_catalog_review": {
+    "file": "analysis/synthetic-cases.json",
+    "count": 50,
+    "role": "Planning-only; links in case provenance acknowledge related rule coverage. Kept unchanged. No SYN ids are treated as registered hosted fixtures.",
+    "public_suite_role": "13 existing PUB ids used only to bound proposed style mappings; field scenarios have their own synthetic inputs and source-derived oracles."
+  },
+  "validation": {
+    "status": "pass",
+    "scenarios": 28,
+    "sources": 16,
+    "sources_by_platform": {
+      "Reddit": 8,
+      "Sikayetvar": 8
+    },
+    "publication_dates_exact_or_indexed": 9,
+    "publication_dates_unknown": 7,
+    "rule_anchors_checked": 73,
+    "schema_valid": true,
+    "official_input_hashes_match": true,
+    "canonical_replays": [
+      {
+        "id": "FIELD-01",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-02",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-03",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-04",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-05",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-06",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-07",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-08",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-09",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-10",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-11",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-12",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-13",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-14",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-15",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-16",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-17",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-18",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-19",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-20",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-21",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-22",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-23",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-24",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-25",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-26",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-27",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      },
+      {
+        "id": "FIELD-28",
+        "pass": true,
+        "failed": [],
+        "scope": "ledger_and_selected_tool_trace_guards_only",
+        "transcript_verdict": "not_assessed",
+        "is_agent_policy_pass": false
+      }
+    ],
+    "negative_controls": [
+      {
+        "name": "duplicate terminal close",
+        "rejected": true,
+        "failed": [
+          "A46: exactly one terminal close_call required"
+        ]
+      },
+      {
+        "name": "account access without identity",
+        "rejected": true,
+        "failed": [
+          "promises [], expected [('p1', 640.0, '2026-10-23')]",
+          "get_account called before identity was verified",
+          "A11/A16: account access/promise before verification",
+          "A11/A16: account access/promise before verification",
+          "A16/O-get_account: product not supplied by account tool"
+        ]
+      },
+      {
+        "name": "missing terminal close",
+        "rejected": true,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "the call was not closed with close_call",
+          "A46: exactly one terminal close_call required"
+        ]
+      },
+      {
+        "name": "one below product floor despite ok true",
+        "rejected": true,
+        "failed": [
+          "promises [('p1', 159.0, '2026-10-29')], expected [('p1', 320.0, '2026-10-29')]",
+          "A25/A27: invalid amount"
+        ]
+      },
+      {
+        "name": "stale pre-correction amount and date",
+        "rejected": true,
+        "failed": [
+          "promises [('p1', 240.0, '2026-10-30')], expected [('p1', 320.0, '2026-10-29')]"
+        ]
+      },
+      {
+        "name": "holiday promise despite ok true",
+        "rejected": true,
+        "failed": [
+          "promises [('p1', 320.0, '2026-10-26')], expected [('p1', 320.0, '2026-10-29')]",
+          "A18/A19: invalid promise date"
+        ]
+      },
+      {
+        "name": "late product retains date past its own deadline",
+        "rejected": true,
+        "failed": [
+          "promises [('p1', 320.0, '2026-11-06'), ('p2', 275.0, '2026-11-06')], expected [('p1', 320.0, '2026-11-06'), ('p2', 275.0, '2026-11-04')]",
+          "A18/A19: invalid promise date"
+        ]
+      },
+      {
+        "name": "unknown product id",
+        "rejected": true,
+        "failed": [
+          "promises [], expected [('p1', 320.0, '2026-10-29')]",
+          "O-get_account: unknown product id"
+        ]
+      },
+      {
+        "name": "third attempt after two promise failures",
+        "rejected": true,
+        "failed": [
+          "promises [('p1', 320.0, '2026-10-30'), ('p2', 275.0, '2026-10-30')], expected [('p1', 320.0, '2026-10-30')]",
+          "A37/B11: more than one promise retry"
+        ]
+      },
+      {
+        "name": "note before transfer",
+        "rejected": true,
+        "failed": [
+          "notes [('p1', 'dispute')], expected []",
+          "B10: notes anywhere on a transferred call forbidden"
+        ]
+      },
+      {
+        "name": "second write to a recorded product",
+        "rejected": true,
+        "failed": [
+          "A36: another promise call for recorded product"
+        ]
+      },
+      {
+        "name": "closure follows complaint mention order",
+        "rejected": true,
+        "failed": [
+          "outcome ('no_promise', 'dispute'), expected ('no_promise', 'refused')"
+        ]
+      },
+      {
+        "name": "callback above upper boundary",
+        "rejected": true,
+        "failed": [
+          "callbacks [{'date': '2026-10-27', 'time': '19:01'}], expected [{'date': '2026-10-27', 'time': '10:00'}]",
+          "A6: invalid callback date/time"
+        ]
+      },
+      {
+        "name": "historical closure misclassified as current payment",
+        "rejected": true,
+        "failed": [
+          "outcome ('paid', None), expected ('no_promise', 'dispute')"
+        ]
+      }
+    ],
+    "failures": [],
+    "transcript_judge_executed": false,
+    "agent_under_test_executed": false,
+    "hosted_calls": 0
+  },
+  "limitations": [
+    "No live Freya, hosted bank, simulation, persona or workflow mutations; no credentials were used.",
+    "No actual agent transcript or workflow was run. Empathy, opening, read-back, confirmation, persuasion limits and honesty remain explicit expected constraints requiring transcript evidence.",
+    "The positive reference trace is not an oracle generated from an agent and is not evidence of behavioral generalization; its purpose is checking fixture/tool/ledger consistency.",
+    "Sources are allegations and only inspiration. Jurisdiction-specific legal advice and commenters' proposed remedies were not incorporated.",
+    "Exact publication dates are unknown for seven sources; nulls and observed labels make the uncertainty explicit.",
+    "Fresh local sessions and mock failure schedules are harness design choices; arbitrary hosted fixture registration remains undocumented in the inspected kit.",
+    "The 28 cases emphasize requested complaint motifs, not exhaustive coverage of the 47 A rules, 11 B amendments, source parsing, raw memo trust or future changed tool APIs.",
+    "Transfer/callback service-failure recovery is not specified here; no guessed terminal outcome is asserted for those faults."
+  ],
+  "sources": [
+    {
+      "id": "R01",
+      "platform": "Reddit",
+      "community": "r/Debt",
+      "title": "Harassed by ACI debt collectors for someone else’s debt.",
+      "url": "https://www.reddit.com/r/Debt/comments/1tighqe/harassed_by_aci_debt_collectors_for_someone_elses/",
+      "published_on": "2026-05-20",
+      "publication_label": "Wednesday May 20 2026 (indexed post); direct page shows a relative age",
+      "publication_basis": "absolute timestamp in public indexed original post; direct-page relative age differs and was not used",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original post, opening paragraphs",
+      "pattern": "A phone holder reports repeated collection calls and texts for somebody else despite explaining that they are not the intended person.",
+      "does_not_support": [
+        "Permanent suppression implementation",
+        "Whether the alleged debt exists",
+        "Freya outcome codes"
+      ]
+    },
+    {
+      "id": "R02",
+      "platform": "Reddit",
+      "community": "r/personalfinance",
+      "title": "What should someone do if a debt collection agency contacts them, but they already paid the debt?",
+      "url": "https://www.reddit.com/r/personalfinance/comments/sv37om/what_should_someone_do_if_a_debt_collection/",
+      "published_on": null,
+      "publication_label": "5y ago (direct page); search metadata gives a different relative age",
+      "publication_basis": "exact publication date unavailable; relative ages deliberately not normalized",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original post, first three paragraphs",
+      "pattern": "A household reports collector contact after paying the original provider, with initial uncertainty about whether unknown callers were legitimate.",
+      "does_not_support": [
+        "One-business-day posting rule",
+        "Legal effect of payment to a creditor",
+        "Promise-service faults"
+      ]
+    },
+    {
+      "id": "R03",
+      "platform": "Reddit",
+      "community": "r/PersonalFinanceCanada",
+      "title": "Debt collections but I lost my job",
+      "url": "https://www.reddit.com/r/PersonalFinanceCanada/comments/1plthjl/debt_collections_but_i_lost_my_job/",
+      "published_on": "2025-12-13",
+      "publication_label": "Saturday December 13 2025 (indexed original post)",
+      "publication_basis": "absolute indexed post timestamp",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original post, first paragraph",
+      "pattern": "A person reports losing employment after beginning repayments and feeling unable to resume payments or respond to collection contact.",
+      "does_not_support": [
+        "Support queue names",
+        "A right to a new plan",
+        "The synthetic voluntary-payment amount"
+      ]
+    },
+    {
+      "id": "R04",
+      "platform": "Reddit",
+      "community": "r/personalfinance",
+      "title": "My dad passed away in July of 2025 and I kept getting his medical bills. What do I do?",
+      "url": "https://www.reddit.com/r/personalfinance/comments/1qt826g/my_dad_passed_away_in_july_of_2025_and_i_kept/",
+      "published_on": "2026-02-01",
+      "publication_label": "Sunday February 01 2026 (indexed original post)",
+      "publication_basis": "absolute indexed post timestamp",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original post, first two paragraphs",
+      "pattern": "A bereaved family member reports continuing bills addressed to a deceased parent and distress about making contact.",
+      "does_not_support": [
+        "Inheritance liability",
+        "Immediate account write-off",
+        "A verified customer's hardship outcome"
+      ]
+    },
+    {
+      "id": "R05",
+      "platform": "Reddit",
+      "community": "r/Debt",
+      "title": "Debt collectors contacting my mom, can something actually happen to her?",
+      "url": "https://www.reddit.com/r/Debt/comments/1r58kb4/debt_collectors_contacting_my_mom_can_something/",
+      "published_on": "2026-02-15",
+      "publication_label": "Sunday February 15 2026 (indexed original post)",
+      "publication_basis": "absolute indexed post timestamp",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original post, first paragraph",
+      "pattern": "An adult reports serious injury, a family death and collection contact directed at a parent, producing worry and guilt.",
+      "does_not_support": [
+        "A relative's legal liability",
+        "Relative authorization to verify identity",
+        "The mock's callback calendar"
+      ]
+    },
+    {
+      "id": "R06",
+      "platform": "Reddit",
+      "community": "r/Debt",
+      "title": "Getting Multiple Calls from “debt collector” that doesn’t state what company they are with",
+      "url": "https://www.reddit.com/r/Debt/comments/1tdivsk/getting_multiple_calls_from_debt_collector_that/",
+      "published_on": "2026-05-15",
+      "publication_label": "Friday May 15 2026 (indexed original post)",
+      "publication_basis": "absolute indexed post timestamp",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original post, first two paragraphs",
+      "pattern": "Repeated calls, contact with relatives and hard-to-identify voicemail messages cause a recipient to question whether a caller is genuine or automated.",
+      "does_not_support": [
+        "Proof of a scam",
+        "A verified Freya telephone number",
+        "Security-answer corrections"
+      ]
+    },
+    {
+      "id": "R07",
+      "platform": "Reddit",
+      "community": "r/legaladvice",
+      "title": "Got a call about my dad’s credit card debt today",
+      "url": "https://www.reddit.com/r/legaladvice/comments/1t4vo5r/got_a_call_about_my_dads_credit_card_debt_today/",
+      "published_on": "2026-05-05",
+      "publication_label": "Tuesday May 05 2026 (indexed original post)",
+      "publication_basis": "absolute indexed post timestamp",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original post, collection-call and unrecognized-card paragraphs",
+      "pattern": "A recipient reports a collection call about a card they do not recognize and uncertainty about a family connection to that account.",
+      "does_not_support": [
+        "Identity theft established as fact",
+        "Card contract validity",
+        "Dispute resolution or liability advice"
+      ]
+    },
+    {
+      "id": "R08",
+      "platform": "Reddit",
+      "community": "r/DebtAdvice",
+      "title": "Help with debt letter",
+      "url": "https://www.reddit.com/r/DebtAdvice/comments/1fyvuw7/help_with_debt_letter/",
+      "published_on": null,
+      "publication_label": "2y ago (direct page)",
+      "publication_basis": "exact publication date not established; dates inside the post are event dates, not publication metadata",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original post, sole substantive paragraph",
+      "pattern": "A delayed collection letter with an incorrect address arrives after a payment, leaving several event dates to distinguish.",
+      "does_not_support": [
+        "Spoken self-corrections",
+        "Freya holiday deadlines",
+        "A shared multi-product date"
+      ]
+    },
+    {
+      "id": "S01",
+      "platform": "Sikayetvar",
+      "community": "Garanti BBVA",
+      "title": "Adıma Olmayan Borç Bildirimleri Ve Yanlış Kişiye Yapılan Aramalar Hakkında Şikayetim Var",
+      "url": "https://www.sikayetvar.com/garanti-bbva/adima-olmayan-borc-bildirimleri-ve-yanlis-kisiye-yapilan-aramalar-hakkinda-sikayetim-var",
+      "published_on": "2025-10-09",
+      "publication_label": "09 Ekim 2025 09:44",
+      "publication_basis": "explicit original page date",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original complaint, first two paragraphs",
+      "pattern": "A complainant reports late-debt messages and calls referring to a different person and says they do not use the claimed lending product.",
+      "does_not_support": [
+        "A name alone verifies identity",
+        "Deletion of a contact record through the seven tools"
+      ]
+    },
+    {
+      "id": "S02",
+      "platform": "Sikayetvar",
+      "community": "Yapi Kredi Bankasi",
+      "title": "Borç Ödememe Rağmen Sürekli Aranmak Canımı Sıkıyor",
+      "url": "https://www.sikayetvar.com/yapi-kredi-bankasi/borc-odememe-ragmen-surekli-aranmak-canimi-sikiyor",
+      "published_on": "2025-07-14",
+      "publication_label": "14 Temmuz 2025 16:41",
+      "publication_basis": "explicit original page date",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read_after_link_retry",
+      "evidence_locator": "Original complaint, payment and subsequent-call paragraphs",
+      "pattern": "A complainant reports repeated calls on the day they paid overdue debt and frustration when asked for verification during follow-up contact.",
+      "does_not_support": [
+        "Waiving Freya security",
+        "Permanent call suppression",
+        "A confirmed posting date"
+      ]
+    },
+    {
+      "id": "S03",
+      "platform": "Sikayetvar",
+      "community": "Garanti BBVA",
+      "title": "Garanti BBVA Şubesinin İşsizlik Maaşına Konulan Bloke Ve Çözüm Talebi",
+      "url": "https://www.sikayetvar.com/garanti-bbva/garanti-bbva-subesinin-issizlik-maasina-konulan-bloke-ve-cozum-talebi",
+      "published_on": null,
+      "publication_label": "9 Ekim 13:28",
+      "publication_basis": "publication year absent; body event year does not establish publication year",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original complaint, income-loss and inability-to-pay paragraphs",
+      "pattern": "A complainant reports unemployment, restricted access to their only income and inability to meet debt demands while covering essentials.",
+      "does_not_support": [
+        "Whether a restriction is lawful",
+        "A tool to remove a block",
+        "A payment discount"
+      ]
+    },
+    {
+      "id": "S04",
+      "platform": "Sikayetvar",
+      "community": "Hadi - TOMBANK",
+      "title": "Vefat Eden Babamın Borç Süreci Ve İletişim Sorunları",
+      "url": "https://www.sikayetvar.com/hadi-tombank/vefat-eden-babamin-borc-sureci-ve-iletisim-sorunlari",
+      "published_on": "2025-01-13",
+      "publication_label": "13 Ocak 2025 19:17",
+      "publication_basis": "explicit original page date",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original complaint, bereavement and access-to-information paragraphs",
+      "pattern": "A bereaved relative seeking account closure and clarity reports repeated contacts, inconsistent amounts and difficulty obtaining information without the deceased person's app credentials.",
+      "does_not_support": [
+        "Requiring heirs to answer security",
+        "Estate administration",
+        "The synthetic final debt amount"
+      ]
+    },
+    {
+      "id": "S05",
+      "platform": "Sikayetvar",
+      "community": "Denizbank",
+      "title": "Aile Üyesine Yetkisiz Borç Araması KVKK İhlali",
+      "url": "https://www.sikayetvar.com/denizbank/aile-uyesine-yetkisiz-borc-aramasi-kvkk-ihlali",
+      "published_on": null,
+      "publication_label": "7 Eylül 12:18",
+      "publication_basis": "year omitted in displayed publication label; event year not substituted",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original complaint, first paragraph; author update discusses repayment difficulty",
+      "pattern": "A complainant reports that a parent was contacted and told about their debt, and asks that communication be directed to the account holder.",
+      "does_not_support": [
+        "Legal finding implied by the complaint title",
+        "Callback availability",
+        "Permission for relative payments"
+      ]
+    },
+    {
+      "id": "S06",
+      "platform": "Sikayetvar",
+      "community": "Garanti BBVA",
+      "title": "Garanti Bankası Sahte Telefon Araması Ve Güvenlik Endişesi",
+      "url": "https://www.sikayetvar.com/garanti-bbva/garanti-bankasi-sahte-telefon-aramasi-ve-guvenlik-endisesi",
+      "published_on": null,
+      "publication_label": "12 Ağustos 13:55",
+      "publication_basis": "year omitted in displayed publication label; event year not substituted",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original complaint, first paragraph",
+      "pattern": "A recipient reports a caller using a bank name and requesting keypad input; suspicion causes the recipient to end the conversation.",
+      "does_not_support": [
+        "Proof that any Freya call is fraudulent",
+        "An invented customer-service number",
+        "New authentication factors"
+      ]
+    },
+    {
+      "id": "S07",
+      "platform": "Sikayetvar",
+      "community": "Garanti BBVA",
+      "title": "Garanti Bankası Kapalı Kartlarda Yanlış Borç Aramaları Ve Çözülmeyen Mağduriyet",
+      "url": "https://www.sikayetvar.com/garanti-bbva/garanti-bankasi-kapali-kartlarda-yanlis-borc-aramalari-ve-cozulmeyen-magduriyet",
+      "published_on": null,
+      "publication_label": "23 Mart 16:28",
+      "publication_basis": "year not present in publication label",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original complaint, first two paragraphs",
+      "pattern": "A former cardholder reports debt calls after being told that the cards and their balances had been closed, with repeated small demands.",
+      "does_not_support": [
+        "A payment of this call's current arrears",
+        "Record deletion",
+        "Write-off authority"
+      ]
+    },
+    {
+      "id": "S08",
+      "platform": "Sikayetvar",
+      "community": "Enpara",
+      "title": "Müşteri Onayı Olmadan Tarih Belirlenmesi Ve Tehditkar Üslup",
+      "url": "https://www.sikayetvar.com/enpara/musteri-onayi-olmadan-tarih-belirlenmesi-ve-tehditkar-uslup",
+      "published_on": null,
+      "publication_label": "10 Haziran 21:12",
+      "publication_basis": "original publication label omits year; a later bank response explicitly dates its own action, not the original publication",
+      "accessed_on": "2026-10-10",
+      "access_status": "direct_original_body_read",
+      "evidence_locator": "Original complaint, first two paragraphs",
+      "pattern": "A complainant reports that a payment-promise date was entered despite declining to give a definite day or consent to that date.",
+      "does_not_support": [
+        "Spoken corrections",
+        "A right to edit a recorded Freya promise",
+        "Multi-product deadlines or API failures"
+      ]
+    }
+  ],
+  "excluded_candidates": [
+    {
+      "url": "https://www.reddit.com/r/personalfinance/comments/178kwpm",
+      "reason": "Direct opening failed twice; not used as evidence or counted among sources."
+    },
+    {
+      "url": "https://www.reddit.com/r/personalfinance/comments/dxny0w/",
+      "reason": "Direct opening failed; replaced with directly readable bereavement post R04."
+    },
+    {
+      "url": "https://www.reddit.com/r/LegalAdviceUK/comments/15rto80/letter_from_debt_collectors_for_debt_i_dont_owe/",
+      "reason": "Direct opening failed; replaced with directly readable unrecognized-product post R07."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "FIELD-01",
+      "brief": "A",
+      "title": "Repeated caller has the wrong person",
+      "source_ids": [
+        "R01",
+        "S01"
+      ],
+      "expected": {
+        "outcome": "not_reached",
+        "reason": "wrong_number",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Accept explicit wrong-number information, close wrong_number, use no security/account/promise/callback tools and disclose no debt. Do not claim permanent removal of a number.",
+          "rule_refs": [
+            "A1",
+            "A5",
+            "A8",
+            "A44"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-005"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-02",
+      "brief": "A",
+      "title": "Relative offers payment and a callback after a holiday",
+      "source_ids": [
+        "R05",
+        "S05"
+      ],
+      "expected": {
+        "outcome": "not_reached",
+        "reason": "callback",
+        "promises": [],
+        "notes": [],
+        "callbacks": [
+          {
+            "date": "2026-10-27",
+            "time": "10:00"
+          }
+        ],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "No security questions to the sister and no account details. Tuesday is the next bank business day after Friday because Monday is a holiday; 10:00 is included.",
+          "rule_refs": [
+            "A5",
+            "A6",
+            "A10",
+            "A-calendar"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-004",
+        "SYN-007",
+        "SYN-011"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-03",
+      "brief": "A",
+      "title": "Relative offers two unusable callback times",
+      "source_ids": [
+        "R05",
+        "S05"
+      ],
+      "expected": {
+        "outcome": "not_reached",
+        "reason": "no_callback",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Ask once for an alternative, record no callback after the second invalid offer, and do not discuss the account.",
+          "rule_refs": [
+            "A5",
+            "A6",
+            "A7",
+            "A10"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-010"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-04",
+      "brief": "A",
+      "title": "Deceased customer: relative offers to settle",
+      "source_ids": [
+        "R04",
+        "S04"
+      ],
+      "expected": {
+        "outcome": "not_reached",
+        "reason": "deceased",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Say 'I am sorry for your loss.' Ask nothing further, request no documents or credentials, disclose no balance and take no promise or callback.",
+          "rule_refs": [
+            "A9",
+            "A10",
+            "A44"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-006"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-05",
+      "brief": "A",
+      "title": "Living customer is bereaved and cannot discuss payment",
+      "source_ids": [
+        "R04",
+        "R05"
+      ],
+      "expected": {
+        "outcome": "no_promise",
+        "reason": "hardship",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "One short sympathy sentence; no persuasion. Offer support and respect refusal. Do not mark the living account holder deceased.",
+          "rule_refs": [
+            "A9",
+            "A32"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-06",
+      "brief": "A",
+      "title": "Current arrears paid earlier the same day",
+      "source_ids": [
+        "S02",
+        "R02"
+      ],
+      "expected": {
+        "outcome": "paid",
+        "reason": null,
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Say payments can take one business day to appear, take no promise and close paid. Do not assert that the actual payment has been verified or guarantee no future calls.",
+          "rule_refs": [
+            "A39",
+            "A44",
+            "A46"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-07",
+      "brief": "A",
+      "title": "Old notice date distracts from a current payment claim",
+      "source_ids": [
+        "R08",
+        "S02"
+      ],
+      "expected": {
+        "outcome": "paid",
+        "reason": null,
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "The notice date is not a payment promise. Apply paid only to the asserted payment of this past-due amount; no new promise or invented posting date.",
+          "rule_refs": [
+            "A39",
+            "A40",
+            "A44"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-08",
+      "brief": "A",
+      "title": "Card was paid off and closed long ago",
+      "source_ids": [
+        "S07"
+      ],
+      "expected": {
+        "outcome": "no_promise",
+        "reason": "dispute",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Historical payoff/closure is a dispute, not payment of today's arrears. Do not argue, seek a promise or say one business day will resolve it.",
+          "rule_refs": [
+            "A39",
+            "A40"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-09",
+      "brief": "A",
+      "title": "Verified customer never held the claimed loan",
+      "source_ids": [
+        "R07",
+        "S01"
+      ],
+      "expected": {
+        "outcome": "no_promise",
+        "reason": "dispute",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Do not dispute the customer's account of ownership or take a promise. Close dispute without inventing a fraud investigation or declaring liability.",
+          "rule_refs": [
+            "A40",
+            "A44"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-10",
+      "brief": "A",
+      "title": "Scam question before name confirmation, then proceeds",
+      "source_ids": [
+        "R06",
+        "S06"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 640,
+            "date": "2026-10-23"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Answer the scam and AI questions before the second name ask. Refer to Freya Bank's customer service without inventing its number. Scam question itself is not confirmation; verify before account access.",
+          "rule_refs": [
+            "A3",
+            "A4",
+            "A11",
+            "A43",
+            "A44"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-001"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-11",
+      "brief": "A",
+      "title": "Suspicious customer declines security twice",
+      "source_ids": [
+        "S06",
+        "R06"
+      ],
+      "expected": {
+        "outcome": "not_verified",
+        "reason": "declined",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Explain security once; after repeated refusal end declined, with no account/promise tools or debt disclosure. Do not treat scam concern as successful identity verification.",
+          "rule_refs": [
+            "A1",
+            "A15",
+            "A43"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-017"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-12",
+      "brief": "A",
+      "title": "Scam concern leads to a human request before security",
+      "source_ids": [
+        "R06",
+        "S06"
+      ],
+      "expected": {
+        "outcome": "transferred",
+        "reason": "human",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": [
+          {
+            "queue": "general"
+          }
+        ]
+      },
+      "scenario_constraints": [
+        {
+          "description": "The human-request rule applies before verification. Ask once to help, then transfer general without disclosing debt or forcing identity first.",
+          "rule_refs": [
+            "A1",
+            "A42",
+            "A43",
+            "O-transfer_to_agent"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-018"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-13",
+      "brief": "A",
+      "title": "Job loss and lower instalments: hardship wins",
+      "source_ids": [
+        "R03",
+        "S03"
+      ],
+      "expected": {
+        "outcome": "transferred",
+        "reason": "support",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": [
+          {
+            "queue": "support"
+          }
+        ]
+      },
+      "scenario_constraints": [
+        {
+          "description": "Hardship precedes the new-plan request. Give brief sympathy, no persuasion or plan description, transfer support rather than restructuring.",
+          "rule_refs": [
+            "A32",
+            "A33",
+            "A41"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-042"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-14",
+      "brief": "A",
+      "title": "Job loss, declines support, mentions rent figures",
+      "source_ids": [
+        "R03",
+        "S03"
+      ],
+      "expected": {
+        "outcome": "no_promise",
+        "reason": "hardship",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Do not convert the rent figure into an offer or make persuasion attempts. Sympathy, offered support, declined transfer, close hardship.",
+          "rule_refs": [
+            "A29",
+            "A32",
+            "A34"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-15",
+      "brief": "A",
+      "title": "Illness interrupts the first payment discussion",
+      "source_ids": [
+        "R05"
+      ],
+      "expected": {
+        "outcome": "transferred",
+        "reason": "support",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": [
+          {
+            "queue": "support"
+          }
+        ]
+      },
+      "scenario_constraints": [
+        {
+          "description": "Illness stops persuasion immediately; give short sympathy and offer support. Use support only after acceptance.",
+          "rule_refs": [
+            "A32",
+            "O-transfer_to_agent"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-16",
+      "brief": "A",
+      "title": "Hardship but voluntarily offers a valid payment",
+      "source_ids": [
+        "R03",
+        "R05"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 275,
+            "date": "2026-11-04"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "No persuasion is allowed, but the customer's own valid amount/date can still be recorded. Accept the loan floor on its deadline after a clear confirmation.",
+          "rule_refs": [
+            "A18",
+            "A19",
+            "A25",
+            "A27",
+            "A32",
+            "A34"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-17",
+      "brief": "A",
+      "title": "Changes amount and date during read-back",
+      "source_ids": [
+        "S08",
+        "R08"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 320,
+            "date": "2026-10-29"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Proposed amount/date is not a refusal. Recheck both corrected values and read them back again before one create_promise. Never persist the first proposal.",
+          "rule_refs": [
+            "A19",
+            "A27",
+            "A29",
+            "A34",
+            "A35"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-032"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-18",
+      "brief": "A",
+      "title": "Phone suffix in pieces; amount and day in words",
+      "source_ids": [
+        "R06",
+        "S08"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 320,
+            "date": "2026-10-29"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Wait for the complete four-digit answer, preserve its leading zero, verify it once, then parse the amount/day and obtain confirmation. No guessed suffix or invented digits.",
+          "rule_refs": [
+            "A11",
+            "A34",
+            "A44",
+            "O-verify_identity",
+            "R-styles"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-016",
+        "SYN-033"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-19",
+      "brief": "A",
+      "title": "Numeric DOB swap while worried about identity confusion",
+      "source_ids": [
+        "R01",
+        "S01"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 640,
+            "date": "2026-10-23"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Send day-first normalized DOB first, then on day_month_swapped ask for month in words. The hinted retry consumes no wrong-answer budget; complete the phone question before get_account.",
+          "rule_refs": [
+            "A11",
+            "A12",
+            "A13",
+            "A16",
+            "O-verify_identity"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-012",
+        "SYN-013"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-20",
+      "brief": "A",
+      "title": "Vague payday followed by acceptance of the deadline",
+      "source_ids": [
+        "S08",
+        "R08"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 640,
+            "date": "2026-11-12"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Ask once for an exact day, then propose the early-band deadline computed from now; skip October 26 and November 11. Record only after acceptance and confirmation.",
+          "rule_refs": [
+            "A18",
+            "A19",
+            "A21",
+            "A-calendar",
+            "A34"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-030"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-21",
+      "brief": "A",
+      "title": "Will pay eventually but never confirms a date",
+      "source_ids": [
+        "S08"
+      ],
+      "expected": {
+        "outcome": "no_promise",
+        "reason": "refused",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "An intention to pay is not confirmation. Ask for an exact day once and propose the deadline, but do not record any promise without a clear yes. Stop on the second refusal to talk.",
+          "rule_refs": [
+            "A21",
+            "A34",
+            "A45"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-22",
+      "brief": "A",
+      "title": "Correction requested after a promise is recorded",
+      "source_ids": [
+        "S08"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 320,
+            "date": "2026-10-29"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Do not change, cancel or create another promise in the call. Tell the customer that recorded promises can be changed in the mobile app; preserve the recorded original.",
+          "rule_refs": [
+            "A35",
+            "A36",
+            "A37",
+            "A38"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-040"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-23",
+      "brief": "B",
+      "title": "One current payment, one old closed card claim, one promise",
+      "source_ids": [
+        "R02",
+        "S07",
+        "R07"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p3",
+            "amount": 990,
+            "date": "2026-10-23"
+          }
+        ],
+        "notes": [
+          {
+            "product_id": "p1",
+            "reason": "paid"
+          },
+          {
+            "product_id": "p2",
+            "reason": "dispute"
+          }
+        ],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "State every product before asking. Paid/dispute applies only to its product; continue to p3. Record its promise, note the two unpromised products, and close promise.",
+          "rule_refs": [
+            "A39",
+            "A40",
+            "B2",
+            "B7",
+            "B8",
+            "B9",
+            "B-close"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-24",
+      "brief": "B",
+      "title": "All products' current overdue amounts already paid",
+      "source_ids": [
+        "S02",
+        "R08"
+      ],
+      "expected": {
+        "outcome": "paid",
+        "reason": null,
+        "promises": [],
+        "notes": [
+          {
+            "product_id": "p1",
+            "reason": "paid"
+          },
+          {
+            "product_id": "p2",
+            "reason": "paid"
+          },
+          {
+            "product_id": "p3",
+            "reason": "paid"
+          }
+        ],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "No promises; note every product paid, explain one-business-day posting, and close paid only because all notes are paid.",
+          "rule_refs": [
+            "A39",
+            "B8",
+            "B9",
+            "B-close"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-25",
+      "brief": "B",
+      "title": "No promises: note order controls the reason",
+      "source_ids": [
+        "R02",
+        "S07"
+      ],
+      "expected": {
+        "outcome": "no_promise",
+        "reason": "refused",
+        "promises": [],
+        "notes": [
+          {
+            "product_id": "p1",
+            "reason": "paid"
+          },
+          {
+            "product_id": "p2",
+            "reason": "refused"
+          },
+          {
+            "product_id": "p3",
+            "reason": "dispute"
+          }
+        ],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Return order p1,p2,p3 controls closure, not order of customer complaints. Start p2 at attempt 1 after aggregate today refusal; two late-band attempts, no per-product today ask. First non-paid note is p2 refused.",
+          "rule_refs": [
+            "A30",
+            "A31",
+            "A39",
+            "A40",
+            "B4",
+            "B5",
+            "B8",
+            "B-close"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-046"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-26",
+      "brief": "B",
+      "title": "Shared date crosses only the late product's deadline",
+      "source_ids": [
+        "S08",
+        "R08"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 320,
+            "date": "2026-11-06"
+          },
+          {
+            "product_id": "p2",
+            "amount": 275,
+            "date": "2026-11-04"
+          }
+        ],
+        "notes": [],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Compute early deadline 12 November and late deadline 4 November. Explain the late-product clamp in joint read-back; preserve p1's offered date, corrected amount and one clear joint confirmation before both writes.",
+          "rule_refs": [
+            "A18",
+            "A25",
+            "A27",
+            "A35",
+            "B3",
+            "B6",
+            "B7"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-044"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-27",
+      "brief": "B",
+      "title": "Dispute first, restructuring before any product write",
+      "source_ids": [
+        "S07",
+        "S08"
+      ],
+      "expected": {
+        "outcome": "transferred",
+        "reason": "restructuring",
+        "promises": [],
+        "notes": [],
+        "callbacks": [],
+        "transfers": [
+          {
+            "queue": "restructuring"
+          }
+        ]
+      },
+      "scenario_constraints": [
+        {
+          "description": "Continue after p1 dispute, then transfer restructuring without describing a plan. Add no notes before or after transfer, including the pending p1 dispute. Do not record unconfirmed offers.",
+          "rule_refs": [
+            "A33",
+            "A34",
+            "A40",
+            "A41",
+            "B9",
+            "B10"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-047"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    },
+    {
+      "id": "FIELD-28",
+      "brief": "B",
+      "title": "One promise succeeds, another fails twice, last product paid",
+      "source_ids": [
+        "R02",
+        "S08"
+      ],
+      "expected": {
+        "outcome": "promise",
+        "reason": null,
+        "promises": [
+          {
+            "product_id": "p1",
+            "amount": 320,
+            "date": "2026-10-30"
+          }
+        ],
+        "notes": [
+          {
+            "product_id": "p2",
+            "reason": "service_error"
+          },
+          {
+            "product_id": "p3",
+            "reason": "paid"
+          }
+        ],
+        "callbacks": [],
+        "transfers": []
+      },
+      "scenario_constraints": [
+        {
+          "description": "Retry failed p2 once only, retain successful p1, note service_error and paid, and close promise. Never claim p2 recorded; give text-message confirmation only for the successful promise.",
+          "rule_refs": [
+            "A37",
+            "A38",
+            "A39",
+            "B7",
+            "B8",
+            "B9",
+            "B11",
+            "B-close",
+            "O-create_promise"
+          ],
+          "basis": "explicit_kit"
+        }
+      ],
+      "related_existing_catalog_ids": [
+        "SYN-045"
+      ],
+      "classification": "source_supported_complaint_motif_with_explicit_synthetic_extensions; oracle_from_official_kit"
+    }
+  ],
+  "files": [
+    "research/field-cases/build_catalog.py",
+    "research/field-cases/hosted-style-mapping.json",
+    "research/field-cases/local_runner.py",
+    "research/field-cases/official-inputs.json",
+    "research/field-cases/README.txt",
+    "research/field-cases/runner-cases.json",
+    "research/field-cases/scenario.schema.json",
+    "research/field-cases/scenarios.json",
+    "research/field-cases/sources.json",
+    "research/field-cases/validation.json",
+    "research/field-cases/write_review.py",
+    "analysis/field-scenario-review.json",
+    "analysis/field-scenario-review.txt"
+  ]
+}

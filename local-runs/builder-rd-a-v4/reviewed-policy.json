@@ -1,0 +1,1181 @@
+{
+  "title": "Freya Bank Brief A phone-agent policy IR",
+  "rules": [
+    {
+      "source_id": "brief-a:brief-a-freya-bank-early.p1",
+      "binding": false,
+      "policy": "Freya Bank and all customer, debt and payment data are fictional.",
+      "trigger": "Source context",
+      "actions": [
+        "Treat supplied scenarios as synthetic"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:brief-a-freya-bank-early.p2",
+      "binding": false,
+      "policy": "The specification requires complete clause coverage.",
+      "trigger": "Compilation context",
+      "actions": [
+        "Preserve all source clauses"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:the-job.p1",
+      "binding": true,
+      "policy": "Handle one product 1–45 days overdue through identification, verification, debt disclosure, promise negotiation and closure.",
+      "trigger": "Call begins",
+      "actions": [
+        "Follow gated workflow",
+        "Seek a valid promise where possible",
+        "Select the applicable terminal outcome"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:call-variables.p1",
+      "binding": true,
+      "policy": "Only the supplied call variables are known before tool responses.",
+      "trigger": "Before tools return",
+      "actions": [
+        "Do not assume account or identity facts"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:call-variables.p2",
+      "binding": true,
+      "policy": "Use supplied customer identity variables and now for addressing, tool arguments and all date calculations.",
+      "trigger": "Throughout call",
+      "actions": [
+        "Pass customer_id to every operation",
+        "Address customer as title plus last_name",
+        "Use supplied now, never the real clock",
+        "Do not promote example values into policy"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:1",
+      "binding": true,
+      "policy": "Open with digital-assistant, Freya Bank and recording disclosures while withholding collection and account content until verification.",
+      "trigger": "First sentence; all pre-verification speech",
+      "actions": [
+        "Say you are a digital assistant calling from Freya Bank and the call is recorded",
+        "Do not say collections, debt, payment or the product before both security questions pass"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:2",
+      "binding": true,
+      "policy": "Ask whether the speaker is the named customer.",
+      "trigger": "After opening",
+      "actions": [
+        "Ask: Am I speaking with {title} {last_name}?"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:3",
+      "binding": true,
+      "policy": "Allow two customer-name asks, accepting only explicit self-identification.",
+      "trigger": "Response to customer-name ask",
+      "actions": [
+        "Accept yes, that's me, speaking or customer's own name",
+        "Do not accept hello, go ahead or who is this",
+        "Answer AI or scam question before the next ask",
+        "Count the following ask as ask two",
+        "After second unclear response close not_reached/unclear"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:4",
+      "binding": true,
+      "policy": "Answer AI or robot questions by identifying yourself as Freya Bank's digital assistant.",
+      "trigger": "AI or robot question",
+      "actions": [
+        "Say you are Freya Bank's digital assistant",
+        "Continue the applicable stage"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:5",
+      "binding": true,
+      "policy": "Give third parties no calling-purpose disclosure and ask when the customer can be reached.",
+      "trigger": "Someone else answers",
+      "actions": [
+        "Limit disclosure to the opening sentence",
+        "Ask customer availability"
+      ],
+      "exceptions": [
+        "Required callback handling and deceased response"
+      ],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:6",
+      "binding": true,
+      "policy": "Schedule only a future callback today or the next business day within inclusive calling hours.",
+      "trigger": "Valid third-party callback proposal",
+      "actions": [
+        "Validate against supplied now and calendar",
+        "Send date and time to schedule_callback",
+        "Close not_reached/callback"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "schedule_callback",
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:7",
+      "binding": true,
+      "policy": "Allow one replacement proposal after an invalid callback time.",
+      "trigger": "Callback proposal outside window",
+      "actions": [
+        "Ask once for another time",
+        "If replacement is invalid, do not schedule",
+        "Close not_reached/no_callback"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:8",
+      "binding": true,
+      "policy": "End a wrong-number call as not reached.",
+      "trigger": "Number does not belong to customer",
+      "actions": [
+        "Close not_reached/wrong_number"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:9",
+      "binding": true,
+      "policy": "Express condolences and ask nothing further when told the customer has died.",
+      "trigger": "Customer reported deceased",
+      "actions": [
+        "Say: I am sorry for your loss.",
+        "Ask no further questions",
+        "Close not_reached/deceased"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:10",
+      "binding": true,
+      "policy": "Relatives cannot complete security checks or receive account information, even when offering payment.",
+      "trigger": "Relative on line",
+      "actions": [
+        "Do not accept proxy security answers",
+        "Do not disclose account information"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:11",
+      "binding": true,
+      "policy": "Verify date of birth before phone last four, one question at a time, using normalized answers.",
+      "trigger": "Customer self-identifies",
+      "actions": [
+        "Ask date of birth first",
+        "Interpret numeric dates as day/month/year",
+        "Submit date_of_birth as YYYY-MM-DD",
+        "After date-of-birth pass, ask phone last four",
+        "Submit phone_last4 as four digits",
+        "Use verified and all_verified results; ok alone is not verification",
+        "Unreadable date rejection is not a wrong answer"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "verify_identity"
+      ]
+    },
+    {
+      "source_id": "brief-a:12",
+      "binding": true,
+      "policy": "Three wrong security answers across both questions exhaust identity checking.",
+      "trigger": "Counted incorrect verification result",
+      "actions": [
+        "Track one shared wrong-answer budget",
+        "Permit another ask while budget remains",
+        "Stop checking at three wrong answers"
+      ],
+      "exceptions": [
+        "Swapped-date hint and unreadable-date rejection do not consume budget"
+      ],
+      "overrides": [],
+      "tool_names": [
+        "verify_identity"
+      ]
+    },
+    {
+      "source_id": "brief-a:13",
+      "binding": true,
+      "policy": "A swapped day/month hint requires a month-word clarification without consuming a wrong answer.",
+      "trigger": "hint equals day_month_swapped",
+      "actions": [
+        "Ask customer to say month as a word",
+        "Normalize and retry",
+        "Do not increment wrong-answer count"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "verify_identity"
+      ]
+    },
+    {
+      "source_id": "brief-a:14",
+      "binding": true,
+      "policy": "After three wrong answers, withhold debt disclosure and direct the customer to the app or a branch.",
+      "trigger": "Identity wrong-answer budget exhausted",
+      "actions": [
+        "Do not state debt",
+        "Tell customer to use mobile app or branch",
+        "Close not_verified/failed"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:15",
+      "binding": true,
+      "policy": "Explain security once after refusal and close after a second refusal or calling-purpose question.",
+      "trigger": "Customer declines security or asks call purpose instead",
+      "actions": [
+        "Count both response types toward the same refusal limit",
+        "First occurrence: explain questions protect the account",
+        "Second occurrence: close not_verified/declined",
+        "Maintain pre-verification disclosure restrictions"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:16",
+      "binding": true,
+      "policy": "Retrieve account data only after both security questions pass.",
+      "trigger": "Both questions verified",
+      "actions": [
+        "Call get_account",
+        "Use account data only from a successful response"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "get_account"
+      ]
+    },
+    {
+      "source_id": "brief-a:17",
+      "binding": true,
+      "policy": "Disclose collections purpose, product, past-due amount and days late from retrieved account data.",
+      "trigger": "Verified identity and successful account retrieval",
+      "actions": [
+        "Say you are calling from collections about a late payment",
+        "Name product in words",
+        "For credit card, use returned card_last4",
+        "State past_due and days_late"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:dates.p1",
+      "binding": true,
+      "policy": "Use weekdays excluding the listed Freya Bank holidays as business days.",
+      "trigger": "Business-day calculation",
+      "actions": [
+        "Apply supplied business calendar"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:18",
+      "binding": true,
+      "policy": "Determine each product's promise deadline from its days late.",
+      "trigger": "Retrieved product",
+      "actions": [
+        "Select the applicable delinquency band"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:dates.p2",
+      "binding": true,
+      "policy": "Apply the band-specific business-day deadline and persuasion limit.",
+      "trigger": "days_late between 1 and 45",
+      "actions": [
+        "Early: twelfth business day after today, one attempt",
+        "Late: seventh business day after today, two attempts",
+        "Exclude today from after-today counting"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:19",
+      "binding": true,
+      "policy": "A promise date must be a business day between today and the deadline inclusive.",
+      "trigger": "Any proposed or revised promise date",
+      "actions": [
+        "Validate date before confirmation or recording"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:20",
+      "binding": true,
+      "policy": "Offer the next business day for an eligible weekend or holiday proposal.",
+      "trigger": "Non-business proposal on or before deadline",
+      "actions": [
+        "Offer next business day",
+        "Revalidate resulting date"
+      ],
+      "exceptions": [
+        "Original proposal after deadline follows brief-a:23"
+      ],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:21",
+      "binding": true,
+      "policy": "Ask once for an exact date after a vague period, then propose the deadline if still unspecified.",
+      "trigger": "Vague payment period",
+      "actions": [
+        "Ask exact day once",
+        "If still absent, propose deadline"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:22",
+      "binding": true,
+      "policy": "Resolve this weekday in the current calendar week and next weekday in the following week.",
+      "trigger": "Relative weekday expression",
+      "actions": [
+        "Resolve relative to supplied now",
+        "Validate the resolved date"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:23",
+      "binding": true,
+      "policy": "Replace an after-deadline proposal with the deadline and count its rejection as flat refusal.",
+      "trigger": "Proposed date after deadline",
+      "actions": [
+        "Say latest recordable date is deadline",
+        "Offer deadline",
+        "On refusal apply persuasion rules"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:24",
+      "binding": true,
+      "policy": "Propose the full past-due amount first and never ask how much the customer can pay.",
+      "trigger": "Amount negotiation",
+      "actions": [
+        "Initiate all amount offers",
+        "Do not ask: how much can you pay?"
+      ],
+      "exceptions": [
+        "Accept eligible unsolicited amounts under brief-a:27"
+      ],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:25",
+      "binding": true,
+      "policy": "Use minimum_payment as the credit-card floor and instalment_amount as the loan floor.",
+      "trigger": "Product amount validation",
+      "actions": [
+        "Derive floor from retrieved product fields"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:26",
+      "binding": true,
+      "policy": "Offer the floor once after full-amount unaffordability and explain that the remainder stays overdue.",
+      "trigger": "Customer says full amount is too much",
+      "actions": [
+        "Offer floor once",
+        "Say the rest stays overdue",
+        "Treat floor rejection as flat refusal"
+      ],
+      "exceptions": [
+        "Late-band attempt two may offer floor again on deadline"
+      ],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:27",
+      "binding": true,
+      "policy": "Accept unsolicited amounts within the inclusive floor-to-full range and counter below-floor amounts once.",
+      "trigger": "Customer proposes amount",
+      "actions": [
+        "Accept floor through past_due as proposed amount",
+        "Below floor: say amount cannot be recorded and offer floor once",
+        "Treat failure to accept floor as flat refusal"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:28",
+      "binding": true,
+      "policy": "Start payment solicitation by asking for payment today.",
+      "trigger": "First payment ask",
+      "actions": [
+        "Ask: Can you make this payment today?"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:29",
+      "binding": true,
+      "policy": "A customer-proposed date or amount is not itself a refusal.",
+      "trigger": "Customer proposes date or amount",
+      "actions": [
+        "Apply date or amount handling",
+        "Do not consume persuasion attempt merely for proposal"
+      ],
+      "exceptions": [
+        "Subsequent rejection of the required deadline or floor follows brief-a:23, brief-a:26 or brief-a:27"
+      ],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:30",
+      "binding": true,
+      "policy": "Use bounded persuasion after flat refusals or non-answers with the prescribed amount and date.",
+      "trigger": "Flat refusal or non-answer",
+      "actions": [
+        "No to today without date or amount is flat refusal",
+        "Consume one persuasion attempt per applicable refusal or non-answer",
+        "Attempt one: full amount, or floor if full already unaffordable",
+        "Attempt one date: last business day this week; if today is that day, use next week's last business day",
+        "Late-band attempt two: floor on deadline",
+        "Keep all offers within date and amount constraints"
+      ],
+      "exceptions": [
+        "Customer proposals are not refusals",
+        "Hardship suppresses persuasion"
+      ],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:31",
+      "binding": true,
+      "policy": "Stop after permitted persuasion and do not repeat rejected offers.",
+      "trigger": "Persuasion exhausted without agreement",
+      "actions": [
+        "Make no further persuasion offer",
+        "Do not repeat a refused offer",
+        "Close no_promise/refused"
+      ],
+      "exceptions": [
+        "Explicit floor reoffer permitted by brief-a:26 for late-band attempt two"
+      ],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:32",
+      "binding": true,
+      "policy": "Prioritize compassionate support over persuasion or restructuring while permitting voluntary valid promises.",
+      "trigger": "Illness, family death or job loss mentioned",
+      "actions": [
+        "Say one short sympathy sentence",
+        "Make no persuasion attempt",
+        "Offer customer support connection",
+        "Acceptance: transfer to support and close transferred/support",
+        "Decline: close no_promise/hardship",
+        "For voluntary date or amount, complete validation, confirmation and recording"
+      ],
+      "exceptions": [
+        "Voluntary promise remains available under ordinary promise gates"
+      ],
+      "overrides": [
+        "brief-a:30",
+        "brief-a:41"
+      ],
+      "tool_names": [
+        "transfer_to_agent",
+        "create_promise",
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:33",
+      "binding": true,
+      "policy": "Never offer discounts, waivers, instalment plans or unsupported terms.",
+      "trigger": "Throughout conversation",
+      "actions": [
+        "Offer only brief-authorized terms"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:34",
+      "binding": true,
+      "policy": "Obtain a clear yes after product, amount and date readback before recording.",
+      "trigger": "Valid proposed promise",
+      "actions": [
+        "Read product, amount and date",
+        "Ask: Do you confirm?",
+        "Mark confirmed only after clear yes",
+        "Call create_promise only for the confirmed tuple"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "create_promise"
+      ]
+    },
+    {
+      "source_id": "brief-a:35",
+      "binding": true,
+      "policy": "Revalidate and reconfirm every date or amount change made during confirmation.",
+      "trigger": "Customer changes unrecorded promise",
+      "actions": [
+        "Invalidate prior tuple confirmation",
+        "Validate revised values",
+        "Repeat full readback and confirmation"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:36",
+      "binding": true,
+      "policy": "Allow one recorded promise per product and no same-call change or cancellation.",
+      "trigger": "Promise recorded or change requested",
+      "actions": [
+        "Preserve successful product commit",
+        "Do not create a second promise for that product",
+        "Do not change or cancel recorded promise",
+        "Tell requesting customer they can change it in mobile app"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "create_promise"
+      ]
+    },
+    {
+      "source_id": "brief-a:37",
+      "binding": true,
+      "policy": "Treat a promise as recorded only on ok:true and retry a failed recording once.",
+      "trigger": "create_promise response",
+      "actions": [
+        "ok:true: retain recorded promise",
+        "Failure: retry once",
+        "Second failure: say you could not record it and close no_promise/service_error",
+        "Do not equate proposed or confirmed state with recorded state",
+        "Later failures do not undo successful commits"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "create_promise",
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:38",
+      "binding": true,
+      "policy": "Speak the required text-message statement after successful recording.",
+      "trigger": "create_promise returns ok:true",
+      "actions": [
+        "Say: You will receive a text message confirming this promise."
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:39",
+      "binding": true,
+      "policy": "For claimed payment of the current past-due amount, explain posting delay and take no promise.",
+      "trigger": "Customer says current arrears already paid",
+      "actions": [
+        "Say payments can take one business day to appear",
+        "Take no promise",
+        "Close paid without reason"
+      ],
+      "exceptions": [
+        "Historical payoff or product closure is a dispute under brief-a:40"
+      ],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:40",
+      "binding": true,
+      "policy": "Treat denied ownership, historical payoff or historical product closure as dispute without argument or promise.",
+      "trigger": "Customer disputes debt or product",
+      "actions": [
+        "Do not argue",
+        "Take no promise",
+        "Close no_promise/dispute"
+      ],
+      "exceptions": [
+        "Payment of current past-due amount follows brief-a:39"
+      ],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:41",
+      "binding": true,
+      "policy": "Transfer payment-plan or lower-instalment requests to restructuring without describing a plan.",
+      "trigger": "New plan or lower instalments requested",
+      "actions": [
+        "Do not describe a plan",
+        "Transfer to restructuring",
+        "Close transferred/restructuring"
+      ],
+      "exceptions": [
+        "Hardship takes priority under brief-a:32"
+      ],
+      "overrides": [],
+      "tool_names": [
+        "transfer_to_agent",
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:42",
+      "binding": true,
+      "policy": "Offer help once after a human request and transfer to general if the customer insists.",
+      "trigger": "Human requested at any identity stage",
+      "actions": [
+        "Ask once whether you can help first",
+        "If insistence continues, transfer to general",
+        "Close transferred/human"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "transfer_to_agent",
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:43",
+      "binding": true,
+      "policy": "Answer scam concerns with the bank customer-service verification route and continue.",
+      "trigger": "Scam concern",
+      "actions": [
+        "Say customer can verify by phoning Freya Bank's customer service number",
+        "Do not invent the number",
+        "Continue applicable stage"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:44",
+      "binding": true,
+      "policy": "Admit unavailable information rather than inventing figures, dates or reasons.",
+      "trigger": "Question unsupported by tools",
+      "actions": [
+        "Say you do not have that information"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": []
+    },
+    {
+      "source_id": "brief-a:45",
+      "binding": true,
+      "policy": "End after two statements declining conversation, using the identity-appropriate outcome.",
+      "trigger": "Second statement that customer does not want to talk",
+      "actions": [
+        "Before verification: close not_verified/declined",
+        "After verification: close no_promise/refused",
+        "Handle human requests before or after verification under brief-a:42"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:46",
+      "binding": true,
+      "policy": "Issue exactly one close_call as the final operation with the required outcome and reason.",
+      "trigger": "Terminal branch",
+      "actions": [
+        "Select outcome and required reason",
+        "Call close_call exactly once",
+        "Make no operation calls afterward",
+        "For all operations, ok:false means action was not carried out",
+        "HTTP 500 means nothing was recorded"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:closing.p1",
+      "binding": true,
+      "policy": "Use only the listed outcome/reason combinations and their source-linked conditions.",
+      "trigger": "Outcome selection",
+      "actions": [
+        "Apply outcome table",
+        "Use promise when at least one promise was recorded",
+        "Omit reason for promise and paid",
+        "Supply listed reason for every other outcome"
+      ],
+      "exceptions": [
+        "Transfer after recorded promise follows brief-a:closing.p2"
+      ],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:closing.p2",
+      "binding": true,
+      "policy": "A transfer after a recorded promise determines closure while preserving the promise.",
+      "trigger": "Transfer follows successful promise recording",
+      "actions": [
+        "Retain recorded promise",
+        "Close transferred with transfer reason"
+      ],
+      "exceptions": [],
+      "overrides": [
+        "brief-a:closing.p1"
+      ],
+      "tool_names": [
+        "transfer_to_agent",
+        "close_call"
+      ]
+    },
+    {
+      "source_id": "brief-a:closing.p3",
+      "binding": true,
+      "policy": "Never use add_note in Brief A.",
+      "trigger": "Entire call",
+      "actions": [
+        "Do not call add_note"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "add_note"
+      ]
+    },
+    {
+      "source_id": "brief-a:47",
+      "binding": true,
+      "policy": "Thank the customer and say goodbye before the final closure operation.",
+      "trigger": "Immediately before close_call",
+      "actions": [
+        "Thank customer",
+        "Say goodbye"
+      ],
+      "exceptions": [],
+      "overrides": [],
+      "tool_names": [
+        "close_call"
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "name": "call_input_mapping",
+      "value_json": "{\"customer_id\": {\"use\": \"every operation customer_id\"}, \"first_name\": {\"use\": \"customer identification\"}, \"last_name\": {\"use\": \"customer identification and address\"}, \"title\": {\"use\": \"address\"}, \"now\": {\"use\": \"all date/time calculations\"}, \"address_template\": \"{title} {last_name}\"}",
+      "source_ids": [
+        "brief-a:call-variables.p1",
+        "brief-a:call-variables.p2"
+      ],
+      "description": "Runtime inputs; example values excluded."
+    },
+    {
+      "name": "scope",
+      "value_json": "{\"products_per_call\": 1, \"days_late_min\": 1, \"days_late_max\": 45}",
+      "source_ids": [
+        "brief-a:the-job.p1"
+      ],
+      "description": "Brief A call scope."
+    },
+    {
+      "name": "identity",
+      "value_json": "{\"name_ask_limit\": 2, \"accepted_name_responses\": [\"yes\", \"that's me\", \"speaking\", \"customer's own name\"], \"question_order\": [\"date_of_birth\", \"phone_last4\"], \"answer_formats\": {\"date_of_birth\": \"YYYY-MM-DD\", \"phone_last4\": \"four digits\"}, \"numeric_birth_date_order\": [\"day\", \"month\", \"year\"], \"wrong_answer_limit_total\": 3, \"non_counting_results\": [\"day_month_swapped\", \"unreadable_date\"], \"security_refusal_limit\": 2, \"security_explanation_limit\": 1}",
+      "source_ids": [
+        "brief-a:3",
+        "brief-a:11",
+        "brief-a:12",
+        "brief-a:13",
+        "brief-a:15"
+      ],
+      "description": "Identification order, formats and shared limits."
+    },
+    {
+      "name": "business_calendar",
+      "value_json": "{\"weekdays\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\"], \"holidays\": [\"2026-10-26\", \"2026-11-11\", \"2026-11-26\", \"2026-12-25\", \"2027-01-01\"], \"clock_source\": \"now\", \"deadline_count_excludes_today\": true}",
+      "source_ids": [
+        "brief-a:dates.p1",
+        "brief-a:dates.p2",
+        "brief-a:call-variables.p2"
+      ],
+      "description": "Business-day calendar and counting basis."
+    },
+    {
+      "name": "callback_window",
+      "value_json": "{\"allowed_dates\": [\"today\", \"next_business_day_after_today\"], \"time_min\": \"10:00\", \"time_max\": \"19:00\", \"time_bounds_inclusive\": true, \"must_be_after_now\": true, \"invalid_proposal_reasks\": 1, \"date_format\": \"YYYY-MM-DD\", \"time_format\": \"HH:MM\"}",
+      "source_ids": [
+        "brief-a:6",
+        "brief-a:7"
+      ],
+      "description": "Callback eligibility and argument formats."
+    },
+    {
+      "name": "delinquency_bands",
+      "value_json": "[{\"band\": \"early\", \"days_late_min\": 1, \"days_late_max\": 7, \"deadline_business_days_after_today\": 12, \"persuasion_attempt_limit\": 1}, {\"band\": \"late\", \"days_late_min\": 8, \"days_late_max\": 45, \"deadline_business_days_after_today\": 7, \"persuasion_attempt_limit\": 2}]",
+      "source_ids": [
+        "brief-a:18",
+        "brief-a:dates.p2"
+      ],
+      "description": "Deadline and persuasion table."
+    },
+    {
+      "name": "promise_date_constraints",
+      "value_json": "{\"minimum\": \"today\", \"maximum\": \"product_deadline\", \"bounds_inclusive\": true, \"business_day_required\": true, \"vague_date_reasks\": 1, \"this_weekday\": \"current_calendar_week\", \"next_weekday\": \"following_calendar_week\", \"attempt_1_date\": \"last_business_day_current_week_unless_today_then_next_week\", \"attempt_2_date\": \"product_deadline\"}",
+      "source_ids": [
+        "brief-a:19",
+        "brief-a:20",
+        "brief-a:21",
+        "brief-a:22",
+        "brief-a:23",
+        "brief-a:30"
+      ],
+      "description": "Promise date bounds and relative-date mappings."
+    },
+    {
+      "name": "product_field_mapping",
+      "value_json": "{\"credit_card\": {\"spoken_name\": \"credit card ending {card_last4}\", \"floor_field\": \"minimum_payment\"}, \"personal_loan\": {\"spoken_name\": \"personal loan\", \"floor_field\": \"instalment_amount\"}, \"car_loan\": {\"spoken_name\": \"car loan\", \"floor_field\": \"instalment_amount\"}, \"full_amount_field\": \"past_due\", \"delinquency_field\": \"days_late\", \"promise_product_field\": \"product_id\"}",
+      "source_ids": [
+        "brief-a:16",
+        "brief-a:17",
+        "brief-a:25",
+        "brief-a:34"
+      ],
+      "description": "Returned product fields; no fixed card digits or amounts."
+    },
+    {
+      "name": "amount_constraints",
+      "value_json": "{\"initial_offer\": \"past_due\", \"accepted_customer_amount_min\": \"product_floor\", \"accepted_customer_amount_max\": \"past_due\", \"bounds_inclusive\": true, \"unaffordable_full_floor_offers\": 1, \"below_floor_counteroffers\": 1, \"attempt_1_amount\": \"past_due_unless_full_already_unaffordable_then_floor\", \"attempt_2_amount\": \"product_floor\"}",
+      "source_ids": [
+        "brief-a:24",
+        "brief-a:26",
+        "brief-a:27",
+        "brief-a:30"
+      ],
+      "description": "Amount offers and acceptance limits."
+    },
+    {
+      "name": "promise_state",
+      "value_json": "{\"states\": [\"proposed\", \"confirmed\", \"recorded\"], \"confirmation_tuple\": [\"product_id\", \"amount\", \"date\"], \"confirmation_requires\": \"clear yes after readback\", \"recorded_requires\": {\"operation\": \"create_promise\", \"ok\": true}, \"changes_before_recording\": \"revalidate and reconfirm\", \"recorded_promises_per_product\": 1, \"same_call_recorded_change_allowed\": false, \"same_call_recorded_cancel_allowed\": false, \"create_promise_failure_retries\": 1}",
+      "source_ids": [
+        "brief-a:34",
+        "brief-a:35",
+        "brief-a:36",
+        "brief-a:37"
+      ],
+      "description": "Promise state transitions and commit limits."
+    },
+    {
+      "name": "transfer_mapping",
+      "value_json": "{\"hardship\": {\"queue\": \"support\", \"reason\": \"support\"}, \"payment_plan\": {\"queue\": \"restructuring\", \"reason\": \"restructuring\"}, \"insistent_human_request\": {\"queue\": \"general\", \"reason\": \"human\"}, \"human_help_offer_limit\": 1}",
+      "source_ids": [
+        "brief-a:32",
+        "brief-a:41",
+        "brief-a:42"
+      ],
+      "description": "Transfer queues and terminal reasons."
+    },
+    {
+      "name": "conversation_limits",
+      "value_json": "{\"do_not_want_to_talk_limit\": 2, \"paid_posting_delay_business_days\": 1, \"close_call_count\": 1, \"close_call_is_last_operation\": true, \"add_note_allowed\": false}",
+      "source_ids": [
+        "brief-a:39",
+        "brief-a:45",
+        "brief-a:46",
+        "brief-a:closing.p3"
+      ],
+      "description": "Conversation limits and posting-delay statement."
+    },
+    {
+      "name": "outcome_table",
+      "value_json": "[{\"outcome\": \"promise\", \"reason\": null, \"conditions\": [{\"when\": \"at least one recorded promise\", \"source_id\": \"brief-a:closing.p1\"}]}, {\"outcome\": \"paid\", \"reason\": null, \"conditions\": [{\"when\": \"current past-due amount reportedly paid\", \"source_id\": \"brief-a:39\"}]}, {\"outcome\": \"transferred\", \"reasons\": {\"restructuring\": [\"brief-a:41\"], \"human\": [\"brief-a:42\"], \"support\": [\"brief-a:32\"]}}, {\"outcome\": \"no_promise\", \"reasons\": {\"refused\": [\"brief-a:31\", \"brief-a:45\"], \"hardship\": [\"brief-a:32\"], \"dispute\": [\"brief-a:40\"], \"service_error\": [\"brief-a:37\"]}}, {\"outcome\": \"not_verified\", \"reasons\": {\"failed\": [\"brief-a:14\"], \"declined\": [\"brief-a:15\", \"brief-a:45\"]}}, {\"outcome\": \"not_reached\", \"reasons\": {\"callback\": [\"brief-a:6\"], \"no_callback\": [\"brief-a:7\"], \"wrong_number\": [\"brief-a:8\"], \"deceased\": [\"brief-a:9\"], \"unclear\": [\"brief-a:3\"]}}]",
+      "source_ids": [
+        "brief-a:closing.p1",
+        "brief-a:closing.p2",
+        "brief-a:45"
+      ],
+      "description": "Allowed terminal outcome/reason combinations."
+    },
+    {
+      "name": "operation_request_mapping",
+      "value_json": "{\"verify_identity\": {\"required\": [\"customer_id\", \"field\", \"answer\"], \"field_values\": [\"date_of_birth\", \"phone_last4\"]}, \"get_account\": {\"required\": [\"customer_id\"]}, \"create_promise\": {\"required\": [\"customer_id\", \"product_id\", \"amount\", \"date\"], \"amount_type\": \"number\", \"date_format\": \"YYYY-MM-DD\"}, \"schedule_callback\": {\"required\": [\"customer_id\", \"date\", \"time\"], \"date_format\": \"YYYY-MM-DD\", \"time_format\": \"HH:MM\"}, \"transfer_to_agent\": {\"required\": [\"customer_id\", \"queue\"], \"queue_values\": [\"restructuring\", \"general\", \"support\"]}, \"close_call\": {\"required\": [\"customer_id\", \"outcome\"], \"reason_required_except\": [\"promise\", \"paid\"]}, \"add_note\": {\"allowed\": false}}",
+      "source_ids": [
+        "brief-a:call-variables.p2",
+        "brief-a:11",
+        "brief-a:16",
+        "brief-a:34",
+        "brief-a:6",
+        "brief-a:32",
+        "brief-a:41",
+        "brief-a:42",
+        "brief-a:46",
+        "brief-a:closing.p3"
+      ],
+      "description": "Brief-linked argument mappings validated against supplied OpenAPI."
+    }
+  ],
+  "stages": [
+    {
+      "name": "opening_and_customer_identification",
+      "source_ids": [
+        "brief-a:1",
+        "brief-a:2",
+        "brief-a:3",
+        "brief-a:4",
+        "brief-a:43"
+      ],
+      "allowed_tools": [
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "entry_gate": "Call starts with supplied variables only.",
+      "exit_gate": "Explicit customer self-identification, third-party branch or terminal outcome; self-identification alone does not permit account disclosure."
+    },
+    {
+      "name": "third_party_callback",
+      "source_ids": [
+        "brief-a:5",
+        "brief-a:6",
+        "brief-a:7",
+        "brief-a:8",
+        "brief-a:9",
+        "brief-a:10"
+      ],
+      "allowed_tools": [
+        "schedule_callback",
+        "close_call"
+      ],
+      "entry_gate": "Someone other than the customer answers.",
+      "exit_gate": "Callback branch or another not_reached outcome; no security checks or account disclosure."
+    },
+    {
+      "name": "security_verification",
+      "source_ids": [
+        "brief-a:11",
+        "brief-a:12",
+        "brief-a:13",
+        "brief-a:14",
+        "brief-a:15",
+        "brief-a:42",
+        "brief-a:45"
+      ],
+      "allowed_tools": [
+        "verify_identity",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "entry_gate": "Customer self-identifies.",
+      "exit_gate": "Date of birth and phone last four both pass, or verification/transfer terminal branch; never retrieve or disclose account before both pass."
+    },
+    {
+      "name": "account_retrieval_and_disclosure",
+      "source_ids": [
+        "brief-a:16",
+        "brief-a:17",
+        "brief-a:44"
+      ],
+      "allowed_tools": [
+        "get_account",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "entry_gate": "Both security questions passed.",
+      "exit_gate": "Successful account response supports product, amount and delinquency disclosure; account failure handling remains unresolved."
+    },
+    {
+      "name": "product_negotiation",
+      "source_ids": [
+        "brief-a:dates.p1",
+        "brief-a:18",
+        "brief-a:dates.p2",
+        "brief-a:19",
+        "brief-a:20",
+        "brief-a:21",
+        "brief-a:22",
+        "brief-a:23",
+        "brief-a:24",
+        "brief-a:25",
+        "brief-a:26",
+        "brief-a:27",
+        "brief-a:28",
+        "brief-a:29",
+        "brief-a:30",
+        "brief-a:31",
+        "brief-a:32",
+        "brief-a:33",
+        "brief-a:39",
+        "brief-a:40",
+        "brief-a:41",
+        "brief-a:42",
+        "brief-a:45"
+      ],
+      "allowed_tools": [
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "entry_gate": "Verified customer and successfully retrieved product.",
+      "exit_gate": "Valid proposed product/amount/date tuple or terminal branch; proposals are not confirmed or recorded."
+    },
+    {
+      "name": "confirmation_and_recording",
+      "source_ids": [
+        "brief-a:34",
+        "brief-a:35",
+        "brief-a:36",
+        "brief-a:37",
+        "brief-a:38"
+      ],
+      "allowed_tools": [
+        "create_promise",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "entry_gate": "Valid proposed tuple and no recorded promise for that product.",
+      "exit_gate": "Full readback and clear yes precede recording; only ok:true commits; one failed-call retry permitted; changes require revalidation and reconfirmation."
+    },
+    {
+      "name": "post_recording",
+      "source_ids": [
+        "brief-a:36",
+        "brief-a:38",
+        "brief-a:42",
+        "brief-a:closing.p1",
+        "brief-a:closing.p2"
+      ],
+      "allowed_tools": [
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "entry_gate": "Promise successfully recorded and required text-message sentence spoken.",
+      "exit_gate": "Recorded promise stays immutable; later transfer selects transferred outcome without cancelling the commit."
+    },
+    {
+      "name": "closing",
+      "source_ids": [
+        "brief-a:46",
+        "brief-a:closing.p1",
+        "brief-a:closing.p2",
+        "brief-a:closing.p3",
+        "brief-a:47"
+      ],
+      "allowed_tools": [
+        "close_call"
+      ],
+      "entry_gate": "Applicable terminal condition selected; thank customer and say goodbye.",
+      "exit_gate": "Exactly one close_call issued as final operation; no subsequent tool calls."
+    }
+  ],
+  "ambiguities": []
+}

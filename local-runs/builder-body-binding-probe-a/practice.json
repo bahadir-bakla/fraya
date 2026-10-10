@@ -1,0 +1,59 @@
+[
+  {
+    "case_id": "PUB-01",
+    "persona_id": "244ef8c7-0e57-41ad-a606-2d51944f6564",
+    "customer_id": "c_c62e76d5-605",
+    "simulation_id": "6036fc24-479a-47e0-8e06-25424c55ed43",
+    "call_id": "36564974-b0d8-4032-a44b-fed7a223acb9",
+    "repetition": 1,
+    "pass": false,
+    "failed": [
+      "outcome ('transferred', 'human'), expected ('promise', None)",
+      "promises [], expected [('p1', 420.0, '2026-10-14')]",
+      "conversation: The call failed to meet several criteria:\n- The `create_promise` function was never called, despite the user agreeing to pay the full amount in message 9.\n- Because no promise was created, the required text-message sentence was also not said.\n- The assistant encountered a technical issue and transferred the call instead of completing the workflow."
+    ],
+    "tools": [
+      "verify_identity",
+      "verify_identity",
+      "get_account",
+      "close_call",
+      "close_call"
+    ]
+  },
+  {
+    "case_id": "PUB-02",
+    "persona_id": "17986669-2ebc-491e-967a-3d37f44f9507",
+    "customer_id": "c_e234c78f-db2",
+    "simulation_id": "6036fc24-479a-47e0-8e06-25424c55ed43",
+    "call_id": "7d688367-bb65-4167-a83f-5fb9abb3845d",
+    "repetition": 1,
+    "pass": false,
+    "failed": [
+      "callbacks [], expected [{'date': '2026-10-15', 'time': '11:00'}]"
+    ],
+    "tools": [
+      "close_call"
+    ]
+  },
+  {
+    "case_id": "PUB-06",
+    "persona_id": "45a0a73e-783b-4d09-9163-c1a7064bb605",
+    "customer_id": "c_1ba41729-02e",
+    "simulation_id": "6036fc24-479a-47e0-8e06-25424c55ed43",
+    "call_id": "6d60e458-1dfa-42c0-9e93-c653bfa144cc",
+    "repetition": 1,
+    "pass": false,
+    "failed": [
+      "outcome (None, None), expected ('promise', None)",
+      "promises [], expected [('p1', 637.5, '2026-10-16')]",
+      "transfers [{'queue': 'support'}], expected []",
+      "the call was not closed with close_call",
+      "conversation: The conversation failed on multiple counts. First, the success criteria regarding payment negotiation were not met: the agent did not offer a minimum payment (Message 8) and no promise for 637.50 on Friday 16 October was established. Second, the call did not end properly. Although the agent attempted to transfer and close the call (Messages 10 and 12), the agent continued to engage in an infinite loop of repetitive 'goodbye' messages from Message 14 through Message 160 until the customer eventually ended the call. This violates the requirement that the agent should not keep producing turns with no real conversation after the conversation is over."
+    ],
+    "tools": [
+      "verify_identity",
+      "verify_identity",
+      "transfer_to_agent"
+    ]
+  }
+]

@@ -9,5 +9,5 @@ if (-not (Test-Path -LiteralPath $taskPython)) {
 }
 & $taskPython -m pip install -r (Join-Path $PSScriptRoot 'requirements-local.txt')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-& (Join-Path $taskRepo 'integrations\freya-mcp\install.ps1') -PythonExecutable $PythonExecutable
+& (Join-Path $taskRepo 'integrations\freya-mcp\install.ps1') -PythonExecutable $taskPython
 exit $LASTEXITCODE

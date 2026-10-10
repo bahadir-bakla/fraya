@@ -45,7 +45,7 @@ if (Test-Path -LiteralPath $venvRoot) {
         throw 'The existing .venv is incomplete. Resolve it explicitly before rerunning install.ps1.'
     }
 } else {
-    $basePython = (Get-Command -Name $PythonExecutable -CommandType Application -ErrorAction Stop).Source
+    $basePython = (Get-Command -Name $PythonExecutable -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
     & $basePython -I -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)'
     if ($LASTEXITCODE -ne 0) {
         throw 'Use Python 3.11 or newer with -PythonExecutable.'

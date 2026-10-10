@@ -158,6 +158,25 @@ class BridgeTests(unittest.TestCase):
         self.assertFalse(self.bridge.validate(str(self.wf), remote=False)["remote_checked"])
         self.assertEqual(len(self.mock.requests), count)
 
+    def test_schema_feedback_is_bounded_and_redacted_only_for_dryrun(self):
+        def reject(req):
+            return httpx.Response(422, json={"message": "bad body " + API_TEST_SECRET,
+                                            "authorization": BANK_TEST_SECRET,
+                                            "detail": "x" * 10000})
+        other = Bridge(self.bridge.config, httpx.MockTransport(reject))
+        try:
+            with self.assertRaises(BridgeError) as caught:
+                other.validate(str(self.wf))
+            message = str(caught.exception)
+            self.assertIn("validation:", message)
+            self.assertNotIn(API_TEST_SECRET, message)
+            self.assertNotIn(BANK_TEST_SECRET, message)
+            self.assertLess(len(message), 6100)
+            with self.assertRaisesRegex(BridgeError, "body withheld"):
+                other.request("POST", "/api/v2/workflow", {"workflow": WORKFLOW})
+        finally:
+            other.close()
+
     def test_save_reuses_slot_normalizes_model_publishes(self):
         first = self.bridge.save("brief-a", str(self.wf))
         second = self.bridge.save("brief-a", str(self.wf))

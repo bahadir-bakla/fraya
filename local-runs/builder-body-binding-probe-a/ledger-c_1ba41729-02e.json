@@ -1,0 +1,83 @@
+{
+  "customer_id": "c_1ba41729-02e",
+  "ledger": {
+    "ok": true,
+    "case": "PUB-06",
+    "team": "e15398ab21b8016a6e555a87",
+    "now": "2026-10-14T11:00",
+    "verified": {
+      "date_of_birth": true,
+      "phone_last4": true
+    },
+    "wrong": 0,
+    "hinted": false,
+    "promises": [],
+    "notes": [],
+    "callbacks": [],
+    "transfers": [
+      {
+        "queue": "support"
+      }
+    ],
+    "outcome": null,
+    "reason": null,
+    "failures": {
+      "verify_identity": 0,
+      "transfer_to_agent": 0
+    },
+    "calls": [
+      {
+        "n": 1,
+        "tool": "verify_identity",
+        "args": {
+          "field": "date_of_birth",
+          "answer": "1986-05-17"
+        },
+        "status": 200,
+        "result": {
+          "ok": true,
+          "verified": true,
+          "wrong_answers_left": 3,
+          "all_verified": false
+        }
+      },
+      {
+        "n": 2,
+        "tool": "verify_identity",
+        "args": {
+          "field": "phone_last4",
+          "answer": "1502"
+        },
+        "status": 200,
+        "result": {
+          "ok": true,
+          "verified": true,
+          "wrong_answers_left": 3,
+          "all_verified": true
+        }
+      },
+      {
+        "n": 3,
+        "tool": "transfer_to_agent",
+        "args": {
+          "queue": "support"
+        },
+        "status": 200,
+        "result": {
+          "ok": true
+        }
+      }
+    ],
+    "last_at": 1791641378606
+  },
+  "ledger_score": {
+    "pass": false,
+    "failed": [
+      "outcome (None, None), expected ('promise', None)",
+      "promises [], expected [('p1', 637.5, '2026-10-16')]",
+      "transfers [{'queue': 'support'}], expected []",
+      "the call was not closed with close_call"
+    ]
+  },
+  "note": "Ledger score only; combine with the simulation judge outcome for full practice scoring."
+}

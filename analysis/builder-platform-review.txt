@@ -1,0 +1,116 @@
+Builder platform boundary verification
+Reviewed: 2026-10-10 16:25 Europe/Istanbul
+Result: 36 passed, zero failed; 36 collected, zero skips/xfails.
+Single isolated pytest run after fixture repair: 1.44 seconds; exit code 0.
+Remaining defects reproduced in this run: none.
+
+Owned files
+  skill-creator-skill-lift/agent_forge/tests/test_builder_platform.py
+  analysis/builder-platform-review.txt
+No implementation files edited. No root/setup suites executed or interrupted.
+No hosted simulations, Bridge network requests, credential reads, or MCP writes.
+
+Implementation snapshot
+  skill-creator-skill-lift/agent_forge/builder_live.py
+  SHA256: 83e668045cea8d794cfad73ecbc9f89e138fb8c51f247cad6f6cdd7e3b1c070a
+  Identical before and after the isolated run.
+Test file SHA256:
+  b1beb208ce33ab52a52519f269ffd690b0b7451caec140124ba851f19158afe2
+Line references below apply to these snapshots; the parent is editing concurrently.
+At 16:26, builder_live.py changed after the completed run to SHA256
+  87ac96cd139e47bdb1857032a2707c31254c9be4b6171742712633ce49427895.
+The test file hash remained unchanged. That later implementation snapshot was
+not rerun; this follow-up requested one isolated run after fixture repair.
+
+Fixture repair
+  Only the test fixture changed. It now builds a temporary local kit containing
+  docs/workflow-format.md, docs/tools-and-code.md and examples/base-agent.json.
+  Both docs explicitly describe the synthetic fixture; the base is its minimal
+  valid workflow. workflow_prompt can read its required inputs without depending
+  on repository kit installation. No production prompt, provider responses,
+  policy ambiguities=[], tests, assertions or compiler gates were weakened.
+  The new policy checkpoint/gap-review path needed no fixture response changes.
+
+Prior defects verified fixed by the parent
+
+1. Practice sessions were created when the next simulation could not fit.
+   Fix: skill-creator-skill-lift/agent_forge/builder_live.py:185
+   Regression: agent_forge/tests/test_builder_platform.py:601
+     test_insufficient_simulation_budget_does_not_create_practice_sessions
+
+   Reproduction: idle remote workspace, valid case selection, 134 seconds left.
+   Before: prepare_practice mutated sessions/personas, then the 59-second
+   simulation duration was rejected after applying the 75-second reserve.
+   Now: preflight reserve=135 fails before preparation. Mutation log is empty.
+   The original no-mutation assertion passes unchanged.
+
+2. Trace persistence could cross the deadline before a mutation dispatch.
+   Fix: skill-creator-skill-lift/agent_forge/builder_live.py:148-150
+   Regression: agent_forge/tests/test_builder_platform.py:609
+     test_deadline_crossed_while_recording_dispatch_does_not_save
+
+   Reproduction: 60-second builder budget, clock at start+58 seconds. The actual
+   Evidence.write still writes trace.json; the test adds a three-second disk
+   stall to that write. Before: Bridge.save dispatched at start+61 seconds.
+   Now: remaining() is checked after trace persistence and raises BuildFailure
+   before save. Mutation log is empty. Timeout is also refreshed at dispatch.
+   The original no-mutation and failure assertions pass unchanged.
+
+No xfail markers or assertions matching defective behavior were added. Both
+implementation fixes were made by the parent; this task edited no implementation.
+
+Verified behavior (36 passing cases)
+  - Pagination: six cases across runs/items/bare-list envelopes and 200/201 runs.
+    Selected failing judge/call is on the final data page. Every run is archived,
+    late-page calls are fetched, and exact multiples handle the empty final page.
+    Large unselected run padding deliberately stresses the paging boundary; it
+    does not represent the normal size of a five-persona practice batch.
+  - Seven source cases, two repetitions, four batches of 5/2/5/2. Prepared
+    bindings and returned runs differ from requested order. Source identity IDs
+    differ from all 14 bank session customer IDs. Every ledger is fetched using
+    its session ID and original source case ID, and judge/call joins use persona
+    IDs. Start receives the exact variables map returned by preparation. No new
+    batch is prepared while the prior simulated run remains active.
+  - Seven independent judge/ledger combinations cover both-pass, judge failure
+    with ledger pass, missing run, missing verdict, null verdict, ledger failure
+    with judge pass, and both failures. Missing iterations also fails safely.
+    Two full-builder negative cases confirm overall status practice_failed for
+    judge failure or missing judge with a passing ledger.
+  - An external running simulation must clear before preparation/start. If
+    waiting exhausts the reserve, there is no mutation and no cancellation.
+  - Unknown or duplicate case IDs cause no preparation/start.
+  - A full positive build reaches practice and export after model/hook readback.
+    Five wrong/missing provider/model/config variants fail before preparation or
+    simulation. Stripping either pre_process_code or post_process_code also
+    blocks practice and preserves the offending semantic path in readback.json.
+    Failed builds persist failed/final_ready=false and close the backend.
+  - Already-expired budgets dispatch none of save/prepare_practice/start. Time
+    consumed by validation blocks save. Time consumed polling a started run
+    prevents subsequent batches/repetitions and leaves the active run untouched.
+
+Method and limits
+  Tests construct the actual builder_live.LiveBackend and use production call,
+  deploy, practice, Evidence, and (for model/hook gates and overall status)
+  build_live. The stateful mock replaces only freya_mcp.bridge.Config/Bridge.
+  A deterministic clock advances polling without real sleeps. Actual HTTPX
+  send methods are guarded to raise on accidental network requests. The root
+  is an empty temporary path, so the credential launcher cannot be loaded.
+  Provider responses, customer IDs, variables, transcripts and verdicts are
+  synthetic. Real input inventory, policy/coverage validation and workflow lint
+  run for build-level cases; minimal synthetic local kit references feed prompts.
+  No compiler/model process runs. Mock artifacts stay in unique system temp dirs;
+  pytest cache and bytecode writes are disabled.
+
+  This verifies backend behavior against documented Bridge return shapes. It
+  does not verify hosted schema acceptance, model quality, actual remote timing,
+  Bridge internal compound-request budgets, or atomic workspace locking. The
+  mock rejects overlapping starts; Bridge's own concurrent-start race handling
+  is outside this isolated test file. Final-ready remains false in build results.
+
+Reproduction command (PowerShell, canonical child venv)
+  Working directory:
+    C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\fraya\skill-creator-skill-lift
+  $env:PYTHONDONTWRITEBYTECODE='1'
+  $platformTestTemp = Join-Path ([System.IO.Path]::GetTempPath()) ('fraya-builder-platform-' + [guid]::NewGuid().ToString('N'))
+  & ./.venv/Scripts/python.exe -B -m pytest agent_forge/tests/test_builder_platform.py -c agent_forge/pytest.ini -p no:cacheprovider -q --tb=short --basetemp $platformTestTemp
+  Environment: Python 3.11.9, pytest 9.1.1. No other tests selected.

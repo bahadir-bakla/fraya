@@ -1,0 +1,279 @@
+{
+  "id": "049dc7d2-1ec7-41da-8cbe-b0cd52100242",
+  "name": "codex-model-probe",
+  "description": null,
+  "version": "2.0.0",
+  "tags": [],
+  "workspaceId": "2507ffc9-3031-479a-ac9e-dae277fa0743",
+  "canvasViewport": null,
+  "nodePositions": {},
+  "workflow": {
+    "nodes": {
+      "dialogue": {
+        "name": "dialogue",
+        "tools": [],
+        "on_enter": {
+          "text": "Hello, I am a digital assistant calling from Freya Bank. This call is recorded. Am I speaking with {{title}} {{last_name}}?",
+          "type": "tts"
+        },
+        "node_type": "conversation",
+        "assertions": [],
+        "passthrough": false,
+        "pre_actions": [],
+        "transitions": [],
+        "role_message": "",
+        "task_message": "Introduce yourself as a digital assistant calling from Freya Bank and say the call is recorded. Ask whether you are speaking with the person. Respond to every user turn. Ask one simple follow-up question at a time.",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": false,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": null,
+        "return_to_previous_on_interrupt": false
+      }
+    },
+    "agent_config": {
+      "llmConfig": {
+        "model": "experimental-5",
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "end_call",
+              "handler": "__function__:end_call",
+              "parameters": {
+                "type": "object",
+                "properties": {}
+              },
+              "description": "This is used to technically terminate the call after all the customer's questions have been answered and necessary information has been provided.\n- It should only be triggered SILENTLY in the background after the customer-related workflow is complete; never mention this tool or its name to the customer."
+            }
+          }
+        ],
+        "apiKey": "[REDACTED]",
+        "baseUrl": null,
+        "provider": "experimental-5",
+        "maxTokens": 1000,
+        "clientType": null,
+        "temperature": 0.7,
+        "firstMessage": "Selam! Sana nasıl yardımcı olabilirim?",
+        "systemPrompt": "You are a helpful assistant. Your role is to help users with their tasks. Always be friendly and professional. You can use `end_call` tool after you say goodbye to customer to hang up if call about to finish.",
+        "firstMessageMode": "assistant-speaks-first",
+        "additionalSettings": {},
+        "disableInterruptionsDuringFirstMessage": true
+      },
+      "sttConfig": {
+        "model": "freya-stt",
+        "apiKey": "[REDACTED]",
+        "baseUrl": null,
+        "language": "tr",
+        "provider": "Freya",
+        "confidenceReask": {
+          "enabled": false,
+          "reaskMode": "phrase",
+          "reduction": "min",
+          "threshold": 0.3,
+          "reaskPhrases": null,
+          "disableOnDigitNodes": true,
+          "maxConsecutiveReasks": 2
+        },
+        "additionalSettings": {
+          "diarize": false,
+          "punctuate": true,
+          "streaming": true,
+          "aicEnabled": false,
+          "krispEnabled": false,
+          "smartTurnEnabled": true
+        }
+      },
+      "ttsConfig": {
+        "model": "freya-tts",
+        "apiKey": "[REDACTED]",
+        "baseUrl": null,
+        "voiceId": "leyla",
+        "language": "tr",
+        "provider": "Freya",
+        "stopSpeakingPlan": {
+          "voiceSeconds": 0.1,
+          "numberOfWords": 2,
+          "backOffSeconds": 0.4,
+          "interruptionPhrases": [
+            "dur",
+            "bekle",
+            "bir dakika",
+            "bir saniye",
+            "dursana",
+            "bekle bi",
+            "anlamadım",
+            "ne diyon",
+            "ne diyorsun",
+            "ne dedin",
+            "yeter"
+          ],
+          "acknowledgementPhrases": [
+            "hı",
+            "evet",
+            "tamam",
+            "aynen",
+            "okey",
+            "okay",
+            "anladım",
+            "hee",
+            "ee",
+            "eee",
+            "ıı",
+            "ııı",
+            "ha",
+            "hı-hı",
+            "ha-ha",
+            "tabi",
+            "tabii",
+            "peki",
+            "tamamdır",
+            "hı hı",
+            "hım",
+            "hımm",
+            "hıhı",
+            "haha",
+            "he",
+            "hahaha"
+          ]
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 0.5,
+          "backgroundNoisePhrases": [
+            "arka plan sesi",
+            "klavye sesi",
+            "klavye sesleri",
+            "öksürük",
+            "öksürük sesi",
+            "video sesi",
+            "video kaydı",
+            "çılgın ses",
+            "çılgın kahkaha",
+            "gülüş",
+            "ses ses ses",
+            "çık çık çık",
+            "sim",
+            "sim izle"
+          ]
+        },
+        "textSubstitutions": [
+          {
+            "pattern": "@",
+            "replacement": "at"
+          },
+          {
+            "pattern": "\\$",
+            "replacement": "dollars"
+          },
+          {
+            "pattern": "%",
+            "replacement": "percent"
+          },
+          {
+            "pattern": "&",
+            "replacement": "and"
+          },
+          {
+            "pattern": "\\+",
+            "replacement": "plus"
+          },
+          {
+            "pattern": "turkishairlines",
+            "replacement": "turkish airlines",
+            "caseInsensitive": true
+          }
+        ],
+        "additionalSettings": {
+          "speed": 1,
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        },
+        "speechNormalization": {
+          "urls": true,
+          "names": false,
+          "emails": true,
+          "emojis": true,
+          "phoneNumbers": false,
+          "generalNumbers": false,
+          "identityNumbers": false
+        }
+      },
+      "dtmfConfig": {
+        "prefix": "DTMF: ",
+        "enabled": false,
+        "timeout": 2,
+        "terminationDigit": "#"
+      },
+      "syncSource": null,
+      "privacyConfig": {
+        "enableRecording": true,
+        "getRecordingConsent": false,
+        "recordingConsentText": null
+      },
+      "complianceConfig": {
+        "soc2": false,
+        "pciDss": false,
+        "euAiAct": false,
+        "mifidIi": false
+      },
+      "routingLlmConfig": null,
+      "backgroundSoundUrl": null,
+      "piiRedactionConfig": {
+        "enabled": false,
+        "maskIban": true,
+        "maskEmail": true,
+        "maskPhone": true,
+        "customRules": [],
+        "maskNationalId": true,
+        "maskPaymentCard": true
+      },
+      "voicemailDetection": {
+        "enabled": false,
+        "messageMode": "none",
+        "staticMessage": null,
+        "voicemailResponseDelay": 2
+      },
+      "callTimeoutSettings": {
+        "maxRetries": 2,
+        "dynamicWait": null,
+        "checkInMessage": null,
+        "closureMessage": null,
+        "silenceTimeout": 10,
+        "maximumDuration": 600,
+        "maxDurationEndCall": {
+          "llmPrompt": null,
+          "messageMode": "llm",
+          "interruptible": false,
+          "spokenMessage": null,
+          "triggerTimeout": null
+        },
+        "silenceTimeoutPrompt": null
+      },
+      "extractionLlmConfig": null,
+      "postConversationAnalysis": {
+        "analysisModel": null,
+        "summaryPrompt": null,
+        "autoDetectProblems": false,
+        "problemDetectionPrompt": null,
+        "problemDetectionInstructions": null
+      }
+    },
+    "global_nodes": {},
+    "initial_node": "dialogue",
+    "system_prompt": "You are a polite assistant testing text conversation. Answer in English.",
+    "test_variables": {}
+  },
+  "previewImage": null,
+  "isImported": false,
+  "createdAt": "2026-10-10T13:59:25.967Z",
+  "updatedAt": "2026-10-10T14:03:23.784Z",
+  "createdBy": "fb9d9429-88c0-41e8-b45f-c02de8759797",
+  "updatedBy": "fb9d9429-88c0-41e8-b45f-c02de8759797",
+  "agentId": "116edc96-2db9-4120-830a-df0915b5c277"
+}

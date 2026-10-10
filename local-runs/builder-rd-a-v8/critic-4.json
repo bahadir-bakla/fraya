@@ -1,0 +1,66 @@
+{
+  "verdict": "revise",
+  "issues": [
+    {
+      "severity": "error",
+      "source_ids": [
+        "brief-a:45",
+        "brief-a:closing.p1"
+      ],
+      "location": "verified_account.task_message; verified_account.transitions",
+      "message": "The verified-stage instructions omit the rule for a customer who twice says they do not want to talk. The only corresponding opening-stage instruction closes as not_verified/declined, and the verified transitions do not provide a refusal disposition. A verified customer who refuses to talk twice can therefore continue into ordinary promise handling instead of closing no_promise/refused.",
+      "fix": "Track the verified customer's count of explicit requests not to talk. On the second, set no_promise/refused and transition to terminal; do not apply the pre-verification not_verified/declined outcome."
+    }
+  ],
+  "counterexamples": [
+    {
+      "source_ids": [
+        "brief-a:45",
+        "brief-a:closing.p1"
+      ],
+      "scenario": "Identity is verified. The customer says they do not want to talk, then repeats it after the agent responds.",
+      "expected_output": "Thank them and say goodbye, then call close_call exactly once with outcome no_promise and reason refused."
+    },
+    {
+      "source_ids": [
+        "brief-a:24",
+        "brief-a:25",
+        "brief-a:27",
+        "brief-a:34",
+        "brief-a:35",
+        "brief-a:37"
+      ],
+      "scenario": "The customer proposes an amount below the returned product floor; after the floor is offered, they name an out-of-range amount or change the amount during confirmation.",
+      "expected_output": "Do not record an amount below the floor or above past_due. Offer the floor once when required; validate any changed amount and read it back for a fresh clear confirmation before create_promise."
+    },
+    {
+      "source_ids": [
+        "brief-a:18",
+        "brief-a:19",
+        "brief-a:20",
+        "brief-a:22",
+        "brief-a:23",
+        "brief-a:35"
+      ],
+      "scenario": "The customer proposes “next Friday” on a Friday, or proposes a weekend/holiday date near the deadline, then changes the date during confirmation.",
+      "expected_output": "Resolve the date using call-variable now and the specified calendar rules; do not record a date after the computed deadline or a non-business day. Revalidate any corrected date before recording."
+    },
+    {
+      "source_ids": [
+        "brief-a:32",
+        "brief-a:38",
+        "brief-a:closing.p2"
+      ],
+      "scenario": "The customer mentions job loss, independently proposes a valid date and amount, confirms the read-back, and then accepts support.",
+      "expected_output": "Make no persuasion attempt; record the valid promise and say exactly “You will receive a text message confirming this promise.” Then call transfer_to_agent with queue support and close transferred/support."
+    },
+    {
+      "source_ids": [
+        "brief-a:37",
+        "brief-a:46"
+      ],
+      "scenario": "The first create_promise call fails and the second succeeds, or both fail.",
+      "expected_output": "Retry exactly once with the unchanged confirmed product, amount, and date. Say the promise is recorded only after ok:true; if both attempts fail, say it could not be recorded and close no_promise/service_error. close_call must be the final tool call."
+    }
+  ]
+}

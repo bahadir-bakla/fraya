@@ -1,0 +1,278 @@
+FRAYA — PUBLIC COMPLAINT-INSPIRED SYNTHETIC FIELD SCENARIO REVIEW
+Reviewed/accessed 2026-10-10, Europe/Istanbul. Official kit v3.
+28 cases (22 A, 6 B); 16 directly read public sources (8 Reddit, 8 Sikayetvar).
+5 subreddits; 5 financial-service names. 9 absolute publication dates, 7 exact dates unknown.
+
+RESULT AND SCOPE
+Observed local validation: PASS. Schema, request contracts, source anchors/hashes and all 28 reference ledgers passed.
+Negative controls: 14/14 rejected.
+No generated agent, real transcript, hosted simulation or MCP mutation was run.
+Reference replay checks authored fixture consistency. It is not an agent-policy pass.
+
+SOURCE VS ARCHITECTURE VS EXPECTATION
+Each source contributes only its short paraphrased original complaint motif. Allegations are unverified and not legal guidance.
+All customer identities, amounts, account ids and fixture dates are authored. No real customer data, raw post bodies or attachments were retained.
+Every scenario separates source-supported pattern from authored architectural extensions and official rule-linked expectations.
+Spoken corrections/pieces, mock faults, holiday boundaries, multi-product combinations and delayed transfer are extensions; sources do not establish them.
+Unknown publication dates remain null with the original observed label. Event dates and crawl ages are not publication dates.
+
+OFFICIAL DERIVATIONS
+Current payment vs historical closure [A39, A40]: Current past-due payment -> paid; historical payoff/closed-product claim -> dispute. Do not replace verification with a complaint's refusal of security.
+Deceased borrower vs living bereaved borrower [A9, A10, A32]: Relative reporting customer death ends deceased with no further question; living customer's family loss invokes hardship/support, never deceased.
+Hardship precedence [A32, A30, A41]: Job loss/illness/family death stops persuasion and precedes a lower-instalment request; support requires acceptance. A voluntarily offered valid promise can still be recorded.
+Consent and corrections [A34, A35, A36, A37, A38, B7]: Before write, revalidate changed values and read back again for clear consent; after successful write, do not edit or cancel in-call. Never claim a failed promise recorded.
+B notes and terminal outcome [B8, B9, B10, B11, B-close]: Per-product paid/dispute continues. Defer final note writes so a later transfer can leave no notes anywhere. Retain successful promises on partial failure; closure otherwise follows account order, with promise/transfer precedence.
+Scam concerns [A3, A4, A15, A42, A43, A44]: Answer legitimate authenticity questions without inventing a telephone number; they do not verify identity. Repeated security refusal ends declined; an insisted human request can transfer even before verification.
+Architectural combinations [R-styles, A18, B3, B6, B11]: Speech pieces, self-corrections, unrelated numbers, holiday boundaries, multi-product mixes, delayed transfer and deterministic API faults are labeled authored extensions, not attributed to a complaint.
+
+SMALL GENERIC SCHEMA
+id, title, brief, facts, speaking_style, provenance, expected, oracle, execution
+research/field-cases/runner-cases.json is a flat kit-compatible list with synthetic FIELD ids. Local mock reads fixtures from scenarios.json. Expected ledger has the exact six official scorer fields; reference tool calls have supplied OpenAPI body shapes.
+Executable local replay/mock plus actual-trace ledger/selected tool-guard check. Natural-language scenario constraints still require an independent judge. This is not a generated-agent pass or general compiler.
+
+LOCAL VS HOSTED
+FIELD ids are local. run_cases.py --cases does not register fixtures: run_once sends each id to the hosted /v1/practice/sessions service. Never pass runner-cases.json to the hosted runner.
+Only the registered PUB fixture's own facts/expected ledger apply. Style variants do not reproduce a FIELD scenario, create a new product, alter role, or inject tool faults.
+Use only original registered PUB data for proposed style exercises. No such exercise was executed.
+
+REPRODUCE LOCALLY FROM FRAYA ROOT
+python -X utf8 -B research/field-cases/build_catalog.py
+python -X utf8 -B research/field-cases/local_runner.py validate --out research/field-cases/validation.json
+python -X utf8 -B research/field-cases/write_review.py
+
+SCENARIO INDEX (all also inherit branch-applicable shared constraints)
+FIELD-01 [A] Repeated caller has the wrong person -> not_reached/wrong_number; sources R01, S01
+  Expected ledger: {"outcome": "not_reached", "reason": "wrong_number", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A1, A44, A5, A8
+  Transcript/action constraint: Accept explicit wrong-number information, close wrong_number, use no security/account/promise/callback tools and disclose no debt. Do not claim permanent removal of a number.
+FIELD-02 [A] Relative offers payment and a callback after a holiday -> not_reached/callback; sources R05, S05
+  Expected ledger: {"outcome": "not_reached", "reason": "callback", "promises": [], "notes": [], "callbacks": [{"date": "2026-10-27", "time": "10:00"}], "transfers": []}
+  Rules: A-calendar, A10, A5, A6
+  Transcript/action constraint: No security questions to the sister and no account details. Tuesday is the next bank business day after Friday because Monday is a holiday; 10:00 is included.
+FIELD-03 [A] Relative offers two unusable callback times -> not_reached/no_callback; sources R05, S05
+  Expected ledger: {"outcome": "not_reached", "reason": "no_callback", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A10, A5, A6, A7
+  Transcript/action constraint: Ask once for an alternative, record no callback after the second invalid offer, and do not discuss the account.
+FIELD-04 [A] Deceased customer: relative offers to settle -> not_reached/deceased; sources R04, S04
+  Expected ledger: {"outcome": "not_reached", "reason": "deceased", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A10, A44, A9
+  Transcript/action constraint: Say 'I am sorry for your loss.' Ask nothing further, request no documents or credentials, disclose no balance and take no promise or callback.
+FIELD-05 [A] Living customer is bereaved and cannot discuss payment -> no_promise/hardship; sources R04, R05
+  Expected ledger: {"outcome": "no_promise", "reason": "hardship", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A32, A9
+  Transcript/action constraint: One short sympathy sentence; no persuasion. Offer support and respect refusal. Do not mark the living account holder deceased.
+FIELD-06 [A] Current arrears paid earlier the same day -> paid; sources S02, R02
+  Expected ledger: {"outcome": "paid", "reason": null, "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A39, A44, A46
+  Transcript/action constraint: Say payments can take one business day to appear, take no promise and close paid. Do not assert that the actual payment has been verified or guarantee no future calls.
+FIELD-07 [A] Old notice date distracts from a current payment claim -> paid; sources R08, S02
+  Expected ledger: {"outcome": "paid", "reason": null, "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A39, A40, A44
+  Transcript/action constraint: The notice date is not a payment promise. Apply paid only to the asserted payment of this past-due amount; no new promise or invented posting date.
+FIELD-08 [A] Card was paid off and closed long ago -> no_promise/dispute; sources S07
+  Expected ledger: {"outcome": "no_promise", "reason": "dispute", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A39, A40
+  Transcript/action constraint: Historical payoff/closure is a dispute, not payment of today's arrears. Do not argue, seek a promise or say one business day will resolve it.
+FIELD-09 [A] Verified customer never held the claimed loan -> no_promise/dispute; sources R07, S01
+  Expected ledger: {"outcome": "no_promise", "reason": "dispute", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A40, A44
+  Transcript/action constraint: Do not dispute the customer's account of ownership or take a promise. Close dispute without inventing a fraud investigation or declaring liability.
+FIELD-10 [A] Scam question before name confirmation, then proceeds -> promise; sources R06, S06
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 640, "date": "2026-10-23"}], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A11, A3, A4, A43, A44
+  Transcript/action constraint: Answer the scam and AI questions before the second name ask. Refer to Freya Bank's customer service without inventing its number. Scam question itself is not confirmation; verify before account access.
+FIELD-11 [A] Suspicious customer declines security twice -> not_verified/declined; sources S06, R06
+  Expected ledger: {"outcome": "not_verified", "reason": "declined", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A1, A15, A43
+  Transcript/action constraint: Explain security once; after repeated refusal end declined, with no account/promise tools or debt disclosure. Do not treat scam concern as successful identity verification.
+FIELD-12 [A] Scam concern leads to a human request before security -> transferred/human; sources R06, S06
+  Expected ledger: {"outcome": "transferred", "reason": "human", "promises": [], "notes": [], "callbacks": [], "transfers": [{"queue": "general"}]}
+  Rules: A1, A42, A43, O-transfer_to_agent
+  Transcript/action constraint: The human-request rule applies before verification. Ask once to help, then transfer general without disclosing debt or forcing identity first.
+FIELD-13 [A] Job loss and lower instalments: hardship wins -> transferred/support; sources R03, S03
+  Expected ledger: {"outcome": "transferred", "reason": "support", "promises": [], "notes": [], "callbacks": [], "transfers": [{"queue": "support"}]}
+  Rules: A32, A33, A41
+  Transcript/action constraint: Hardship precedes the new-plan request. Give brief sympathy, no persuasion or plan description, transfer support rather than restructuring.
+FIELD-14 [A] Job loss, declines support, mentions rent figures -> no_promise/hardship; sources R03, S03
+  Expected ledger: {"outcome": "no_promise", "reason": "hardship", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A29, A32, A34
+  Transcript/action constraint: Do not convert the rent figure into an offer or make persuasion attempts. Sympathy, offered support, declined transfer, close hardship.
+FIELD-15 [A] Illness interrupts the first payment discussion -> transferred/support; sources R05
+  Expected ledger: {"outcome": "transferred", "reason": "support", "promises": [], "notes": [], "callbacks": [], "transfers": [{"queue": "support"}]}
+  Rules: A32, O-transfer_to_agent
+  Transcript/action constraint: Illness stops persuasion immediately; give short sympathy and offer support. Use support only after acceptance.
+FIELD-16 [A] Hardship but voluntarily offers a valid payment -> promise; sources R03, R05
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 275, "date": "2026-11-04"}], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A18, A19, A25, A27, A32, A34
+  Transcript/action constraint: No persuasion is allowed, but the customer's own valid amount/date can still be recorded. Accept the loan floor on its deadline after a clear confirmation.
+FIELD-17 [A] Changes amount and date during read-back -> promise; sources S08, R08
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 320, "date": "2026-10-29"}], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A19, A27, A29, A34, A35
+  Transcript/action constraint: Proposed amount/date is not a refusal. Recheck both corrected values and read them back again before one create_promise. Never persist the first proposal.
+FIELD-18 [A] Phone suffix in pieces; amount and day in words -> promise; sources R06, S08
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 320, "date": "2026-10-29"}], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A11, A34, A44, O-verify_identity, R-styles
+  Transcript/action constraint: Wait for the complete four-digit answer, preserve its leading zero, verify it once, then parse the amount/day and obtain confirmation. No guessed suffix or invented digits.
+FIELD-19 [A] Numeric DOB swap while worried about identity confusion -> promise; sources R01, S01
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 640, "date": "2026-10-23"}], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A11, A12, A13, A16, O-verify_identity
+  Transcript/action constraint: Send day-first normalized DOB first, then on day_month_swapped ask for month in words. The hinted retry consumes no wrong-answer budget; complete the phone question before get_account.
+FIELD-20 [A] Vague payday followed by acceptance of the deadline -> promise; sources S08, R08
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 640, "date": "2026-11-12"}], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A-calendar, A18, A19, A21, A34
+  Transcript/action constraint: Ask once for an exact day, then propose the early-band deadline computed from now; skip October 26 and November 11. Record only after acceptance and confirmation.
+FIELD-21 [A] Will pay eventually but never confirms a date -> no_promise/refused; sources S08
+  Expected ledger: {"outcome": "no_promise", "reason": "refused", "promises": [], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A21, A34, A45
+  Transcript/action constraint: An intention to pay is not confirmation. Ask for an exact day once and propose the deadline, but do not record any promise without a clear yes. Stop on the second refusal to talk.
+FIELD-22 [A] Correction requested after a promise is recorded -> promise; sources S08
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 320, "date": "2026-10-29"}], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A35, A36, A37, A38
+  Transcript/action constraint: Do not change, cancel or create another promise in the call. Tell the customer that recorded promises can be changed in the mobile app; preserve the recorded original.
+FIELD-23 [B] One current payment, one old closed card claim, one promise -> promise; sources R02, S07, R07
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p3", "amount": 990, "date": "2026-10-23"}], "notes": [{"product_id": "p1", "reason": "paid"}, {"product_id": "p2", "reason": "dispute"}], "callbacks": [], "transfers": []}
+  Rules: A39, A40, B-close, B2, B7, B8, B9
+  Transcript/action constraint: State every product before asking. Paid/dispute applies only to its product; continue to p3. Record its promise, note the two unpromised products, and close promise.
+FIELD-24 [B] All products' current overdue amounts already paid -> paid; sources S02, R08
+  Expected ledger: {"outcome": "paid", "reason": null, "promises": [], "notes": [{"product_id": "p1", "reason": "paid"}, {"product_id": "p2", "reason": "paid"}, {"product_id": "p3", "reason": "paid"}], "callbacks": [], "transfers": []}
+  Rules: A39, B-close, B8, B9
+  Transcript/action constraint: No promises; note every product paid, explain one-business-day posting, and close paid only because all notes are paid.
+FIELD-25 [B] No promises: note order controls the reason -> no_promise/refused; sources R02, S07
+  Expected ledger: {"outcome": "no_promise", "reason": "refused", "promises": [], "notes": [{"product_id": "p1", "reason": "paid"}, {"product_id": "p2", "reason": "refused"}, {"product_id": "p3", "reason": "dispute"}], "callbacks": [], "transfers": []}
+  Rules: A30, A31, A39, A40, B-close, B4, B5, B8
+  Transcript/action constraint: Return order p1,p2,p3 controls closure, not order of customer complaints. Start p2 at attempt 1 after aggregate today refusal; two late-band attempts, no per-product today ask. First non-paid note is p2 refused.
+FIELD-26 [B] Shared date crosses only the late product's deadline -> promise; sources S08, R08
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 320, "date": "2026-11-06"}, {"product_id": "p2", "amount": 275, "date": "2026-11-04"}], "notes": [], "callbacks": [], "transfers": []}
+  Rules: A18, A25, A27, A35, B3, B6, B7
+  Transcript/action constraint: Compute early deadline 12 November and late deadline 4 November. Explain the late-product clamp in joint read-back; preserve p1's offered date, corrected amount and one clear joint confirmation before both writes.
+FIELD-27 [B] Dispute first, restructuring before any product write -> transferred/restructuring; sources S07, S08
+  Expected ledger: {"outcome": "transferred", "reason": "restructuring", "promises": [], "notes": [], "callbacks": [], "transfers": [{"queue": "restructuring"}]}
+  Rules: A33, A34, A40, A41, B10, B9
+  Transcript/action constraint: Continue after p1 dispute, then transfer restructuring without describing a plan. Add no notes before or after transfer, including the pending p1 dispute. Do not record unconfirmed offers.
+FIELD-28 [B] One promise succeeds, another fails twice, last product paid -> promise; sources R02, S08
+  Expected ledger: {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 320, "date": "2026-10-30"}], "notes": [{"product_id": "p2", "reason": "service_error"}, {"product_id": "p3", "reason": "paid"}], "callbacks": [], "transfers": []}
+  Rules: A37, A38, A39, B-close, B11, B7, B8, B9, O-create_promise
+  Transcript/action constraint: Retry failed p2 once only, retain successful p1, note service_error and paid, and close promise. Never claim p2 recorded; give text-message confirmation only for the successful promise.
+
+PUBLIC SOURCE MANIFEST (full metadata in sources.json)
+R01 [Reddit] Harassed by ACI debt collectors for someone else’s debt.
+  URL: https://www.reddit.com/r/Debt/comments/1tighqe/harassed_by_aci_debt_collectors_for_someone_elses/
+  Published: 2026-05-20; observed label: Wednesday May 20 2026 (indexed post); direct page shows a relative age; accessed: 2026-10-10
+  Basis: absolute timestamp in public indexed original post; direct-page relative age differs and was not used
+  Pattern (paraphrase): A phone holder reports repeated collection calls and texts for somebody else despite explaining that they are not the intended person.
+R02 [Reddit] What should someone do if a debt collection agency contacts them, but they already paid the debt?
+  URL: https://www.reddit.com/r/personalfinance/comments/sv37om/what_should_someone_do_if_a_debt_collection/
+  Published: UNKNOWN exact date; observed label: 5y ago (direct page); search metadata gives a different relative age; accessed: 2026-10-10
+  Basis: exact publication date unavailable; relative ages deliberately not normalized
+  Pattern (paraphrase): A household reports collector contact after paying the original provider, with initial uncertainty about whether unknown callers were legitimate.
+R03 [Reddit] Debt collections but I lost my job
+  URL: https://www.reddit.com/r/PersonalFinanceCanada/comments/1plthjl/debt_collections_but_i_lost_my_job/
+  Published: 2025-12-13; observed label: Saturday December 13 2025 (indexed original post); accessed: 2026-10-10
+  Basis: absolute indexed post timestamp
+  Pattern (paraphrase): A person reports losing employment after beginning repayments and feeling unable to resume payments or respond to collection contact.
+R04 [Reddit] My dad passed away in July of 2025 and I kept getting his medical bills. What do I do?
+  URL: https://www.reddit.com/r/personalfinance/comments/1qt826g/my_dad_passed_away_in_july_of_2025_and_i_kept/
+  Published: 2026-02-01; observed label: Sunday February 01 2026 (indexed original post); accessed: 2026-10-10
+  Basis: absolute indexed post timestamp
+  Pattern (paraphrase): A bereaved family member reports continuing bills addressed to a deceased parent and distress about making contact.
+R05 [Reddit] Debt collectors contacting my mom, can something actually happen to her?
+  URL: https://www.reddit.com/r/Debt/comments/1r58kb4/debt_collectors_contacting_my_mom_can_something/
+  Published: 2026-02-15; observed label: Sunday February 15 2026 (indexed original post); accessed: 2026-10-10
+  Basis: absolute indexed post timestamp
+  Pattern (paraphrase): An adult reports serious injury, a family death and collection contact directed at a parent, producing worry and guilt.
+R06 [Reddit] Getting Multiple Calls from “debt collector” that doesn’t state what company they are with
+  URL: https://www.reddit.com/r/Debt/comments/1tdivsk/getting_multiple_calls_from_debt_collector_that/
+  Published: 2026-05-15; observed label: Friday May 15 2026 (indexed original post); accessed: 2026-10-10
+  Basis: absolute indexed post timestamp
+  Pattern (paraphrase): Repeated calls, contact with relatives and hard-to-identify voicemail messages cause a recipient to question whether a caller is genuine or automated.
+R07 [Reddit] Got a call about my dad’s credit card debt today
+  URL: https://www.reddit.com/r/legaladvice/comments/1t4vo5r/got_a_call_about_my_dads_credit_card_debt_today/
+  Published: 2026-05-05; observed label: Tuesday May 05 2026 (indexed original post); accessed: 2026-10-10
+  Basis: absolute indexed post timestamp
+  Pattern (paraphrase): A recipient reports a collection call about a card they do not recognize and uncertainty about a family connection to that account.
+R08 [Reddit] Help with debt letter
+  URL: https://www.reddit.com/r/DebtAdvice/comments/1fyvuw7/help_with_debt_letter/
+  Published: UNKNOWN exact date; observed label: 2y ago (direct page); accessed: 2026-10-10
+  Basis: exact publication date not established; dates inside the post are event dates, not publication metadata
+  Pattern (paraphrase): A delayed collection letter with an incorrect address arrives after a payment, leaving several event dates to distinguish.
+S01 [Sikayetvar] Adıma Olmayan Borç Bildirimleri Ve Yanlış Kişiye Yapılan Aramalar Hakkında Şikayetim Var
+  URL: https://www.sikayetvar.com/garanti-bbva/adima-olmayan-borc-bildirimleri-ve-yanlis-kisiye-yapilan-aramalar-hakkinda-sikayetim-var
+  Published: 2025-10-09; observed label: 09 Ekim 2025 09:44; accessed: 2026-10-10
+  Basis: explicit original page date
+  Pattern (paraphrase): A complainant reports late-debt messages and calls referring to a different person and says they do not use the claimed lending product.
+S02 [Sikayetvar] Borç Ödememe Rağmen Sürekli Aranmak Canımı Sıkıyor
+  URL: https://www.sikayetvar.com/yapi-kredi-bankasi/borc-odememe-ragmen-surekli-aranmak-canimi-sikiyor
+  Published: 2025-07-14; observed label: 14 Temmuz 2025 16:41; accessed: 2026-10-10
+  Basis: explicit original page date
+  Pattern (paraphrase): A complainant reports repeated calls on the day they paid overdue debt and frustration when asked for verification during follow-up contact.
+S03 [Sikayetvar] Garanti BBVA Şubesinin İşsizlik Maaşına Konulan Bloke Ve Çözüm Talebi
+  URL: https://www.sikayetvar.com/garanti-bbva/garanti-bbva-subesinin-issizlik-maasina-konulan-bloke-ve-cozum-talebi
+  Published: UNKNOWN exact date; observed label: 9 Ekim 13:28; accessed: 2026-10-10
+  Basis: publication year absent; body event year does not establish publication year
+  Pattern (paraphrase): A complainant reports unemployment, restricted access to their only income and inability to meet debt demands while covering essentials.
+S04 [Sikayetvar] Vefat Eden Babamın Borç Süreci Ve İletişim Sorunları
+  URL: https://www.sikayetvar.com/hadi-tombank/vefat-eden-babamin-borc-sureci-ve-iletisim-sorunlari
+  Published: 2025-01-13; observed label: 13 Ocak 2025 19:17; accessed: 2026-10-10
+  Basis: explicit original page date
+  Pattern (paraphrase): A bereaved relative seeking account closure and clarity reports repeated contacts, inconsistent amounts and difficulty obtaining information without the deceased person's app credentials.
+S05 [Sikayetvar] Aile Üyesine Yetkisiz Borç Araması KVKK İhlali
+  URL: https://www.sikayetvar.com/denizbank/aile-uyesine-yetkisiz-borc-aramasi-kvkk-ihlali
+  Published: UNKNOWN exact date; observed label: 7 Eylül 12:18; accessed: 2026-10-10
+  Basis: year omitted in displayed publication label; event year not substituted
+  Pattern (paraphrase): A complainant reports that a parent was contacted and told about their debt, and asks that communication be directed to the account holder.
+S06 [Sikayetvar] Garanti Bankası Sahte Telefon Araması Ve Güvenlik Endişesi
+  URL: https://www.sikayetvar.com/garanti-bbva/garanti-bankasi-sahte-telefon-aramasi-ve-guvenlik-endisesi
+  Published: UNKNOWN exact date; observed label: 12 Ağustos 13:55; accessed: 2026-10-10
+  Basis: year omitted in displayed publication label; event year not substituted
+  Pattern (paraphrase): A recipient reports a caller using a bank name and requesting keypad input; suspicion causes the recipient to end the conversation.
+S07 [Sikayetvar] Garanti Bankası Kapalı Kartlarda Yanlış Borç Aramaları Ve Çözülmeyen Mağduriyet
+  URL: https://www.sikayetvar.com/garanti-bbva/garanti-bankasi-kapali-kartlarda-yanlis-borc-aramalari-ve-cozulmeyen-magduriyet
+  Published: UNKNOWN exact date; observed label: 23 Mart 16:28; accessed: 2026-10-10
+  Basis: year not present in publication label
+  Pattern (paraphrase): A former cardholder reports debt calls after being told that the cards and their balances had been closed, with repeated small demands.
+S08 [Sikayetvar] Müşteri Onayı Olmadan Tarih Belirlenmesi Ve Tehditkar Üslup
+  URL: https://www.sikayetvar.com/enpara/musteri-onayi-olmadan-tarih-belirlenmesi-ve-tehditkar-uslup
+  Published: UNKNOWN exact date; observed label: 10 Haziran 21:12; accessed: 2026-10-10
+  Basis: original publication label omits year; a later bank response explicitly dates its own action, not the original publication
+  Pattern (paraphrase): A complainant reports that a payment-promise date was entered despite declining to give a definite day or consent to that date.
+
+LIMITATIONS
+No live Freya, hosted bank, simulation, persona or workflow mutations; no credentials were used.
+No actual agent transcript or workflow was run. Empathy, opening, read-back, confirmation, persuasion limits and honesty remain explicit expected constraints requiring transcript evidence.
+The positive reference trace is not an oracle generated from an agent and is not evidence of behavioral generalization; its purpose is checking fixture/tool/ledger consistency.
+Sources are allegations and only inspiration. Jurisdiction-specific legal advice and commenters' proposed remedies were not incorporated.
+Exact publication dates are unknown for seven sources; nulls and observed labels make the uncertainty explicit.
+Fresh local sessions and mock failure schedules are harness design choices; arbitrary hosted fixture registration remains undocumented in the inspected kit.
+The 28 cases emphasize requested complaint motifs, not exhaustive coverage of the 47 A rules, 11 B amendments, source parsing, raw memo trust or future changed tool APIs.
+Transfer/callback service-failure recovery is not specified here; no guessed terminal outcome is asserted for those faults.
+
+VALIDATION NEGATIVE CONTROLS
+REJECTED duplicate terminal close
+REJECTED account access without identity
+REJECTED missing terminal close
+REJECTED one below product floor despite ok true
+REJECTED stale pre-correction amount and date
+REJECTED holiday promise despite ok true
+REJECTED late product retains date past its own deadline
+REJECTED unknown product id
+REJECTED third attempt after two promise failures
+REJECTED note before transfer
+REJECTED second write to a recorded product
+REJECTED closure follows complaint mention order
+REJECTED callback above upper boundary
+REJECTED historical closure misclassified as current payment
+
+ASSIGNED OUTPUT PATHS
+research/field-cases/build_catalog.py
+research/field-cases/hosted-style-mapping.json
+research/field-cases/local_runner.py
+research/field-cases/official-inputs.json
+research/field-cases/README.txt
+research/field-cases/runner-cases.json
+research/field-cases/scenario.schema.json
+research/field-cases/scenarios.json
+research/field-cases/sources.json
+research/field-cases/validation.json
+research/field-cases/write_review.py
+analysis/field-scenario-review.json
+analysis/field-scenario-review.txt

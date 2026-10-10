@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fraya:field-scenarios:1",
+  "title": "Synthetic field scenario catalog",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "rule_registry",
+    "shared_constraints",
+    "scenarios"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "rule_registry": {
+      "type": "object"
+    },
+    "shared_constraints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/constraint"
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 30,
+      "items": {
+        "$ref": "#/$defs/scenario"
+      }
+    }
+  },
+  "$defs": {
+    "constraint": {
+      "type": "object",
+      "required": [
+        "description",
+        "rule_refs",
+        "basis"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "rule_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "basis": {
+          "enum": [
+            "explicit_kit",
+            "derived_from_explicit_kit",
+            "proposed_extension"
+          ]
+        }
+      }
+    },
+    "ledger": {
+      "type": "object",
+      "required": [
+        "outcome",
+        "reason",
+        "promises",
+        "notes",
+        "callbacks",
+        "transfers"
+      ],
+      "properties": {
+        "outcome": {
+          "enum": [
+            "promise",
+            "paid",
+            "no_promise",
+            "not_reached",
+            "not_verified",
+            "transferred"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "promises": {
+          "type": "array"
+        },
+        "notes": {
+          "type": "array"
+        },
+        "callbacks": {
+          "type": "array"
+        },
+        "transfers": {
+          "type": "array"
+        }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "brief",
+        "facts",
+        "speaking_style",
+        "provenance",
+        "expected",
+        "oracle",
+        "execution"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^FIELD-[0-9]{2}$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "brief": {
+          "enum": [
+            "A",
+            "B"
+          ]
+        },
+        "facts": {
+          "type": "object",
+          "required": [
+            "variables",
+            "identity",
+            "products",
+            "third_party",
+            "entry",
+            "customer_events",
+            "faults"
+          ],
+          "properties": {
+            "variables": {
+              "type": "object",
+              "required": [
+                "customer_id",
+                "first_name",
+                "last_name",
+                "title",
+                "now"
+              ]
+            },
+            "identity": {
+              "type": "object"
+            },
+            "products": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 3
+            },
+            "third_party": {
+              "type": "boolean"
+            },
+            "customer_events": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "faults": {
+              "type": "array"
+            }
+          }
+        },
+        "speaking_style": {
+          "type": "object",
+          "required": [
+            "name",
+            "facts_must_remain_fixed"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "neutral",
+                "pieces",
+                "corrects",
+                "talkative",
+                "asks_back",
+                "in_words"
+              ]
+            },
+            "facts_must_remain_fixed": {
+              "const": true
+            }
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "required": [
+            "sources",
+            "source_supported_patterns",
+            "architectural_extensions",
+            "expectations_derived_from"
+          ],
+          "properties": {
+            "sources": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "url",
+                  "published_on",
+                  "publication_label",
+                  "accessed_on"
+                ]
+              }
+            },
+            "source_supported_patterns": {
+              "type": "array"
+            },
+            "architectural_extensions": {
+              "type": "array",
+              "minItems": 1
+            }
+          }
+        },
+        "expected": {
+          "$ref": "#/$defs/ledger"
+        },
+        "oracle": {
+          "type": "object",
+          "required": [
+            "scenario_constraints",
+            "rule_refs",
+            "clear_confirmations_required"
+          ],
+          "properties": {
+            "scenario_constraints": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/constraint"
+              }
+            },
+            "rule_refs": {
+              "type": "array"
+            },
+            "clear_confirmations_required": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "execution": {
+          "type": "object",
+          "required": [
+            "mode",
+            "hosted_registered",
+            "reference_tool_calls",
+            "reference_is_agent_test",
+            "script"
+          ],
+          "properties": {
+            "mode": {
+              "const": "local_only"
+            },
+            "hosted_registered": {
+              "const": false
+            },
+            "reference_is_agent_test": {
+              "const": false
+            },
+            "reference_tool_calls": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "tool",
+                  "arguments"
+                ],
+                "properties": {
+                  "tool": {
+                    "enum": [
+                      "verify_identity",
+                      "get_account",
+                      "create_promise",
+                      "add_note",
+                      "schedule_callback",
+                      "transfer_to_agent",
+                      "close_call"
+                    ]
+                  },
+                  "arguments": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

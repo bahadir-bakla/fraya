@@ -1,0 +1,47 @@
+{
+  "patches": [
+    {
+      "op": "replace",
+      "path": "/nodes/verified_account/tools",
+      "value_json": "[{\"_tool_ref\": \"account_lookup\"}, {\"_tool_ref\": \"promise_write\"}, {\"_tool_ref\": \"handoff_support\"}]"
+    },
+    {
+      "op": "add",
+      "path": "/nodes/restructuring_handoff",
+      "value_json": "{\"name\": \"restructuring_handoff\", \"node_type\": \"conversation\", \"task_message\": \"For a request for a new payment plan or lower instalments, do not describe a plan. Call handoff_restructuring. On tool result, do not claim success unless the result is positive. Thank the customer and say goodbye before the final close_call; use transferred/restructuring. No tool follows close_call.\", \"tools\": [{\"_tool_ref\": \"handoff_restructuring\"}], \"transitions\": [{\"target_node\": \"terminal\", \"description\": \"The restructuring disposition is selected\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"terminal_outcome\", \"operator\": \"equals\", \"operand\": \"transferred\"}]}}]}"
+    },
+    {
+      "op": "add",
+      "path": "/nodes/general_handoff",
+      "value_json": "{\"name\": \"general_handoff\", \"node_type\": \"conversation\", \"task_message\": \"When a verified customer insists on speaking with a human after being asked once whether you can help, call handoff_general. Do not claim success unless the tool result is positive. Thank the customer and say goodbye before final close_call; use transferred/human. No tool follows close_call.\", \"tools\": [{\"_tool_ref\": \"handoff_general\"}], \"transitions\": [{\"target_node\": \"terminal\", \"description\": \"The human-request disposition is selected\", \"condition\": {\"logic\": \"or\", \"conditions\": [{\"variable\": \"terminal_outcome\", \"operator\": \"equals\", \"operand\": \"transferred\"}]}}]}"
+    },
+    {
+      "op": "replace",
+      "path": "/nodes/verified_account/task_message",
+      "value_json": "\"Verified stage. Call account_lookup only after both security answers have actually passed. Do not discuss debt until the actual account lookup result is positive. Use only returned product IDs and values. Follow Brief A's one-product scope; if the response does not supply one unambiguous product, do not invent or select product data. State collections team, late payment, product in words, past_due and days_late. Ask whether the full past-due amount can be paid today; never ask how much they can pay. Apply the source floor, amount, date, deadline, business-day, retry, confirmation, and sympathy rules. Hardship support and promise creation remain available here. Do not route restructuring or human requests through a duplicate transfer tool: use their dedicated stage. Preserve recorded promises; transfer after a recorded promise takes the source-specified transfer precedence. Thank the customer and say goodbye before terminal close_call. Never use add_note.\""
+    }
+  ],
+  "coverage_updates": [
+    {
+      "source_id": "brief-a:41",
+      "node_ids": [
+        "restructuring_handoff"
+      ],
+      "mechanism": "Dedicated node exposes only restructuring transfer."
+    },
+    {
+      "source_id": "brief-a:42",
+      "node_ids": [
+        "general_handoff"
+      ],
+      "mechanism": "Dedicated node exposes only general transfer after insistence."
+    }
+  ],
+  "limitations": [
+    "The supplied prior workflow lacks deterministic callback-window validation and deterministic promise deadline, date, amount, and persuasion calculations; prompts alone do not implement these checks.",
+    "The supplied workflow does not reliably enforce identity refusal counts, wrong-answer totals, or a second callback-offer limit with explicit state.",
+    "The policy leaves precedence unspecified when a promise has already been recorded and a later paid, dispute, or refusal outcome occurs; only a later transfer has stated precedence.",
+    "The supplied API and brief do not specify recovery behavior for unsuccessful callback or transfer writes; the prior workflow has no safe, source-defined terminal recovery for those failures.",
+    "The prior workflow is not a complete deployable workflow under this patch: the added handoff nodes require routing from verified_account based on actual customer intent and tool-result state, and terminal state must be set consistently before entering terminal."
+  ]
+}

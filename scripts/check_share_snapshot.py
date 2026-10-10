@@ -3,8 +3,9 @@ from pathlib import Path
 import os
 import re
 import zipfile
+import subprocess
 
-from freya_dpapi_server import inject_credentials
+from freya_dpapi_server import inject_credentials, unprotect
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -13,8 +14,18 @@ def main():
     inject_credentials()
     target = ROOT / 'fraya' if (ROOT / 'fraya').is_dir() else ROOT
     secrets = [os.environ[name].encode() for name in ('FREYA_API_KEY', 'FREYA_BANK_TEAM_KEY') if os.environ.get(name)]
+    for filename in ('zep-key.dpapi', 'llm-proxy-key.dpapi'):
+        secret_path = ROOT / '.local-secrets' / filename
+        if secret_path.is_file() and os.name == 'nt':
+            secrets.append(unprotect(secret_path).encode())
     problems, count = [], 0
-    for path in target.rglob('*'):
+    # Audit the exact shareable set; ignored local runtimes and DPAPI stores stay local.
+    listing = subprocess.run(['git', 'ls-files', '-z', '--cached', '--others', '--exclude-standard'],
+                             cwd=target, stdout=subprocess.PIPE, check=True).stdout
+    for item in listing.split(b'\0'):
+        if not item:
+            continue
+        path = target / os.fsdecode(item)
         relative = path.relative_to(target)
         if relative.parts[0] == '.git' or not path.is_file():
             continue
