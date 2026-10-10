@@ -4,6 +4,10 @@ Bu klasör gerçek yarışma akışını uygular: **bankanın belgeleri + o brie
 
 Önceki `demo/` klasörü ayrı bir yerel açıklama prototipidir. Yarışma için `competition/builder.py` ve bunun gerçek Freya export’u kullanılır.
 
+## Doğrulanmış public demo
+
+Son uygun hazırlık koşuları: Brief A `20261010-173717-1b9196`, Freya sürüm 7, **10/10**; Brief B `20261010-173746-6ed19b`, Freya sürüm 6, **3/3**. İkisi de 30 dakikalık UTC sınırı içinde tamamlandı. Bunlar ayrı public pratik koşularıdır; tek bir karma 13 müşterilik koşu veya gizli final başarısı değildir. Önceki başarısız ve süre aşmış koşular provenance olarak korunur.
+
 ## Başlatma
 
 Python 3.11+ ve giriş yapılmış Codex CLI gerekir. Ek Python paketi gerekmez. Builder mevcut Codex girişini kullanır; başka bir model anahtarı istemez. Freya anahtarı ortamdan alınır veya terminalde gizli girişle sorulur; kaynak, prompt, log ya da frontend içine yazılmaz. Sunucu kapatıldığında bellekten çıkar.

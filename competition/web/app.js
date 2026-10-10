@@ -1,7 +1,7 @@
 const $=id=>document.getElementById(id);
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const phaseNames={starting:'Başlatılıyor',model_build:'Belgeler okunuyor, ajan oluşturuluyor',model_repair:'Test hataları onarılıyor',validating:'Workflow doğrulanıyor',publishing:'Freya’da yayınlanıyor',exporting:'Platform export’u alınıyor',published:'Workflow yayınlandı',official_simulation:'Resmi müşteri simülasyonu sürüyor',completed:'Çalıştırma tamamlandı',needs_attention:'İyileştirme gerekiyor',failed:'Çalıştırma hatası'};
-let current,initialized=false,csrf,signature='',workflow,selectedRun='';
+let current,initialized=false,csrf,signature='',workflow,selectedRun=new URLSearchParams(location.search).get('run')||'';
 const setLink=(id,filename)=>{const element=$(id);element.classList.toggle('disabled',!filename);if(filename){element.href='/artifact/'+filename+'?run='+encodeURIComponent(current?.status?.id||'');element.download=filename.split('/').at(-1);}else element.removeAttribute('href');};
 function render(data) {
   current=data;csrf=data.csrf;const status=data.status;
@@ -21,7 +21,7 @@ function render(data) {
   if(report){$('score').textContent=`Son ölçüm: ${report.passed}/${report.total} geçti · ${report.runs||1} tekrar${report.freya_version?' · Sürüm '+report.freya_version:''}`;$('results').replaceChildren(...report.rows.map(row=>{const button=document.createElement('button');button.className='case '+(row.pass?'pass':'fail');button.innerHTML=`<strong>${row.pass?'✓':'✕'} ${esc(row.id)}</strong><span>${esc(row.family)}</span>`;button.addEventListener('click',()=>{const call=data.failures?.find(f=>f.case===row.id);$('case-detail').textContent=JSON.stringify({result:row,...(call?{transcript:call.messages}: {})},null,2);});return button;}));}
 }
 async function refresh(){try{const response=await fetch('/api/status'+(selectedRun?'?run='+encodeURIComponent(selectedRun):''));if(!response.ok)throw new Error('Sunucu verisi güncelleniyor…');render(await response.json());}catch(error){$('connection').textContent=error.message;}}
-$('run-picker').addEventListener('change',event=>{selectedRun=event.target.value;signature='';$('score').textContent='Henüz sonuç yok';$('results').replaceChildren();refresh();});
+$('run-picker').addEventListener('change',event=>{selectedRun=event.target.value;signature='';$('score').textContent='Henüz sonuç yok';$('results').replaceChildren();$('case-detail').textContent='Bir müşteri sonucu seçin.';refresh();});
 $('brief').addEventListener('input',()=>{$('official-tests').checked=false;});
 $('schema').addEventListener('input',()=>{$('official-tests').checked=false;});
 $('preset-a').addEventListener('click',()=>{$('brief').value=current.presets.A;$('official-tests').checked=true;$('test-scope').textContent='10 resmi Brief A müşterisiyle test et';$('preset-a').classList.add('selected');$('preset-ab').classList.remove('selected');});

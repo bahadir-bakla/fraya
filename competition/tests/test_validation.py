@@ -1,7 +1,7 @@
 import copy,json,pathlib,sys,unittest
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from validation import validate
+from validation import validate,validate_coverage
 API=json.loads((ROOT.parent/'build-the-builder 2/tools/openapi.json').read_text())
 BASE=json.loads((ROOT.parent/'build-the-builder 2/examples/base-agent.json').read_text())
 def without_null(value):
@@ -20,6 +20,9 @@ def specimen():
         name=tool['function']['name'];schema=copy.deepcopy(API['paths']['/'+name]['post']['requestBody']['content']['application/json']['schema']);tool['function']['parameters']['properties']['body']=schema
     return workflow
 class StructuralValidationTests(unittest.TestCase):
+    def test_disclosed_loss_of_mandatory_guards_blocks_publication(self):
+        self.assertTrue(validate_coverage({'rules':[{'rule':'Payment guard','status':'implemented with explicitly degraded enforcement'}]}))
+        self.assertFalse(validate_coverage({'rules':[{'rule':'Payment guard','status':'implemented'}],'limitations':['Natural-language extraction is model-dependent.']}))
     def test_current_api_matching_schema_passes(self):self.assertEqual(validate(specimen(),API),[])
     def test_empty_speech_on_an_action_node_is_rejected(self):
         workflow=specimen();workflow['nodes']['identity']['on_enter']={'type':'tts','text':''}
