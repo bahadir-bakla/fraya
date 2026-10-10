@@ -1,5 +1,5 @@
 """Autonomous evidence -> Freya -> official tests -> repair -> export. Standard library only."""
-import argparse, codecs, datetime, getpass, hashlib, json, os, pathlib, re, selectors, shutil, signal, subprocess, sys, time, tomllib, uuid
+import argparse, codecs, datetime, getpass, hashlib, json, os, pathlib, queue, re, shutil, signal, subprocess, sys, threading, time, tomllib, uuid
 from validation import validate
 from transcripts import compact_messages
 
@@ -124,27 +124,60 @@ class Run:
         end=time.monotonic()+min(timeout,self.remaining())
         wall_end=time.time()+min(timeout,self.remaining())
         self.event('command_start',command=command,purpose=purpose,timeout_s=round(end-time.monotonic()))
-        proc=subprocess.Popen(command,cwd=self.work,env=env,stdin=subprocess.PIPE if stdin is not None else subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True,bufsize=1)
-        if stdin is not None:proc.stdin.write(stdin);proc.stdin.close()
-        selector=selectors.DefaultSelector();selector.register(proc.stdout,selectors.EVENT_READ)
-        os.set_blocking(proc.stdout.fileno(),False)
+        proc=subprocess.Popen(command,cwd=self.work,env=env,stdin=subprocess.PIPE if stdin is not None else subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,start_new_session=True)
+        chunks=queue.Queue()
+        def read_output():
+            try:
+                while True:
+                    chunk=proc.stdout.read1(65536)
+                    if not chunk:break
+                    chunks.put(chunk)
+            finally:chunks.put(None)
+        reader=threading.Thread(target=read_output,daemon=True);reader.start()
+        def write_input():
+            try:proc.stdin.write(stdin.encode('utf-8'));proc.stdin.flush()
+            except (BrokenPipeError,OSError,ValueError):pass
+            finally:
+                try:proc.stdin.close()
+                except (OSError,ValueError):pass
+        if stdin is not None:threading.Thread(target=write_input,daemon=True).start()
+        def stop_process():
+            if proc.poll() is not None:return
+            if os.name=='nt':
+                # Kill the owned CLI process tree: terminating a .cmd/node parent
+                # alone leaves its children holding the output pipe and workdir.
+                try:subprocess.run(['taskkill','/PID',str(proc.pid),'/T','/F'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=1,creationflags=subprocess.CREATE_NO_WINDOW)
+                except (OSError,subprocess.TimeoutExpired):proc.kill()
+            else:
+                try:os.killpg(proc.pid,signal.SIGTERM)
+                except ProcessLookupError:pass
+            try:proc.wait(timeout=.5)
+            except subprocess.TimeoutExpired:
+                if os.name=='nt':proc.kill()
+                else:
+                    try:os.killpg(proc.pid,signal.SIGKILL)
+                    except ProcessLookupError:pass
+                proc.wait(timeout=1)
         lines=[];timed_out=False;pending='';decoder=codecs.getincrementaldecoder('utf-8')()
-        with (self.path/log_name).open('a') as log:
-            while selector.get_map():
-                if time.monotonic()>=end or time.time()>=wall_end or self.remaining()<=0:
-                    timed_out=True;os.killpg(proc.pid,signal.SIGTERM)
-                    try:proc.wait(5)
-                    except subprocess.TimeoutExpired:os.killpg(proc.pid,signal.SIGKILL)
-                    break
-                for key,_ in selector.select(timeout=1):
-                    chunk=os.read(key.fileobj.fileno(),65536)
-                    pending+=decoder.decode(chunk,final=not chunk)
-                    if not chunk:selector.unregister(key.fileobj)
-                    while '\n' in pending or (not chunk and pending):
+        try:
+            with (self.path/log_name).open('a',encoding='utf-8') as log:
+                eof=False
+                while not eof or proc.poll() is None:
+                    left=min(end-time.monotonic(),wall_end-time.time(),self.remaining())
+                    if left<=0:
+                        timed_out=True;stop_process();break
+                    try:chunk=chunks.get(timeout=min(.1,left))
+                    except queue.Empty:continue
+                    if chunk is None:eof=True
+                    else:pending+=decoder.decode(chunk)
+                    while '\n' in pending or (eof and pending):
                         line,separator,tail=pending.partition('\n');pending=tail if separator else ''
                         safe=self.clean({'output':line.rstrip()})['output'];lines.append(safe);log.write(safe+'\n');log.flush()
-            proc.wait(timeout=10)
-        selector.close();proc.stdout.close()
+                if pending:
+                    safe=self.clean({'output':pending})['output'];lines.append(safe);log.write(safe+'\n');log.flush()
+                if proc.poll() is None:proc.wait(timeout=max(.01,min(1,end-time.monotonic(),wall_end-time.time())))
+        finally:
+            stop_process();reader.join(timeout=1);proc.stdout.close()
         self.event('command_end',purpose=purpose,returncode=proc.returncode,timed_out=timed_out,log=log_name)
         if timed_out:raise TimeoutError(f'{purpose} exceeded the run time budget')
         if proc.returncode:raise RuntimeError(f'{purpose} failed (exit {proc.returncode}): '+'\n'.join(lines[-8:])[:3000])
