@@ -32,6 +32,7 @@ PARSE = re.compile(r"unterminated string|json.?decode|json.{0,30}pars|"
                    r"expecting (?:value|property name|',' delimiter)|invalid json", re.I)
 DIAGNOSTICS = {
     "extraction_error": "Inspect the model extraction response envelope and JSON escaping at the cited event; replay only the format boundary offline. Then rerun the unchanged hosted case. Below-floor kernel behavior is untested by this error.",
+    "inner_event_json_error": "Inspect the JSON string value of the successfully recorded variable_extracted event named event at the cited boundary. Replay its JSON parsing offline without changing the original score or judge; downstream behavior and model attribution are not established by this observation.",
     "policy_receipt_ledger_failure": "Compare the cited recorded ledger/receipt and failed scorer checks with the unchanged case contract and ordered tool events; determine the first mismatch without changing the score.",
     "judged_actor_divergence": "Compare the judge's actor-divergence claim with the cited user turns and original actor script. Preserve the failed judge outcome; diagnose actor adherence separately.",
     "infrastructure_incomplete": "Recover or finish the bounded run/evidence collection and verify call bindings before attributing behavior. Unexecuted or missing repetitions are not agent failures.",
@@ -224,6 +225,10 @@ def classify(reader, path, evidence, job):
     malformed_events = False
     terminal_seen = False
     for i, message in enumerate(messages):
+        if reader.expired():
+            reader.issues.append({"path": str(path), "status": "time_budget_exhausted",
+                                  "json_pointer": f"/call/messages/{i}"})
+            return "infrastructure_incomplete", "bounded_call_events", [], refs
         if not isinstance(message, dict) or message.get("role") != "system":
             continue
         raw = message.get("message")
@@ -240,6 +245,39 @@ def classify(reader, path, evidence, job):
         name = event.get("event", "")
         if name == "call_ended":
             terminal_seen = True
+        # Text event values beginning with { or [ (after whitespace) declare a
+        # JSON-like boundary. Native values and other text/compact grammars do
+        # not declare one. Inspect only this recorded variable, never copies in
+        # raw_response/variable_table or inferred model/extractor occurrences.
+        value = event.get("value")
+        if (call.get("modality") == "text" and name == "variable_extracted"
+                and event.get("name") == "event" and isinstance(value, str)
+                and value.lstrip().startswith(("{", "["))):
+            try:
+                json.loads(value)
+            except json.JSONDecodeError as error:
+                types.append("inner_event_json_error")
+                if "extraction_error" not in types:
+                    mechanism = "extracted_event_string_json_parse_error"
+                # Never copy inner payloads, including malformed JSON with
+                # escaped sensitive field names, into diagnostics/excerpts.
+                pointer = f"/call/messages/{i}/message"
+                if isinstance(raw, dict):
+                    pointer += "/value"
+                ref = reader.ref(path, pointer, {
+                    "event": name, "name": "event", "inner_json": "malformed",
+                    "parse_error": error.msg, "line": error.lineno,
+                    "column": error.colno, "offset": error.pos,
+                    "payload": "[WITHHELD extracted event payload]"})
+                if isinstance(raw, str):
+                    # RFC 6901 cannot traverse a JSON-encoded string. Cite the
+                    # actual string, with a separate locator after decoding it.
+                    ref["decoded_json_pointer"] = "/value"
+                refs.append(ref)
+            except (RecursionError, ValueError):
+                reader.issues.append({"path": str(path), "status": "inner_json_parse_limit",
+                                      "json_pointer": f"/call/messages/{i}/message"})
+                return "infrastructure_incomplete", "bounded_inner_event_json", [], refs
         if name == "extraction_error" or (name in ("variable_extraction_error", "extraction_failed") and event.get("error")):
             types.append("extraction_error")
             mechanism = "model_format_outer_json_parse_error" if PARSE.search(str(event.get("error", ""))) else "explicit_extraction_error"
@@ -260,7 +298,9 @@ def classify(reader, path, evidence, job):
                 refs.append(reader.ref(path, f"/call/messages/{i}/message", x.get("message", "")))
     # A syntactically valid but cut-short snapshot cannot establish a behavioral
     # ledger mismatch. Explicit extraction events remain direct observations.
-    if "extraction_error" not in types and (malformed_events or not terminal_seen or not isinstance(ledger.get("calls"), list)):
+    if "extraction_error" not in types and (malformed_events or not terminal_seen
+            or not isinstance(ledger.get("calls"), list)
+            or ("inner_event_json_error" in types and judge.get("outcome") not in ("pass", "fail"))):
         return "infrastructure_incomplete", "incomplete_call_or_ledger", [], refs
     failed = result.get("pass") is False or judge.get("outcome") == "fail"
     if result.get("ledger_and_trace_pass") is False:
@@ -282,6 +322,8 @@ def classify(reader, path, evidence, job):
         refs.append(reader.ref(path, "/ledger", {k: ledger.get(k) for k in ("outcome", "reason", "promises", "notes", "callbacks", "transfers")}))
     if "extraction_error" in types:
         primary = "extraction_error"
+    elif "inner_event_json_error" in types:
+        primary = "inner_event_json_error"
     elif "judged_actor_divergence" in types:
         primary = "judged_actor_divergence"
     elif "policy_receipt_ledger_failure" in types:
@@ -325,7 +367,7 @@ def collect(root=REPO / "local-runs/customer-benchmark", limits=None):
                       "original_ledger_and_trace_pass": result.get("ledger_and_trace_pass"),
                       "original_transcript_pass": result.get("transcript_pass"),
                       "agent_failure_attribution": "unknown" if kind in ("unknown", "infrastructure_incomplete", "judged_actor_divergence") else "observed_failure_mechanism_only",
-                      "below_floor_kernel_outcome": "unobserved" if kind == "extraction_error" else "not_adjudicated",
+                      "below_floor_kernel_outcome": "unobserved" if kind in ("extraction_error", "inner_event_json_error") else "not_adjudicated",
                       "secondary_failure_types": secondary or [], "evidence": refs}
         if occurrence not in group["occurrences"]:
             group["occurrences"].append(occurrence)
@@ -456,13 +498,13 @@ def collect(root=REPO / "local-runs/customer-benchmark", limits=None):
         group["repetition_status"] = "repeated_observed" if len(calls) > 1 else "single_observed" if calls else "unobserved_or_incomplete"
     notable = []
     for group in items:
-        if group["failure_type"] == "extraction_error":
+        if group["failure_type"] in ("extraction_error", "inner_event_json_error"):
             per_run = {}
             for occurrence in group["occurrences"]:
                 per_run.setdefault(occurrence["run_id"], set()).add(occurrence["call_id"])
             notable.append({"failure_type": group["failure_type"], "variant_id": group["variant_id"],
                             "mechanism": group["mechanism"], "distinct_calls_by_run": {k: len(v) for k, v in per_run.items()},
-                            "diagnostic_limit": "Observed model-format failure; below-floor kernel outcome remains unobserved."})
+                            "diagnostic_limit": "Observed inner event JSON boundary failure; model attribution and downstream kernel outcome remain unobserved." if group["failure_type"] == "inner_event_json_error" else "Observed model-format failure; below-floor kernel outcome remains unobserved."})
     return safe({"schema_version": 1, "generated_at": datetime.now(timezone.utc).isoformat(),
                  "input_root": str(reader.root), "limits": asdict(limits), "bytes_read": reader.bytes,
                  "collection_complete": not reader.issues, "collection_issues": reader.issues,
@@ -482,7 +524,7 @@ def render_text(report):
              "Observed modes: " + json.dumps(report["observed_call_modes"], sort_keys=True),
              "Repetitions are observations, never extrapolations. Original scores/judges are retained.",
              "Run original_summary counts fully satisfied variants; observed_scores counts actual call repetitions.",
-             "", "TOP MODEL-FORMAT FINDINGS"]
+             "", "TOP FORMAT FINDINGS"]
     lines += [json.dumps(finding, sort_keys=True) for finding in report["notable_findings"]]
     lines += ["", "RUN COVERAGE"]
     for run in report["runs"]:
@@ -498,6 +540,8 @@ def render_text(report):
             lines.append("  Source: " + json.dumps({k: v for k, v in occurrence.items() if k != "evidence"}, sort_keys=True))
             for ref in occurrence["evidence"]:
                 lines.append(f"    {ref['path']}#{ref['json_pointer']} sha256={ref['sha256']} excerpt={ref['excerpt']}")
+                if "decoded_json_pointer" in ref:
+                    lines.append("      After decoding the cited JSON string: " + ref["decoded_json_pointer"])
     lines += ["", "SOURCE SNAPSHOT HASHES (exact bytes; null means unobserved)"]
     lines += [f"{s['path']} sha256={s['sha256']} bytes={s['bytes']} status={s['status']}" for s in report["sources"]]
     lines += ["", "COLLECTION ISSUES", json.dumps(report["collection_issues"], sort_keys=True)]

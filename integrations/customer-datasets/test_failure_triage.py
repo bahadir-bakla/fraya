@@ -71,6 +71,158 @@ class FailureTriageTests(unittest.TestCase):
         self.assertTrue(any(s["status"] == "invalid_or_truncated_json" and s["sha256"] for s in report["sources"]))
         self.assertTrue(all(g["observed_failure_calls"] == 0 for g in report["backlog"]))
 
+    def test_outer_success_with_malformed_inner_event_retains_exact_provenance(self):
+        value = '  {"type":"note","text":"unterminated}'
+        event = {"event": "variable_extracted", "name": "event", "value": value,
+                 "raw_response": json.dumps({"extracted": {"event": value}})}
+        directory, evidence = self.fixture(events=[event, {"event": "call_ended"}],
+                                           score=True, judge="pass", ledger_pass=True, required=1)
+        path = directory / "evidence/0001.json"
+        before = path.read_bytes()
+        report = triage.collect(self.root)
+        group = self.groups(report, "inner_event_json_error")[0]
+        self.assertFalse(self.groups(report, "extraction_error"))
+        self.assertEqual(group["mechanism"], "extracted_event_string_json_parse_error")
+        self.assertEqual(group["observed_failure_calls"], 1)
+        occurrence = group["occurrences"][0]
+        self.assertTrue(occurrence["original_score_pass"])
+        self.assertTrue(occurrence["original_ledger_and_trace_pass"])
+        self.assertEqual(occurrence["original_judge_outcome"], "pass")
+        self.assertEqual(occurrence["below_floor_kernel_outcome"], "unobserved")
+        ref = next(r for r in occurrence["evidence"] if r.get("decoded_json_pointer"))
+        self.assertEqual(ref["json_pointer"], "/call/messages/0/message")
+        self.assertEqual(ref["decoded_json_pointer"], "/value")
+        self.assertEqual(ref["sha256"], hashlib.sha256(before).hexdigest())
+        self.assertEqual(json.loads(evidence["call"]["messages"][0]["message"])["value"], value)
+        # Every source pointer resolves against the actual stored artifact.
+        for ref in occurrence["evidence"]:
+            resolved = json.loads(Path(ref["path"]).read_bytes())
+            for part in ref["json_pointer"].strip("/").split("/"):
+                part = part.replace("~1", "/").replace("~0", "~")
+                resolved = resolved[int(part)] if isinstance(resolved, list) else resolved[part]
+        self.assertEqual(path.read_bytes(), before)
+
+    def test_native_outer_envelope_cites_actual_value_pointer(self):
+        directory, evidence = self.fixture(score=True, judge="pass", ledger_pass=True, required=1)
+        evidence["call"]["messages"].insert(0, {"role": "system", "message": {
+            "event": "variable_extracted", "name": "event", "value": '{"type":'}})
+        self.write(directory / "evidence/0001.json", evidence)
+        group = self.groups(triage.collect(self.root), "inner_event_json_error")[0]
+        ref = group["occurrences"][0]["evidence"][0]
+        self.assertEqual(ref["json_pointer"], "/call/messages/0/message/value")
+        self.assertNotIn("decoded_json_pointer", ref)
+
+    def test_valid_inner_native_values_and_text_formats_have_no_false_positives(self):
+        values = [' {"type":"note"} ', '[{"type":"note"}]', {"type": "note"},
+                  [{"type": "note"}], "free text with {braces}", "NOTE|text=hello",
+                  'event=note; text="unfinished', "", None, 7, True]
+        for index, value in enumerate(values):
+            with self.subTest(value=value):
+                self.fixture(run=f"passing-{index}", call_id=f"passing-call-{index}",
+                             events=[{"event": "variable_extracted", "name": "event", "value": value},
+                                     {"event": "call_ended"}],
+                             score=True, judge="pass", ledger_pass=True, required=1)
+        self.assertEqual(triage.collect(self.root)["backlog"], [])
+
+    def test_inner_json_detection_requires_recorded_system_event_named_event(self):
+        malformed = '{"type":'
+        events = [{"event": "variable_extracted", "name": "other", "value": malformed},
+                  {"event": "other", "name": "event", "value": malformed},
+                  {"event": "variable_extracted", "name": "event",
+                   "raw_response": json.dumps({"extracted": {"event": malformed}}),
+                   "variable_table": {"event": {"value": malformed}}},
+                  {"event": "call_ended"}]
+        directory, evidence = self.fixture(events=events, score=True, judge="pass",
+                                           ledger_pass=True, required=1)
+        for role in ("user", "assistant"):
+            evidence["call"]["messages"].insert(0, {"role": role, "message": json.dumps({
+                "event": "variable_extracted", "name": "event", "value": malformed})})
+        self.write(directory / "evidence/0001.json", evidence)
+        self.assertEqual(triage.collect(self.root)["backlog"], [])
+
+    def test_sensitive_malformed_inner_payload_never_leaks(self):
+        secrets = ["embedded-private-value", "escaped-private-value", "late-private-value",
+                   "fak_abcdef123456", "Bearer private-auth-value"]
+        values = ['{"nested":{"headers":{"X-API-Key":"' + secrets[0] + '"}},',
+                  '{"\\u0074oken":"' + secrets[1] + '",',
+                  '{"text":"' + "benign " * 100 + '","secret":"' + secrets[2] + '",',
+                  '{"text":"' + secrets[3] + '",', '{"text":"' + secrets[4] + '",']
+        self.fixture(events=[{"event": "variable_extracted", "name": "event", "value": v}
+                             for v in values] + [{"event": "call_ended"}], required=1)
+        report = triage.collect(self.root)
+        group = self.groups(report, "inner_event_json_error")[0]
+        refs = [r for r in group["occurrences"][0]["evidence"] if r.get("decoded_json_pointer")]
+        self.assertEqual(len(refs), len(values))
+        self.assertEqual(group["observed_failure_calls"], 1)
+        output = json.dumps(report) + triage.render_text(report)
+        for secret in secrets:
+            self.assertNotIn(secret, output)
+        self.assertTrue(all("WITHHELD extracted event payload" in r["excerpt"] for r in refs))
+
+    def test_inner_event_in_incomplete_or_bounded_evidence_is_not_agent_failure(self):
+        for condition in ("cut_short", "missing", "binding", "messages", "bytes", "depth",
+                          "integer_limit", "judge", "ledger", "malformed_outer"):
+            with self.subTest(condition=condition):
+                value = "[" * 1500 + "]" * 1500 if condition == "depth" else '{"type":'
+                if condition == "integer_limit":
+                    value = '{"n":' + "1" * 5000 + "}"
+                events = [{"event": "variable_extracted", "name": "event", "value": value}]
+                if condition != "cut_short":
+                    events.append({"event": "call_ended"})
+                directory, evidence = self.fixture(events=events, required=1)
+                path = directory / "evidence/0001.json"
+                if condition == "missing":
+                    path.unlink()
+                elif condition == "binding":
+                    evidence["binding"]["call_id"] = "other-call"
+                    self.write(path, evidence)
+                elif condition in ("judge", "ledger", "malformed_outer"):
+                    if condition == "judge":
+                        evidence["judge"].pop("outcome")
+                    elif condition == "ledger":
+                        evidence["ledger"].pop("calls")
+                    else:
+                        evidence["call"]["messages"].insert(0, {"role": "system", "message": '{"event":'})
+                    self.write(path, evidence)
+                limits = triage.Limits(max_messages=1) if condition == "messages" else (
+                    triage.Limits(max_file_bytes=50) if condition == "bytes" else None)
+                report = triage.collect(self.root, limits)
+                self.assertEqual({g["failure_type"] for g in report["backlog"]},
+                                 {"infrastructure_incomplete"})
+                self.assertTrue(all(g["observed_failure_calls"] == 0 for g in report["backlog"]))
+                self.assertTrue(all(o["agent_failure_attribution"] == "unknown"
+                                    for g in report["backlog"] for o in g["occurrences"]))
+
+    def test_inner_detection_is_text_only(self):
+        directory, evidence = self.fixture(events=[
+            {"event": "variable_extracted", "name": "event", "value": '{"type":'},
+            {"event": "call_ended"}], score=True, judge="pass", ledger_pass=True, required=1)
+        for modality in ("voice", "audio", None):
+            with self.subTest(modality=modality):
+                evidence["call"]["modality"] = modality
+                self.write(directory / "evidence/0001.json", evidence)
+                self.assertEqual(triage.collect(self.root)["backlog"], [])
+
+    def test_outer_and_inner_errors_remain_distinct_without_inflated_call_counts(self):
+        events = [{"event": "variable_extracted", "name": "event", "value": '{"type":'},
+                  {"event": "extraction_error", "error": "Unterminated string"},
+                  {"event": "call_ended"}]
+        self.fixture(events=events, required=1)
+        report = triage.collect(self.root)
+        group = self.groups(report, "extraction_error")[0]
+        self.assertEqual(group["mechanism"], "model_format_outer_json_parse_error")
+        self.assertIn("inner_event_json_error", group["occurrences"][0]["secondary_failure_types"])
+        self.assertEqual(group["observed_failure_calls"], 1)
+
+    def test_same_inner_error_call_in_two_runs_is_one_observation(self):
+        events = [{"event": "variable_extracted", "name": "event", "value": '{"type":'},
+                  {"event": "call_ended"}]
+        self.fixture(run="inner-a", events=events, required=1)
+        self.fixture(run="inner-b", events=events, required=1)
+        group = self.groups(triage.collect(self.root), "inner_event_json_error")[0]
+        self.assertEqual(len(group["occurrences"]), 2)
+        self.assertEqual(group["observed_failure_calls"], 1)
+
     def test_valid_json_with_cut_short_events_is_infrastructure(self):
         self.fixture(events=[{"event": "node_enter", "node": "initialize"}])
         report = triage.collect(self.root)
