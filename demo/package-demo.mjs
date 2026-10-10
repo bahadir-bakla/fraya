@@ -1,0 +1,12 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const root=path.dirname(fileURLToPath(import.meta.url));
+const read=name=>readFile(path.join(root,name),'utf8');
+const [html,css,presets,compiler,engine,app,api]=await Promise.all(['index.html','style.css','presets.js','compiler.js','engine.js','app.js','assets/bank-api.json'].map(read));
+const modules=[presets,compiler,engine].map(code=>code.replace(/^export /gm,''));
+const appSource=app.replace(/^import .*;\n/gm,'').replace(/fetch\('\.\/assets\/bank-api\.json'\)[\s\S]*?(?=\n\$\('build'\)\.addEventListener)/,`api = ${api};\n$('build').disabled=false;`);
+const script=[...modules,appSource].join('\n').replace(/<\/script/gi,'<\\/script');
+const output=html.replace('<link rel="stylesheet" href="style.css">',`<style>${css}</style>`).replace('<script type="module" src="app.js"></script>',`<script type="module">${script}</script>`);
+await writeFile(path.join(root,'demo.html'),output);
+console.log(`Standalone demo: ${path.join(root,'demo.html')}`);

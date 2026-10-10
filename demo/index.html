@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Freya Build the Builder için brief, workflow ve sentetik müşteri simülasyonu demosu.">
+  <title>Freya · Builder Lab</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><a class="brand" href="./"><strong>freya</strong><span>/ builder lab</span></a><span class="environment"><i></i>Yerel demo · Sentetik veri</span></header>
+  <main>
+    <section class="intro"><h1>Brief’ten çalışan ajana.</h1><p>Kuralları çıkar. Ajanı üret. Senaryolarla sınırlarını test et.</p></section>
+    <div class="builder-grid">
+      <section class="panel brief-panel"><h2><span>01</span> Banka brief’i</h2>
+        <div class="presets" aria-label="Brief örnekleri"><button id="default-preset" class="selected" aria-pressed="true">Tahsilat</button><button id="strict-preset" aria-pressed="false">Daha sıkı kurallar</button></div>
+        <label class="description" for="brief">Banka adını, limitleri ve son tarihi değiştirerek deneyin.</label>
+        <textarea id="brief" spellcheck="false"></textarea>
+        <button id="build" class="primary">Ajanı oluştur <span>→</span></button>
+        <p id="build-status" class="status" role="status" aria-live="polite"></p>
+      </section>
+      <section class="panel workflow-panel"><div class="section-head"><h2><span>02</span> Üretilen workflow</h2><button id="download" class="utility" disabled>↓ JSON indir</button></div>
+        <p class="description" id="workflow-description">Brief’inizden Freya formatında 5 düğümlü bir workflow oluşturun.</p>
+        <div id="workflow" class="workflow empty" aria-label="Workflow adımları">
+          <div class="gate"><span class="lock">⌑</span> İki doğrulama olmadan geçiş yok</div>
+          <div class="nodes">
+            <button class="node" data-node="greeting"><span class="number">1</span><strong>Karşılama</strong><small>Dijital asistan ve kayıt bilgisi</small></button>
+            <span class="arrow">→</span><button class="node" data-node="identity"><span class="number">2</span><strong>Kimlik<br>doğrulama</strong><small>Doğum tarihi ve telefonun son 4 hanesi</small></button>
+            <span class="arrow secure">→</span><button class="node" data-node="account"><span class="number">3</span><strong>Hesap bilgisi</strong><small>API’den ürün, tutar ve gecikme</small></button>
+            <span class="arrow">→</span><button class="node" data-node="collection"><span class="number">4</span><strong>Ödeme onayı</strong><small>Teklif, açık onay ve başarılı kayıt</small></button>
+            <span class="arrow">→</span><button class="node" data-node="closing"><span class="number">5</span><strong>Kapanış</strong><small>Doğru sonuç ve tek kapanış</small></button>
+          </div>
+        </div>
+        <div id="policy" class="policy"><p>Hazır olduğunuzda <strong>Ajanı oluştur</strong> düğmesine basın.</p></div>
+        <details id="node-detail"><summary>Workflow JSON’unu incele</summary><pre id="json-preview">Henüz bir workflow oluşturulmadı.</pre></details>
+      </section>
+    </div>
+    <section class="panel simulation-panel"><div class="section-head simulation-head"><div><h2><span>03</span> Müşteri simülasyonu</h2><p class="description">Aynı kurallar, farklı müşteriler. Görüşme ve banka kaydı yan yana.</p></div><button id="run-all" class="utility" disabled>Tüm senaryoları test et ↗</button></div>
+      <div id="scenarios" class="scenario-tabs" aria-label="Müşteri senaryoları"></div>
+      <div class="case-heading"><p id="scenario-detail">Ajanı oluşturup bir müşteri senaryosu seçin.</p><span id="result" class="result" role="status"></span></div>
+      <div class="simulation-grid">
+        <div class="conversation"><div class="subheading"><h3>Görüşme</h3><button id="reset" class="text-button" disabled>Yeni görüşme ↻</button></div><div id="messages" class="messages" aria-live="polite"><div class="placeholder">Brief’i workflow’a dönüştürün.<br><span>Ardından ajanı hazır senaryolarla veya kendiniz deneyin.</span></div></div>
+          <div id="suggestions" class="suggestions"></div><form id="chat-form"><label class="sr-only" for="chat-input">Müşteri mesajı</label><input id="chat-input" placeholder="Müşteri olarak cevap verin…" autocomplete="off" disabled><button type="submit" id="send" aria-label="Mesaj gönder" disabled>↑</button></form>
+        </div>
+        <div class="trace"><div class="subheading"><h3>Araç çağrısı izi</h3><button id="trace-download" class="text-button" disabled>İzi indir ↓</button></div><div id="tool-trace" class="tool-trace"><div class="placeholder">Banka araçları burada görünecek.<br><span>Görüşmedeki sözler ile kaydedilen sonucu karşılaştırın.</span></div></div><div id="ledger" class="ledger">Banka kaydı henüz oluşmadı.</div></div>
+      </div>
+      <div id="checks" class="checks"></div><div id="suite" class="suite" hidden></div>
+    </section>
+    <footer><p>Kural tabanlı prototip · LLM veya gerçek arama kullanmaz. Yerel kontroller, Freya platformundaki değerlendirme değildir.</p><a href="https://www.freyavoice.ai/hackathon" target="_blank" rel="noopener">Hackathon ↗</a></footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
