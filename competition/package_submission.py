@@ -37,7 +37,7 @@ def main():
                 pending.append(ROOT/'runs'/parent)
     for name in ('README.md','VERSION','freya.py','public-test-set.json','env.example'):
         files.append((KIT/name,'build-the-builder 2/'+name))
-    for directory in ('docs','briefs','tools','examples'):
+    for directory in ('docs','briefs','tools','examples','.claude/skills'):
         files.extend((file,'build-the-builder 2/'+str(file.relative_to(KIT))) for file in (KIT/directory).rglob('*') if file.is_file() and '__pycache__' not in file.parts)
     manifest={'runs':entries,'ancestry':ancestry,'files':[]}
     payload=[]

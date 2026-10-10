@@ -1,6 +1,6 @@
 """Autonomous evidence -> Freya -> official tests -> repair -> export. Standard library only."""
 import argparse, codecs, datetime, getpass, hashlib, json, os, pathlib, queue, re, shutil, signal, subprocess, sys, threading, time, tomllib, uuid
-from validation import validate
+from validation import validate,validate_coverage
 from transcripts import compact_messages
 
 ROOT=pathlib.Path(__file__).resolve().parent
@@ -211,6 +211,7 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
         import freya
         self.phase('validating')
         errors=validate(workflow,self.api)
+        errors+=validate_coverage(json.loads((self.work/'coverage.json').read_text()))
         if errors:raise ValueError(json.dumps({'local_validation':errors},ensure_ascii=False))
         freya.validate_workflow(self.args.slot,workflow)
         self.event('validation',local='passed',freya_dry_run='passed')
@@ -272,6 +273,7 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                 last_result=json.loads((self.path/self.status['tests'][-1]['report']).read_text())
                 self.feedback.append({'official_test_report':last_result,'read_file':'failed-calls.json','instruction':'Read actual failed-call events, diagnose the remaining root cause and preserve all bank rules. Earlier model-step interruptions are not the current failure when a newer test report exists.'})
             if (self.work/'workflow.json').exists():self.feedback.append({'local_validation':validate(json.loads((self.work/'workflow.json').read_text()),self.api)})
+            if (self.work/'coverage.json').exists():self.feedback.append({'coverage_validation':validate_coverage(json.loads((self.work/'coverage.json').read_text())),'instruction':'Remove any fallback that weakens mandatory policy guards. A sandbox outage must fail closed; never substitute an unconstrained dialogue/tool model for unavailable financial enforcement. Do not tune business rules to infrastructure-failed scores.'})
         try:
             if getattr(self.args,'practice_repair',None) and not self.args.skip_tests and not self.args.repair_first:
                 ids=self.publish(json.loads((self.work/'workflow.json').read_text()))

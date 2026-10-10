@@ -2,6 +2,19 @@
 import ast
 from urllib.parse import urlparse
 
+def validate_coverage(coverage):
+    errors=[]
+    def walk(value,path='coverage'):
+        if isinstance(value,dict):
+            status=str(value.get('status','')).lower().replace('_',' ')
+            if any(marker in status for marker in ('degraded enforcement','weakened enforcement','not implemented','not enforced','prompt only')):
+                errors.append(f'{path}: required policy enforcement is incomplete: {value.get("rule",value.get("id",status))}')
+            for key,item in value.items():walk(item,path+'.'+key)
+        elif isinstance(value,list):
+            for index,item in enumerate(value):walk(item,f'{path}[{index}]')
+    walk(coverage)
+    return errors
+
 def validate(workflow, api):
     errors = []
     def fail(message): errors.append(message)
