@@ -1,0 +1,249 @@
+Independent authored speech-text stress catalog
+Date: 2026-10-10. Scope: authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score
+
+Created only:
+  research/customer-benchmark/speech-stress-cases.json
+  analysis/speech-stress-cases.txt
+
+Ten original actor scripts: five bound to PUB-01 / Brief A and five to PUB-11 / Brief B.
+The adapter suite specifically requires ten saved rows, within its eight-to-twelve pack limit.
+The bank variables, identity, products, product order, brief and empty faults are copied
+unchanged from competition-v3/build-the-builder/public-test-set.json. Actor scripts,
+titles, stress tags, checks and explicit expected ledgers are independently authored.
+The original public scripts and public expected ledgers are not used as the authored oracle.
+Product IDs p1/p2/p3 are the existing adapter synthetic receipt bindings in account order;
+they are not claimed to be live backend identifiers.
+
+Immutable facts and calendar:
+  PUB-01: Daniel Reyes; now 2026-10-14T11:00; DOB 1988-03-14; phone suffix 4471.
+  p1 credit card ending 4821: overdue 420.00, six days late, floor 126.00.
+  PUB-11: Sofia Almeida; same now; DOB 1987-06-03; phone suffix 2288.
+  p1 credit card ending 2288: overdue 220.00, nine days late, floor 66.00.
+  p2 personal loan: overdue 640.00, nine days late, floor 213.00.
+  p3 car loan: overdue 75.00, three days late, floor 25.00.
+  All dates derive from the fixed call variable now, not the real clock.
+  PUB-01 computed final business-day deadlines: p1=2026-11-02.
+  PUB-11 computed final business-day deadlines: p1=2026-10-23, p2=2026-10-23, p3=2026-11-02.
+  The 2026-10-26 holiday is excluded when computing these windows.
+
+Authored behavior and exact oracle (each empty collection below is intentional):
+
+1. PUB-01__speech_partial_amount_date_repair
+   Vague date and partial amount become one explicit corrected promise
+   Text stress: ambiguity, partial_correction, fragmented_amount, vague_date, readback_date_repair
+   Customer script: You are Daniel Reyes. Answer the recipient question with 'Speaking, Daniel Reyes', unless this scenario gives a different opening. Give 14 March 1988 and phone suffix 4471 only when each security question is asked, unless the scenario explicitly fragments them. After hearing the card balance and the request for full payment today, say 'Four hundred twenty is too much; I can pay one hundred ...'. Stop there for that turn. On the next clarification, say 'One hundred twenty-six, not one hundred; next week'. When asked for the exact day, answer 'Tuesday, the twentieth of October 2026'. If the caller proposes a deadline instead, restate Tuesday the twentieth. At the first read-back of those terms, say 'No, wait, Thursday ...' and stop for that turn; this is not confirmation. On the next clarification give the complete correction: 'Thursday the twenty-second of October 2026, still one hundred twenty-six for the credit card ending four eight two one'. Only after a new complete read-back of that product, amount and corrected date say 'Yes, I confirm'. Do not request any correction after recording. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [], "outcome": "promise", "promises": [{"amount": 126.0, "date": "2026-10-22", "product_id": "p1"}], "reason": null, "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A18, A19, A24, A25, A27, A28, A29, A34, A35, A36, A37, A38, A-calendar, O-create_promise, A21, A26
+
+2. PUB-01__speech_yes_but_amount_date
+   Qualified yes changes both amount and date before recording
+   Text stress: negation, yes_but, amount_correction, date_correction
+   Customer script: You are Daniel Reyes. Answer the recipient question with 'Speaking, Daniel Reyes', unless this scenario gives a different opening. Give 14 March 1988 and phone suffix 4471 only when each security question is asked, unless the scenario explicitly fragments them. Initially agree to pay the full card amount of four hundred twenty today. At the first read-back, even when it correctly repeats that initial offer, answer 'Yes, but not four hundred twenty today. Only two hundred on this Friday, the sixteenth of October 2026'. That qualified answer withdraws the initial terms and is not permission to record them. If asked to confirm without a revised complete read-back, repeat the correction. After the credit card ending 4821, two hundred and 16 October 2026 are read back together, say 'Yes, I confirm those corrected terms'. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [], "outcome": "promise", "promises": [{"amount": 200.0, "date": "2026-10-16", "product_id": "p1"}], "reason": null, "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A18, A19, A24, A25, A27, A28, A29, A34, A35, A36, A37, A38, A-calendar, O-create_promise, A22
+
+3. PUB-01__speech_gardas_english_floor
+   Informal gardas interjection with an explicit English floor decision
+   Text stress: informal_gardas, code_switch_approximation, english_response, floor_offer
+   Customer script: You are Daniel Reyes. Answer the recipient question with 'Speaking, Daniel Reyes', unless this scenario gives a different opening. Give 14 March 1988 and phone suffix 4471 only when each security question is asked, unless the scenario explicitly fragments them. Speak English apart from the short interjection 'gardaş'; it is a friendly form of address, not a new identity or agreement. After the full-payment request say 'Gardaş, four hundred twenty is too much. I can pay one hundred twenty-six today'. Say 'Please keep speaking English' if the caller changes language. Do not request a discount, new plan or lower instalment. At a complete read-back of credit card ending 4821, one hundred twenty-six and today, 14 October 2026, answer in English: 'Yes, I confirm'. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [], "outcome": "promise", "promises": [{"amount": 126.0, "date": "2026-10-14", "product_id": "p1"}], "reason": null, "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A18, A19, A24, A25, A27, A28, A29, A34, A35, A36, A37, A38, A-calendar, O-create_promise, A26, A33
+
+4. PUB-01__speech_phone_digits_card_distractor
+   Phone fragments stay distinct from unrelated card digits
+   Text stress: phone_digit_ambiguity, fragmented_phone, numeric_dob, card_phone_separation
+   Customer script: You are Daniel Reyes and answer the recipient question with 'Speaking, Daniel Reyes'. When asked for date of birth say 'fourteen, zero three, nineteen eighty-eight, day then month then year'. If asked to clarify the month, say '14 March 1988'. When asked for the last four phone digits say only 'four four ...' and stop for that turn. On the next request for the remaining digits say 'seven one; together four four seven one'. If the caller guesses another suffix, reject it and repeat 'four four seven one'. Do not change the answer. After the account has been obtained, say 'four eight two one is the card ending, not my phone answer'. Agree to the full four hundred twenty today, 14 October 2026. Confirm only after those complete card payment terms are read back. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [], "outcome": "promise", "promises": [{"amount": 420.0, "date": "2026-10-14", "product_id": "p1"}], "reason": null, "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A18, A19, A24, A25, A27, A28, A29, A34, A35, A36, A37, A38, A-calendar, O-create_promise
+
+5. PUB-01__speech_sibling_callback_time_repair
+   Sibling corrects a partial callback time without account authority
+   Text stress: third_party, time_digit_ambiguity, self_correction, callback_boundary
+   Customer script: You are Daniel Reyes's sibling, not Daniel. At the recipient question say 'No, I am his sibling; Daniel is out'. You do not know or supply any security answers and cannot discuss or authorize payment. When asked when Daniel can be reached say 'Today at six ... no, seven p.m., nineteen hundred, on 14 October 2026'. If asked to clarify repeat 'Today at 19:00, seven p.m.'; the final time is 19:00, not 18:00. Accept a read-back of that callback time and say nothing about the account. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [{"date": "2026-10-14", "time": "19:00"}], "notes": [], "outcome": "not_reached", "promises": [], "reason": "callback", "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A5, A6, A10, O-schedule_callback
+
+6. PUB-11__speech_heterogeneous_product_decisions
+   Card floor promise, personal-loan refusal and car-loan payment claim
+   Text stress: heterogeneous_products, per_product_refusal, already_paid, floor_promise
+   Customer script: You are Sofia Almeida. Answer the recipient question with 'Yes, Sofia Almeida'. Give 3 June 1987 and phone suffix 2288 only when each security question is asked. Wait until all three products have been stated before discussing payment. At the common request to pay everything today say 'No, I cannot pay all of them today; let us take them separately'. For the credit card ending 2288 say 'Two hundred twenty is too much; I can pay sixty-six this Friday, 16 October 2026'. For the personal loan say 'I will not pay that personal loan' and reject each permitted persuasion offer, including the full six hundred forty on 16 October and the floor two hundred thirteen on its 23 October deadline. Offer no alternative for that loan. For the car loan say 'I already paid this past-due seventy-five yesterday'; this is a payment of the current arrears, not a historical product-closure claim. Keep these three decisions separate. At the grouped read-back confirm only the card promise of sixty-six on 16 October; the other two products have no promise. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [{"product_id": "p2", "reason": "refused"}, {"product_id": "p3", "reason": "paid"}], "outcome": "promise", "promises": [{"amount": 66.0, "date": "2026-10-16", "product_id": "p1"}], "reason": null, "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A18, A19, A24, A25, A27, A28, A29, A34, A35, A36, A37, A38, A-calendar, O-create_promise, A26, A30, A31, A39, B-inherits, B2, B4, B5, B7, B8, B9, B-close, O-add_note
+
+7. PUB-11__speech_grouped_yes_but_partial_repair
+   Grouped yes-but changes one amount and another product date
+   Text stress: grouped_readback, yes_but, partial_amount_correction, per_product_date_repair
+   Customer script: You are Sofia Almeida. Answer the recipient question with 'Yes, Sofia Almeida'. Give 3 June 1987 and phone suffix 2288 only when each security question is asked. Wait until all three products have been stated before discussing payment. At the common today question say 'Not today; I can pay all three full amounts this Friday, 16 October 2026'. At the first grouped read-back say 'Yes, but the personal loan is only two hundred ...' and stop for that turn. This is not consent to any of the initial promises. On the next clarification say 'Two hundred thirteen for the personal loan on 16 October; the car loan is next Friday, 23 October 2026, still seventy-five; the card stays two hundred twenty on 16 October'. If the caller repeats a superseded term, reject it and give those final terms again. Say 'Yes, I confirm all three corrected promises' only after a new grouped read-back has the card 220 on 16 October, personal loan 213 on 16 October and car loan 75 on 23 October. Do not ask to revise any recorded promise. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [], "outcome": "promise", "promises": [{"amount": 220.0, "date": "2026-10-16", "product_id": "p1"}, {"amount": 213.0, "date": "2026-10-16", "product_id": "p2"}, {"amount": 75.0, "date": "2026-10-23", "product_id": "p3"}], "reason": null, "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A18, A19, A24, A25, A27, A28, A29, A34, A35, A36, A37, A38, A-calendar, O-create_promise, A22, B-inherits, B2, B3, B4, B7, B-close
+
+8. PUB-11__speech_vague_shared_date_split_deadlines
+   One exact date after clarification is split by per-product deadlines
+   Text stress: vague_date, per_product_deadlines, shared_date_split, informal_gardas, english_response
+   Customer script: You are Sofia Almeida. Answer the recipient question with 'Yes, Sofia Almeida'. Give 3 June 1987 and phone suffix 2288 only when each security question is asked. Wait until all three products have been stated before discussing payment. At the common today question say 'Not today, gardaş; the full amounts at the end of the month'. Use English for every other word and expect the caller to continue in English. When asked for the exact day say 'Friday, 30 October 2026, for all three'. If the caller says the card and personal-loan latest date is 23 October, explicitly answer 'I accept 23 October for the card and personal loan; keep 30 October for the car loan'. Do not refuse those earlier deadlines. If any other day is suggested, restate this final split. At the complete grouped read-back of card 220 on 23 October, personal loan 640 on 23 October and car loan 75 on 30 October say 'Yes, I confirm all three'. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [], "outcome": "promise", "promises": [{"amount": 220.0, "date": "2026-10-23", "product_id": "p1"}, {"amount": 640.0, "date": "2026-10-23", "product_id": "p2"}, {"amount": 75.0, "date": "2026-10-30", "product_id": "p3"}], "reason": null, "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A18, A19, A24, A25, A27, A28, A29, A34, A35, A36, A37, A38, A-calendar, O-create_promise, A21, A23, B-inherits, B2, B3, B4, B6, B7, B-close
+
+9. PUB-11__speech_not_paid_dispute_account_order
+   Current payment, negated payment claim and refusal close by account order
+   Text stress: negation, paid_vs_dispute, heterogeneous_products, account_order_close
+   Customer script: You are Sofia Almeida. Answer the recipient question with 'Yes, Sofia Almeida'. Give 3 June 1987 and phone suffix 2288 only when each security question is asked. Wait until all three products have been stated before discussing payment. At the common today request say 'No; each product has a different answer'. For the credit card say 'I already paid the current two hundred twenty past-due amount yesterday'. For the personal loan say 'I have not paid this overdue amount. I never had that personal loan; the debt is not mine'. This is a dispute, not an already-paid claim or a request for a new plan. For the car loan say 'No, I refuse to pay the car loan' and reject its full seventy-five on 16 October persuasion offer without proposing an amount or date. Do not mention hardship or ask for a transfer. Never confirm a payment promise for any product. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [{"product_id": "p1", "reason": "paid"}, {"product_id": "p2", "reason": "dispute"}, {"product_id": "p3", "reason": "refused"}], "outcome": "no_promise", "promises": [], "reason": "dispute", "transfers": []}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A18, A30, A31, A39, A40, B-inherits, B2, B4, B5, B8, B9, B-close, O-add_note
+
+10. PUB-11__speech_negative_confirmation_human_transfer
+   Negative grouped confirmation insists on a human before any writes
+   Text stress: negation, withheld_consent, grouped_readback, human_transfer
+   Customer script: You are Sofia Almeida. Answer the recipient question with 'Yes, Sofia Almeida'. Give 3 June 1987 and phone suffix 2288 only when each security question is asked. Wait until all three products have been stated before discussing payment. At the common today question say 'Not today; all three full amounts this Friday, 16 October 2026'. At the first grouped read-back answer 'No, do not record any of those promises. I want to speak to a human'. Do not give a yes to those terms. When the caller asks once whether they can help first say 'No, I insist on a human, please'. Keep insisting on that same request if the caller returns to payment confirmation; do not supply any new payment decision, hardship or restructuring request. Accept a transfer to a general human agent. If a read-back contains an incorrect or superseded product, amount or date, say no and restate your final decision; do not invent another decision. After the caller says goodbye, say 'Thank you, goodbye' and stop.
+   Expected ledger: {"callbacks": [], "notes": [], "outcome": "transferred", "promises": [], "reason": "human", "transfers": [{"queue": "general"}]}
+   Direct rule references: A1, A2, A11, A16, A46, A47, A-vars, A-close, O-verify_identity, O-get_account, O-close_call, R-score, A34, A42, B-inherits, B2, B4, B7, B10, B-close, O-transfer_to_agent
+
+Oracle design:
+  Every script states the final product-specific amount, date, refusal/payment claim,
+  callback or transfer request and the response required at confirmation. Partial
+  fragments, negation and yes-but never authorize the earlier terms. Corrections
+  happen before recording and require a complete new read-back and clear yes.
+  The callback recipient is explicitly a sibling without security answers or authority.
+  gardas / gardaş is only an authored interjection. Conversation and confirmations
+  stay in English; there is no expectation of real dialect or speech recognition.
+  B heterogeneous decisions remain per product: promise/refused/paid and
+  paid/dispute/refused. B-close uses the first non-paid note in account order.
+  The human-transfer row explicitly withholds all promise consent and insists after
+  the one permitted help-first question. B10 prohibits notes anywhere on that call.
+
+Source contracts used directly:
+  competition-v3/build-the-builder/tools/score.py::score_ledger
+    Exact outcome/reason; sorted promise (product_id, amount rounded to two decimals,
+    date), note (product_id, reason), callback (date,time) and transfer queue equality.
+    close_call must be the last call; get_account/create_promise must not be attempted
+    before verification; unreached rows must not use identity/account tools.
+    This is a ledger oracle only. Consent and read-back need separate transcript evidence.
+  competition-v3/build-the-builder/tools/openapi.json
+    Request bodies supply the documented customer_id and tool fields only.
+    Promise dates and amounts are typed; note reasons and transfer queues are enums.
+    Expected reason:null is represented by omission on promise/paid close requests.
+    No optional note text is asserted by the ledger oracle.
+  competition-v3/build-the-builder/briefs/brief-a.md
+    Identity/privacy, amount floors, date windows, numeric DOB interpretation,
+    callbacks, read-back repair, consent, transfers and final close outcomes.
+  competition-v3/build-the-builder/briefs/brief-b.md
+    Account order, per-product windows/attempts, grouped consent, split dates,
+    mixed product notes, transfers without notes and closing precedence.
+
+All referenced registry anchors (existing research/field-cases/scenarios.json):
+  A-calendar -> competition-v3/build-the-builder/briefs/brief-a.md :: line 53 :: business days and bank holiday calendar
+  A-close -> competition-v3/build-the-builder/briefs/brief-a.md :: line 108 :: closing table, transfer precedence and no add_note in A
+  A-vars -> competition-v3/build-the-builder/briefs/brief-a.md :: line 15 :: call variable table, especially now and customer_id
+  A1 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 24 :: numbered rule 1
+  A10 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 36 :: numbered rule 10
+  A11 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 40 :: numbered rule 11
+  A16 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 48 :: numbered rule 16
+  A18 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 55 :: numbered rule 18
+  A19 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 62 :: numbered rule 19
+  A2 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 25 :: numbered rule 2
+  A21 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 64 :: numbered rule 21
+  A22 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 65 :: numbered rule 22
+  A23 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 66 :: numbered rule 23
+  A24 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 70 :: numbered rule 24
+  A25 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 71 :: numbered rule 25
+  A26 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 72 :: numbered rule 26
+  A27 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 73 :: numbered rule 27
+  A28 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 77 :: numbered rule 28
+  A29 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 78 :: numbered rule 29
+  A30 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 79 :: numbered rule 30
+  A31 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 82 :: numbered rule 31
+  A33 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 84 :: numbered rule 33
+  A34 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 88 :: numbered rule 34
+  A35 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 89 :: numbered rule 35
+  A36 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 90 :: numbered rule 36
+  A37 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 91 :: numbered rule 37
+  A38 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 92 :: numbered rule 38
+  A39 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 96 :: numbered rule 39
+  A40 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 97 :: numbered rule 40
+  A42 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 99 :: numbered rule 42
+  A46 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 106 :: numbered rule 46
+  A47 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 121 :: numbered rule 47
+  A5 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 31 :: numbered rule 5
+  A6 -> competition-v3/build-the-builder/briefs/brief-a.md :: line 32 :: numbered rule 6
+  B-close -> competition-v3/build-the-builder/briefs/brief-b.md :: line 23 :: first non-paid note in account order; promise/transfer precedence
+  B-inherits -> competition-v3/build-the-builder/briefs/brief-b.md :: line 5 :: B overrides A only where expressly replaced
+  B10 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 18 :: numbered rule 10
+  B2 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 10 :: numbered rule 2
+  B3 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 11 :: numbered rule 3
+  B4 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 12 :: numbered rule 4
+  B5 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 13 :: numbered rule 5
+  B6 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 14 :: numbered rule 6
+  B7 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 15 :: numbered rule 7
+  B8 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 16 :: numbered rule 8
+  B9 -> competition-v3/build-the-builder/briefs/brief-b.md :: line 17 :: numbered rule 9
+  O-add_note -> competition-v3/build-the-builder/tools/openapi.json :: /paths/~1add_note/post :: 
+  O-close_call -> competition-v3/build-the-builder/tools/openapi.json :: /paths/~1close_call/post :: 
+  O-create_promise -> competition-v3/build-the-builder/tools/openapi.json :: /paths/~1create_promise/post :: 
+  O-get_account -> competition-v3/build-the-builder/tools/openapi.json :: /paths/~1get_account/post :: 
+  O-schedule_callback -> competition-v3/build-the-builder/tools/openapi.json :: /paths/~1schedule_callback/post :: 
+  O-transfer_to_agent -> competition-v3/build-the-builder/tools/openapi.json :: /paths/~1transfer_to_agent/post :: 
+  O-verify_identity -> competition-v3/build-the-builder/tools/openapi.json :: /paths/~1verify_identity/post :: 
+  R-score -> competition-v3/build-the-builder/README.md :: How you are scored; Rules: synthetic data only :: How you are scored; Rules: synthetic data only
+
+Actual offline verification:
+  Python 3.11; python -B - (PowerShell stdin script; no helper file or bytecode output).
+  Imported test_speech_stress_adapter, loaded every test with
+  unittest.defaultTestLoader.loadTestsFromModule, and ran TextTestRunner(verbosity=2).
+  Final actual suite: Ran 26 tests in 0.191s; OK; failures=0, errors=0, skipped=0.
+  All four saved-catalog-dependent tests now pass:
+    test_saved_catalog_has_ten_authored_source_bound_rows
+    test_pack_pins_original_kit_independently_and_validates_catalog
+    test_authored_catalog_promise_and_mixed_note_receipt_controls
+    test_main_is_keyless_plan_with_defaults_and_no_socket_or_client
+  The first invocation ran 26 tests with 24 passing and two wrapper-induced errors:
+  a plain dict replacing os.environ could not have its get method patched by tests.
+  Replacing that in-memory guard with an empty dict subclass fixed compatibility.
+  No test, adapter, runner, harness or source-kit file was changed to obtain the pass.
+  Throughout imports and execution, real os.environ was replaced by an empty object
+  and os.getenv returned supplied defaults, without reading the real environment.
+  socket.socket and urllib.request.urlopen raised on any attempted network access.
+  The suite additionally blocks OfficialClient and credential lookups in plan/execute tests.
+  validate_hosted: PASS; verify_pack: PASS; original source hashes all match pins.
+  Every row also replayed through the existing synthetic_receipts helper:
+  10/10 original score_ledger controls pass; 10/10 receipt/trace controls pass.
+  These controls are explicitly expected-derived synthetic programs, not independent
+  agent behavior, spoken consent, audio/ASR execution or a transcript verdict.
+  For all ten controls, transcript_pass=false and aggregate agent pass=false.
+
+Actual keyless plan via speech_stress_adapter.main([]):
+  {"batches_required": 6, "execution_status": "not_executed", "execution_supported": false, "max_personas_per_batch": 5, "mode": "plan", "network_calls": 0, "repetitions": 3, "sessions_required": 30, "voice_asr_certified": false}
+  Those 30 sessions and six batches are planning counts. Zero sessions were executed.
+  Live execution is disabled by this adapter; --execute rejection is tested.
+
+Source manifest (UTF-8/LF normalized SHA-256):
+  tools/score.py = daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7
+  tools/openapi.json = 9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8
+  tools/run_cases.py = c96da9f9189d82850e46bfc551603ff5a62847025b5c50a77b923ad999f3767c
+  public-test-set.json = fb7f4c0082eecb724a6faab771b4339bc62655627e49251e6bb2a0cf59a72fcb
+  briefs/brief-a.md = d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7
+  briefs/brief-b.md = c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550
+  catalog canonical JSON SHA-256 = b6d6adb17ded0879917715499dd6bfcff61d2ac7a3460c21deb8742045928e8c
+  adapter SHA-256 = ac3b0a19fc57fe54e90b7fd84ffee505eefaf6c0934b7ecc830e5705ff916b28
+
+Minimal reproducible suite/validation/plan invocation from the fraya directory:
+  @'
+import io, json, os, socket, sys, unittest, urllib.request
+from pathlib import Path
+from unittest.mock import patch
+sys.path.insert(0, str(Path.cwd() / 'integrations/customer-datasets'))
+class EmptyEnvironment(dict): pass
+def offline(*a, **k): raise AssertionError('network access forbidden')
+with patch.object(os, 'environ', EmptyEnvironment()), patch.object(os, 'getenv', lambda key, default=None: default), patch.object(socket, 'socket', side_effect=offline), patch.object(urllib.request, 'urlopen', side_effect=offline):
+    import test_speech_stress_adapter as tests
+    result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(tests))
+    assert result.wasSuccessful()
+    import speech_stress_adapter as s
+    s.validate_hosted(s.catalog())
+    print(json.dumps(s.verify_pack(), indent=2))
+    assert s.main([]) == 0
+'@ | python -B -
+
+Limitations: text-only authored approximation; execution_status=not_executed.
+No live service, network, secret/config inspection, git operation, workflow mutation,
+official public-score claim, audio/ASR certification or live-success claim is made.
+Parent-owned builder/harness/live-v4 work is outside these two files.

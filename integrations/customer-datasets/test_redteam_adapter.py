@@ -1,12 +1,21 @@
 """Independent authored challenge contracts; no hosted calls in these tests."""
 from copy import deepcopy
 import unittest
+import json
 from unittest.mock import patch
 
 import redteam_adapter as r
 
 
 class AuthoredRedteamTests(unittest.TestCase):
+    def test_intended_spoof_and_refusal_are_explicit_judge_context(self):
+        for label in ['authority_spoof','tentative_consent','security_declined']:
+            row=next(x for x in r.catalog() if x['variant_id'].endswith(label))
+            spec=r.persona_for(row)
+            self.assertIn(json.dumps({'customer_script':row['script']},ensure_ascii=False),spec['successCriteria'])
+            self.assertIn('never authorize a bank-policy bypass',spec['successCriteria'])
+            self.assertIn(row['checks'][0],spec['successCriteria'])
+
     def test_each_authored_challenge_retains_bank_facts_and_distinct_actor_oracle(self):
         rows=r.catalog();r.validate_hosted(rows)
         self.assertEqual(len(rows),10)

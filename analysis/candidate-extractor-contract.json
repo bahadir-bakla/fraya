@@ -1,0 +1,4282 @@
+{
+  "audit": "NEW candidate extractor-to-policy contract",
+  "run": "20261010-184923-51801a",
+  "parent_run": "20261010-182840-2582df",
+  "published_identity": {
+    "workflow_id": "41424bc5-f5d0-4a29-9213-044e6d97664a",
+    "agent_id": "d5dd0517-28ec-4c7e-b700-bfbab900a1c8",
+    "version": 1
+  },
+  "local_status_snapshot": {
+    "id": "20261010-184923-51801a",
+    "started": "2026-10-10T15:49:23.402506+00:00",
+    "phase": "completed",
+    "slot": "codex-stress-b",
+    "model": "gpt-6.1-sol",
+    "round": 1,
+    "artifacts": {
+      "workflow": "codex-stress-b.workflow.json",
+      "policy": "work/policy.json",
+      "coverage": "work/coverage.json",
+      "trace": "trace.jsonl"
+    },
+    "tests": [],
+    "maximum_minutes": 3,
+    "test_brief": "B",
+    "updated": "2026-10-10T15:51:10.892394+00:00",
+    "elapsed_s": 107,
+    "freya": {
+      "workflow_id": "41424bc5-f5d0-4a29-9213-044e6d97664a",
+      "agent_id": "d5dd0517-28ec-4c7e-b700-bfbab900a1c8",
+      "version": 1
+    },
+    "ended": "2026-10-10T15:51:10.892394+00:00",
+    "evaluation": "not_evaluated",
+    "latest_score": {},
+    "within_30_minutes": true
+  },
+  "evidence_hashes": {
+    "competition\\runs\\20261010-184923-51801a\\work\\workflow.json": "b7c3da400e68d838ce90ea0ca7c2725dc1c438636e02f68079b694a1d3f21fc1",
+    "competition\\runs\\20261010-184923-51801a\\codex-stress-b.workflow.json": "b44627fa40a80a6b9809b153dbe43a315b5c8fc13e2c9177e4b88ad164017af4",
+    "competition\\runs\\20261010-182840-2582df\\work\\engine.py": "979341cf4eb1325cdb6a8cc6fe8c8fc9cd21069a87ca36ee6ec41ad4bbd1f12c",
+    "competition\\runs\\20261010-182840-2582df\\work\\checks.py": "fd4062db0b01269fda91c8d2f11929c50303c12902bb32007dd1fd07e775d972",
+    "competition\\runs\\20261010-184923-51801a\\work\\contract_checks.py": "780d2fde56011bcc07a826af777cd285266e139679a8daea17ec2a5fe500e778",
+    "integrations\\customer-datasets\\workflow_replay.py": "3cbe335330d67308c83841c0a1e3128c7887f09c35199fd75278288dee7e0f14"
+  },
+  "advertised_contract": {
+    "name": "event",
+    "type": "string",
+    "description": "Extract ONLY the latest customer speech as a JSON object encoded in a string. Always include ALL keys: kind,raw,answer,amount,date,time,scope,products,ai,scam,complete. raw is verbatim latest speech. kind is one of yes,confirm,no,refuse,other,third_party,wrong_number,deceased,human,restructuring,stop,about_call,paid,dispute,hardship,too_much,proposal,partial,correction,vague,ai_question,scam_question,unknown_question. answer is security DOB YYYY-MM-DD (numeric dates day-month-year; spoken years and month words normalize), or four phone digits, else empty. amount is numeric or empty string; date is exact asserted payment/callback date ISO using CALL now, or preserve today/tomorrow/this weekday/next weekday literally; never turn vague or incomplete dates into exact dates. time HH:MM or empty. scope is current/all/total/each; an aggregate amount is total, never each. products is array of product types or exact returned product IDs mentioned, empty if none. ai and scam are independent booleans, preserve primary kind even if administrative question co-occurs. complete is true only when speech is finished. Never extract incidental dates from small talk or negated dates (cannot pay today); only positive proposed payment dates. Corrections supersede previous fragments. A trailing wait/let me correct or unfinished 'I want to pay on' is partial/correction, never yes/refusal. A proposal of amount alone is proposal but no assumed date. A clear refusal with an unrelated unfinished phrase is partial only when it is an actual payment correction. yes is clear agreement to current question, not just 'hello/go ahead'. A claim previously closed/paid off is dispute; paid refers to this past-due payment. Classify latest turn faithfully, never inherit old answers. Security phase {{phase}}. Call now {{now}}. Accounts (only after bank verification): {{account_facts}}. Speech: {{extractor.speech}}. Recent conversation: {{extractor.conversation.last-10}}. {{extractor.type_preamble}} {{extractor.variables_list}} Pending incomplete payment fragment: {{fragment_facts}}. Combine only continuation fragments with this pending fragment to extract the completed amount/date; never inherit unrelated prior answers. If a complete sentence explicitly states a new amount or date, classify proposal, even when it says let me correct. In a collective question, all/everything/both/full total means scope total for one aggregate amount. Do not classify a proposal with I confirm as confirm: first validate the proposal and ask a new read-back. Hardship takes priority over restructuring when they co-occur without voluntary payment.",
+    "extraction_prompt": "Extract ONLY the latest customer speech as a JSON object encoded in a string. Always include ALL keys: kind,raw,answer,amount,date,time,scope,products,ai,scam,complete. raw is verbatim latest speech. kind is one of yes,confirm,no,refuse,other,third_party,wrong_number,deceased,human,restructuring,stop,about_call,paid,dispute,hardship,too_much,proposal,partial,correction,vague,ai_question,scam_question,unknown_question. answer is security DOB YYYY-MM-DD (numeric dates day-month-year; spoken years and month words normalize), or four phone digits, else empty. amount is numeric or empty string; date is exact asserted payment/callback date ISO using CALL now, or preserve today/tomorrow/this weekday/next weekday literally; never turn vague or incomplete dates into exact dates. time HH:MM or empty. scope is current/all/total/each; an aggregate amount is total, never each. products is array of product types or exact returned product IDs mentioned, empty if none. ai and scam are independent booleans, preserve primary kind even if administrative question co-occurs. complete is true only when speech is finished. Never extract incidental dates from small talk or negated dates (cannot pay today); only positive proposed payment dates. Corrections supersede previous fragments. A trailing wait/let me correct or unfinished 'I want to pay on' is partial/correction, never yes/refusal. A proposal of amount alone is proposal but no assumed date. A clear refusal with an unrelated unfinished phrase is partial only when it is an actual payment correction. yes is clear agreement to current question, not just 'hello/go ahead'. A claim previously closed/paid off is dispute; paid refers to this past-due payment. Classify latest turn faithfully, never inherit old answers. Security phase {{phase}}. Call now {{now}}. Accounts (only after bank verification): {{account_facts}}. Speech: {{extractor.speech}}. Recent conversation: {{extractor.conversation.last-10}}. {{extractor.type_preamble}} {{extractor.variables_list}} Pending incomplete payment fragment: {{fragment_facts}}. Combine only continuation fragments with this pending fragment to extract the completed amount/date; never inherit unrelated prior answers. If a complete sentence explicitly states a new amount or date, classify proposal, even when it says let me correct. In a collective question, all/everything/both/full total means scope total for one aggregate amount. Do not classify a proposal with I confirm as confirm: first validate the proposal and ask a new read-back. Hardship takes priority over restructuring when they co-occur without voluntary payment.",
+    "min_confidence": 0,
+    "max_retries": 1
+  },
+  "consumed_event_fields": {
+    "get": [
+      "ai",
+      "amount",
+      "answer",
+      "complete",
+      "date",
+      "kind",
+      "products",
+      "raw",
+      "scam",
+      "scope",
+      "time"
+    ],
+    "subscript": [
+      "amount",
+      "date"
+    ],
+    "unadvertised": []
+  },
+  "parent_inner_engine_identical": true,
+  "published_export_comparison": {
+    "top_level": {
+      "work_only": [],
+      "export_only": [
+        "agent_config"
+      ],
+      "shared_different": [
+        "nodes"
+      ]
+    },
+    "process_code_identical": true,
+    "speak_extraction_schema_identical": true,
+    "relevant_nodes": {
+      "initialize": {
+        "pre_actions_identical": false,
+        "transitions_identical": false
+      },
+      "process": {
+        "pre_actions_identical": false,
+        "transitions_identical": false
+      },
+      "continue_writes": {
+        "pre_actions_identical": false,
+        "transitions_identical": false
+      },
+      "verify": {
+        "pre_actions_identical": true,
+        "transitions_identical": false
+      },
+      "load": {
+        "pre_actions_identical": true,
+        "transitions_identical": false
+      },
+      "promise": {
+        "pre_actions_identical": true,
+        "transitions_identical": false
+      },
+      "note": {
+        "pre_actions_identical": true,
+        "transitions_identical": false
+      },
+      "transfer": {
+        "pre_actions_identical": true,
+        "transitions_identical": false
+      },
+      "callback": {
+        "pre_actions_identical": true,
+        "transitions_identical": false
+      },
+      "close": {
+        "pre_actions_identical": true,
+        "transitions_identical": false
+      },
+      "safe_close": {
+        "pre_actions_identical": true,
+        "transitions_identical": false
+      }
+    },
+    "interpretation": "Export adds agent_config and normalizes transition conditions with mode=exact; process code and speak extraction schema are byte-for-byte identical, and verify/load/promise/note/transfer/callback/close/safe_close pre_actions are identical. Wrapper metadata differs for code pre_actions; no graph or runtime equivalence is asserted."
+  },
+  "independent_fictional_actor_facts": {
+    "customer_id": "fictional-customer-rill",
+    "first_name": "Mira",
+    "last_name": "Rill",
+    "title": "Ms",
+    "now": "2026-10-12T11:20",
+    "date_of_birth": "1988-04-21",
+    "phone_last4": "5296",
+    "products": [
+      {
+        "product_id": "fictional-rill-card",
+        "type": "credit_card",
+        "card_last4": "7352",
+        "past_due": 460,
+        "minimum_payment": 115,
+        "days_late": 5
+      },
+      {
+        "product_id": "fictional-rill-loan",
+        "type": "personal_loan",
+        "past_due": 730,
+        "instalment_amount": 210,
+        "days_late": 18
+      },
+      {
+        "product_id": "fictional-rill-car",
+        "type": "car_loan",
+        "past_due": 880,
+        "instalment_amount": 260,
+        "days_late": 12
+      }
+    ]
+  },
+  "method": {
+    "network_calls": 0,
+    "real_agents_or_api_calls": 0,
+    "actual_workflow_graph_replay": false,
+    "namespace": "split globals/locals",
+    "allowed_snippet_imports": [
+      "json",
+      "re",
+      "datetime"
+    ],
+    "unique_snippets_audited": 12,
+    "snippet_invocations": 217,
+    "seconds": 0.032,
+    "max_snippet_invocations": 400,
+    "max_probe_seconds": 15,
+    "actor_events": "All actor events use exactly eleven advertised keys, kinds and types. Lossy compound projections explicitly labeled. The sole nonconforming robustness payload is not an actor output. No reference ledger or expected records read or fed to actor events.",
+    "refinement": "One security case was re-run with a route=verify request immediately before its mocked verify result; 6 additional bounded snippet invocations."
+  },
+  "scenarios": [
+    {
+      "id": "security_authoritative_gate",
+      "classification": "local_control_pass",
+      "summary": "No account facts before backend all_verified; normalized DOB/phone route to verify; account loads only after mocked backend authorization.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "yes",
+            "raw": "Yes, speaking.",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "What is your date of birth?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "other",
+            "raw": "Twenty first April nineteen eighty eight.",
+            "answer": "1988-04-21",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "verify",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "request": {
+              "security_field": "date_of_birth",
+              "security_answer": "1988-04-21"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "verify",
+            "data": {
+              "ok": true,
+              "verified": true,
+              "all_verified": false
+            }
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "phone",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "phone",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "What are the last four digits of the phone number on file?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "other",
+            "raw": "five two nine six",
+            "answer": "5296",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "verify",
+            "phase": "phone",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "phone",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "request": {
+              "security_field": "phone_last4",
+              "security_answer": "5296"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "verify",
+            "data": {
+              "ok": true,
+              "verified": true,
+              "all_verified": true
+            }
+          },
+          "observed": {
+            "route": "load",
+            "phase": "phone",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "phone",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "load",
+            "data": {
+              "ok": true,
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "card_last4": "7352",
+                  "past_due": 460,
+                  "minimum_payment": 115,
+                  "days_late": 5
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "past_due": 730,
+                  "instalment_amount": 210,
+                  "days_late": 18
+                }
+              ]
+            }
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "collective",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "collective",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0
+                }
+              ]
+            },
+            "dialogue_line": "I am calling from the collections team about a late payment. Your credit card ending 7352 has 460.0 past due and is 5 days late. Your personal loan has 730.0 past due and is 18 days late. Can you make all these payments today?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "security_raw_fallback",
+      "classification": "local_control_pass",
+      "summary": "Allowed raw DMY DOB and spoken four phone digits preserve security answer.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "yes",
+            "raw": "Speaking",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "What is your date of birth?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "other",
+            "raw": "21/04/1988",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "verify",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "request": {
+              "security_field": "date_of_birth",
+              "security_answer": "1988-04-21"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "verify",
+            "data": {
+              "ok": true,
+              "verified": true,
+              "all_verified": false
+            }
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "phone",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "phone",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "What are the last four digits of the phone number on file?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "other",
+            "raw": "five two nine six",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "verify",
+            "phase": "phone",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "phone",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "request": {
+              "security_field": "phone_last4",
+              "security_answer": "5296"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "security_incomplete_unverified_and_failed",
+      "classification": "local_control_pass",
+      "summary": "Incomplete security answer and preverification payment proposal do not unlock collection; after a normalized DOB requests verify, a mocked backend exhausted-wrong-answers response terminates not_verified/failed.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "yes",
+            "raw": "Speaking",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "What is your date of birth?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "partial",
+            "raw": "April twenty first",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": false
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "Please complete your date of birth, including the year and month as a word."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "I can pay 460 on October 16",
+            "answer": "",
+            "amount": 460,
+            "date": "2026-10-16",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "Please complete your date of birth, including the year and month as a word."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "other",
+            "raw": "Twenty first April nineteen eighty eight.",
+            "answer": "1988-04-21",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "verify",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "request": {
+              "security_field": "date_of_birth",
+              "security_answer": "1988-04-21"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "verify",
+            "data": {
+              "ok": true,
+              "verified": false,
+              "all_verified": false,
+              "wrong_answers_left": 0
+            }
+          },
+          "observed": {
+            "route": "goodbye",
+            "phase": "dob",
+            "outcome": "not_verified",
+            "reason": "failed",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_verified",
+              "reason": "failed",
+              "products": []
+            },
+            "farewell": "Please use the mobile app or visit a branch. Thank you for your time. Goodbye."
+          }
+        }
+      ]
+    },
+    {
+      "id": "security_cooccurring_admin_flags_lost",
+      "classification": "local_defect",
+      "summary": "ai/scam prefixes are computed but dropped when security routes to verify; result hook asks phone without answering either question.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "yes",
+            "raw": "Speaking",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "What is your date of birth?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "other",
+            "raw": "Twenty first April 1988. Are you an AI? Is this a scam?",
+            "answer": "1988-04-21",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": true,
+            "scam": true,
+            "complete": true
+          },
+          "observed": {
+            "route": "verify",
+            "phase": "dob",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "dob",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "request": {
+              "security_field": "date_of_birth",
+              "security_answer": "1988-04-21"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "verify",
+            "data": {
+              "ok": true,
+              "verified": true,
+              "all_verified": false
+            }
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "phone",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "phone",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "What are the last four digits of the phone number on file?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "compound_distinct_first_scalar",
+      "classification": "local_contract_representability_defect",
+      "summary": "Grammar-conforming lossy projection, not an observed LLM output: one scalar tuple is duplicated onto both named products; the other clause has no structured slot.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "I will pay 230 for the credit card on October 16 and 420 for the personal loan on October 19.",
+            "answer": "",
+            "amount": 230,
+            "date": "2026-10-16",
+            "time": "",
+            "scope": "all",
+            "products": [
+              "credit_card",
+              "personal_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 230.0, \"2026-10-16\"], [\"fictional-rill-loan\", 230.0, \"2026-10-16\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 230.0 on 2026-10-16; personal loan, 230.0 on 2026-10-16. Do you confirm?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "compound_distinct_last_scalar",
+      "classification": "local_contract_representability_defect",
+      "summary": "Grammar-conforming lossy projection, not an observed LLM output: one scalar tuple is duplicated onto both named products; the other clause has no structured slot.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "I will pay 230 for the credit card on October 16 and 420 for the personal loan on October 19.",
+            "answer": "",
+            "amount": 420,
+            "date": "2026-10-19",
+            "time": "",
+            "scope": "all",
+            "products": [
+              "credit_card",
+              "personal_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 420.0, \"2026-10-19\"], [\"fictional-rill-loan\", 420.0, \"2026-10-19\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 420,
+                    "date": "2026-10-19"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 420,
+                    "date": "2026-10-19"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 420.0 on 2026-10-19; personal loan, 420.0 on 2026-10-19. Do you confirm?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "compound_distinct_blank_scalars",
+      "classification": "local_contract_representability_defect",
+      "summary": "Conservative blank scalar projection asks for a date and stores only product IDs; raw separate amounts/dates are not parsed into per-product decisions.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "I will pay 230 for the credit card on October 16 and 420 for the personal loan on October 19.",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "all",
+            "products": [
+              "credit_card",
+              "personal_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "collective",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "collective",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "fragment": {
+                "ids": [
+                  "fictional-rill-card",
+                  "fictional-rill-loan"
+                ],
+                "scope": "all",
+                "raw": ""
+              },
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0
+                }
+              ]
+            },
+            "dialogue_line": "What exact date will you pay these amounts?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "compound_distinct_statuses",
+      "classification": "local_contract_representability_defect",
+      "summary": "Grammar-conforming proposal projection applies the card tuple to three products. One top-level kind cannot represent simultaneous proposal/paid/dispute; raw status clauses are ignored.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "I will pay 330 for the credit card on October 16; I already paid the personal loan arrears; the car loan debt is not mine.",
+            "answer": "",
+            "amount": 330,
+            "date": "2026-10-16",
+            "time": "",
+            "scope": "all",
+            "products": [
+              "credit_card",
+              "personal_loan",
+              "car_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 330.0, \"2026-10-16\"], [\"fictional-rill-loan\", 330.0, \"2026-10-16\"], [\"fictional-rill-car\", 330.0, \"2026-10-16\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 330.0 on 2026-10-16; personal loan, 330.0 on 2026-10-16; car loan, 330.0 on 2026-10-16. Do you confirm?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aggregate_exact_full_total",
+      "classification": "local_control_pass",
+      "summary": "A full aggregate total 1190 becomes distinct full amounts 460/730 on common date; first write is requested only after separate confirmation.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "I will pay the full total 1190 for all products on October 16.",
+            "answer": "",
+            "amount": 1190,
+            "date": "2026-10-16",
+            "time": "",
+            "scope": "total",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 460.0 on 2026-10-16; personal loan, 730.0 on 2026-10-16. Do you confirm?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-16"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "aggregate_nonfull_and_serial_allocation",
+      "classification": "local_control_pass",
+      "summary": "A nonfull total asks allocation; separate targeted turns can represent distinct amounts/dates using the existing grammar and require a fresh collective readback.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "I can pay 650 total across the card and loan on October 16.",
+            "answer": "",
+            "amount": 650,
+            "date": "2026-10-16",
+            "time": "",
+            "scope": "total",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "collective",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "collective",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "allocation": {
+                "total": 650,
+                "date": "2026-10-16",
+                "ids": [
+                  "fictional-rill-card",
+                  "fictional-rill-loan"
+                ]
+              },
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0
+                }
+              ]
+            },
+            "dialogue_line": "Please specify the amount for each product; 650.0 is a total across products."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "230 for the credit card on October 16.",
+            "answer": "",
+            "amount": 230,
+            "date": "2026-10-16",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "credit_card"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "product",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "product",
+              "verified": true,
+              "index": 1,
+              "confirmed": "",
+              "readback": "",
+              "allocation": {
+                "total": 650,
+                "date": "2026-10-16",
+                "ids": [
+                  "fictional-rill-card",
+                  "fictional-rill-loan"
+                ]
+              },
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1
+                }
+              ]
+            },
+            "dialogue_line": "Can you pay 730.0 for your personal loan on 2026-10-16?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "420 for the personal loan on October 19.",
+            "answer": "",
+            "amount": 420,
+            "date": "2026-10-19",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "personal_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 2,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 230.0, \"2026-10-16\"], [\"fictional-rill-loan\", 420.0, \"2026-10-19\"]]",
+              "allocation": {
+                "total": 650,
+                "date": "2026-10-16",
+                "ids": [
+                  "fictional-rill-card",
+                  "fictional-rill-loan"
+                ]
+              },
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "proposal": {
+                    "amount": 420,
+                    "date": "2026-10-19"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 230.0 on 2026-10-16; personal loan, 420.0 on 2026-10-19. Do you confirm?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "partial_correction_and_fresh_consent",
+      "classification": "local_control_pass",
+      "summary": "All-product partial correction preserves proposals/index/attempts, blocks premature yes, and needs a new readback and separate yes after completed date.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "correction",
+            "raw": "Wait, let me correct that, I want to pay on",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "all",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": false
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "fragment": {
+                "raw": " Wait, let me correct that, I want to pay on",
+                "ids": [
+                  "fictional-rill-card",
+                  "fictional-rill-loan"
+                ],
+                "scope": "all"
+              },
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please complete the new payment date."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "fragment": {
+                "raw": " Wait, let me correct that, I want to pay on",
+                "ids": [
+                  "fictional-rill-card",
+                  "fictional-rill-loan"
+                ],
+                "scope": "all"
+              },
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please finish your correction before confirming."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "October 19.",
+            "answer": "",
+            "amount": "",
+            "date": "2026-10-19",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-19\"], [\"fictional-rill-loan\", 730.0, \"2026-10-19\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-19"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-19"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 460.0 on 2026-10-19; personal loan, 730.0 on 2026-10-19. Do you confirm?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm those dates",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-19\"], [\"fictional-rill-loan\", 730.0, \"2026-10-19\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-19\"], [\"fictional-rill-loan\", 730.0, \"2026-10-19\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-19"
+                  },
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-19"
+                  }
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-19"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "same_turn_proposal_not_consent",
+      "classification": "local_control_pass",
+      "summary": "A faithfully classified proposal containing I confirm still gets a fresh collective readback and does not itself authorize a write.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "I confirm a new card amount of 230 on October 19.",
+            "answer": "",
+            "amount": 230,
+            "date": "2026-10-19",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "credit_card"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 230.0, \"2026-10-19\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-19"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 230.0 on 2026-10-19; personal loan, 730.0 on 2026-10-16. Do you confirm?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-card\", 230.0, \"2026-10-19\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 230.0, \"2026-10-19\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-19"
+                  },
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 230,
+              "promise_date": "2026-10-19"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "unrelated_product_clears_correction_explicit_loan_amount",
+      "classification": "local_defect",
+      "summary": "An unrelated explicit loan proposal globally consumes the unfinished card fragment, allowing the old card 460 to be requested for writing after the collective yes.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "correction",
+            "raw": "Wait, for the credit card I will pay 230 on",
+            "answer": "",
+            "amount": 230,
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "credit_card"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": false
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "fragment": {
+                "raw": " Wait, for the credit card I will pay 230 on",
+                "ids": [
+                  "fictional-rill-card"
+                ],
+                "scope": "current",
+                "amount": 230
+              },
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please complete the new payment date."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "For the personal loan I will pay 420 on October 19.",
+            "answer": "",
+            "amount": 420,
+            "date": "2026-10-19",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "personal_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 420.0, \"2026-10-19\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 420,
+                    "date": "2026-10-19"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 460.0 on 2026-10-16; personal loan, 420.0 on 2026-10-19. Do you confirm?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 420.0, \"2026-10-19\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 420.0, \"2026-10-19\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 420,
+                    "date": "2026-10-19"
+                  }
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-16"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "unrelated_product_clears_correction_date_only_loan",
+      "classification": "local_defect",
+      "summary": "An unrelated loan proposal globally consumes the unfinished card fragment, allowing the old card 460 to be written after yes. A date-only loan proposal additionally inherits the card fragment amount 230.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "correction",
+            "raw": "Wait, for the credit card I will pay 230 on",
+            "answer": "",
+            "amount": 230,
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "credit_card"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": false
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "fragment": {
+                "raw": " Wait, for the credit card I will pay 230 on",
+                "ids": [
+                  "fictional-rill-card"
+                ],
+                "scope": "current",
+                "amount": 230
+              },
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please complete the new payment date."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "For the personal loan I will pay on October 19.",
+            "answer": "",
+            "amount": "",
+            "date": "2026-10-19",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "personal_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 230.0, \"2026-10-19\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-19"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 460.0 on 2026-10-16; personal loan, 230.0 on 2026-10-19. Do you confirm?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 230.0, \"2026-10-19\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 230.0, \"2026-10-19\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-19"
+                  }
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-16"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "support_partial_correction_bypasses_guard",
+      "classification": "local_defect",
+      "summary": "Support branch treats partial/correction as propose before the general partial handler, ignoring complete=false and leaving no fragment to block confirmation.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "hardship",
+            "raw": "I lost my job.",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "support",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "support",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0
+                }
+              ]
+            },
+            "dialogue_line": "I am sorry you are going through this. Would you like me to connect you with customer support?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "correction",
+            "raw": "I can pay 230 on October 16, wait, let me correct that",
+            "answer": "",
+            "amount": 230,
+            "date": "2026-10-16",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "credit_card"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": false
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 230.0, \"2026-10-16\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 230.0 on 2026-10-16. Do you confirm?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[[\"fictional-rill-card\", 230.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 230.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 230,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 230,
+              "promise_date": "2026-10-16"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "single_product_twice_failed_write",
+      "classification": "local_control_pass",
+      "summary": "Two application-level ok:false results request one retry, then factual failure acknowledgement, service_error note and no_promise close body. Graph failure-counter interaction remains unknown.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-16"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "promise",
+            "data": {
+              "ok": false
+            }
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 2
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-16"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "promise",
+            "data": {
+              "ok": false
+            }
+          },
+          "observed": {
+            "route": "acknowledge",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "reason": "service_error",
+                  "writes": 2
+                }
+              ]
+            },
+            "action_line": "I could not record the promise for credit card ending 7352."
+          }
+        },
+        {
+          "mode": "continue",
+          "observed": {
+            "route": "note",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "reason": "service_error",
+                  "writes": 2
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "note_reason": "service_error"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "note",
+            "data": {
+              "ok": true
+            }
+          },
+          "observed": {
+            "route": "goodbye",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-card",
+              "outcome": "no_promise",
+              "reason": "service_error",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "reason": "service_error",
+                  "writes": 2,
+                  "note_done": true
+                }
+              ]
+            },
+            "farewell": "I could not complete the bank service. Thank you for your time. Goodbye."
+          }
+        },
+        {
+          "local_close_body": {
+            "customer_id": "fictional-customer-rill",
+            "outcome": "no_promise",
+            "reason": "service_error"
+          }
+        }
+      ]
+    },
+    {
+      "id": "partial_write_failure_preserves_success",
+      "classification": "local_control_pass",
+      "summary": "Mocked first success remains recorded; second product fails twice, gets a service_error note, and the close body remains promise without reason.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-16"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "promise",
+            "data": {
+              "ok": true,
+              "promise_id": "offline-fictional-receipt-card"
+            }
+          },
+          "observed": {
+            "route": "acknowledge",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-card",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "action_line": "Your payment promise for credit card ending 7352 is recorded. You will receive a text message confirming this promise."
+          }
+        },
+        {
+          "mode": "continue",
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-loan",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-card",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-loan",
+              "amount": 730,
+              "promise_date": "2026-10-16"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "promise",
+            "data": {
+              "ok": false
+            }
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-loan",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-card",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 2
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-loan",
+              "amount": 730,
+              "promise_date": "2026-10-16"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "promise",
+            "data": {
+              "ok": false
+            }
+          },
+          "observed": {
+            "route": "acknowledge",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-loan",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-card",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "reason": "service_error",
+                  "writes": 2
+                }
+              ]
+            },
+            "action_line": "I could not record the promise for personal loan."
+          }
+        },
+        {
+          "mode": "continue",
+          "observed": {
+            "route": "note",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-loan",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-card",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "reason": "service_error",
+                  "writes": 2
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-loan",
+              "note_reason": "service_error"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "note",
+            "data": {
+              "ok": true
+            }
+          },
+          "observed": {
+            "route": "goodbye",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-loan",
+              "outcome": "promise",
+              "reason": "",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-card",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "reason": "service_error",
+                  "writes": 2,
+                  "note_done": true
+                }
+              ]
+            },
+            "farewell": "Your recorded payment promises remain in place. You will receive a text message confirming this promise. Thank you for your time. Goodbye."
+          }
+        },
+        {
+          "local_close_body": {
+            "customer_id": "fictional-customer-rill",
+            "outcome": "promise"
+          }
+        }
+      ]
+    },
+    {
+      "id": "serial_mixed_statuses_and_terminal",
+      "classification": "local_control_pass",
+      "summary": "Separate schema-conforming turns preserve card promise, loan paid, car dispute; correct distinct notes and promise terminal outcome are reachable locally.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "330 for card on October 16",
+            "answer": "",
+            "amount": 330,
+            "date": "2026-10-16",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "credit_card"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "product",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "product",
+              "verified": true,
+              "index": 1,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 0
+                }
+              ]
+            },
+            "dialogue_line": "Can you pay 730.0 for your personal loan on 2026-10-16?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "paid",
+            "raw": "I already paid the personal loan arrears.",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "personal_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "product",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "product",
+              "verified": true,
+              "index": 2,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "paid"
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 1
+                }
+              ]
+            },
+            "dialogue_line": "Payments can take one business day to appear. Can you pay 880.0 for your car loan on 2026-10-16?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "dispute",
+            "raw": "The car loan debt is not mine.",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "car_loan"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 3,
+              "confirmed": "",
+              "readback": "[[\"fictional-rill-card\", 330.0, \"2026-10-16\"]]",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  }
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "paid"
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "dispute"
+                }
+              ]
+            },
+            "dialogue_line": "Please confirm: credit card ending 7352, 330.0 on 2026-10-16. Do you confirm?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm the card",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 3,
+              "confirmed": "[[\"fictional-rill-card\", 330.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 330.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "paid"
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "dispute"
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 330,
+              "promise_date": "2026-10-16"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "promise",
+            "data": {
+              "ok": true,
+              "promise_id": "offline-fictional-receipt-mixed"
+            }
+          },
+          "observed": {
+            "route": "acknowledge",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 3,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-mixed",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "paid"
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "dispute"
+                }
+              ]
+            },
+            "action_line": "Your payment promise for credit card ending 7352 is recorded. You will receive a text message confirming this promise."
+          }
+        },
+        {
+          "mode": "continue",
+          "observed": {
+            "route": "note",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 3,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-loan",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-mixed",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "paid"
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "dispute"
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-loan",
+              "note_reason": "paid"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "note",
+            "data": {
+              "ok": true
+            }
+          },
+          "observed": {
+            "route": "note",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 3,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-car",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-mixed",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "paid",
+                  "note_done": true
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "dispute"
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-car",
+              "note_reason": "dispute"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "note",
+            "data": {
+              "ok": true
+            }
+          },
+          "observed": {
+            "route": "goodbye",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 3,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-car",
+              "outcome": "promise",
+              "reason": "",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 330,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-mixed",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "paid",
+                  "note_done": true
+                },
+                {
+                  "product_id": "fictional-rill-car",
+                  "type": "car_loan",
+                  "floor": 260,
+                  "past_due": 880,
+                  "deadline": "2026-10-21",
+                  "attempt": 1,
+                  "reason": "dispute",
+                  "note_done": true
+                }
+              ]
+            },
+            "farewell": "Your recorded payment promises remain in place. You will receive a text message confirming this promise. Thank you for your time. Goodbye."
+          }
+        },
+        {
+          "local_close_body": {
+            "customer_id": "fictional-customer-rill",
+            "outcome": "promise"
+          }
+        }
+      ]
+    },
+    {
+      "id": "transfer_failure_cancels_uncommitted",
+      "classification": "local_control_pass",
+      "summary": "Uncommitted proposals are cancelled on transfer and no note is requested; mocked transfer failure produces factual service failure farewell.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "restructuring",
+            "raw": "I need to restructure these loans.",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "transfer",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "transfer": "restructuring",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0
+                }
+              ]
+            },
+            "request": {
+              "queue": "restructuring"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "transfer",
+            "data": {
+              "ok": false
+            }
+          },
+          "observed": {
+            "route": "goodbye",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "transfer": "restructuring",
+              "outcome": "no_promise",
+              "reason": "service_error",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0
+                }
+              ]
+            },
+            "farewell": "I could not connect the call. Thank you for your time. Goodbye."
+          }
+        }
+      ]
+    },
+    {
+      "id": "transfer_after_recorded_promise",
+      "classification": "local_control_pass",
+      "summary": "Local event injection while acknowledgement is pending preserves mocked recorded success, cancels remaining agreement and ends transferred; actual interrupt timing is an engine unknown.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes, I confirm",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"], [\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-16"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "promise",
+            "data": {
+              "ok": true,
+              "promise_id": "offline-fictional-receipt-before-transfer"
+            }
+          },
+          "observed": {
+            "route": "acknowledge",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "[[\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-loan\", 730.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-before-transfer",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 730,
+                    "date": "2026-10-16"
+                  }
+                }
+              ]
+            },
+            "action_line": "Your payment promise for credit card ending 7352 is recorded. You will receive a text message confirming this promise."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "restructuring",
+            "raw": "Please restructure the loan.",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "transfer",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "active": "fictional-rill-card",
+              "transfer": "restructuring",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-before-transfer",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0
+                }
+              ]
+            },
+            "request": {
+              "queue": "restructuring"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "transfer",
+            "data": {
+              "ok": true
+            }
+          },
+          "observed": {
+            "route": "goodbye",
+            "phase": "confirm",
+            "outcome": "transferred",
+            "reason": "restructuring",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "active": "fictional-rill-card",
+              "transfer": "restructuring",
+              "outcome": "transferred",
+              "reason": "restructuring",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-before-transfer",
+                  "writes": 1
+                },
+                {
+                  "product_id": "fictional-rill-loan",
+                  "type": "personal_loan",
+                  "floor": 210,
+                  "past_due": 730,
+                  "deadline": "2026-10-21",
+                  "attempt": 0
+                }
+              ]
+            },
+            "farewell": "I have connected your call to the requested team. Thank you for your time. Goodbye."
+          }
+        }
+      ]
+    },
+    {
+      "id": "immutable_record_and_safe_terminal",
+      "classification": "local_control_pass",
+      "summary": "Recorded promise cannot be edited; malformed-event robustness route is safe_exit, and safe_close hook preserves stored success. No network or actual close_call occurs.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "confirm",
+            "raw": "Yes",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "promise",
+            "phase": "confirm",
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"]]",
+              "readback": "[[\"fictional-rill-card\", 460.0, \"2026-10-16\"]]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "proposal": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "writes": 1
+                }
+              ]
+            },
+            "request": {
+              "product_id": "fictional-rill-card",
+              "amount": 460,
+              "promise_date": "2026-10-16"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "promise",
+            "data": {
+              "ok": true,
+              "promise_id": "offline-fictional-receipt-safe"
+            }
+          },
+          "observed": {
+            "route": "acknowledge",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-safe",
+                  "writes": 1
+                }
+              ]
+            },
+            "action_line": "Your payment promise for credit card ending 7352 is recorded. You will receive a text message confirming this promise."
+          }
+        },
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "Move the recorded card to October 19.",
+            "answer": "",
+            "amount": "",
+            "date": "2026-10-19",
+            "time": "",
+            "scope": "current",
+            "products": [
+              "credit_card"
+            ],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-safe",
+                  "writes": 1
+                }
+              ]
+            },
+            "dialogue_line": "A recorded promise cannot be changed during this call. You can change it in the mobile app."
+          }
+        },
+        {
+          "nonconforming_robustness_payload": "{}",
+          "observed": {
+            "route": "safe_exit",
+            "phase": "confirm",
+            "outcome": "promise",
+            "reason": "",
+            "state": {
+              "phase": "confirm",
+              "verified": true,
+              "index": 1,
+              "confirmed": "[]",
+              "readback": "[]",
+              "active": "fictional-rill-card",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": [
+                {
+                  "product_id": "fictional-rill-card",
+                  "type": "credit_card",
+                  "floor": 115,
+                  "past_due": 460,
+                  "deadline": "2026-10-29",
+                  "attempt": 0,
+                  "recorded": true,
+                  "record": {
+                    "amount": 460,
+                    "date": "2026-10-16"
+                  },
+                  "promise_id": "offline-fictional-receipt-safe",
+                  "writes": 1
+                }
+              ]
+            },
+            "farewell": "I cannot safely continue the bank service. Thank you for your time. Goodbye."
+          }
+        },
+        {
+          "local_safe_close_body": {
+            "customer_id": "fictional-customer-rill",
+            "outcome": "promise"
+          }
+        }
+      ]
+    },
+    {
+      "id": "callback_failure_terminal",
+      "classification": "local_control_pass",
+      "summary": "Advertised date/time fields schedule only permissible local callback request; mocked callback failure closes no_callback.",
+      "steps": [
+        {
+          "input_event": {
+            "kind": "third_party",
+            "raw": "This is her relative.",
+            "answer": "",
+            "amount": "",
+            "date": "",
+            "time": "",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "speak",
+            "phase": "callback",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "callback",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "dialogue_line": "When can Ms Rill be reached?"
+          }
+        },
+        {
+          "input_event": {
+            "kind": "proposal",
+            "raw": "Tomorrow at noon.",
+            "answer": "",
+            "amount": "",
+            "date": "tomorrow",
+            "time": "12:00",
+            "scope": "current",
+            "products": [],
+            "ai": false,
+            "scam": false,
+            "complete": true
+          },
+          "observed": {
+            "route": "callback",
+            "phase": "callback",
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "state": {
+              "phase": "callback",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "unclear",
+              "products": []
+            },
+            "request": {
+              "callback_date": "2026-10-13",
+              "callback_time": "12:00"
+            }
+          }
+        },
+        {
+          "synthetic_result": {
+            "operation": "callback",
+            "data": {
+              "ok": false
+            }
+          },
+          "observed": {
+            "route": "goodbye",
+            "phase": "callback",
+            "outcome": "not_reached",
+            "reason": "no_callback",
+            "state": {
+              "phase": "callback",
+              "verified": false,
+              "index": 0,
+              "confirmed": "",
+              "readback": "",
+              "outcome": "not_reached",
+              "reason": "no_callback",
+              "products": []
+            },
+            "farewell": "I could not schedule a callback. Thank you for your time. Goodbye."
+          }
+        }
+      ]
+    }
+  ],
+  "engine_boundary": {
+    "candidate_failure_transition": {
+      "target_node": "action_failure",
+      "description": "promise_failure_count greater_than 0",
+      "condition": {
+        "logic": "or",
+        "conditions": [
+          {
+            "variable": "promise_failure_count",
+            "operator": "greater_than",
+            "operand": 0
+          }
+        ]
+      }
+    },
+    "replay_limit": "workflow_replay.condition accepts only always or mode=exact/operator=equals, so greater_than yields unsupported_transition_semantics. This is adapter unsupported/incomplete, not an agent failure.",
+    "replay_grammar_mismatch": "Replay authored events use date_phrase/product/items/unknown_question/hardship and kinds including identity_yes/security_answer. assign_event blindly serializes authored events when extraction_schema is event:string; candidate instead requires date/scope/products/complete and advertised kinds.",
+    "counter_unknown": "No local assertion about whether application data.ok=false increments engine failure_count or whether counters persist between visits. The first greater_than 0 transition could override computed retry if incremented, but hosted semantics were not observed.",
+    "terminal_topology": {
+      "goodbye_next": "close",
+      "close_next": "end",
+      "safe_exit_next": "safe_close",
+      "action_failure_next": "safe_close",
+      "safe_close_next": "end",
+      "end_node_type": "end_call"
+    },
+    "hosted_tests": "No hosted results or voice/LLM behavior observed; evaluation remains the supplied/local not_evaluated snapshot.",
+    "published_failure_transition": {
+      "target_node": "action_failure",
+      "description": "promise_failure_count greater_than 0",
+      "condition": {
+        "logic": "or",
+        "conditions": [
+          {
+            "mode": "exact",
+            "operand": 0,
+            "operator": "greater_than",
+            "variable": "promise_failure_count"
+          }
+        ]
+      }
+    },
+    "scope": "Literal TTS values and local route/body/state observations are examined. Actual model extraction, tool execution/response mapping timing, TTS/ASR performance, interruptions and hosted transition selection remain unobserved."
+  },
+  "verdict": {
+    "classification": "local_contract_defects_reproduced_hosted_outcome_unknown",
+    "defect_families": 4,
+    "bounded_scenarios": 22,
+    "scenario_classifications": {
+      "local_control_pass": 14,
+      "local_defect": 4,
+      "local_contract_representability_defect": 4
+    },
+    "no_unadvertised_consumed_event_fields": true,
+    "evaluation": "not_evaluated",
+    "real_freya_llm_voice_result": "not_observed",
+    "note": "Counts describe local authored cases and controls, not a score, hosted pass rate, or actual extractor reliability. One family may have multiple witness scenarios."
+  },
+  "self_tests": {
+    "candidate_contract_checks": {
+      "path": "competition/runs/20261010-184923-51801a/work/contract_checks.py",
+      "result": "pass",
+      "output": "23 extractor event families round-trip through generated state code; raw DOB/phone fallback passed; all 58 evidence rules retain explicit coverage.",
+      "limitations": [
+        "All 23 kinds are injected at opening with raw='' and otherwise blank scalar fields; assert only route and bank_state exist (lines 13-18). No actual extractor invocation or reached collection/support phase coverage.",
+        "The consumed-key assertion checks regex e.get only; this audit additionally checks AST direct subscripts and shapes. Both reads remain within the advertised eleven fields.",
+        "58 coverage entries have nonempty statuses and IDs; this checks completeness of coverage bookkeeping, not implementation behavior.",
+        "Raw DOB and phone fallback checks are meaningful local controls, but cannot establish real LLM/date/voice extraction."
+      ]
+    },
+    "parent_checks_against_new_workflow": {
+      "path": "competition/runs/20261010-182840-2582df/work/checks.py",
+      "candidate_workdir": "competition/runs/20261010-184923-51801a/work",
+      "result": "pass",
+      "output": "PASS: JSON, graph targets, snippet compilation, split-scope sandbox, security, aggregate allocation, partial correction, collective confirmation, bounded writes, atomic successes, notes, callback, human and deceased contracts\r\nPASS: all event families, real envelope hook/mapping, refusal limits, swap hint, split callback, amount/date fragments, weekend collective offer, transfer cancellation, no-transfer notes and outcome precedence",
+      "limitations": [
+        "Uses the actual eleven-field grammar; covers normalized security, aggregate common-date proposals, collective correction, separate paid/dispute turns, mocked API envelopes and bounded local writes.",
+        "Does not cover a single turn with different per-product amounts/dates/statuses, unrelated product continuation of a pending correction, or partial correction while in support.",
+        "Executes snippets and mocked hooks, not workflow transitions, real extraction, real bank tools, voice or hosted tests."
+      ]
+    },
+    "repair_checks": {
+      "path": "competition/runs/20261010-184923-51801a/work/repair_checks.py",
+      "execution": "not_run",
+      "reason": "Lines 5-7 mutate workflow.json; ownership forbids candidate edits."
+    },
+    "stale_replay_adapter": {
+      "path": "integrations/customer-datasets/workflow_replay.py",
+      "execution": "not_run",
+      "static_evidence": [
+        "Lines 35-49 author date_phrase/product/items/unknown_question/hardship fields instead of candidate date/scope/products/complete.",
+        "Lines 135-141 put per-product kinds/amounts/date_phrase inside items, which candidate neither advertises nor consumes.",
+        "Lines 233-237 serialize this older object without grammar adaptation whenever the outer extraction schema is event:string.",
+        "Lines 181-192 reject greater_than as unsupported_transition_semantics. Published export explicitly normalizes mode=exact but retains greater_than."
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "classification": "local_contract_representability_defect",
+      "title": "Scalar event grammar cannot retain heterogeneous per-product decisions",
+      "source": [
+        "work/workflow.json nodes.speak.extraction_schema[0]",
+        "embedded process code lines 118-126, 137-168, 328-333, 347-350"
+      ],
+      "evidence_scenarios": [
+        "compound_distinct_first_scalar",
+        "compound_distinct_last_scalar",
+        "compound_distinct_blank_scalars",
+        "compound_distinct_statuses"
+      ],
+      "witness": "Speech card 230 on October 16 + loan 420 on October 19 cannot be represented losslessly by one amount/date plus products[]. A legal first-tuple projection makes both proposals 230/2026-10-16; a last-tuple projection makes both 420/2026-10-19. Mixed card proposal, loan paid, car dispute similarly has only one kind; a proposal projection makes all three proposal 330/2026-10-16.",
+      "caveat": "These are grammar-conforming lossy projections, not claimed observed LLM outputs. The schema lacks an explicit instruction to ask clarification for such speech. No write occurs in these compound cases before a separate confirmation.",
+      "smallest_repair": "Explicitly handle heterogeneous turns by either advertising and consuming per-product decision records, or asking per-product clarifications before creating proposals; never broadcast a scalar tuple across distinct clauses."
+    },
+    {
+      "id": "F2",
+      "severity": "high",
+      "classification": "local_state_defect",
+      "title": "An unrelated product update consumes and may borrow a pending correction",
+      "source": [
+        "embedded process code lines 353-360 and 365-377"
+      ],
+      "evidence_scenarios": [
+        "unrelated_product_clears_correction_explicit_loan_amount",
+        "unrelated_product_clears_correction_date_only_loan"
+      ],
+      "witness": "From card 460/Oct16 and loan 730/Oct16 readback, correction complete=false/products=[credit_card]/amount=230 creates fragment.ids=[fictional-rill-card]. A complete unrelated loan proposal removes that fragment and returns to confirm with old card 460. A date-only loan proposal additionally inherits fragment.amount=230, changing loan 730 to 230. A following yes requests card 460/Oct16 for writing while its correction was never completed.",
+      "cause": "Only fragment-based target selection is conditional on not refs; amount/date fallback and s.pop('fragment') are unconditional. Per-product provenance is not applied to fragment consumption.",
+      "smallest_repair": "Bind continuation and fragment fallback to the same product set, consume only matching fragments, and retain unresolved corrections as a confirmation/write gate."
+    },
+    {
+      "id": "F3",
+      "severity": "high",
+      "classification": "local_state_defect",
+      "title": "Support phase accepts an unfinished correction before the general partial guard",
+      "source": [
+        "embedded process code lines 249-250, 335-340, 353-360, 378-391"
+      ],
+      "evidence_scenarios": [
+        "support_partial_correction_bypasses_guard"
+      ],
+      "witness": "One verified card -> hardship -> phase=support. Event kind=correction/amount=230/date=2026-10-16/complete=false with trailing 'wait, let me correct that' produces proposal 230/Oct16, phase=confirm, no fragment. Next yes requests that write.",
+      "caveat": "There is a fresh readback and a separate yes, but the explicitly unfinished correction is never retained or resolved.",
+      "smallest_repair": "Process partial/correction/complete=false before phase-specific proposal or consent handlers, including support; completion must precede readback and write eligibility."
+    },
+    {
+      "id": "F4",
+      "severity": "medium",
+      "classification": "local_dialogue_state_defect",
+      "title": "Security co-occurring AI/scam questions are dropped across verify routing",
+      "source": [
+        "embedded process code lines 253-257, 311-325, 415",
+        "nodes.verify post_process_code -> result:verify"
+      ],
+      "evidence_scenarios": [
+        "security_cooccurring_admin_flags_lost"
+      ],
+      "witness": "A valid normalized DOB with ai=true and scam=true routes verify. The subsequent mocked successful DOB result speaks only 'What are the last four digits of the phone number on file?' Both administrative answers are absent.",
+      "cause": "Prefixes are only added to speak routes and are not persisted through verify/result processing.",
+      "smallest_repair": "Keep pending administrative flags until their computed response has been spoken; preserve the primary security event."
+    }
+  ],
+  "smallest_generic_source_guidance_repair": "Treat extraction and policy as one lossless typed contract. For a turn containing different product amounts, dates or statuses, advertise and consume per-product decisions, or ask per-product clarifications; never broadcast one scalar tuple across heterogeneous clauses. Bind each incomplete correction to its product set, preserve it across unrelated updates, and gate all phases (including support) before proposal/confirmation handling until it completes and gets a fresh readback plus a separate yes. Persist co-occurring administrative questions across tool routing until answered. Validate exact advertised actor events at the phases that consume them; unsupported replay operators mean incomplete evidence, not agent failure.",
+  "ownership": {
+    "created_files": [
+      "analysis/candidate-extractor-contract.txt",
+      "analysis/candidate-extractor-contract.json"
+    ],
+    "other_files_written": [],
+    "prohibited_actions_performed": [],
+    "safeguards": "Read only supplied candidate, parent helper/check, brief/platform guidance and replay source; no credentials, personal settings, expected ledger, network, real API/agents, commit, or candidate/host/kit mutation. Python invoked with -B; audited embedded code restricted to allowed imports with file/eval/exec/introspection operations blocked."
+  }
+}

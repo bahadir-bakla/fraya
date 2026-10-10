@@ -1,0 +1,238 @@
+{
+  "scope": "Bounded candidate v2 policy snippets with fictional inputs and mocked receipts; NOT hosted, graph, extraction or audio scoring.",
+  "workflow_sha256": "ad0698ccde986261a063e41a3e03cbd22d37f8d236ecf51a98fbdf478211d60d",
+  "run": "20261010-191155-82b9b2",
+  "methods": {
+    "split_scopes": true,
+    "allowed_imports": [
+      "json",
+      "re",
+      "datetime"
+    ],
+    "invocations": 52,
+    "elapsed_seconds": 0.015,
+    "maximum_invocations": 400,
+    "maximum_seconds": 15
+  },
+  "local_control_passes": 5,
+  "cases": 6,
+  "results": [
+    {
+      "id": "advertised_spaced_collective_paid",
+      "input_event": {
+        "kind": "paid",
+        "raw": "All current arrears on the credit card, personal loan and car loan were paid.",
+        "answer": "",
+        "amount": "",
+        "date": "",
+        "time": "",
+        "scope": "all",
+        "products": [
+          "credit card",
+          "personal loan",
+          "car loan"
+        ],
+        "ai": false,
+        "scam": false,
+        "complete": true,
+        "clauses": []
+      },
+      "expected": "All three returned products paid; no further payment persuasion.",
+      "local_control_pass": false,
+      "observed": {
+        "route": "speak",
+        "phase": "product",
+        "outcome": "not_reached",
+        "dialogue_line": "Payments can take one business day to appear. Can you pay 460.0 for your credit card ending 7352 on 2026-10-16?",
+        "products": [
+          {
+            "product_id": "fictional-rill-card"
+          },
+          {
+            "product_id": "fictional-rill-loan",
+            "reason": "paid"
+          },
+          {
+            "product_id": "fictional-rill-car",
+            "reason": "paid"
+          }
+        ],
+        "fragments": {},
+        "confirmed": ""
+      }
+    },
+    {
+      "id": "heterogeneous_advertised_clauses",
+      "input_event": {
+        "kind": "proposal",
+        "raw": "",
+        "answer": "",
+        "amount": "",
+        "date": "",
+        "time": "",
+        "scope": "current",
+        "products": [],
+        "ai": false,
+        "scam": false,
+        "complete": true,
+        "clauses": [
+          {
+            "kind": "proposal",
+            "raw": "",
+            "amount": 230,
+            "date": "2026-10-16",
+            "scope": "current",
+            "products": [
+              "credit_card"
+            ],
+            "complete": true
+          },
+          {
+            "kind": "proposal",
+            "raw": "",
+            "amount": 420,
+            "date": "2026-10-19",
+            "scope": "current",
+            "products": [
+              "personal_loan"
+            ],
+            "complete": true
+          }
+        ]
+      },
+      "local_control_pass": true,
+      "observed": {
+        "route": "speak",
+        "phase": "confirm",
+        "outcome": "not_reached",
+        "dialogue_line": "Please confirm: credit card ending 7352, 230.0 on 2026-10-16; personal loan, 420.0 on 2026-10-19. Do you confirm?",
+        "products": [
+          {
+            "product_id": "fictional-rill-card",
+            "proposal": {
+              "amount": 230.0,
+              "date": "2026-10-16"
+            }
+          },
+          {
+            "product_id": "fictional-rill-loan",
+            "proposal": {
+              "amount": 420.0,
+              "date": "2026-10-19"
+            }
+          }
+        ],
+        "fragments": {},
+        "confirmed": ""
+      }
+    },
+    {
+      "id": "unrelated_update_fragment_420",
+      "local_control_pass": true,
+      "observed": {
+        "route": "speak",
+        "phase": "confirm",
+        "outcome": "not_reached",
+        "dialogue_line": "Please finish your correction before confirming or choosing support.",
+        "products": [
+          {
+            "product_id": "fictional-rill-card",
+            "proposal": {
+              "amount": 460.0,
+              "date": "2026-10-16"
+            }
+          },
+          {
+            "product_id": "fictional-rill-loan",
+            "proposal": {
+              "amount": 420.0,
+              "date": "2026-10-19"
+            }
+          }
+        ],
+        "fragments": {
+          "fictional-rill-card": {
+            "raw": "For card 230 on",
+            "amount": 230
+          }
+        },
+        "confirmed": ""
+      }
+    },
+    {
+      "id": "unrelated_update_fragment_date_only",
+      "local_control_pass": true,
+      "observed": {
+        "route": "speak",
+        "phase": "confirm",
+        "outcome": "not_reached",
+        "dialogue_line": "Please finish your correction before confirming or choosing support.",
+        "products": [
+          {
+            "product_id": "fictional-rill-card",
+            "proposal": {
+              "amount": 460.0,
+              "date": "2026-10-16"
+            }
+          },
+          {
+            "product_id": "fictional-rill-loan",
+            "proposal": {
+              "amount": 730.0,
+              "date": "2026-10-19"
+            }
+          }
+        ],
+        "fragments": {
+          "fictional-rill-card": {
+            "raw": "For card 230 on",
+            "amount": 230
+          }
+        },
+        "confirmed": ""
+      }
+    },
+    {
+      "id": "support_partial_consent_blocked",
+      "local_control_pass": true,
+      "observed": {
+        "route": "speak",
+        "phase": "support",
+        "outcome": "not_reached",
+        "dialogue_line": "Please finish your correction before confirming or choosing support.",
+        "products": [
+          {
+            "product_id": "fictional-rill-card"
+          }
+        ],
+        "fragments": {
+          "fictional-rill-card": {
+            "raw": "",
+            "amount": 230,
+            "date": "2026-10-16"
+          }
+        },
+        "confirmed": ""
+      }
+    },
+    {
+      "id": "admin_questions_survive_backend_result",
+      "local_control_pass": true,
+      "observed": {
+        "route": "speak",
+        "phase": "phone",
+        "outcome": "not_reached",
+        "dialogue_line": "I am Freya Bank's digital assistant. You can verify this call by phoning Freya Bank's customer service number. What are the last four digits of the phone number on file?",
+        "products": [],
+        "fragments": {},
+        "confirmed": ""
+      }
+    }
+  ],
+  "hosted_context": {
+    "all_paid_call": "04b9e9d2-d1f1-43a6-b4f9-39fb33cb0ae8",
+    "cent_floor_call": "e34825ce-0889-47f1-a10a-f1b3c0e3b67f",
+    "cent_floor": "customer-ended-call; no extractor/process event after last customer sentence; policy handling not observed"
+  },
+  "subagent": "Stopped at account usage limit before producing artifacts; these bounded checks were executed by parent."
+}

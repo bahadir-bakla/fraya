@@ -195,6 +195,36 @@ class RunnerTests(unittest.TestCase):
         self.assertFalse((self.root / "never_created").exists())
         self.adapter.verify_pack.assert_not_called()
 
+    def test_fail_fast_preserves_failed_batch_and_unverified_repeats(self):
+        cases=rows(2);client=FakeClient(cases);client.outcomes=['fail']
+        result,manifest,client=self.execute(cases=cases,client=client,fail_fast=True)
+        self.assertEqual(result['execution_status'],'stopped_on_failure')
+        self.assertFalse(result['pass'])
+        self.assertEqual(len(client.starts),1)
+        self.assertEqual(sum(j['state']=='scored' for j in manifest['jobs']),2)
+        for row in result['final']:
+            self.assertTrue(row['failure_observed'])
+            self.assertEqual(row['completed_repetitions'],1)
+            self.assertEqual(row['pending_repetitions'],2)
+            self.assertFalse(row['pass'])
+
+    def test_runner_source_change_is_rejected_before_any_network(self):
+        client=FakeClient(rows())
+        with patch.object(r,'RUNNER_SOURCE_PIN','different-source'):
+            with self.assertRaisesRegex(r.RunnerError,'pack_integrity_failed'):
+                self.execute(client=client)
+        self.assertEqual(client.requests,[])
+
+    def test_parallel_repeats_share_capacity_but_never_sessions_or_personas(self):
+        cases=rows(2)
+        result,manifest,client=self.execute(cases=cases,parallel_reps=True)
+        self.assertTrue(result['pass'])
+        self.assertEqual([len(x['selectedPersonaIds']) for x in client.starts],[5,1])
+        self.assertEqual(len({j['customer_id'] for j in manifest['jobs']}),6)
+        self.assertEqual(len({j['persona_id'] for j in manifest['jobs']}),6)
+        self.assertEqual([x['completed_repetitions'] for x in result['final']],[3,3])
+        self.assertEqual(r.plan(cases,self.adapter,reps=3,batch_size=5,parallel_reps=True)['batches_required'],2)
+
     def test_boolean_receipt_cannot_impersonate_numeric_value(self):
         self.assertFalse(r.receipt_matches({'amount':True},{'amount':1}))
         self.assertFalse(r.receipt_matches({'verified':1},{'verified':True}))

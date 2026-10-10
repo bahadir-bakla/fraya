@@ -1,0 +1,73 @@
+NEW candidate extractor-to-policy audit
+Candidate 20261010-184923-51801a; public practice parent 20261010-182840-2582df.
+Published workflow 41424bc5-f5d0-4a29-9213-044e6d97664a, agent d5dd0517-28ec-4c7e-b700-bfbab900a1c8, version 1.
+
+The bounded local audit reproduces four defect families: heterogeneous product facts cannot fit the scalar extraction contract; unrelated product updates consume or borrow a pending correction; the support phase bypasses unfinished-correction handling; and security turns lose co-occurring AI/scam answers. The code does not consume unadvertised event keys. Local controls also succeed. Nothing here establishes a hosted, LLM or voice outcome: the supplied/local status remains not_evaluated, tests=[], latest_score={}.
+
+Evidence is the actual candidate work/workflow.json, including nodes.speak.extraction_schema and generated process code/API hooks. Its process code and extraction schema are identical to the published local export's workflow object. API pre_actions for verify/load/promise/note/transfer/callback/close/safe_close are also identical. Export conditions add mode=exact; code-pre-action metadata differs. This audit does not assert graph/runtime equivalence. The candidate function's inner policy body is line-for-line identical to the parent's work/engine.py. These policy defects are inherited, rather than evidence that this regeneration independently introduced them.
+
+The JSON companion records hashes, the entire advertised schema, fictional facts, full eleven-key actor events, observed local state/routes, synthetic backend results and all 22 scenarios. Source line references below mean one-based lines within the embedded nodes.process code string, not physical lines of the outer JSON file.
+
+Every actor event has exactly kind, raw, answer, amount, date, time, scope, products, ai, scam, complete. The schema advertises 23 kinds, one number-or-empty-string amount, one asserted ISO/literal date, one time, current/all/total/each scope, and an array of product types or returned IDs. ai/scam/complete are booleans. There is no decision/items object and no per-product amount/date/status record. AST inspection finds e.get reads of exactly those eleven fields and direct subscripts only amount/date. Internal bank_result, bank_state, proposal and fragment fields are derived backend/policy state, not hidden customer extraction requirements.
+
+Fictional actor facts were authored independently, not copied from a ledger or reference answer: Mira Rill, DOB 1988-04-21, phone suffix 5296; call now 2026-10-12T11:20. Mock account records are card ending 7352 (460 full, 115 floor, 5 days late), personal loan (730 full, 210 floor, 18 days late), and car loan (880 full, 260 floor, 12 days late). All runtime product IDs originate in those mocked account results after mocked backend all_verified. No expected records were fed to actor outputs. Dates/amounts in the witnesses are actor facts and local observed state.
+
+1. High: scalar grammar loses different product amounts, dates and statuses.
+
+Witness speech: "I will pay 230 for the credit card on October 16 and 420 for the personal loan on October 19." All remaining event fields keep their advertised defaults. A grammar-conforming projection kind=proposal, amount=230, date=2026-10-16, scope=all, products=[credit_card,personal_loan] produces both proposals as 230/2026-10-16. A last-clause projection amount=420/date=2026-10-19 produces both as 420/2026-10-19. Leaving amount/date empty asks for a date and creates an IDs-only fragment; it does not parse separate facts from raw.
+
+These projections are explicitly hypothetical authored extractor outputs, not observed LLM behavior. No legal scalar event preserves both tuples. Likewise, speech proposing card 330/Oct16, saying the loan arrears are already paid, and disputing the car debt has no lossless single kind. A proposal projection with all three products makes all three proposals 330/Oct16, losing paid/dispute. No promise request is issued yet in these compound probes; a separate confirmation would still be required.
+
+Cause: lines 118-126 expand one scalar across targets, lines 137-168 apply one date, and lines 347-350 apply one status to all targets. Product references identify targets but cannot attach separate decisions. Raw fallback handles security/keywords, not per-product payment clauses.
+
+Smallest generic repair: explicitly support heterogeneous utterances by advertising and consuming per-product decision records, or ask targeted clarifications before constructing proposals. Never broadcast a scalar tuple onto different clauses. Do not repair this with unadvertised items injected only by tests.
+
+2. High: unrelated product updates erase or leak a pending correction.
+
+Start with validated pending card 460/Oct16 and loan 730/Oct16, neither recorded. A faithful correction event with raw="Wait, for the credit card I will pay 230 on", products=[credit_card], amount=230, complete=false creates fragment.ids=[fictional-rill-card], fragment.amount=230, while preserving old proposals and invalidating confirmation.
+
+Next, a separate complete loan event amount=420/date=2026-10-19/products=[personal_loan] globally removes the unfinished card fragment and returns to confirm. The readback contains old card 460/Oct16 plus loan 420/Oct19. A following confirm requests card 460/Oct16 for writing even though its correction was never completed.
+
+The second variant is stronger: the unrelated loan event specifies date=2026-10-19 but amount="". Policy borrows the card fragment's 230, changes loan 730 to 230, clears the card fragment and reads both back. A following yes again requests the old card 460.
+
+Cause: lines 367-369 restrict fragment target selection when refs is empty, but lines 370-373 use fragment amount/date regardless of explicit unrelated refs; line 376 removes the fragment unconditionally. This is a deterministic state/provenance defect with faithfully targeted events. A separate yes exists; the defect is loss of the unresolved correction and cross-product facts.
+
+Smallest repair: consume fragment fields only for the matching product set and clear only matching completed fragments. Keep unresolved corrections as a confirmation/write gate while preserving other product proposals.
+
+3. High: support phase bypasses the incomplete-correction guard.
+
+A one-card verified account receives hardship and enters phase=support. The next event is kind=correction, amount=230, date=2026-10-16, complete=false, products=[credit_card], raw="I can pay 230 on October 16, wait, let me correct that". It produces proposal 230/Oct16, phase=confirm and no fragment. A subsequent yes requests a promise for that tuple.
+
+Cause: support lines 335-340 send proposal/partial/correction directly into propose before the general partial handler at lines 353-360. The complete=false correction is therefore not retained. This does not demonstrate absence of readback or a separate yes; it demonstrates that an explicitly unfinished correction becomes eligible without completion.
+
+Smallest repair: handle partial/correction/complete=false before phase-specific proposal or consent branches, including support. Preserve the fragment, then require completed values, a fresh readback and a separate yes.
+
+4. Medium: security loses independent administrative questions.
+
+A truthful other event includes the normalized DOB answer and ai=true/scam=true in the same speech. It requests verify without answering either question. After the mocked successful DOB result, the literal dialogue is only "What are the last four digits of the phone number on file?" The AI/scam responses are absent.
+
+Cause: lines 253-257 compute a local prefix; security line 325 routes to verify; line 415 speaks the prefix only when route=speak. No pending administrative response survives the tool hop.
+
+Smallest repair: persist the flags until their computed response is spoken, while preserving the primary security answer.
+
+The local controls passed for authoritative backend security gating, normalized and raw security answers, incomplete security answers, exhausted wrong-answer termination, full aggregate allocation, nonfull total clarification followed by targeted allocation, collective partial correction, fresh consent, same-turn "I confirm" proposals, bounded application-level failed writes, preservation of an earlier successful write, serial mixed product statuses/notes, transfer cancellation and failure, callback failure, immutable records and safe close bodies. The sole nonconforming {} payload is labeled a robustness probe and is not an actor event.
+
+There are 22 authored scenarios: 14 local controls, 4 local state/dialogue witnesses and 4 representability projections. The inspected main probes used 211 snippet invocations; a six-invocation security refinement supplies a real local route=verify request immediately before the mocked exhausted-answer result, for 217 total. Execution used split Python namespaces, audited snippets and restricted imports; the main probe block had hard bounds of 400 invocations and 15 seconds. These counts are local cases, not a score or a hosted pass rate.
+
+Candidate contract_checks.py passes. Its "23 event families round-trip" test injects every kind only at opening with empty raw and scalar values and checks that route/bank_state exist (lines 13-18). That assertion does not verify the intended kind behavior, later phases, shapes, or real extraction. The e.get regex validates key names only. Security fallback checks are useful controls; 58 coverage statuses/IDs establish bookkeeping, not behavioral correctness.
+
+The parent's checks.py also passes when run against the NEW work/workflow.json. It exercises the correct eleven-field grammar, same-date aggregate allocation, collective correction, serial paid/dispute turns and synthetic API envelope hooks. It does not test heterogeneous clauses in one turn, unrelated-product correction continuation, or support-phase partial correction. Passing these self-tests therefore does not contradict the witnesses. repair_checks.py was read but not executed because lines 5-7 rewrite workflow.json.
+
+The generic offline replay is a separate evidence limitation. workflow_replay.py lines 35-49 author date_phrase/product/items/unknown_question/hardship, and its mixed-product cases at lines 135-141 place per-product decisions inside items. The candidate advertises date/scope/products/complete instead. Lines 233-237 blindly serialize the older event when the outer schema is event:string. Even after transition support were added, those unadapted events would fail the candidate's required-key check; they are not extractor-conforming evidence.
+
+The currently reported greater_than failure-counter rejection is NOT an agent failure. Static inspection confirms replay.condition (lines 181-192) supports only always or mode=exact/operator=equals and rejects greater_than. The published candidate retains first-priority conditions such as promise_failure_count greater_than 0 -> action_failure. Supplied platform guidance documents this operator and counters. This audit did not run or patch the replay and does not reinterpret its unsupported result as a policy failure.
+
+Unknown: whether application-level data.ok=false increments a Freya failure counter; whether counters persist between visits; and whether first-priority counter routing overrides the locally computed retry. Local mocked ok:false handling requests one retry, then failure acknowledgement/note. That is policy code evidence only. Real hosted retry behavior requires actual engine traces. Interrupt injection while acknowledgement is pending is also a local policy probe, not evidence of actual hosted interruption timing.
+
+Terminal topology is statically goodbye -> close -> end and safe_exit/action_failure -> safe_close -> end. Local close pre-hooks produce correct bodies for failed writes and prior recorded success; no close_call actually ran. This does not establish actual close counts, transition selection, latency, ASR/TTS behavior, extraction accuracy or hosted success.
+
+Smallest generic source-guidance addition:
+
+Treat extraction and policy as one lossless typed contract. For a turn containing different product amounts, dates or statuses, advertise and consume per-product decisions, or ask per-product clarifications; never broadcast one scalar tuple across heterogeneous clauses. Bind each incomplete correction to its product set, preserve it across unrelated updates, and gate all phases (including support) before proposal/confirmation handling until it completes and gets a fresh readback plus a separate yes. Persist co-occurring administrative questions across tool routing until answered. Validate exact advertised actor events at the phases that consume them; unsupported replay operators mean incomplete evidence, not agent failure.
+
+Only analysis/candidate-extractor-contract.txt and analysis/candidate-extractor-contract.json were created. No candidate, parent, host, kit, source-guidance or test file was edited; no secrets, ledger, network, real APIs/agents or git operations were used. No hidden success is claimed.

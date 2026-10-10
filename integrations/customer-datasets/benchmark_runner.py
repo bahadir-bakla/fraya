@@ -31,6 +31,7 @@ AGENT_MODEL = {"provider": "experimental-5", "model": "experimental-5"}
 CALL_VARIABLES = {"customer_id", "first_name", "last_name", "title", "now"}
 INACTIVE = {"completed", "failed", "canceled", "cancelled"}
 TERMINAL = {"completed", "failed", "paused"}
+RUNNER_SOURCE_PIN=hashlib.sha256(Path(__file__).read_bytes().replace(b'\r\n',b'\n')).hexdigest()
 
 
 class RunnerError(Exception):
@@ -181,7 +182,7 @@ def evaluation_scope(rows):
     return rows[0].get("evaluation_scope", "hosted_public_regression_only_not_hidden_case_coverage")
 
 
-def plan(rows, adapter, *, brief=None, only=None, reps=3, batch_size=5):
+def plan(rows, adapter, *, brief=None, only=None, reps=3, batch_size=5, parallel_reps=False):
     settings(reps, batch_size)
     selected = select_rows(rows, adapter, brief, only)
     return {"mode": "plan", "execution_status": "not_executed", "network_calls": 0,
@@ -189,7 +190,7 @@ def plan(rows, adapter, *, brief=None, only=None, reps=3, batch_size=5):
             "variants": [{k: row[k] for k in ("id", "variant_id", "brief", "style", "delivery_profile")} for row in selected],
             "repetitions": reps, "all_repetitions_must_pass": True,
             "sessions_required": len(selected) * reps,
-            "batches_required": math.ceil(len(selected) / batch_size) * reps,
+            "batches_required": math.ceil(len(selected) * reps / batch_size) if parallel_reps else math.ceil(len(selected) / batch_size) * reps,
             "max_personas_per_batch": batch_size, "total_budget_seconds": 1200,
             "execution_requires": ["--execute", "--agent-id", "--brief", "--only variant_ids",
                                    "verified source/pack hashes", "idle workspace", "credentials"]}
@@ -273,6 +274,8 @@ def summarize(selected, jobs, reps, status):
         passes = sum(job["result"].get("pass") is True for job in observed)
         final.append({"id": row["id"], "variant_id": row["variant_id"],
                       "completed_repetitions": len(observed), "passes": passes, "required_repetitions": reps,
+                      "failure_observed":any(job['result'].get('pass') is False for job in observed),
+                      "pending_repetitions":max(0,reps-len(observed)),
                       "pass": len(observed) == reps and passes == reps and reps >= 3})
     return {"execution_status": status, "scope": evaluation_scope(selected),
             "passed": sum(row["pass"] for row in final), "total": len(final), "final": final,
@@ -281,7 +284,7 @@ def summarize(selected, jobs, reps, status):
 
 def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
             budget_seconds=1200, output_root=DEFAULT_OUTPUT, pack_path=DEFAULT_PACK,
-            client=None, clock=time.monotonic, sleep=time.sleep, secrets=()):
+            client=None, clock=time.monotonic, sleep=time.sleep, secrets=(),fail_fast=False,parallel_reps=False):
     """Explicit execution entry point; use a fake client/clock in offline tests."""
     if brief not in {"A", "B"} or not only or not agent_id:
         raise RunnerError("execution_requires_agent_brief_and_variants")
@@ -297,6 +300,8 @@ def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
     def verify():
         nonlocal verification_fingerprint
         try:
+            if hashlib.sha256(Path(__file__).read_bytes().replace(b'\r\n',b'\n')).hexdigest()!=RUNNER_SOURCE_PIN:
+                raise ValueError('runner source changed after import')
             verified_manifest = adapter.verify_pack()
             fingerprint = digest(verified_manifest)
             if verification_fingerprint is not None and fingerprint != verification_fingerprint:
@@ -329,6 +334,7 @@ def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
              "row_sha256": digest(row), "state": "planned"}
             for rep in range(1, reps + 1) for row in selected]
     manifest = {"run_id": run_id, "started_at": datetime.now(timezone.utc).isoformat(),
+                "runner_source_sha256":RUNNER_SOURCE_PIN,"diagnostic_fail_fast":bool(fail_fast),"parallel_repetitions":bool(parallel_reps),
                 "agent_id": agent_id, "brief": brief, "api_origin": api_origin, "bank_origin": bank_origin,
                 "pack_sha256": frozen_pack_hash, "reps": reps, "batch_size": batch_size,
                 "verified_pack_manifest": copy.deepcopy(verified_manifest),
@@ -389,13 +395,13 @@ def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
         except Exception:
             raise RunnerError("workspace_lookup_failed") from None
         budget.remaining()
-        for rep in range(1, reps + 1):
-            rep_jobs = [job for job in jobs if job["rep"] == rep]
+        for rep in ([None] if parallel_reps else range(1, reps + 1)):
+            rep_jobs = jobs if parallel_reps else [job for job in jobs if job["rep"] == rep]
             for start in range(0, len(rep_jobs), batch_size):
                 batch_jobs = rep_jobs[start:start + batch_size]
                 idle()  # Before any session/persona allocation.
                 number = len(manifest["batches"]) + 1
-                batch = {"batch": number, "rep": rep, "state": "allocating",
+                batch = {"batch": number, "rep": rep, "repetitions":sorted({job['rep'] for job in batch_jobs}), "state": "allocating",
                          "variants": [job["variant_id"] for job in batch_jobs]}
                 manifest["batches"].append(batch)
                 manifest["status"] = "running"
@@ -421,7 +427,7 @@ def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
                     if set(spec) - {"name", "prompt", "successCriteria", "tags"} or any(
                             not isinstance(spec.get(k), str) or not spec[k] for k in ("name", "prompt", "successCriteria")):
                         raise RunnerError("malformed_persona_spec")
-                    spec["name"] += f" [rep {rep}; {run_id}]"
+                    spec["name"] += f" [rep {job['rep']}; {run_id}]"
                     job.update(persona_sha256=digest(spec), state="persona_start_attempted")
                     persist()
                     made = items(request("POST", "/api/v2/personas", {"personas": [spec]}), "personas")
@@ -530,10 +536,12 @@ def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
                     persist()
                 batch["state"] = "scored"
                 persist()
+                if fail_fast and any(job['result']['pass'] is False for job in batch_jobs):
+                    raise RunnerError('diagnostic_stopped_on_failure')
         manifest["status"] = "completed"
     except RunnerError as error:
         manifest["error_code"] = str(error)
-        manifest["status"] = "timeout" if str(error) == "total_budget_exhausted" else "incomplete"
+        manifest["status"] = 'stopped_on_failure' if str(error)=='diagnostic_stopped_on_failure' else "timeout" if str(error) == "total_budget_exhausted" else "incomplete"
     except Exception:
         # Error bodies, environment values and arbitrary adapter exception text
         # are deliberately withheld. Allocated resources are never canceled.
@@ -556,20 +564,22 @@ def main(argv=None, *, adapter=None, client=None):
     parser.add_argument("--reps", type=int, default=3)
     parser.add_argument("--batch-size", type=int, default=5)
     parser.add_argument("--budget-seconds", type=float, default=1200)
+    parser.add_argument('--fail-fast',action='store_true',help='Diagnostic run: stop after collecting a failing batch; unobserved repetitions remain unverified')
+    parser.add_argument('--parallel-reps',action='store_true',help='Pack independent repeats into the same <=5-call batch; each retains a fresh bank session and persona')
     args = parser.parse_args(argv)
     try:
         if args.execute and (not args.agent_id or not args.brief or not args.only):
             raise RunnerError("execution_requires_agent_brief_and_variants")
         adapter = adapter or importlib.import_module("benchmark_adapter")
         rows = json.loads(args.cases.read_text(encoding="utf-8"))
-        result = plan(rows, adapter, brief=args.brief, only=args.only, reps=args.reps, batch_size=args.batch_size)
+        result = plan(rows, adapter, brief=args.brief, only=args.only, reps=args.reps, batch_size=args.batch_size,parallel_reps=args.parallel_reps)
         result["total_budget_seconds"] = args.budget_seconds
         if args.execute:
             if client is None and (not os.environ.get("FREYA_API_KEY") or len(os.environ.get("FREYA_BANK_TEAM_KEY", "")) < 16):
                 raise RunnerError("required_credentials_missing")
             result = execute(rows, adapter, agent_id=args.agent_id, brief=args.brief, only=args.only,
                              reps=args.reps, batch_size=args.batch_size, budget_seconds=args.budget_seconds,
-                             output_root=args.out, pack_path=args.cases, client=client)
+                             output_root=args.out, pack_path=args.cases, client=client,fail_fast=args.fail_fast,parallel_reps=args.parallel_reps)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return int(args.execute and not result["pass"])
     except RunnerError as error:

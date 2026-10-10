@@ -65,6 +65,9 @@ def validate_practice_seed(work,seed,sources):
     if (work/'inputs/openapi.json').read_bytes()!=(seed/'work/inputs/openapi.json').read_bytes():
         raise ValueError('Practice repair API must be byte-identical')
 
+def practice_seed_stopped_or_untested(prior):
+    return prior.get('phase') in {'failed','needs_attention'} or (prior.get('phase')=='completed' and prior.get('evaluation')=='not_evaluated')
+
 class Run:
     def __init__(self,args):
         self.args=args;self.start=time.monotonic();self.deadline=self.start+args.minutes*60;self.wall_deadline=time.time()+args.minutes*60
@@ -132,7 +135,7 @@ class Run:
             if not re.fullmatch(r'[A-Za-z0-9_-]+',seed_id):raise ValueError('Invalid practice run ID')
             seed=ROOT/'runs'/seed_id
             prior=json.loads((seed/'status.json').read_text())
-            if prior['phase'] not in {'failed','needs_attention'}:raise ValueError('Practice repair requires a stopped unsuccessful practice run')
+            if not practice_seed_stopped_or_untested(prior):raise ValueError('Practice repair requires a stopped or explicitly untested public practice run')
             validate_practice_seed(self.work,seed,self.sources)
             for name in ('workflow.json','policy.json','coverage.json'):
                 shutil.copyfile(seed/'work'/name,self.work/name)

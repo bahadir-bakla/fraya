@@ -1,0 +1,34 @@
+Independent candidate-v5 contract red-team (local only)
+
+Target: competition/runs/20261010-210947-e98c64/work/workflow.json
+Workflow SHA-256: 6ebb42a5aea446f0193d8c8bac624d5c1a3968da9d26189c59349bfd7ad50ea7
+Process snippet SHA-256: 06dcb1ac9f0316396b546dc34e14725769a2f65267a2813f55293738a44c1358
+32 actual, unmodified snippet invocations, including 7 fixture-building invocations.
+Separate globals/locals. Snippet imports restricted to json/re/datetime; no filesystem, network, tools, credentials, git, ASR, full-graph replay, or hosted evaluation. No API was called. A route=promise is only a scheduled local action; no promise was recorded. Backend results used to reach verified account state were synthetic local stubs. Parent-owned hosted repeats are not evidence in this report.
+
+Read canonical A/B briefs and OpenAPI, identical by SHA to the run inputs. No public expected rows or other analysis reports were read. All input/state/expectation/assertion records, effective extraction description/prompt, source hashes and exact outputs are in the companion JSON. Workflow SHA remained unchanged. Only the two owned new analysis files were written.
+
+Fixture: Mara Kestrel, call now 2026-12-09T14:20; synthetic DOB 1979-04-23 and phone 3762. Returned order: card ending 5937 (full 432.58, floor 117.63, days late 4), personal loan (687.42, 228.17, 17), car loan (951.36, 317.12, 31). Actual code computes deadlines 2026-12-28 / 2026-12-18 / 2026-12-18 from call now and brief holidays. Independently chosen IDs, cents, dates and account values.
+
+Advertised effective grammar: string-encoded compact JSON; k is event kind; optional p target, m amount, d asserted date, f completion flag. A batch uses c tuples [kind, product reference, amount or empty, date or empty, 1/0, optional scope]. Minimal agreement tuples may omit amount/date and accept actually spoken offers in counteroffers phase. Only confirm phase authorizes writes. Changed terms are correction. Partial security sets f=false. r is reserved for security fallback/ambiguous fragments; no raw duplication with c. Exact full advertised description and extraction_prompt are retained in JSON.
+
+Concrete defect D1 (medium, conforming typed contract): pending amount is bypassed by cached offer.
+Invocations 24 -> 25 -> 31: during genuine spoken counteroffers, card partial holds only 2026-12-15; customer then proposes personal-loan amount 300.41 without a date. The code correctly retains the card fragment and stores 300.41 on the personal loan without borrowing the card date. Customer completes the card with 149.28. Expected next: ask the exact payment date for the retained personal-loan amount 300.41. Actual next: "I cannot record less than 228.17. The rest stays overdue. Can you pay 228.17 for your personal loan on 2026-12-11?". Personal-loan fragment_amount=300.41 still exists, but next_product prioritizes the old offer. This is a conversation/policy defect, not an observed stale write or lost account value. Invocation 32 shows explicit missing-date input recovers 300.41.
+Source: process snippet lines 104-111 (cached offer priority), 187-189 (component stored outside per-product fragments), 225-255 (scoped continuation). Brief A 27/29/34-35 and B 4/7.
+General builder improvement: unify pending components for complete amount-only/date-only proposals and explicitly unfinished fragments, then prioritize pending components before cached offers. Generate interleaved-target tests that assert the next spoken question, not just no cross-target copying.
+
+Concrete defect D2 (medium, local consumer robustness under injected redundant raw): contracted historical negation becomes dispute.
+Invocations 18 and 19 inject k=proposal, p=car loan, m=360.27, d=2026-12-11 plus r respectively "The car loan isn't paid off; I can pay 360.27 on December eleventh." and "The car loan wasn't closed; I can pay 360.27 on December eleventh." Expected car proposal=360.27/2026-12-11, no reason. Actual proposal absent, reason=dispute. Invocations 17/20 (full "not" and "haven't") and 21 (minimal typed no-r) retain the proposal. The strict advertised compact grammar would normally omit r here; these are intentionally injected redundant-raw payloads, not a claim of model behavior or a failure of the minimal typed payload. No add_note was executed.
+Source: process snippet lines 72-81 and 355-356, then dispute handling 591-595. General builder improvement: do not convert authoritative positive typed proposals into terminal claims using raw keywords alone; resolve scoped negation or clarify conflicting facts. Test paraphrases at this boundary. Other raw paraphrases/quotations are static risks only, untested here.
+
+Requested local contracts and controls:
+- Invocation 8 creates actual floor offers for all three products on 2026-12-11 and computes the joint question before any acceptance.
+- Invocation 9 minimal batch yes/confirm tuples with omitted amount/date: exact joint readback for 117.63/228.17/317.12, phase=confirm, confirmed empty, no write counter.
+- Invocation 10 later minimal compound confirmation: identical confirmed/readback signatures, route=promise for first product only, amount=117.63/date=2026-12-11, writes=1; zero recorded promises, no API.
+- Invocations 11/13 conforming scalar and compound changed terms: personal-loan 245.39/2026-12-15, fresh joint readback, no write. Invocation 12 intentionally mislabels the qualified yes as yes; defensive consumer also prevents stale write.
+- Invocations 14/15 partial DOB/phone: finish-answer prompt, no verify route or refusal increment. Invocation 16 intentionally injects a complete phone a with f=false; completion guard still blocks verify.
+- Invocation 21 minimal no-r positive proposal despite the hypothetical negated historical speech: car 360.27/2026-12-11, no dispute.
+- Invocations 22-26 and 28-30: explicit unrelated-target partial/complete facts neither inherit nor clear sibling fragments. Only each target's own amount/date is inherited; card finishes 149.28/2026-12-15 and personal loan 300.41/2026-12-16. Full consent while card incomplete stays blocked.
+- Invocation 27 corrupts a pending proposal while retaining the old signature (injected state fault, not model behavior): actual continue_writes guard routes safe_exit without incrementing a write counter.
+
+Evidence scope: local original Python snippets and injected structured events only. No assertion about extraction quality, ASR, actual model payload frequency, complete graph behavior, actual bank writes, hosted repeats, or final score. Parent owns all source fixes.

@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "language": "tr",
+  "date": "2026-10-10",
+  "scope": "Yayımlanmış v3 adayının yerel salt okunur konuşma dayanıklılığı incelemesi; yalnız iki yeni analiz çıktısı.",
+  "model_review": {
+    "requested_model": "gpt-6-astra",
+    "requested_effort": "max",
+    "redteam_agent_id": "01a126ee-aaa9-7760-9668-c2fdbab58ccf",
+    "redteam_model": "gpt-6-astra",
+    "redteam_effort": "max",
+    "redteam_scope": "Orijinal A/B, platform belgeleri, dil/belirsizlik/onay; dosya yazmadı."
+  },
+  "candidate": {
+    "path": "competition/runs/20261010-203542-f719bd/work/workflow.json",
+    "sha256": "5db4071ec81468c828dc40ba1229ecd085ed76c033c118a6ad2ad6506dff5c3c",
+    "workflow_id": "41424bc5-f5d0-4a29-9213-044e6d97664a",
+    "published_version_id": "0f40d6e6-d51d-43e0-a022-22baf6d1e1e2",
+    "published_version_number": 3,
+    "source_binding": "İstenen work/workflow.json incelendi; mevcut saved manifest/call sürümü v3 olarak doğrulandı. Export platform varsayılan alanları eklediğinden bayt eşitliği veya her canlı snippetin hash eşitliği iddia edilmiyor."
+  },
+  "source_policy": "A/B ve docs değişmedi; run inputs kopyaları canonical competition-v3 dosyalarıyla LF normalizasyonunda eşit. İngilizce çıktı, kullanıcının korunan yarışma talimatı + aday system_prompt + shared skill ile bağlandı; A/B'de açık yalnız-İngilizce hükmü varmış gibi gösterilmedi.",
+  "graph": {
+    "nodes": 17,
+    "edges": 106,
+    "initial": "initialize",
+    "strongly_connected_component": [
+      "process",
+      "continue_writes",
+      "speak",
+      "verify",
+      "load",
+      "promise",
+      "note",
+      "transfer",
+      "callback",
+      "acknowledge"
+    ],
+    "all_nodes_structurally_reach_end": true,
+    "paths": [
+      "initialize→speak→process→speak",
+      "process→verify→speak; verify→load yalnız backend all_verified",
+      "process→promise→acknowledge→continue_writes→promise",
+      "goodbye→close→end",
+      "safe_exit/action_failure→safe_close→end"
+    ],
+    "runtime_chain": "speak.on_enter tts={{dialogue_line}}; tools=[]; extraction event:string → always process code_exec → vars.route exact conditions → API pre_actions; post_process_code result.data→bank_result→aynı reducer; literal speech yeniden söylenir.",
+    "routing": "9 dispatcher düğümde ilk *_failure_count>0→action_failure, sonra 9 route eşitliği ve son always→safe_exit. Yapısal çevrimler veri/faz ile sınırlandırılır; grafikten DAG çıkarımı yanlıştır.",
+    "flexibility": "Tek konuşma düğümü+faz/ürün durumu serbest sıradaki teklif, düzeltme ve admin sorusunu taşıyabilir. Esneklik extractor enum, clause grammar, resolver ve reducer dallarıyla sınırlı; deterministik kod kaybolmuş anlamı geri getiremez.",
+    "code_reference": "Raporun process N satırları /nodes/process/pre_actions/0/function/parameters/properties/code/default stringinin 1-based satırlarıdır; workflow.json fiziksel satırları değildir."
+  },
+  "observed_evidence": {
+    "modality": "text / CHATTEXT",
+    "latest_run": "local-runs/customer-benchmark/20261010T174349Z-03f6264c9384",
+    "latest_repetitions": 3,
+    "latest_passes": 0,
+    "extraction_errors": 3,
+    "latest_message_indexing": "M zero-based call.messages index",
+    "latest_effect": "0001 M45 karma teklif; M46 extraction_error; M52 safe_exit; M56 tek close_call; boş promises/notes, no_promise/service_error. Üç saved çağrıda aynı M46 parse hatası.",
+    "earlier_v3_run": "20261010T174015Z-fdeecbd9264a: dört varyant 1/1, cent-floor 0/1; her varyantın planlanan 3 tekrarı tamamlanmadı. 4/5 gözlenen çağrı, 0/5 tamamlanmış üçlü başarı; resmi PUB skoru değil.",
+    "historical": "observed-b-stress: farklı published v6/agent, 7/15 çağrı ve 1/5 üçlü. Yalnız geçmiş tanı bağlamı; v3 oranı veya v3 karşı örneği diye kullanılmadı."
+  },
+  "local_execution": {
+    "method": "Yalnız incelenmiş aday process snippet'i; Python -B, ayrı globals/locals, vars içinde sentetik checkpoint. Ağ, banka, platform/extractor/ses çalıştırılmadı. Dosya/test üretmedi.",
+    "invocations": 5,
+    "sequences": 4,
+    "all_expected_safety_assertions_passed": false,
+    "description": "Üç anlamlı zayıflık tanığı ve bir kasıtlı anlamsal extractor hata enjeksiyonu; geçiş yönlendirmeleri gerçek banka etkisi değildir.",
+    "fixtures": {
+      "now": "2026-10-14T11:00",
+      "default_card": {
+        "product_id": "synthetic_card",
+        "type": "credit_card",
+        "past_due": 500,
+        "floor": 100,
+        "days_late": 9,
+        "limit": 2,
+        "deadline": "2026-10-23"
+      },
+      "cases": [
+        "SR2 partial complete=false + answer=1234 → verify",
+        "SR3 proposal 500 tomorrow + negated paid off → note/dispute",
+        "SR4 semantic fault confirm+400 tomorrow while readback=500/2026-10-16 → promise(old terms)",
+        "SR5 card500/100,loan600/200,car70/25; offers99.99,199.99 today + car paid → warning absent; next yes changes sibling date14→16 and attempt0→1"
+      ]
+    }
+  },
+  "risks": [
+    {
+      "id": "SR1",
+      "priority": "P1",
+      "status": "observed_hosted_text",
+      "risk": "Karma cümlenin büyük, iç içe JSON-string çıktısı gerçek çıkarım yolunda bozuluyor.",
+      "evidence": "speak.extraction_schema[0]: tek event:string; 12 zorunlu anahtar, üst raw ve her clause için raw; min_confidence=0.0, max_retries=1. V3 tekrar 0001/0002/0003 M[46]: Unterminated string...char 24. M[45] üç ürünün farklı kararını içeriyor; 0001 M[52–59] safe_exit→safe_close→end.",
+      "control": "Tek konuşma kaynağına bağlı, kayıpsız ve kompakt tipli clauses; negatif/eksik alanlar açık; bütün hedefler doğrulanmadan karar uygulama yok. Bozuk çıkarım iş kararı veya önceki rıza yerine geçmez. V4 onarımı ana ajanda; burada yama yok. Hatanın kesin token/taşıma limiti nedeni kanıtlanmadı.",
+      "test": "Aynı karma niyeti kısa/uzun, sayı/sözcük ve farklı sıralarla gerçek extractor üzerinden geçir; bütün ürün/cent/tarih/status korunmalı. Malformed çıktıda create_promise/add_note yok; faza uygun sınırlı netleştirme veya gerekçeli güvenli çıkış."
+    },
+    {
+      "id": "SR2",
+      "priority": "P1",
+      "status": "local_candidate_witness",
+      "risk": "Tamamlanmamış güvenlik cevabı doğrulama aracına gönderilebilir.",
+      "evidence": "process gömülü kod 379–402: answer biçimi kontrol ediliyor, complete kontrol edilmiyor; kısmi olay kontrolü 451'de, güvenlik dalından sonra. Yerel partial/complete=false, answer=1234, raw='One two three four, wait, let me correct that' → route=verify/security_answer=1234.",
+      "control": "Tamamlanma ve düzeltme engelini güvenlik dahil bütün fazların önüne koy; eksik/iptal edilen cevap doğrulama denemesini tüketmesin. Nihai kimlik yetkisi yine gerçek all_verified yanıtında kalmalı.",
+      "test": "DOB ve dört rakamın ortasında durma/düzeltme; ay-gün karışmasında ayı sözcükle isteme (A11–13). Tamamlanmadan verify_identity yok; üçüncü kişiyle hiçbir güvenlik/hesap yolu açılmamalı."
+    },
+    {
+      "id": "SR3",
+      "priority": "P1",
+      "status": "local_candidate_witness",
+      "risk": "Ham metin anahtar sözcüğü, doğru çıkarılmış teklifin olumsuzluğunu bozuyor.",
+      "evidence": "process 72–79: historical regex 'paid off' eşleşmesini negated_paid'dan bağımsız dispute yapıyor. Yerel kind=proposal, amount=500, date=tomorrow, raw='I have not paid off the current arrears. I can pay 500 tomorrow.' → route=note/note_reason=dispute.",
+      "control": "Olumsuzluk, geçmiş hesap kapanışı ve güncel ödeme iddiası aynı tipli clause içinde korunmalı; kaba regex geçerli clause'u ezmemeli. 'Ödedim/ödemedim', 'yok, cuma değil' ve dil karışmasında belirsizlik açık tutulmalı; bilinmeyen kelime ret değildir.",
+      "test": "Negated paid-off örneği teklif olarak kalmalı; gerçek tarihi kapanış dispute, güncel arrears ödemesi paid olmalı (A39–40). Türkçe metin varyantları yalnız anlamsal tanı testidir; aksan başarısı sayılmaz."
+    },
+    {
+      "id": "SR4",
+      "priority": "P1",
+      "status": "semantic_fault_injection",
+      "risk": "Sözdizimi geçerli fakat tutarsız çıkarım, eski özete rıza verebilir.",
+      "evidence": "write_next 138–149 kimlik, proposal imzası, tarih, floor ve retry kapılarını uygular. Ancak 491–492 kind=confirm için aynı olayın amount/date alanlarını denetlemez. Kontrollü extractor hata enjeksiyonu: 'Yes, but change it to 400 tomorrow', kind=confirm/amount=400/date=tomorrow → eski 500/2026-10-16 için route=promise. Bu olay extractor yönergesine aykırıdır; doğal model çıktısı veya canlı yazma değildir.",
+      "control": "Onay olayında yeni teklif/düzeltme/belirsizlik bulunmamasını deterministik doğrula; spoken readback_revision ve sonraki utterance_id ile aynı ürün/tutar/tarih kümesini bağla. Her düzeltme önce rızayı geçersiz kılmalı.",
+      "test": "'Yes, but…', 'uh-huh', miktar-only ve yarım düzeltme; yeni tamamlanmış özet ve sonraki açık evet gelmeden create yok (A34–35, B7). Geçerli ayrı evet kontrolü korunmalı."
+    },
+    {
+      "id": "SR5",
+      "priority": "P1",
+      "status": "local_candidate_witness",
+      "risk": "Karma tekliflerde konuşulmamış kardeş teklif ve zorunlu uyarı kayboluyor.",
+      "evidence": "process 97–119, 150–201, 418–450: say tek dialogue_line'ı ezer; batch sonunda offer uyarısız yeniden çağrılır. Yerel card full500/floor100→99.99, loan full600/floor200→199.99 bugün, car paid: son cümle yalnız 'Can you pay 100 ... 2026-10-14?' (residual warning yok). Kart eveti ardından loan teklif tarihi 14→16 Ekim ve attempt 0→1 olur.",
+      "control": "Her teklif için proposed/spoken/accepted durumları ve gerekli uyarı kaydı tut; yalnız gerçekten söylenen teklif kabul edilebilir. Kardeş ürüne geçiş mevcut geçerli teklifi/tarihi ve deneme bütçesini korumalı. Skill zaten bunları istiyor; aday karşı örneği mevcut.",
+      "test": "Aynı karma olayın iki turunu gerçek graph+extractor ile tekrar et; her taban için 'The rest stays overdue.' duyulmalı, kredi tarihi ve sayacı kart kabulüyle değişmemeli (A26–30, B4–7)."
+    },
+    {
+      "id": "SR6",
+      "priority": "P2",
+      "status": "static_risk_with_historical_support",
+      "risk": "Döngüde genel netleştirmeler ilerlemeden tekrarlanabilir; metin akıcılığı ses dayanıklılığı sanılabilir.",
+      "evidence": "speak→process→speak; speak max_node_turns=90. process 369–370,400,451–454,508 ve LookupError 532–537 için çağrı çapında no-progress sayacı yok. Eski observed-b-stress 0004: 22 eksik-bilgi istemi; bu eski sürüm verisi v3 başarısızlık oranı değildir.",
+      "control": "Eksik slotu ve fazı adlandır; ör. 'Please say the four digits again, one at a time.' / 'Which exact date do you mean?' İlerleme parmak izi ve politika temelli sınır tut; açıklama istemeyi otomatik ret/ikna sayma. Çıktı dili English kalır; Türkçe isteğe göre kendiliğinden politika değiştirme.",
+      "test": "Belirsiz/çok hızlı konuşmanın yalnız metin benzetimi, parçalı rakam ve Türkçe-İngilizce geçişi: tahminle tarih/evet üretilmesin. Gelecekte izinli ses testinde aksan/şive/hız/gürültü ve kesilme için alan hatası, yanlış onay ve gecikme ayrı ölçülsün. Token güveni akustik güven değildir."
+    },
+    {
+      "id": "SR7",
+      "priority": "P2",
+      "status": "static_control_and_residual_risk",
+      "risk": "Doğru fakat tekrarlı veya fazla uzun konuşma müşteri düzeltmesini zorlaştırır.",
+      "evidence": "process 288–302/132–133: ürün başına kayıt+SMS bildirimi ve sonda aynı SMS tekrar var; eski O/0003 tekrar bulgusunu destekler. Olumlu kontrol: admin_pending 326–332/517–525, AI/scam sorusunu API geçişinden sonra söylemek üzere saklar; gerçek başarı yalnız data.ok ile işlenir.",
+      "control": "Zorunlu SMS cümlesini koruyup söylenme durumunu izle; her ürünün sonucunu kısa ve doğru aktar. 'I am Freya Bank’s digital assistant.' / 'You can verify this call by phoning Freya Bank’s customer service number.' kullanılabilir; sayı/iletişim bilgisi uydurma. Empati ve insan talebi sırası A32/42'ye uymalı.",
+      "test": "DOB+AI/scam sorusu, job-loss+support reddi, tekrarlı human ve ikinci ürün başarısızlığı: soru gerçekten yanıtlanmalı; destek kabulü olmadan transfer, ok:true olmadan recorded sözü olmamalı. Son vedada gereksiz SMS döngüsü olmamalı."
+    },
+    {
+      "id": "SR8",
+      "priority": "P1",
+      "status": "static_unproven_runtime_boundary",
+      "risk": "Araç sonucu, konuşulmuş özet ve kapanmış çağrı arasında yürütme sınırı eksik kanıtlı.",
+      "evidence": "promise API pre_process_code yok; kapı upstream write_next'te, body vars'tan. close ve safe_close data.ok→close_done map eder fakat transitions[0]=always→end; close_done kapısı yok. Genel action failure geçişleri *_failure_count>0; ok:false/retry etkileşimi canlı hata iziyle doğrulanmadı.",
+      "control": "Dispatch öncesi aynı revizyon/ürün/kimlik/rıza/fragment kapısını uygula; action_id ve sonuç eşlemesiyle pending/confirmed/unknown ayır. Timeout otomatik başarısız kayıt sayılmamalı. Tek close dispatch, en son araç ve vedadan sonra; başarısız/unknown close'u başarı diye raporlama. B10 için notlardan önce gerçek giriş kapanışı/transfer sınırı doğrulanmalı.",
+      "test": "ok:false, timeout, geç yanıt, post-hook hatası ve acknowledge sırasında human interrupt; önceki başarılı ürün korunmalı, kör tekrar/ikinci close/not sonrası transfer ihlali olmamalı. Graphın end'e yolu olması canlı bitiş ve tam bir close garantisi değildir."
+    }
+  ],
+  "minimal_architecture_plan": [
+    "1. Çıkarım sözleşmesini sürümle: tek turn_id/raw kaynağı; kompakt clauses[{kind,target_refs,amount,amount_state,date_phrase,date_state,scope,polarity,complete,source_span}], ayrı admin flags. İç grammar tam doğrulansın; platformda yalnız belgelenmiş string/primitive extraction tipleri. Eksik durum ile sıfır/ret ayrışsın; para API sözleşmesine uygun kesin birimde işlensin; uzunluk aşımı sessiz kırpma olmasın.",
+    "2. Reducer başında global belirsizlik/düzeltme kapısı; ürün bazlı fragman ve revision; current proposal, spoken offer/readback ve confirmed proposal ayrı durum. Konuşma planı sıralı müşteri cümleleri üretmeli; teşhis metni müşteriye söylenmemeli. Rıza yalnız sonraki açık yanıta ve gerçekten okunan aynı revizyona bağlansın.",
+    "3. Her banka yazması deterministik kimlik+API ürün kökeni+tamlık+floor/date+readback/consent revision+retry/no prior record kapısından geçsin. Banka etkisi pending/succeeded/failed/unknown ve ilişkilendirilmiş receipt ile izlensin. Transfer önceliği/not erteleme ve tek close sınırı platformda ayrıca kanıtlansın.",
+    "4. Gerçek cyclic graphı koru; faza özgü netleştirme ve ilerleme bütçesi ekle. İngilizce çıktı ve kaynak zorunlu cümleleri koru; dil/aksan belirsizliği onay sayılmasın. V4 extractor onarımı mevcut sahibinde; senaryo/triage kodu diğer ajanlarda, bu rapor yalnız sınırları ve test beklentilerini verir."
+  ],
+  "cannot_prove": [
+    "Ses/ASR doğruluğu, Türkçe aksan veya şive dayanıklılığı, hızlı konuşma, gürültü, endpointing, TTS anlaşılırlığı ve gerçek barge-in denenmedi.",
+    "Token-olasılık extraction güveni akustik güven değildir; min_confidence=0 semantik doğruluk sağlamaz.",
+    "Canlı parser hatasının token tavanı/taşıma kırpması gibi kesin iç nedeni bilinmiyor.",
+    "Statik readback string üretimi sesin müşteriye bütünüyle ulaştığını veya interruption cutoff'unu kanıtlamaz.",
+    "Yerel snippet tanıkları gerçek extractor üretimi, graph seçimleri veya hosted başarı ölçümü değildir; SR4 özellikle yönerge dışı fault injection.",
+    "close_done kullanılmadığından başarısız/unknown close'un gerçek etkisi; API ok:false ile engine counter ilişkisi; gecikmiş cevap/idempotency davranışı henüz kanıtlı değil.",
+    "Mevcut v3 ve skill incelemesi gelecekteki v4 düzeltmelerini veya görülmemiş bank brieflerini doğrulamaz."
+  ],
+  "sources": [
+    {
+      "path": "competition/runs/20261010-203542-f719bd/work/workflow.json",
+      "sha256": "5db4071ec81468c828dc40ba1229ecd085ed76c033c118a6ad2ad6506dff5c3c",
+      "bytes": 424658
+    },
+    {
+      "path": "competition/skills/build-phone-agent.md",
+      "sha256": "e090ee731cc93fde513a189a0759ff1910ee2e1142c6a832c7599832d928998b",
+      "bytes": 17725
+    },
+    {
+      "path": "competition-v3/build-the-builder/briefs/brief-a.md",
+      "sha256": "d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7",
+      "bytes": 10174
+    },
+    {
+      "path": "competition-v3/build-the-builder/briefs/brief-b.md",
+      "sha256": "c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550",
+      "bytes": 2393
+    },
+    {
+      "path": "competition-v3/build-the-builder/docs/workflow-format.md",
+      "sha256": "4ff70b5a37b647122e6a6f3ca1a523b207dbcdf6afb32058de8451a8c7d1dcfc",
+      "bytes": 42104
+    },
+    {
+      "path": "competition-v3/build-the-builder/docs/tools-and-code.md",
+      "sha256": "56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711",
+      "bytes": 31394
+    },
+    {
+      "path": "competition-v3/build-the-builder/tools/openapi.json",
+      "sha256": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+      "bytes": 10557
+    },
+    {
+      "path": "analysis/observed-b-stress.txt",
+      "sha256": "4336dda37ec729550cf7abc7a2584d82138c7e291a2b516091162d5925a7d52d",
+      "bytes": 46808
+    },
+    {
+      "path": "analysis/candidate-v2-contract.txt",
+      "sha256": "b9cec29cf5ef6767fd13b500edb9301fca49932c6c90b972070b1f5c71bf71dc",
+      "bytes": 951
+    },
+    {
+      "path": "analysis/candidate-extractor-contract.txt",
+      "sha256": "68a9327dc517873776e0d6b715b97dbe53c9d5b38c0c0a0ba8c3fabd3f26f533",
+      "bytes": 13193
+    },
+    {
+      "path": "competition/runs/20261010-203542-f719bd/work/observed-stress-feedback.json",
+      "sha256": "bac56393c1e73de1a54d8402ec9effd27b134add473eba8ffd96f5afefdb77b6",
+      "bytes": 6805
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T174349Z-03f6264c9384/manifest.json",
+      "sha256": "c53267f8006f4361377f8884d33dd4dfcd6e95065bcb4eb14e4518478508571a"
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T174349Z-03f6264c9384/results.json",
+      "sha256": "91c0d4160182fbc2de9976a69e9df8d7b210872d153f32df79ebb902d2f93b38"
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T174349Z-03f6264c9384/evidence/0001.json",
+      "sha256": "150b8b359b5daf51d7776acf2eda280a530fafaa5e2c144a4adadb91b4eebd94"
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T174349Z-03f6264c9384/evidence/0002.json",
+      "sha256": "93c5b87538c2338f42db96ed162f1d9ac834278f5f61ec995c962a9583547c8d"
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T174349Z-03f6264c9384/evidence/0003.json",
+      "sha256": "2058d638b245e8c4ee6ea004036747581523590355b719f2c79d452a8a0adda4"
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T174015Z-fdeecbd9264a/manifest.json",
+      "sha256": "c64dd45a304ce67221a90fcb19b9254833208e08eebcce68f981769539b0d181"
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T174015Z-fdeecbd9264a/results.json",
+      "sha256": "2e09ddb9963c1b14989f94d3a6c11d45a04cd8be86879496e1dbddaff2b21dce"
+    }
+  ],
+  "changes": {
+    "created_only": [
+      "analysis/speech-resilience-review.txt",
+      "analysis/speech-resilience-review.json"
+    ],
+    "not_run": [
+      "git",
+      "network/Freya",
+      "credential reads",
+      "hidden evaluation",
+      "candidate/host/kit/source/tests edits"
+    ],
+    "v4_patch_duplicated": false
+  },
+  "elapsed_seconds_before_write": 364
+}

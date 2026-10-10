@@ -233,6 +233,19 @@ class Code:
 def assign_event(schema, authored, variables):
     contract = {item["name"]: item["type"] for item in schema}
     if contract == {"event": "string"}:
+        # An outer string type does not establish its JSON grammar. This actor
+        # driver supports one explicitly advertised grammar; other candidates
+        # need their own driver, rather than receiving invented event fields.
+        prompt = schema[0].get("extraction_prompt") or schema[0].get("description", "")
+        pattern = r"\b(?:ALL keys required|ALL keys):\s*([^.]+)\."
+        declared = re.search(pattern, prompt, re.IGNORECASE)
+        if not declared and "{{extractor.variables_list}}" in prompt:
+            # This documented template expands the variable's description;
+            # the baseline uses it rather than repeating the JSON contract.
+            declared = re.search(pattern, schema[0].get("description", ""), re.IGNORECASE)
+        fields = {field.strip() for field in declared.group(1).split(",")} if declared else set()
+        if fields != EVENT_KEYS or set(authored) != EVENT_KEYS:
+            raise ReplayError("unsupported_extraction_contract")
         variables["event"] = json.dumps(authored)
         return
     separate = {key: "string" for key in ("e_raw", "e_kind", "e_answer", "e_amount", "e_date", "e_time", "e_flags")}

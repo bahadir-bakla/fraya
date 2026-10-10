@@ -85,6 +85,10 @@ failure, retry overrun, cross-customer writes, date/floor violations and notes
 on transferred calls. Transcript checks separately cover opening/privacy,
 read-back/confirmation, sympathy/persuasion, truthfulness, SMS and goodbye.
 Judge criteria also reject materially divergent customer simulations.
+Authored judge criteria include the complete quoted customer script; an
+intentional refusal or authority-spoof attempt is evaluated against that script,
+without authorizing any banking-policy bypass. Earlier verdicts are retained;
+criteria changes require a fresh run, never a retroactive pass.
 Synthetic test data is kit-v3-specific and must never become permanent builder
 code/prompts. New final briefs/APIs require new independent fixture oracles.
 Future bank limits, calendars, fields and outcome codes are not inferred here.
@@ -114,6 +118,14 @@ The unmodified official scorer, extra receipt guards and platform transcript
 judge all apply. Extra guards may reject an official ledger pass; they never
 turn an official ledger failure into a pass. Read failed-dialogue evidence
 before attributing customer-simulator divergence to an agent defect.
+Diagnostic --fail-fast stops only after the entire failing batch's evidence is
+collected. Remaining repetitions stay unverified; a single observed pass never
+completes a three-repetition scenario. The executing runner source hash is pinned
+and checked before mutations, alongside the adapter, kit and scenario sources.
+Optional --parallel-reps packs independent repetitions into one <=5-call batch.
+Every repeat still creates a distinct bank session and persona, and the same
+observed workflow version must hold. This is our additional stress scheduling;
+the supplied official runner/scorer and their repetition protocol stay unchanged.
 
 Offline exported deterministic kernel (45-second clean-environment child):
 python -X utf8 -B integrations/customer-datasets/workflow_replay.py --workflow <redacted-export.json> --brief B --out <local-report.json>
@@ -123,6 +135,9 @@ routes against a fresh local bank with authored structured actor events. No
 Freya engine, LLM extraction, conversation judge or audio is run. Unsupported
 semantics fail explicitly. Aggregate-total probes vary only the actor's offer
 wording/scope on split-deadline fixtures; no expected oracle enters extraction.
+An event:string wrapper does not establish its inner grammar. This actor driver
+requires its explicitly advertised field contract; other grammars are refused
+as unsupported, rather than receiving unrelated synthetic fields.
 kernel_ledger_pass is separate from voice_agent_pass, which remains null.
 
 ATTRIBUTION
@@ -134,3 +149,19 @@ Google LLC. Exact notices: integrations/customer-datasets/sources.json.
 Complaint-inspired provenance is inherited only for the DATA templates;
 the new EDGE matrix is explicitly authored synthetic data, not a complaint
 corpus or an observed distribution of real customers.
+Authored speech-text stress catalog (10 cases)
+-------------------------------------------
+speech-stress-cases.json contains five Brief A and five Brief B actor contracts
+with explicit expected ledgers, rule references and immutable registered bank
+facts. Fragmentation, qualified consent, negation, code switching, phone digits
+and heterogeneous product decisions are text approximations; no audio or ASR
+performance is certified. Existing speech_stress_adapter.py remains offline.
+speech_stress_live.py uses the same benchmark runner, unchanged supplied scorer,
+receipt/provenance guards and source/version pins. Its default is a keyless plan.
+Live runs require explicit --execute --agent-id --brief --only exact variant IDs;
+--reps 3 and --batch-size 5 preserve independent sessions, with a single active
+workspace simulation. An HTTP failure before scored calls is incomplete evidence.
+
+failure_triage.py collects bounded existing artifacts into an evidence backlog.
+It preserves original scores/judges, counts observed repetitions only and flags
+missing evidence separately. A judge allegation still needs actual event order.

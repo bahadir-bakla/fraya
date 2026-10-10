@@ -61,8 +61,21 @@ class WorkflowReplayTests(unittest.TestCase):
 
     def test_unknown_extraction_fields_fail_instead_of_inventing_values(self):
         with self.assertRaises(r.ReplayError):r.assign_event([{'name':'unknown','type':'string'}],r.event('yes','yes'),{})
-        values={};r.assign_event([{'name':'event','type':'string'}],r.event('yes','yes'),values)
+        schema=[{'name':'event','type':'string','description':'ALL keys required: '+', '.join(sorted(r.EVENT_KEYS))+'.'}]
+        values={};r.assign_event(schema,r.event('yes','yes'),values)
         self.assertIn('event',values)
+        schema[0]['extraction_prompt']='{{extractor.variables_list}} Return the event described by its contract.'
+        values={};r.assign_event(schema,r.event('yes','yes'),values)
+        self.assertIn('event',values)
+
+    def test_string_wrapper_cannot_hide_an_incompatible_effective_grammar(self):
+        description='ALL keys required: '+', '.join(sorted(r.EVENT_KEYS))+'.'
+        for prompt in ('', 'Always include ALL keys: kind,raw,answer,amount,date,time,scope,products,ai,scam,complete,clauses.'):
+            schema=[{'name':'event','type':'string','description':description if prompt else '', 'extraction_prompt':prompt}]
+            values={}
+            with self.assertRaisesRegex(r.ReplayError,'unsupported_extraction_contract'):
+                r.assign_event(schema,r.event('yes','yes'),values)
+            self.assertNotIn('event',values)
 
     def test_exported_code_cannot_use_io_or_arbitrary_imports(self):
         for code in ('import os','open("data")','x=vars.__class__'):

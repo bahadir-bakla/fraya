@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "candidate_run": "20261010-204854-487831",
+  "tested_version": 4,
+  "evaluation_scope": "authored_actor_scenarios_on_registered_bank_facts_not_official_pub_score",
+  "observed_calls": 3,
+  "passed_calls": 0,
+  "findings": [
+    {
+      "category": "redundant_notification_and_judge_divergence",
+      "case": "0001",
+      "observed": "Two actual promises and paid sibling note. Same required SMS sentence in three assistant turns. Actual goodbye M106 precedes close_call M109, contradicting that part of the judge narration. Failing score retained."
+    },
+    {
+      "category": "partial_answer_no_progress",
+      "case": "0002",
+      "observed": "After partial amount/product utterances M54, M63, M72, M81, agent repeats generic correction/exact-date demands. No writes observed; customer ends call. Preserve partial safety while asking one focused missing component."
+    },
+    {
+      "category": "scalar_compound_kind_contract_mismatch",
+      "case": "0003",
+      "observed": "M55 actual extracted compound confirm clauses naming the two spoken offers; M60 process routes safe_exit despite code_exec reporting success. Generated product-clause branch only permits proposals/refusals/paid/dispute/hardship and otherwise raises unsupported product clause. Acceptance must instead produce joint readback and later confirmation. Not a malformed JSON/extraction_error and no bank outage shown."
+    }
+  ],
+  "repair_instructions": "Use source-general state/contract fixes, no fixture hardcoding. Match extractor and reducer kind sets, distinguish acceptance from post-readback consent, preserve partial negative/correction safety, retain source mandated notifications without unnecessary duplication. Recompute coverage. Test minimal scalar+compound advertised events in active phases, including negative and partial controls.",
+  "generated_at": "2026-10-10T18:08:51.179542+00:00",
+  "evidence_refs": [
+    {
+      "file": "local-runs/customer-benchmark/20261010T175319Z-4fbd0bfdc9f4/evidence/0001.json",
+      "sha256": "71b7608e51db03cc31b2b86850ccd6019611712857120941b76d8b802b57f06e",
+      "call_id": "0dfae2d7-da3e-48f5-809a-419b869b3424",
+      "judge_outcome": "fail"
+    },
+    {
+      "file": "local-runs/customer-benchmark/20261010T175319Z-4fbd0bfdc9f4/evidence/0002.json",
+      "sha256": "ea28c34216906aedebbde9a4261b9f64c58587a0ad54f0d52519c084125779f2",
+      "call_id": "72fc0bec-ddf3-46d3-8e66-0f5574953c8b",
+      "judge_outcome": "fail"
+    },
+    {
+      "file": "local-runs/customer-benchmark/20261010T175319Z-4fbd0bfdc9f4/evidence/0003.json",
+      "sha256": "82ef2eda9a3f23aefaaa19c462d25cce83508bb85664b18802e7c0ea3023181d",
+      "call_id": "b86f6ee0-13e9-4f8e-8ef1-9590e606744a",
+      "judge_outcome": "fail"
+    }
+  ]
+}
