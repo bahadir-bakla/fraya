@@ -2,6 +2,11 @@ import pathlib,sys,tempfile,unittest
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[1]))
 import builder
 class CaseScopeTests(unittest.TestCase):
+    def test_copy_of_public_cases_cannot_evaluate_an_unseen_brief(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=pathlib.Path(directory);brief=root/'new.md';brief.write_text('A different bank policy')
+            copied=root/'alias.json';copied.write_text((builder.KIT/'public-test-set.json').read_text())
+            with self.assertRaisesRegex(ValueError,'Unseen briefs'):builder.validate_case_scope([brief],copied,False)
     def test_a_and_its_amendment_have_distinct_test_cohorts(self):
         a=builder.KIT/'briefs/brief-a.md';b=builder.KIT/'briefs/brief-b.md'
         self.assertEqual(builder.infer_practice_group([a]),'A')

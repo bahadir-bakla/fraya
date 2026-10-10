@@ -1,0 +1,297 @@
+Observed actual B stress diagnostics
+Run: 20261010T151919Z-b8256297f6a0
+Verified reported calls: 7/15 pass, 8/15 fail. Variants meeting all three repetitions: 1/5.
+Ledger/trace passes: 8/15; judge passes: 7/15.
+Offline reconcile_call: 15/15 matched, 102 ordered bank operations.
+Only actual saved hosted calls are counted; all are modality=text. Audio/voice validation and kernel/oracle pass claims: none.
+Scored-pass target boundaries observed: 5; scored passes 0009 and 0014 omit the unrelated distractor date and do not establish that boundary.
+Repair variants: 0/6 pass. Full canonical same-turn repair is observed in 0010; others are incomplete/noncanonical, with separate builder defects.
+
+Scope and pins
+Only two NEW analysis outputs written. No hosted requests, credential access, official-kit/runner/adapter edits, commits, agents, generated calls or reference executions. Python -X utf8 -B; reconciliation executes the frozen read-only runner module, not its CLI main. Embedded runtime code is hashed only, never executed.
+Git HEAD: 79fdbee3fce20f26ae10036562252b260ae40abb (dirty parent source; may change).
+Observed deployed agent/workflow/version: ed82b070-9d84-4706-969c-7b0ca908c70a / 778d58f0-a0d3-4f15-b1bb-398b380ee76e / ab92e966-7575-4262-a929-0305b7d1ee01 / v6.
+Observed run-state code SHA256: 92a849898a28b68740f709b399387c11897393dfbcf1f93bae2ea06ac8daad76 (from actual code_exec events; not a reference pass).
+Frozen offline runner raw SHA256: 97dfbd214f7c24db3661218c1adaefe7edecc0f7a3441f8dc012b17dde2b296f.
+Run canonical pack SHA256: 78eec42edf952b15b39a51a9d018831a679531e91291e3c845e0adfcbafe91ef; current pack matches: True.
+Manifest raw SHA256: bea6d5928cbc45ecf13a7886d78f6f1b452c612ab136f8931b06b2e431f621ac.
+API LF-normalized hash matches the run-recorded pin. Full evidence, source, persona, batch and manifest hashes are in the JSON.
+Parent runner changed between initial inspection and final offline reconciliation. Initial raw SHA256: 5502e94a387f217302a386c6f66049f27802c4794f0e61631a06c2613a59bc39; final frozen raw SHA256: 97dfbd214f7c24db3661218c1adaefe7edecc0f7a3441f8dc012b17dde2b296f. Both runs reconciled all 15 saved calls; final source function is at line 214.
+Parent source changes during final scan: none; run inputs changed: none.
+Current source pins do not establish which current builder source produced published v6. No source rerun or rescore replaces the observed results.
+
+Variant totals
+PUB-11__pieces: 3/3 calls pass; all-three pass=True; target-boundary pass claims=3.
+PUB-12__repair_pause: 0/3 calls pass; all-three pass=False; target-boundary pass claims=0.
+PUB-13__in_words: 2/3 calls pass; all-three pass=False; target-boundary pass claims=2.
+PUB-11__distractor_words: 2/3 calls pass; all-three pass=False; target-boundary pass claims=0.
+PUB-13__repair_pause: 0/3 calls pass; all-three pass=False; target-boundary pass claims=0.
+
+Per-call results
+M[index] means the ZERO-BASED call.messages index in evidence/NNNN.json, not the judge Message number. JSON includes every spoken turn, HTTP event, actual ledger call and selected state witnesses.
+
+0001 PUB-11__pieces rep 1 | PASS | call 43975090-64ad-40f3-8282-6d3a3c204178
+Evidence: evidence/0001.json sha256=e280ffccd230a1c486bbd0a88d1e0c4d1b96e4d933178792dde33e57c6d077fa
+Recorded ledger/trace=True; judge=pass; reconciled operations=7; target=fragmentation_observed
+Actor/coverage: Split identity replies are observed; identity is eventually verified after a complete answer. This establishes prompting for a complete answer, not successful accumulation of split suffixes.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 220, "date": "2026-10-16"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 640, "date": "2026-10-16"}, {"promise_id": "pr3", "product_id": "p3", "type": "car_loan", "amount": 75, "date": "2026-10-16"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 220.0, "date": "2026-10-16"}, {"product_id": "p2", "amount": 640.0, "date": "2026-10-16"}, {"product_id": "p3", "amount": 75.0, "date": "2026-10-16"}], "notes": [], "callbacks": [], "transfers": []}
+Observed speech: missing-detail prompts=0; text notifications=4 for 3 recorded products. Goodbye M[128] precedes single close start M[131].
+
+0002 PUB-12__repair_pause rep 1 | FAIL | call 0291108e-48a1-4bbc-8c9a-45b8ea2bc9f6
+Evidence: evidence/0002.json sha256=e47edb4e99e2fc3f24f079234e1b4657d1eccd19b8a7de0b17b0ba00e28d0b15
+Recorded ledger/trace=False; judge=fail; reconciled operations=8; target=not_completed
+Actor/coverage: The actor repeatedly starts a correction, switches among incomplete fragments and Friday, and never finishes a same-turn correction ending with the canonical tomorrow or gives final confirmation. Missing promise alone cannot prove rejection of a complete canonical repair.
+Actual ledger: {"promises": [], "notes": [{"product_id": "p1", "reason": "refused", "text": ""}, {"product_id": "p2", "reason": "refused", "text": ""}, {"product_id": "p3", "reason": "refused", "text": ""}], "outcome": "no_promise", "reason": "refused"}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 510.0, "date": "2026-10-15"}], "notes": [{"product_id": "p2", "reason": "refused"}, {"product_id": "p3", "reason": "refused"}], "callbacks": [], "transfers": []}
+[builder/attempt_budget] Personal-loan offers occur four times; car-loan offers twice despite observed limits two and one. Partial corrections and product switching do not justify replaying exhausted offers. Evidence: M[93], M[102], M[138], M[147], M[156], M[165]
+  M[93] assistant: Can you pay 1320.0 for your personal loan on 2026-10-14?
+  M[102] assistant: Can you pay 1320.0 for your personal loan on 2026-10-16?
+[builder/false_refusal] No credit-card flat refusal is spoken; nevertheless p1 receives a refused note and the call closes no_promise/refused. No unconfirmed create_promise is made. Evidence: M[175], M[184], M[193], M[202], M[211], M[220], M[228], M[240], M[243]
+  M[175] user: "Wait, let me correct that. I will
+  M[184] user: wait, let me correct that. I will pay the
+[builder/partial_proposal] Credit-card Friday fragment ending wait is later included in a combined confirmation as 16 October, although the canonical tomorrow was never completed. Evidence: M[85], M[174]
+  M[85] user: I will pay the credit card on Friday... wait
+  M[174] assistant: Please confirm: credit card ending 9015, 510.0 on 2026-10-16. Do you confirm?
+Judge reason (unaltered): The conversation failed several specific success criteria: 1. No promise was recorded for the credit card; instead, the agent recorded it as 'refused' (Message 46 and system events for p1). 2. The agent exceeded the allowed number of attempts for the other products: there were 4 attempts on the personal loan (Messages 16, 18, 26, 28) instead of two, and 2 attempts on the car loan (Messages 30, 32) instead of one. 3. Consequently, the credit card did not receive its mandatory promise.
+Observed speech: missing-detail prompts=1; text notifications=0 for 0 recorded products. Goodbye M[240] precedes single close start M[243].
+
+0003 PUB-13__in_words rep 1 | FAIL | call 6a063912-3091-4535-b2ac-d6b0a525a9ef
+Evidence: evidence/0003.json sha256=7ae183864d14719599f170276cf26c83e7b092fe2515229f9f86e5bf3400d09d
+Recorded ledger/trace=True; judge=fail; reconciled operations=6; target=not_applicable
+Actor/coverage: The actor supplies the canonical common date in words and confirms the adjusted combined read-back. No correction profile applies.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 300, "date": "2026-10-30"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 900, "date": "2026-10-23"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 300.0, "date": "2026-10-30"}, {"product_id": "p2", "amount": 900.0, "date": "2026-10-23"}], "notes": [], "callbacks": [], "transfers": []}
+[builder/duplicate_receipt_speech] Two successful promise receipts are narrated separately, then the text-message sentence is repeated in the final summary. The transcript judge fails this repetition. Evidence: M[62], M[63], M[66], M[69], M[70], M[73], M[76]
+  M[66] assistant: Your payment promise is recorded. You will receive a text message confirming this promise.
+  M[73] assistant: Your payment promise is recorded. You will receive a text message confirming this promise.
+[judge/judge_order_error] The allegation that goodbye followed close_call is contradicted by message/event order and secondsFromStart: goodbye M76=19.504604, close start M79=19.641862, close complete M80=19.830949. Keep the recorded failure; repetition is independently observed. Evidence: M[76], M[79], M[80]
+  M[76] assistant: Your promises are recorded. You will receive a text message confirming this promise. Thank you for your time. Goodbye.
+Judge reason (unaltered): The agent failed to say goodbye before the single final close_call; the farewell in Message 12 was delivered after the close_call function was already executed in the system event sequence and the agent had already narrated the recording outcome. Additionally, the assistant was highly repetitive, stating the confirmation and text-message notification sentence three times (Messages 10, 11, and 12) without further user interaction, failing to conclude the call efficiently once the user had confirmed the dates. All other criteria, including identity verification, debt disclosure timing, the specific dates for the promises (30 October for credit card and 23 October for personal loan), and the summary read-back, were met correctly.
+Observed speech: missing-detail prompts=0; text notifications=3 for 2 recorded products. Goodbye M[76] precedes single close start M[79].
+
+0004 PUB-11__distractor_words rep 1 | FAIL | call b22c8690-71e8-453e-a3b5-d29b2ca0bd9e
+Evidence: evidence/0004.json sha256=9b274a83c136ff24c13b20bc2c9b0f4e55d8be6910a377f893930de80989e51b
+Recorded ledger/trace=False; judge=fail; reconciled operations=7; target=observed_but_failed
+Actor/coverage: The unrelated birthday on the thirtieth is spoken at M15 and is excluded from identity verification. Later the actor emits repeated 1,383/1,227-character blocks and eventually confirms a materially different aggregate read-back. Retain failure; early complete canonical payment intent is available before the degeneration.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 66, "date": "2026-10-23"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 213, "date": "2026-10-23"}, {"promise_id": "pr3", "product_id": "p3", "type": "car_loan", "amount": 25, "date": "2026-10-16"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 220.0, "date": "2026-10-16"}, {"product_id": "p2", "amount": 640.0, "date": "2026-10-16"}, {"product_id": "p3", "amount": 75.0, "date": "2026-10-16"}], "notes": [], "callbacks": [], "transfers": []}
+[builder/aggregate_scope] At M45 the customer offers the full total 935 for all three on Friday. Extracted event M47 contains amount=935, product=all, date=this Friday. The next process M51 asks about only the car-loan 75 today; collective scope is not preserved. Evidence: M[45], M[47], M[51], M[53]
+  M[45] user: I cannot make those payments today. I will pay all nine hundred and thirty-five dollars this Friday.
+  M[53] assistant: The full past-due amount is 75.0. Can you pay 75.0 for your car loan on 2026-10-14?
+[builder/loop_no_progress] Complete total-and-date statements at M198 and later do not resolve the confirmation state. There are 22 missing-detail prompts overall, including 18 consecutive before the first huge block. Evidence: M[152], M[198], M[200], M[204], M[206], M[305], M[306]
+  M[152] assistant: Please tell me the missing detail so I can continue.
+  M[198] user: I will pay the total of nine hundred and thirty-five dollars for all three accounts this Friday.
+[mixed/noncanonical_ledger] Final read-back and accepted writes are p1=66 on 23 October, p2=213 on 23 October, p3=25 on 16 October, rather than the canonical full amounts on 16 October. Actor confirms M441; these are confirmed but wrong for the scenario, not missing or rejected receipts. Evidence: M[440], M[441], M[449], M[450], M[456], M[457], M[463], M[464]
+  M[440] assistant: Please confirm: credit card ending 2288, 66.0 on 2026-10-23; personal loan, 213.0 on 2026-10-23; car loan, 25.0 on 2026-10-16. Do you confirm?
+  M[441] user: Yes, I confirm.
+[actor/actor_repetition] Large repeated text blocks violate the persona delivery and role constraints. They do not excuse the earlier aggregate-scope failure. Evidence: M[306], M[324], M[405]
+  M[306] user: this Friday. I will pay the total of nine hundred and thirty-five dollars this Friday.I will pay the full nine hundred and thirty-five dollars this Friday. I will pay nine hundred and thirty-five dollars this Friday.I wi [excerpt]
+  M[324] user: this Friday. I will pay the total of nine hundred and thirty-five dollars this Friday.I will pay the full nine hundred and thirty-five dollars this Friday. I will pay nine hundred and thirty-five dollars this Friday.I wi [excerpt]
+Judge reason (unaltered): The call failed due to a materially different simulated customer behavior and excessive repetition by the assistant. The simulated customer produced massive blocks of repetitive text in messages 65, 69, and 87, which deviates significantly from the expected recipient role and scenario. Additionally, the assistant entered an unproductive loop, repeating the phrase 'Please tell me the missing detail so I can continue' 18 times between messages 30 and 64, even though the user had already expressed their intent to pay. Finally, the assistant repeated the promise confirmation message four times (messages 96-99), indicating a breakdown in the conversation flow.
+Observed speech: missing-detail prompts=22; text notifications=4 for 3 recorded products. Goodbye M[470] precedes single close start M[473].
+
+0005 PUB-13__repair_pause rep 1 | FAIL | call f64140cb-cfbb-4cff-bab3-03b532f40760
+Evidence: evidence/0005.json sha256=3e265e6b51ec324dce4e80cca3c933d6be2aee38f0eaa70b3ee52e0a3592d5b0
+Recorded ledger/trace=False; judge=fail; reconciled operations=6; target=not_completed
+Actor/coverage: The actor repeatedly truncates correction turns, offers 25 October instead of the canonical final 30 October, and never gives the prescribed complete repair followed by final confirmation.
+Actual ledger: {"promises": [], "notes": [{"product_id": "p1", "reason": "refused", "text": ""}, {"product_id": "p2", "reason": "refused", "text": ""}], "outcome": "no_promise", "reason": "refused"}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 300.0, "date": "2026-10-30"}, {"product_id": "p2", "amount": 900.0, "date": "2026-10-23"}], "notes": [], "callbacks": [], "transfers": []}
+[builder/missing_date_default] Incomplete collective intent I cannot pay today / want to pay both has empty date and amount in M47, yet M51 sets both products pending for today and M53 requests confirmation of those invented dates. Evidence: M[45], M[47], M[51], M[53]
+  M[45] user: I can't pay today. I want to pay both
+  M[53] assistant: Please confirm: credit card ending 6604, 300.0 on 2026-10-14; personal loan, 900.0 on 2026-10-14. Do you confirm?
+[builder/date_consumption] A concrete noncanonical date October twenty-fifth is correctly present for both products in extracted M65 but process M69 repeats missing detail without consuming it or applying calendar policy. Evidence: M[63], M[65], M[69], M[71]
+  M[63] user: I want to pay both on October twenty-fifth...
+  M[71] assistant: Please tell me the missing detail so I can continue.
+[builder/false_refusal] Willing-but-incomplete credit/loan correction turns produce refused notes for both products despite no spoken flat refusal. No unconfirmed promise is written. Evidence: M[81], M[90], M[108], M[135], M[143], M[147], M[151], M[154]
+  M[81] user: Wait, let me correct that, I
+  M[90] user: Wait, let me correct that, I want to pay
+Judge reason (unaltered): The agent failed to meet the primary success criteria: no payment promises were recorded for the credit card (required for 30 October) or the personal loan (required for 23 October). Although the agent mentioned the correct date for the loan in Message 26, it did not obtain confirmation and ultimately declared that no promise was recorded in Message 28. As a result, there was no read-back of both dates, and the specific recording protocols (obtaining clear confirmation, claiming success after ok:true, and saying the required text-message sentence) were not followed.
+Observed speech: missing-detail prompts=1; text notifications=0 for 0 recorded products. Goodbye M[151] precedes single close start M[154].
+
+0006 PUB-11__pieces rep 2 | PASS | call 78a88107-2700-482f-acf4-655c0dd19ead
+Evidence: evidence/0006.json sha256=ec818ad91373291ed07eb8a7d2e943afb802bf4e67636628e914a92b23d9f321
+Recorded ledger/trace=True; judge=pass; reconciled operations=7; target=fragmentation_observed
+Actor/coverage: Split identity replies are observed; identity is eventually verified after a complete answer. This establishes prompting for a complete answer, not successful accumulation of split suffixes.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 220, "date": "2026-10-16"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 640, "date": "2026-10-16"}, {"promise_id": "pr3", "product_id": "p3", "type": "car_loan", "amount": 75, "date": "2026-10-16"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 220.0, "date": "2026-10-16"}, {"product_id": "p2", "amount": 640.0, "date": "2026-10-16"}, {"product_id": "p3", "amount": 75.0, "date": "2026-10-16"}], "notes": [], "callbacks": [], "transfers": []}
+Observed speech: missing-detail prompts=0; text notifications=4 for 3 recorded products. Goodbye M[119] precedes single close start M[122].
+
+0007 PUB-12__repair_pause rep 2 | FAIL | call 862a0287-dd71-4afe-a05b-60a9faf360cc
+Evidence: evidence/0007.json sha256=10aa4e4f157ad32ee7a9fbfa03380da520fdd21c5089f15143e0af2ecc2d256a
+Recorded ledger/trace=False; judge=fail; reconciled operations=8; target=not_completed
+Actor/coverage: The actor alternates Friday/Saturday/tomorrow with dangling wait/let fragments, never completes the prescribed canonical final repair, then explicitly confirms Friday. The recorded 16 October is supported by that final read-back/yes, but differs from the canonical tomorrow.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 510, "date": "2026-10-16"}], "notes": [{"product_id": "p2", "reason": "refused", "text": ""}, {"product_id": "p3", "reason": "refused", "text": ""}], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 510.0, "date": "2026-10-15"}], "notes": [{"product_id": "p2", "reason": "refused"}, {"product_id": "p3", "reason": "refused"}], "callbacks": [], "transfers": []}
+[builder/partial_items_consumed] M60 marks the first credit-card proposal partial=true, yet M64 marks p1 pending for Friday and moves to the next product. Partial status does not block item application. Evidence: M[58], M[60], M[64], M[66]
+  M[58] user: I will pay the credit card on Friday, wait, let
+  M[66] assistant: Can you pay 1320.0 for your personal loan on 2026-10-16?
+[builder/attempt_budget] Five personal-loan offers and three car-loan offers are spoken despite limits two and one. State remains at its attempt limit while earlier refused offers are re-emitted after partial turns. Evidence: M[66], M[75], M[78], M[82], M[102], M[138], M[156], M[165], M[183], M[192]
+  M[66] assistant: Can you pay 1320.0 for your personal loan on 2026-10-16?
+  M[75] assistant: Can you pay 440.0 for your personal loan on 2026-10-23?
+[mixed/date_state_churn] Tomorrow is extracted at M132 and applied as 15 October in M136, but later actor Friday fragments replace it and the final combined read-back is 16 October. This does not demonstrate rejection of a completed final canonical correction. Evidence: M[130], M[132], M[136], M[148], M[175], M[201], M[202], M[210], M[211]
+  M[130] user: I will pay the credit card tomorrow, wait, let
+  M[148] user: I will pay the credit card on Friday, wait
+[builder/duplicate_receipt_speech] A successful receipt is followed by the text-message sentence both immediately and again at goodbye. Evidence: M[214], M[225]
+  M[214] assistant: Your payment promise is recorded. You will receive a text message confirming this promise.
+  M[225] assistant: Your promise is recorded. You will receive a text message confirming this promise. Thank you for your time. Goodbye.
+Judge reason (unaltered): The assistant failed to follow the attempt limits for the loan products. It made five attempts for the personal loan (late band) across messages 10, 12, 18, 26, and 30, exceeding the allowed limit of two attempts. It also made three attempts for the car loan (early band) in messages 32, 36, and 38, exceeding the allowed limit of one attempt. Furthermore, the assistant repeated the mandatory text-message confirmation sentence in both message 42 and message 43, though it did correctly provide the farewell and close the call only once.
+Observed speech: missing-detail prompts=0; text notifications=2 for 1 recorded products. Goodbye M[225] precedes single close start M[228].
+
+0008 PUB-13__in_words rep 2 | PASS | call fe5009fe-3339-4a64-b9e6-d6e8a262f64b
+Evidence: evidence/0008.json sha256=8b4da5d11e066bd0cf806a675d40b62bb35c517599af594f660591d96c33e099
+Recorded ledger/trace=True; judge=pass; reconciled operations=6; target=spoken_date_and_split_deadlines_observed
+Actor/coverage: The actor speaks the canonical shared date in words and confirms a combined read-back containing the distinct policy-derived product deadlines.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 300, "date": "2026-10-30"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 900, "date": "2026-10-23"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 300.0, "date": "2026-10-30"}, {"product_id": "p2", "amount": 900.0, "date": "2026-10-23"}], "notes": [], "callbacks": [], "transfers": []}
+Observed speech: missing-detail prompts=0; text notifications=3 for 2 recorded products. Goodbye M[76] precedes single close start M[79].
+
+0009 PUB-11__distractor_words rep 2 | PASS | call 2de5a666-9907-4eb8-9a5c-315f312aaf9d
+Evidence: evidence/0009.json sha256=efc5a1885c4f6cd7628843dcfc98b7b981736feda0628c6a195afc29caffe62d
+Recorded ledger/trace=True; judge=pass; reconciled operations=7; target=unrelated_date_not_spoken
+Actor/coverage: Birthday fragments are spoken, but no unrelated thirtieth/payment-adjacent distractor date appears anywhere in user messages. The target date boundary is unexercised; this scored pass cannot count as a pass of that boundary.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 220, "date": "2026-10-16"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 640, "date": "2026-10-16"}, {"promise_id": "pr3", "product_id": "p3", "type": "car_loan", "amount": 75, "date": "2026-10-16"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 220.0, "date": "2026-10-16"}, {"product_id": "p2", "amount": 640.0, "date": "2026-10-16"}, {"product_id": "p3", "amount": 75.0, "date": "2026-10-16"}], "notes": [], "callbacks": [], "transfers": []}
+[actor/missing_target_boundary] Birthday fragments are spoken, but no unrelated thirtieth/payment-adjacent distractor date appears anywhere in user messages. The target date boundary is unexercised; this scored pass cannot count as a pass of that boundary. Evidence: M[6], M[15], M[28], M[45], M[54], M[63]
+  M[6] user: Yes, this is Sofia Almeida.
+  M[15] user: My date of birth is the third of June nineteen eighty seven.
+Observed speech: missing-detail prompts=0; text notifications=4 for 3 recorded products. Goodbye M[92] precedes single close start M[95].
+
+0010 PUB-13__repair_pause rep 2 | FAIL | call 87594340-7105-4a33-877a-58f882b1f87a
+Evidence: evidence/0010.json sha256=1d6cd1b690e439780e8c04e0eafe775892effcf17be2d64ae30013badd199786
+Recorded ledger/trace=False; judge=fail; reconciled operations=6; target=completed_and_failed
+Actor/coverage: Many actor turns are fragmented and a long repeated block later breaks the persona. However M99 provides an entire different-date-then-canonical correction in one turn: fifteen October, actually thirty October. It is a real exercised correction, not an absent boundary. The actor eventually accepts the noncanonical loan-today proposal.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p2", "type": "personal_loan", "amount": 900, "date": "2026-10-14"}], "notes": [{"product_id": "p1", "reason": "refused", "text": ""}], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 300.0, "date": "2026-10-30"}, {"product_id": "p2", "amount": 900.0, "date": "2026-10-23"}], "notes": [], "callbacks": [], "transfers": []}
+[builder/missing_date_default] An incomplete collective proposal with empty date causes both products to become pending today despite an explicit inability to pay today. Evidence: M[45], M[47], M[51], M[53]
+  M[45] user: I cannot pay today. I want to pay both
+  M[53] assistant: Please confirm: credit card ending 6604, 300.0 on 2026-10-14; personal loan, 900.0 on 2026-10-14. Do you confirm?
+[builder/completed_correction_not_consumed] M99 ends clearly with thirty October; extraction M101 preserves product=all and date_phrase=thirty October. Process M105 makes no progress. A subsequent complete both-products proposal is extracted with both items at M110, yet M114 also repeats missing detail. Evidence: M[99], M[101], M[105], M[107], M[108], M[110], M[114], M[116]
+  M[99] user: let me correct that, I can pay on fifteen October... actually, I want to pay on thirty October.
+  M[107] assistant: Please tell me the missing detail so I can continue.
+[builder/loop_no_progress] There are 63 missing-detail prompts, including complete amount/date proposals from M153 onward. Later block M639 is actor degeneration, after prolonged observed builder non-progress. Evidence: M[153], M[161], M[207], M[216], M[261], M[638], M[639]
+  M[153] user: I want to pay the three hundred and the nine hundred on thirty October.
+  M[161] assistant: Please tell me the missing detail so I can continue.
+[mixed/noncanonical_ledger] Final explicit yes confirms only the loan 900 today. That write succeeds, p1 is noted refused without a flat refusal, and the scenario fails. The write is confirmed but does not recover the earlier valid corrected proposal. Evidence: M[647], M[648], M[656], M[657], M[665], M[666], M[672], M[676], M[679]
+  M[647] assistant: Can you pay 900.0 for your personal loan on 2026-10-14?
+  M[648] user: Yes, I can do that.
+Judge reason (unaltered): The agent failed on multiple success criteria:
+- The credit card payment was not recorded for 30 October; in fact, it was not recorded at all by the end of the call.
+- The loan was recorded for 14 October instead of the required deadline of 23 October.
+- The final read-back only included the loan, not both products and their respective dates.
+- The agent entered an extensive repetitive loop from message 10 to 138, continuously asking for 'missing details' that the customer was providing, which indicates a failure in dialogue processing.
+- The agent did not follow the canonical values/decisions specified for the simulated customer (23 October for the loan).
+Observed speech: missing-detail prompts=63; text notifications=2 for 1 recorded products. Goodbye M[676] precedes single close start M[679].
+
+0011 PUB-11__pieces rep 3 | PASS | call 82043749-eaab-4a89-99ab-bc5f951ab2a7
+Evidence: evidence/0011.json sha256=3d68ffd5978b26b02093e1b51cbedbacdebcbf3a886c252d0d8833db763e548f
+Recorded ledger/trace=True; judge=pass; reconciled operations=7; target=fragmentation_observed
+Actor/coverage: Split identity replies are observed; identity is eventually verified after a complete answer. This establishes prompting for a complete answer, not successful accumulation of split suffixes.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 220, "date": "2026-10-16"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 640, "date": "2026-10-16"}, {"promise_id": "pr3", "product_id": "p3", "type": "car_loan", "amount": 75, "date": "2026-10-16"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 220.0, "date": "2026-10-16"}, {"product_id": "p2", "amount": 640.0, "date": "2026-10-16"}, {"product_id": "p3", "amount": 75.0, "date": "2026-10-16"}], "notes": [], "callbacks": [], "transfers": []}
+Observed speech: missing-detail prompts=0; text notifications=4 for 3 recorded products. Goodbye M[119] precedes single close start M[122].
+
+0012 PUB-12__repair_pause rep 3 | FAIL | call 2a19d4fd-eceb-444c-9b2f-c7d14fe18a99
+Evidence: evidence/0012.json sha256=9573b42c2807e4dc4c33f9a645ab9a36d757886293b11fc3fed4075a59368de1
+Recorded ledger/trace=False; judge=fail; reconciled operations=8; target=not_completed
+Actor/coverage: The actor never finishes a same-turn correction ending in canonical tomorrow; it emits fragments, then today, and a Draft prefix. No final promise confirmation is obtained.
+Actual ledger: {"promises": [], "notes": [{"product_id": "p1", "reason": "refused", "text": ""}, {"product_id": "p2", "reason": "refused", "text": ""}, {"product_id": "p3", "reason": "refused", "text": ""}], "outcome": "no_promise", "reason": "refused"}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 510.0, "date": "2026-10-15"}], "notes": [{"product_id": "p2", "reason": "refused"}, {"product_id": "p3", "reason": "refused"}], "callbacks": [], "transfers": []}
+[builder/missing_date_default] Incomplete credit-card intent with no date/amount at M69 becomes pending today at M73. A later today fragment changes tentative state, but does not fulfill the canonical correction. Evidence: M[67], M[69], M[73], M[111], M[157], M[159], M[163], M[165]
+  M[67] user: Wait, let me correct that, I will pay the credit
+  M[111] assistant: Please confirm: credit card ending 9015, 510.0 on 2026-10-14. Do you confirm?
+[builder/attempt_budget] The personal loan is asked three times (including a repeat of the exhausted floor/deadline offer); the car loan is asked once and stays within its limit. Evidence: M[75], M[84], M[93], M[102]
+  M[75] assistant: Can you pay 1320.0 for your personal loan on 2026-10-16?
+  M[84] assistant: Can you pay 440.0 for your personal loan on 2026-10-23?
+[builder/false_refusal] Willing credit-card fragments are converted to a refused note. The final ledger has no promises and all three refused notes; create_promise remains correctly blocked without confirmation. Evidence: M[121], M[130], M[184], M[193], M[201], M[205], M[209], M[213], M[216]
+  M[121] user: Wait, let me correct that, I will pay
+  M[130] user: Wait, let me correct that, I will pay five hundred
+Judge reason (unaltered): The agent failed several success criteria. Specifically:
+- Exactly one promise on the credit card was required, but the agent failed to record any promise, eventually stating in Message 40 that 'No payment promise was recorded.'
+- The agent made three attempts to collect on the personal loan (Messages 12, 14, and 16) instead of the required two attempts.
+- The agent added a 'refused' note for all three products (per system events), whereas the criteria required refused notes only for the 'other two' products (personal and car loans), with a promise expected for the credit card.
+Observed speech: missing-detail prompts=1; text notifications=0 for 0 recorded products. Goodbye M[213] precedes single close start M[216].
+
+0013 PUB-13__in_words rep 3 | PASS | call ec13220e-956e-42f4-aa0f-4299c0ccd2b4
+Evidence: evidence/0013.json sha256=6db5f82419cb4555f841fad1e5fbc7c0dd5d6547f3a8adaafd37554f62ef19ac
+Recorded ledger/trace=True; judge=pass; reconciled operations=6; target=spoken_date_and_split_deadlines_observed
+Actor/coverage: The actor speaks the canonical shared date in words and confirms a combined read-back containing the distinct policy-derived product deadlines.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 300, "date": "2026-10-30"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 900, "date": "2026-10-23"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 300.0, "date": "2026-10-30"}, {"product_id": "p2", "amount": 900.0, "date": "2026-10-23"}], "notes": [], "callbacks": [], "transfers": []}
+Observed speech: missing-detail prompts=0; text notifications=3 for 2 recorded products. Goodbye M[76] precedes single close start M[79].
+
+0014 PUB-11__distractor_words rep 3 | PASS | call 8ea082fb-8406-4014-8dc0-d96fe0af4a10
+Evidence: evidence/0014.json sha256=142e7ffaf6ea14c3adf7ce1d7d4443d3e1ebdd0345604c1db1822c3cfc0b317c
+Recorded ledger/trace=True; judge=pass; reconciled operations=7; target=unrelated_date_not_spoken
+Actor/coverage: Birthday fragments are spoken, but no unrelated thirtieth/payment-adjacent distractor date appears anywhere in user messages. The target date boundary is unexercised; this scored pass cannot count as a pass of that boundary.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 220, "date": "2026-10-16"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 640, "date": "2026-10-16"}, {"promise_id": "pr3", "product_id": "p3", "type": "car_loan", "amount": 75, "date": "2026-10-16"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 220.0, "date": "2026-10-16"}, {"product_id": "p2", "amount": 640.0, "date": "2026-10-16"}, {"product_id": "p3", "amount": 75.0, "date": "2026-10-16"}], "notes": [], "callbacks": [], "transfers": []}
+[actor/missing_target_boundary] Birthday fragments are spoken, but no unrelated thirtieth/payment-adjacent distractor date appears anywhere in user messages. The target date boundary is unexercised; this scored pass cannot count as a pass of that boundary. Evidence: M[6], M[15], M[28], M[45], M[54], M[63]
+  M[6] user: Yes, this is Sofia Almeida.
+  M[15] user: Third of June nineteen eighty seven. I also have a birthday to attend
+Observed speech: missing-detail prompts=0; text notifications=4 for 3 recorded products. Goodbye M[92] precedes single close start M[95].
+
+0015 PUB-13__repair_pause rep 3 | FAIL | call 85187ebf-b17d-4f3e-adac-4674e7ed3049
+Evidence: evidence/0015.json sha256=01e3a2bf0e24e24f4b1689d4b954002b9fabfc057f34980fcd0426f1abd3df07
+Recorded ledger/trace=False; judge=fail; reconciled operations=6; target=not_completed_but_shared_update_observed
+Actor/coverage: The actor never supplies the canonical 30 October repair. It supplies incomplete 20 and both-on-25 proposals, then accepts the loan deadline and confirms the final noncanonical combined read-back. Thus canonical correction coverage fails; a shared-scope update is still directly observable.
+Actual ledger: {"promises": [{"promise_id": "pr1", "product_id": "p1", "type": "credit_card", "amount": 300, "date": "2026-10-20"}, {"promise_id": "pr2", "product_id": "p2", "type": "personal_loan", "amount": 900, "date": "2026-10-23"}], "notes": [], "outcome": "promise", "reason": null}
+Expected (run-row pin verified): {"outcome": "promise", "reason": null, "promises": [{"product_id": "p1", "amount": 300.0, "date": "2026-10-30"}, {"product_id": "p2", "amount": 900.0, "date": "2026-10-23"}], "notes": [], "callbacks": [], "transfers": []}
+[builder/stale_shared_update] M65 accepts day-only 20 for p1. Later M74 contains product=all and items for both p1/p2 on 25, but M78 updates only p2 to its deadline and leaves p1 pending on 20. M89 reads back the stale p1 date. Existing pending products must participate in a later shared proposal before confirmation. Evidence: M[63], M[65], M[69], M[72], M[74], M[78], M[80], M[89]
+  M[63] user: I want to pay on 20
+  M[72] user: I want to pay both on 25
+[mixed/noncanonical_ledger] The final yes M90 authorizes p1 300 on 20 October and p2 900 on 23 October; both receipts succeed. This is a canonical scenario mismatch and stale earlier intent, not an unconfirmed write or bank rejection. Evidence: M[89], M[90], M[98], M[99], M[105], M[106]
+  M[89] assistant: Please confirm: credit card ending 6604, 300.0 on 2026-10-20; personal loan, 900.0 on 2026-10-23. Do you confirm?
+  M[90] user: Yes, I confirm.
+[builder/duplicate_receipt_speech] Two successful writes generate three notification sentences including the goodbye summary. Evidence: M[102], M[109], M[112]
+  M[102] assistant: Your payment promise is recorded. You will receive a text message confirming this promise.
+  M[109] assistant: Your payment promise is recorded. You will receive a text message confirming this promise.
+Judge reason (unaltered): The conversation failed on several counts: 1) The credit card promise was recorded for 20 October [Message 16] instead of the required 30 October. 2) The agent failed to properly revalidate the customer's correction in [Message 13] where the user requested to pay both on the 25th; the agent ignored the credit card change and suggested the 23rd for the loan [Message 14], then used 20 October for the credit card in the final summary [Message 16]. 3) The agent repeated the success confirmation message three times [Messages 18, 19, 20], indicating a routing loop before the call ended.
+Observed speech: missing-detail prompts=0; text notifications=3 for 2 recorded products. Goodbye M[112] precedes single close start M[115].
+
+Grouped generic builder recommendations
+
+P1 Proposal completeness and confirmation state (calls 0002, 0005, 0007, 0010, 0012, 0015)
+Represent missing dates/amounts as unknown rather than defaulting to today. Gate all per-product items on complete utterance/repair state; suspend commitment while a correction is unfinished. When values change, invalidate the combined confirmation and revalidate affected products using the supplied brief, calendar and tool schema before obtaining a fresh yes. Preserve the no-write-without-confirmation guard observed here.
+
+P1 Multi-product intent and shared updates (calls 0004, 0010, 0015)
+Keep explicit scope for per-product and collective proposals, including aggregate totals. Interpret a total against the current returned products; if allocation is ambiguous, ask a targeted question without replacing the total with a product amount. Apply later collective updates to all affected unrecorded products, including products already pending, then derive each product deadline independently from the supplied policy.
+
+P1 Attempt limits and reasons (calls 0002, 0005, 0007, 0012)
+Count actual persuasion offers per product when emitted and prevent re-emitting an exhausted or previously refused offer after partial turns or product switches. Track clarification separately using the supplied policy. Preserve a product-specific refusal only when supported by observed customer intent or the supplied policy for non-answers; do not automatically label an unfinished willing proposal refused.
+
+P1 Date consumption and progress (calls 0004, 0005, 0010)
+Normalize cardinal, ordinal and month-first date forms consistently, and ensure extracted complete proposals are consumed by the state machine. Track whether each clarification changes known slots. Replace identical missing-detail loops with a question naming the precise missing slot and a policy-derived bounded recovery path. Never fabricate a date, agreement or outcome on exhaustion.
+
+P2 Receipt narration and closing (calls 0003, 0004, 0007, 0010, 0015)
+Use explicit receipt-speech and closing state so each successful product receipt gets only the notification required by the supplied brief, and the final goodbye does not replay already emitted notifications. Keep goodbye before the single close_call as observed. Repeated notifications also occur in scored passes, so repair the shared builder path rather than special-casing failed case IDs.
+
+P2 Evidence-based validation (calls 0003, 0004, 0009, 0010, 0014)
+Keep ledger, call-event, judge and actor-fidelity verdicts separate. Derive ordering assertions from message indices and event timestamps. Require a distracting unrelated date or a complete final correction to appear in actual actor speech before counting that boundary covered. Judge inconsistencies and actor drift stay explicit failures or unexercised coverage; replay/kernel/oracle results do not become hosted conversation passes.
+
+Interpretation and limits
+7/15 is verified by manifest jobs and the summed current results; 1/5 is the three-repetition aggregate, not the call denominator. Recorded verdicts are retained, not independently re-scored or upgraded.
+All 15 have real saved hosted text-modality call transcripts and bank HTTP start/complete receipts. This is conversation simulation evidence, not live audio or unseen-policy coverage.
+The two distractor scored passes lack the distracting unrelated date. They retain their reported score but provide no pass claim for that boundary. No absent correction, simulator drift or kernel/oracle reference is promoted to a pass.
+The canonical repair is fully exercised in call 10. Other repair calls expose incomplete/noncanonical actor turns and additional directly observed builder problems, so the missing promise alone is not attributed to failure to process a canonical repair.
+Every promise-bearing call repeats the required notification again in its final summary: recorded judges inconsistently treat this as a transcript failure. Call 3 contains a directly contradicted judge ordering allegation; the remaining repetition finding is real and its failure is retained.
+recommendations are invariants driven by supplied policy, tools and observed intent; do not encode these public case IDs, dates, balances, attempt limits or bank constants as permanent builder policy.
+The reconciler validates HTTP/ledger provenance, not customer fidelity or conversational policy compliance.
+No current-source regeneration or synthetic reference is treated as evidence for these saved calls.
+No hidden cases, policy transfer, production audio, interruptions or timed barge-in are established.
+
+Source comparisons to recorded run pins
+competition-v3/build-the-builder/VERSION: matches run=True; recorded=1121cfccd5913f0a63fec40a6ffd44ea64f9dc135c66634ba001d10bcf4302a2; current LF=1121cfccd5913f0a63fec40a6ffd44ea64f9dc135c66634ba001d10bcf4302a2
+competition-v3/build-the-builder/briefs/brief-a.md: matches run=True; recorded=d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7; current LF=d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7
+competition-v3/build-the-builder/briefs/brief-b.md: matches run=True; recorded=c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550; current LF=c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550
+competition-v3/build-the-builder/tools/openapi.json: matches run=True; recorded=9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8; current LF=9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8
+competition-v3/build-the-builder/tools/score.py: matches run=True; recorded=daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7; current LF=daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7
+competition-v3/build-the-builder/tools/run_cases.py: matches run=True; recorded=c96da9f9189d82850e46bfc551603ff5a62847025b5c50a77b923ad999f3767c; current LF=c96da9f9189d82850e46bfc551603ff5a62847025b5c50a77b923ad999f3767c
+competition-v3/build-the-builder/public-test-set.json: matches run=True; recorded=fb7f4c0082eecb724a6faab771b4339bc62655627e49251e6bb2a0cf59a72fcb; current LF=fb7f4c0082eecb724a6faab771b4339bc62655627e49251e6bb2a0cf59a72fcb
+research/field-cases/scenarios.json: matches run=True; recorded=8212624356d0e8391a79a4f187d0f1124a387322bf32df8d9617a7aec4637771; current LF=8212624356d0e8391a79a4f187d0f1124a387322bf32df8d9617a7aec4637771
+research/field-cases/local_runner.py: matches run=True; recorded=23122cb937af3fd332cf282d6385c4e611f87c6965c3536a2f9bdff51bc49231; current LF=23122cb937af3fd332cf282d6385c4e611f87c6965c3536a2f9bdff51bc49231
+integrations/customer-datasets/benchmark_adapter.py: matches run=False; recorded=16b20a56a8bc0c4a9194313c9e5ee8156a0311d813a625847e539e4804ce225a; current LF=0841820981c808a85248f160284192e4845db272e30b476ee04a3cfc690824c6
+integrations/customer-datasets/adapter.py: matches run=True; recorded=5b863d5b9631dfab012ffde6377376f0f8aa1c14db0ea86715a747e46a78faee; current LF=5b863d5b9631dfab012ffde6377376f0f8aa1c14db0ea86715a747e46a78faee
+integrations/customer-datasets/sources.json: matches run=True; recorded=b4e49d95d91ddd9582df6443da1c5952dbe07f29155091dfdfd0f8dcf56285f8; current LF=b4e49d95d91ddd9582df6443da1c5952dbe07f29155091dfdfd0f8dcf56285f8
+
+Saved-output validation: 15 calls, 168 direct finding witnesses and all actual ledger calls match saved evidence; completed-run hashes unchanged.

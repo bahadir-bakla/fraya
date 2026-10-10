@@ -4,15 +4,20 @@ from urllib.parse import urlparse
 
 def validate_coverage(coverage):
     errors=[]
+    inventory=[]
     def walk(value,path='coverage'):
         if isinstance(value,dict):
             status=str(value.get('status','')).lower().replace('_',' ')
-            if any(marker in status for marker in ('degraded enforcement','weakened enforcement','not implemented','not enforced','prompt only')):
+            if 'status' in value and any(key in value for key in ('rule','id','requirement')):inventory.append(value)
+            if any(marker in status for marker in ('degraded enforcement','weakened enforcement','not implemented','not enforced','prompt only','omitted','unknown','unresolved','uncertain','unsupported','not covered','missing','todo')):
                 errors.append(f'{path}: required policy enforcement is incomplete: {value.get("rule",value.get("id",status))}')
             for key,item in value.items():walk(item,path+'.'+key)
         elif isinstance(value,list):
             for index,item in enumerate(value):walk(item,f'{path}[{index}]')
     walk(coverage)
+    if not inventory:errors.append('coverage: nonempty rule inventory with explicit implementation status is required')
+    for rule in inventory:
+        if not str(rule.get('status','')).strip():errors.append('coverage: every rule needs a nonempty implementation status')
     return errors
 
 def validate(workflow, api):
@@ -48,8 +53,14 @@ def validate(workflow, api):
         if handler!='__function__:api_call':fail(f'{where}: unsupported handler {handler}');return
         url=props.get('url',{}).get('default','')
         if url not in allowed_urls:fail(f'{where}: endpoint outside supplied bank API: {url}')
-        endpoint='/'+name if '/'+str(name) in api['paths'] else urlparse(url).path.removeprefix(urlparse(api['servers'][0]['url']).path)
-        operation=api['paths'].get(endpoint,{}).get('post',{})
+        matches=[endpoint for server in api['servers'] for endpoint in api['paths'] if server['url'].rstrip('/')+endpoint==url]
+        endpoint=matches[0] if len(set(matches))==1 else ''
+        method=str(props.get('method',{}).get('default','')).lower()
+        operation=api['paths'].get(endpoint,{}).get(method,{})
+        if not operation:fail(f'{where}: method/URL does not resolve to a supplied API operation')
+        operation_id=operation.get('operationId')
+        if operation_id and name!=operation_id:fail(f'{where}: function name does not match bound endpoint operationId')
+        if not operation_id and '/'+str(name) in api['paths'] and endpoint!='/'+str(name):fail(f'{where}: function name does not match bound endpoint')
         expected=operation.get('requestBody',{}).get('content',{}).get('application/json',{}).get('schema',{})
         body=props.get('body',{})
         if body.get('type')!='object':fail(f'{where}: body must be an object schema')

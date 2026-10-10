@@ -1,0 +1,315 @@
+Scenario compatibility audit — local kit v3, 2026-10-10
+Repository: C:/Users/9bakl/OneDrive/Belgeler/ChatGPT/BUILD THE BUILDER/fraya
+
+Scope and evidence
+Read the local official score.py, run_cases.py, public-test-set.json, both briefs,
+OpenAPI, FIELD catalog/export/schema and SYN planning catalog. Parallel read-only
+reviews checked scenario inventory and runners. No network, live simulations,
+workflow changes, publishing, fetching or pulling were performed. Pure in-memory
+scorer probes and stubbed runner probes establish code behavior, not agent passes.
+The customer-dataset adapter is parent-owned and is not implemented by this audit.
+
+Compatibility means three different things
+1. Format-compatible: the object has fields the runner/scorer actually consume.
+2. Runnable on the official public mock: its exact registered PUB id, immutable
+   facts, persona, oracle and newly allocated backend session agree.
+3. Executed pass: observed complete simulation, ledger/action trace and passing
+   transcript judge, bound to the same case/persona/session; every required repeat
+   passes. A reference replay or a format check is never an executed agent pass.
+
+Inventory and unsupported practice IDs
+- public-test-set.json: 13 fixtures, PUB-01 through PUB-13; A=10, B=3.
+- research/field-cases/scenarios.json: 28 fixtures, FIELD-01 through FIELD-28;
+  A=22, B=6. Catalog object with nested facts/oracle/execution is not --cases input.
+- research/field-cases/runner-cases.json: 28 exports of those SAME FIELD fixtures;
+  flat array is format-compatible, but the IDs are not documented public sessions.
+- analysis/synthetic-cases.json: 50 SYN-001 through SYN-050, A=44, B=6. Planning
+  object, not a case array. Every SYN record lacks top-level family, level, title,
+  variables, identity, products, script, expected and checks required by the runner.
+- Thus 78 distinct local scenario IDs have no documented public registration;
+  91 distinct IDs including the public set. The FIELD export is not 28 extra cases.
+  This is a source-based boundary; registration was not probed remotely.
+Refs: public-test-set.json:3,443; scenarios.json:5,519; runner-cases.json:3;
+analysis/synthetic-cases.json:23-35,1304. Official paths below are relative to
+competition-v3/build-the-builder/ unless a different prefix is supplied.
+
+Exact runner format and session binding
+- --cases must decode to a list of case dictionaries. Consumed fields are id,
+  brief, family, level, title, variables.first_name/last_name, identity, script,
+  expected and checks; style and third_party are optional persona controls.
+  title/now in variables are essential brief facts even where persona_for does
+  not use them. checks must be a list of strings; a string would be joined as
+  individual characters. identity must be a mapping; script/title must be strings.
+- Official style names: pieces, corrects, talkative, asks_back, in_words. Neutral
+  is represented by missing/null style, not the literal "neutral". Unknown style
+  fails the STYLES lookup. Third-party handling uses family == "Third party" OR
+  truthy third_party, so renamed families still need an explicit third_party flag.
+- run_once POSTs only {"case": case.id} to /v1/practice/sessions. A --cases file
+  does NOT install its identity, products, now or faults. The mock selects its
+  fixture by id and returns variables including a fresh secret customer_id.
+- The simulation map is persona_id -> returned session variables. Every bank
+  call must use that session's customer_id. Ledger retrieval must use that exact
+  id with the same team namespace. Never substitute a local-field id or a previous
+  session. Returned variables must match immutable public names/title/now.
+- Identity answers belong to the customer persona, not the phone-agent variables.
+  Products are learned from get_account. Expected ledgers, fault schedules and
+  dataset source text must not be included in the phone-agent variable map.
+- Product ids originate from get_account. Public oracles use p1/p2/p3 in returned
+  product order. Renaming FIELD to PUB creates inconsistent persona/oracle/backend
+  facts; it cannot make the FIELD scenario hosted-runnable.
+Refs: tools/run_cases.py:35-47,52-62,84-98; README.md:102; briefs/brief-a.md:13-20.
+
+Exact ledger oracle consumed by score_ledger
+- expected.outcome is required. expected.reason may be absent; absent equals
+  None, whereas an empty string is different. Ledger outcome/reason are .get'ed.
+- expected and ledger must each contain promises, notes, callbacks, transfers
+  as arrays (including empty arrays). Ledger also needs calls as an array.
+- Promises compare sorted tuples (product_id, round(float(amount), 2), date).
+  Product/date values are exact, amounts are cent-rounded binary floats. Amount
+  strings are accepted by this scorer but are NOT valid OpenAPI number arguments.
+- Notes compare sorted tuples (note.get(product_id), reason); note text is ignored.
+- Callbacks compare sorted (date,time); there is no date/time normalization.
+- Transfers compare sorted queue strings. All four comparisons preserve duplicate
+  counts but discard order. Extra item fields are ignored by the equality keys.
+- Last call.tool must be close_call. Each relevant call.result must be a mapping.
+  get_account/create_promise fail policy only if result.error equals the EXACT
+  string "identity not verified". For expected not_reached/no_contact/unreached,
+  ANY verify_identity/get_account attempt fails. The latter two outcome aliases
+  occur in scorer logic but are not allowed by the current OpenAPI/brief.
+- Ledger-only score.py CLI loads ONLY public-test-set.json and does not run the
+  transcript judge. Official run_cases.py adds failure unless judge.outcome is
+  exactly "pass". Three all-pass repeats are required in final rules; practice
+  defaults to one. Valid expected arrays are essential independent oracles.
+Refs: tools/score.py:17-38; tools/run_cases.py:50,72-73,94-98; README.md:57-78.
+
+Schema and export weaknesses
+- FIELD scenario.schema.json describes a catalog object with 20..30 scenarios,
+  FIELD-NN IDs, local_only execution and false hosted_registered/reference_is_agent_test.
+  It is not an official runner schema or proof of hosted compatibility.
+- Variables require names but not their types; identity contents, product items,
+  fault items and reference argument contents are unspecified. Ledger arrays have
+  no item schemas. Reasons accept arbitrary string/null without outcome coupling.
+  Unique IDs, rule-reference existence, per-brief product/note rules, valid calendar,
+  amount floor, exact confirmation chronology and session provenance are not
+  expressed. additionalProperties is unrestricted. Passing it leaves these gaps.
+- FIELD-28 canonical facts contain create_promise/p2/fail_first_n=2. The export
+  generator drops faults entirely although FIELD-28 expects a service_error note.
+  Canonical replay success does not validate this export's executable completeness.
+- SYN classification (46 explicit-kit, 1 proposed harness, 1 proposed recovery,
+  2 proposed extensions) does not produce executable full expected ledgers. Raw
+  memo identity/outcome extensions cannot use this public mock's unchanged API.
+Refs: research/field-cases/scenario.schema.json:25-30,62-101,130-171,273-295;
+research/field-cases/scenarios.json:5705-5713; runner-cases.json:1549;
+research/field-cases/build_catalog.py:226-231; analysis/synthetic-cases.json:32,64-69.
+
+Existing runner weaknesses, prioritized
+P1: official hosted runner never checks local facts against session facts. It
+joins judge rows with a dict by personaId, hiding duplicates, and accepts a passing
+judge with no callId. It does not require completed simulation status or exact
+run cardinality/runsTotal. Stub probes accepted a green ledger with failed status,
+missing callId and mismatched runsTotal; a duplicate passing verdict hid a fail.
+Refs: tools/run_cases.py:86-98; freya.py:70-78,87-106;
+skill-creator-skill-lift/agent_forge/builder_live.py:227.
+
+P1: FIELD local_runner trusts supplied results and Python truthiness. Wrong
+security answers with verified:true, ok:false plus verified:true, and string
+"false" as promise ok can promote state. A get_account response with products:[]
+still permits fixture product ids because provenance is checked against hidden
+catalog products rather than the actual response. These are fabricated-evidence
+acceptance gaps, not evidence that the hosted mock actually behaves that way.
+Refs: research/field-cases/local_runner.py:165-178,196-198.
+
+P2: --only silently drops unknown ids; duplicates collide in id dictionaries.
+--reps accepts zero/negative values without meaningful validation. FIELD
+check-traces accepts subsets/duplicate entries without coverage accounting, and
+an empty array returns zero failures and exit 0. Malformed dates/amounts can raise
+ValueError/KeyError after a request error was appended, rather than a failed row.
+Refs: tools/run_cases.py:50-53,73-77; research/field-cases/local_runner.py:160-192,350-361.
+
+P2: hosted saved output retains only the final simulation/iteration ids even
+across repetitions. Rows lack per-repetition simulation/iteration binding; raw
+ledgers/judge evidence, case/style/persona hashes and published workflow version
+are absent. Discarded slow runs are not retained. Persona cache does not include
+API origin/workspace. freya.run_simulation has unbounded workspace waiting/polling.
+Refs: tools/run_cases.py:54-61,66-82; freya.py:87-106; README.md:98.
+
+Scorer blindspots and offline probe results
+- It checks the last close tool name, not exactly one close or close ok:true.
+  An oracle-shaped PUB-01 ledger with two closes and failed final close passed.
+- An empty-action PUB-03 ledger ending close_call with not_verified/failed passed
+  despite performing none of the three required wrong-answer attempts.
+- An oracle-shaped hardship ledger with a failed create_promise attempt passed:
+  failed forbidden mutations generally leave no compared side effects.
+- Capitalized "Identity not verified" bypassed the exact error-string test.
+- Promise amount "420.004" matched 420.00. Duplicate successful promise entries
+  correctly FAILED, because equality is multiset equality, not subset matching.
+- A not_reached ledger containing verify_identity correctly FAILED, regardless
+  of its result. Empty expected arrays reject successful extra side effects, but
+  do not prove absence of forbidden attempts such as add_note on Brief A.
+- With oracle and ledger both changed to a bank holiday, score_ledger passed.
+  It does not compute business days, bands, floors, deadlines or legal outcome
+  combinations. Correct independent expected data is a safety requirement.
+- Missing ledger.notes raised KeyError. Mixed missing/string note product_ids
+  raised TypeError while sorting. Invalid floats/nonfinite amounts and malformed
+  calls can crash or distort equality rather than return structured failures.
+- Neither sorted equality nor the two policy checks proves question order,
+  full/today offers, persuasion limits, consent, retry count, result honesty,
+  product-response provenance, disclosure privacy, SMS wording or spoken goodbye.
+  Judge checks and stricter observed-trace validation are both necessary.
+These are AST-extracted, pure in-memory score_ledger probes, not simulations.
+Refs: tools/score.py:19-34; tools/openapi.json:6; briefs/brief-a.md:40-44,53-92,106-121;
+briefs/brief-b.md:12-23.
+
+Grounded hosted mapping examples — partial regression coverage only
+Existing hosted-style-mapping.json has 8 groups, 17 FIELD ids, 8 PUB ids and 17
+PUB/style pairs. Eleven FIELD ids have no proposed equivalent. None is an alias.
+- FIELD-02/03 -> PUB-02 with asks_back/talkative: privacy/callback motif only.
+  The public callback is 2026-10-15 11:00, not FIELD's holiday boundary/invalid offers.
+  Refs: research/field-cases/hosted-style-mapping.json:7-16; public-test-set.json:73-90.
+- FIELD-13/14/16 -> PUB-05 with talkative/asks_back: job-loss motif. PUB declines
+  support and makes no promise; accepting support/voluntary payment are uncovered.
+  Refs: mapping.json:19-29; public-test-set.json:202-215.
+- FIELD-20 -> PUB-07 in_words/corrects: holiday parsing; public promise is p1,
+  540.00 on 2026-10-27. Refs: mapping.json:32-40; public-test-set.json:288-306.
+- SYN-035 -> PUB-06 is an inferred floor-acceptance proxy, not an existing mapping:
+  public 637.50 on 2026-10-16 differs from SYN 126.37 today. Refs:
+  analysis/synthetic-cases.json:2935; public-test-set.json:243-261.
+- FIELD-26/SYN-044 -> PUB-13: separate deadlines. Exact public promises are p1,
+  300.00 on 2026-10-30 and p2, 900.00 on 2026-10-23. Do not import local values.
+  Refs: mapping.json:79-86; analysis/synthetic-cases.json:3403; public-test-set.json:609-632.
+- FIELD-28/SYN-041 -> PUB-10: retry/honesty proxy. Public fails once, then records
+  365.00 on 2026-10-16. It does not cover two failures or B partial success.
+  Refs: mapping.json:68-75; public-test-set.json:416-439.
+Here mapping.json abbreviates research/field-cases/hosted-style-mapping.json.
+Style asks_back can replace security answers twice and conflict with A15; style
+names alone do not prove simulator fidelity. Ref: hosted-style-mapping.json:118.
+
+Required checks for a trustworthy adapter/runner
+- Pin and verify official source + generated pack hashes before live actions;
+  validate immutable PUB facts and approved style/profile whitelist, never upload
+  FIELD/SYN or silently alias them. Freeze the selected rows for the whole run.
+- Require explicit execute, agent id, brief and exact nonempty variant selection.
+  Reject unknown/duplicate selections and wrong-brief variants, never run a
+  silently reduced pack. Dry planning must require neither credentials nor network.
+- Batch at most five personas; fresh session/customer_id AND persona_id for every
+  variant/repetition. Reject duplicate allocations and reused call ids. Bind the
+  observed judge/call/iteration/simulation/session to the exact selected variant.
+- Inspect all workspace simulation pages before mutation and again before start;
+  block running/queued/pending/unknown active states. Never pause/cancel/adopt other
+  simulations. Persist uncertain starts before POST; do not retry an unknown write.
+- Apply bounded total waiting and request timeouts. Require completed simulation,
+  complete iteration cardinality/runsTotal, exactly one verdict per selected
+  persona, actual callId and evidence. No green fallback for missing or failed runs.
+- Require untouched official ledger scoring plus independent typed trace guards
+  and judge.outcome == pass. Enforce exactly one successful final close, valid
+  verified field order/results, account-returned ids, mutation results/retry limits,
+  no attempts forbidden by case role/brief, no notes anywhere on B transfers,
+  lawful per-product dates/amounts and expected arrays. Preserve strict boolean
+  response types; malformed evidence is a failed row rather than a crash.
+- Three repetitions minimum; all three (or all requested >3) must pass. Save raw
+  observed evidence and all results, hashes/selection/agent/model/bindings per
+  repetition, including partial failures/timeouts. No reference verdict becomes
+  a conversation or agent pass. Redact credentials/headers/error bodies; local
+  session capabilities belong only in ignored local evidence, never stdout.
+Refs: README.md:75-92; docs/api.md:193-224,276-290;
+skill-creator-skill-lift/integrations/freya-mcp/freya_mcp/bridge.py:407-455.
+
+Execution evidence currently available
+FIELD validation stores 28/28 reference replays and 14 rejected negative controls,
+with transcript_judge_executed=false, agent_under_test_executed=false, hosted_calls=0.
+SYN is planning-only with no executed agent tests. These are useful harness checks,
+not official benchmark passes. Refs: research/field-cases/validation.json:14,354-356;
+analysis/synthetic-cases.json:23-25,58,1245.
+
+Source snapshot SHA256 (initial audit read; no source modifications by this audit)
+score.py: DAF55989D47915D9A4F0387C2A4F6748580FCDF66B7D3EC61356925EFB0D17D7
+run_cases.py: C96DA9F9189D82850E46BFC551603FF5A62847025B5C50A77B923AD999F3767C
+public-test-set.json: FB7F4C0082EECB724A6FAAB771B4339BC62655627E49251E6BB2A0CF59A72FCB
+openapi.json: 9A8410B12E5C82B6C6A30E9ED7030574D6F919CAFDB1E035CEF7BD876B0BADB8
+brief-a.md: D57C049C89AEC4615F5B939C5A96EE9BD194142D17045BC4036615CFBDF0F1C7
+brief-b.md: C59C70099148B91C13E9C5E40246A63B58638F09469D735F8EB65771BB63D550
+FIELD catalog: B33B1EE504E9767BDC46B83BE834E20F2BCE72278DF7947C672BC2EDFBB00738
+FIELD export: 0AC246AE09253A2DAE8E234D23D7C4CB9489693CA653E67B9EA9C7B400930637
+FIELD schema: 57871A2348608CB5ABEDE70C169B4EA9A1DC2F61B6B16AB69954DDA37349ED18
+SYN catalog: BF3B7356D2059889CCD892272600642DE23459E48D71EA9D777E279C6552F807
+
+Addendum: parent-owned customer benchmark pack and fresh_case script review
+The generated pack reviewed has 362 local scenarios: 50 DATA cases derived from
+delivery cues across all 28 authored FIELD fixtures, plus 26 fresh policy families
+crossed with 12 calendar days (312 EDGE cases). The 117 hosted variants preserve
+the 13 public fixtures and exercise delivery only. Local coverage is therefore
+broader than 13 public regressions; neither pack is a claimed sample of 60 hidden
+customers. Refs: integrations/customer-datasets/benchmark_adapter.py:FAMILIES,
+fresh_case,build; research/customer-benchmark/manifest.json:61;
+research/customer-benchmark/local-cases.json:6375 (FIELD-28 dataset provenance).
+
+Read-only script findings, across seeds 00..11 unless specified below. Line refs
+are to the generated local-cases.json snapshot at review time; parent regeneration
+can move them. Suggested wording changes are not applied by this audit.
+- P1 transfer_after_promise: EDGE-transfer_after_promise-00 introduces the car-loan
+  dispute before a later restructuring request. Immediate B9 note handling is
+  then incompatible with B10's ban on notes anywhere on a transferred call.
+  This confounds transfer chronology with note deferral. Place the dispute and
+  restructuring request in one utterance after recording is acknowledged, or
+  explicitly declare that note buffering itself is the challenge being tested.
+  Refs: local-cases.json:40777; briefs/brief-b.md:17-18.
+- P2 nonbusiness_date: seeds 02,04,06,08,10 say "Cannot pay today" and then offer
+  the full amount on that same holiday. For -02 it is 2026-10-26. Remove the initial
+  refusal on holiday seeds; offer the named holiday and accept the next business
+  day after its restriction is explained. Ref: local-cases.json:52361; A19-A20.
+- P2 after_deadline/vague_date/below_floor: separate-turn refusal and alternative
+  can consume A30/A26 persuasion before the intended A21/A23/A27 branch. Require
+  refusal plus alternative in the same response. Acceptance of a proposed date
+  is not A34 recording consent: say "Yes, I confirm" only after the complete
+  product/amount/date read-back. Apply the same confirmation gate to nonbusiness_date.
+  Refs: local-cases.json:50163,46558,48257; A21,A23,A26-A30,A34.
+- P2 hardship_voluntary: "declines support, but voluntarily offers" can be split
+  across turns, letting a correct A32 hardship closure happen before the promise.
+  Require support refusal and volunteered amount/date in one response.
+  Ref: local-cases.json:28748; brief-a.md:83.
+- P2 deceased: "has died, then offers to pay" can put the challenge after the A9
+  terminal event. Put both in one answer to the name question, e.g. "She has died;
+  I can pay her debt myself." Ref: local-cases.json:56829; A9,A10.
+- P2 partial_failure: the script confirms two promises before identifying the car
+  arrears as paid. State every product decision first, then confirm the combined
+  read-back, so B4/B7/B9 chronology is unambiguous. Ref: local-cases.json:38056.
+- P2 fragmented_phone: a bare two-digit answer can sound complete, while "do not
+  treat a fragment as wrong" instructs behavior the actor cannot control. Include
+  an audible incompleteness marker: "Zero zero—one moment, I haven't finished",
+  followed next turn by "zero seven". Ref: local-cases.json:19291; A11.
+security_declined and wrong_number are coherent under A15/A8. Optional clarification:
+anchor the first refusal/wrong-number statement to the security/name question.
+Refs: local-cases.json:53925,55377. Simulator-fidelity criteria should reject an
+actor that changes these fixed decisions, rather than blaming the phone agent.
+
+Parent adapter improvements acknowledged
+The new benchmark_adapter.score retains the untouched official scorer and adds
+typed receipt checks, fixture-consistent verification, total wrong-answer limits,
+actual successful get_account product provenance, failed forbidden-promise-attempt
+checks and successful exact-close guards. It requires _session_customer_id for
+hosted receipts whose args omit customer_id, then normalizes observed args for
+strict checking. A missing judge remains reference_only, never a conversation
+pass. verify_pack freezes source and generated-output hashes. These strengthen
+the new adapter; the earlier findings describe the unchanged original runners.
+Parent reports 362 valid references and 16 rejected controls; those remain offline
+harness evidence. Refs: integrations/customer-datasets/benchmark_adapter.py:
+verify_pack,score,receipt_errors,validation,negative_controls.
+
+Disjoint runner integration completed in benchmark_runner.py/test_benchmark_runner.py
+The runner plans by default, needs explicit execution/agent/brief/variant selection,
+uses fresh session and persona allocations for each variant/repetition, max-five
+batches, exact official model constants and a shared default 1200-second budget.
+It checks all workspace listing pages and blocks nonterminal/uncertain states,
+does not disturb other simulations and never retries an uncertain start. Pack
+verification precedes every mutation; no supplied kit/ZIP is edited. Client copies
+keep the workspace cache scoped to their API origin and cap socket timeouts by the
+remaining budget. Completed status, runsTotal, exact cardinality, persona/call IDs,
+optional observed ledger case/now/customer_id and call agent/simulation/iteration
+bindings are required. It supplies actual _session_customer_id to the parent score.
+All three (or all requested >3) repetitions must pass. Every allocated job and
+batch, partial failure, simulation/iteration, ledger, judge and call evidence is
+persisted in ignored local output with secret/error-body redaction. Timeout leaves
+the owned simulation intact with incomplete results; it neither cancels nor marks
+unobserved calls passing. Hosted variants remain regression coverage only.
+Offline runner tests use mocked network/clock and the real parent scorer; no live
+execution, workflow update, publishing or Git operation is part of this integration.

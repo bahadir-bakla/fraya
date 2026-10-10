@@ -86,3 +86,10 @@ an uncontaminated BANKING77 test score.
 
 Research covering six candidates: ../../research/customer-datasets.txt
 No hosted simulation, git commit or push was performed.
+
+The initial ingestion above remains conversation-only. A separate subsequent
+benchmark compiler now supplies kit-v3 policy/fixture mapping without changing
+this ingestion module or the official kit: benchmark_adapter.py. Its tracked
+pack has 362 independent local fixtures and 117 immutable public delivery
+variants. See ../../research/customer-benchmark/README.txt for exact boundaries,
+reference checks, source hashes, negative controls and the explicit hosted runner.

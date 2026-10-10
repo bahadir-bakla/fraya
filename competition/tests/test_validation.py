@@ -20,6 +20,17 @@ def specimen():
         name=tool['function']['name'];schema=copy.deepcopy(API['paths']['/'+name]['post']['requestBody']['content']['application/json']['schema']);tool['function']['parameters']['properties']['body']=schema
     return workflow
 class StructuralValidationTests(unittest.TestCase):
+    def test_wrong_allowlisted_endpoint_and_method_are_rejected(self):
+        workflow=specimen();tool=workflow['nodes']['identity']['tools'][0]
+        props=tool['function']['parameters']['properties']
+        props['url']['default']=API['servers'][0]['url'].rstrip('/')+'/create_promise'
+        self.assertTrue(any('bound endpoint' in e for e in validate(workflow,API)))
+        workflow=specimen();tool=workflow['nodes']['identity']['tools'][0]
+        tool['function']['parameters']['properties']['method']['default']='DELETE'
+        self.assertTrue(any('method/URL' in e for e in validate(workflow,API)))
+    def test_empty_unknown_and_omitted_coverage_are_rejected(self):
+        for coverage in ({},{'rules':[]},{'rules':[{'rule':'Guard','status':'unknown'}]},{'rules':[{'rule':'Guard','status':'omitted'}]}):
+            self.assertTrue(validate_coverage(coverage))
     def test_disclosed_loss_of_mandatory_guards_blocks_publication(self):
         self.assertTrue(validate_coverage({'rules':[{'rule':'Payment guard','status':'implemented with explicitly degraded enforcement'}]}))
         self.assertFalse(validate_coverage({'rules':[{'rule':'Payment guard','status':'implemented'}],'limitations':['Natural-language extraction is model-dependent.']}))

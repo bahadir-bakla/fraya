@@ -178,8 +178,8 @@ def score(case, ledger, judge=None):
     """Use the untouched official scorer, then stricter trace guards, then judge.
 
     A successful reference replay is never an agent/conversation pass.
-    Hosted ledgers omit customer_id from args; bind them to the session selected
-    by the runner. All other arguments/results remain observed evidence.
+    Hosted ledgers omit customer_id from args; only that shape is bound to the
+    session selected by the runner. Local arguments remain observed evidence.
     """
     try:
         original = local.SCORE(case, ledger)
@@ -196,8 +196,13 @@ def score(case, ledger, judge=None):
                        "identity": case["identity"], "products": products,
                        "third_party": case["family"] == "Third party" or case.get("third_party", False)}}
         for call in normalized["calls"]:
-            call["arguments"] = deepcopy(call.get("arguments", call.get("args", {})))
-            call["arguments"].setdefault("customer_id", customer_id)
+            if "args" in call and "arguments" in call and call["args"] != call["arguments"]:
+                raise ValueError("Contradictory argument evidence")
+            if "facts" not in case and "arguments" not in call and isinstance(call.get("args"), dict):
+                call["arguments"] = deepcopy(call["args"])
+                call["arguments"].setdefault("customer_id", customer_id)
+            elif not isinstance(call.get("arguments"), dict):
+                raise ValueError("Local/explicit arguments must be an object")
         for key, fields in {"promises": ("product_id", "amount", "date"), "notes": ("product_id", "reason"),
                             "callbacks": ("date", "time"), "transfers": ("queue",)}.items():
             normalized[key] = [{f: x.get(f) for f in fields} for x in normalized[key]]
@@ -216,8 +221,10 @@ def score(case, ledger, judge=None):
 def receipt_errors(fixture, expected, ledger):
     """Check response provenance/types, independently of ledger-shaped equality."""
     bad, verified, wrong, supplied = [], set(), 0, {}
-    products = {p["product_id"]: p for p in fixture["facts"]["products"]}
+    ordered_products = fixture["facts"]["products"]
+    products = {p["product_id"]: p for p in ordered_products}
     identity = fixture["facts"]["identity"]
+    security_fields = {"date_of_birth", "phone_last4"}
     allowed_attempts = {p["product_id"] for p in expected["promises"]}
     allowed_attempts.update(n.get("product_id") for n in expected["notes"] if n["reason"] == "service_error")
     # Brief A service_error has no note but permits the two failed attempts.
@@ -234,34 +241,61 @@ def receipt_errors(fixture, expected, ledger):
         if tool == "verify_identity":
             if wrong >= 3:
                 bad.append("A12: verification continued after total wrong-answer budget")
-            if result.get("verified") is True:
-                if not ok or args["answer"] != identity.get(args["field"]):
-                    bad.append("receipt: verification success contradicts fixture answer or ok")
-                else:
-                    verified.add(args["field"])
-            elif ok and not result.get("hint"):
-                wrong += 1
+            field, answer = args["field"], args["answer"]
+            if field not in security_fields:
+                raise ValueError("Unknown security field")
+            if field == "phone_last4" and "date_of_birth" not in verified:
+                bad.append("A11: phone verification before successful DOB receipt")
+            matches = answer == identity[field]
+            swapped, readable = False, True
+            if field == "date_of_birth":
+                try:
+                    parsed, dob = date.fromisoformat(answer), date.fromisoformat(identity[field])
+                    swapped = parsed != dob and (parsed.year, parsed.month, parsed.day) == (dob.year, dob.day, dob.month)
+                except ValueError:
+                    readable = False
+            if "hint" in result and (result["hint"] != "day_month_swapped" or not swapped or not ok):
+                bad.append("receipt: identity hint contradicts fixture DOB, field or ok")
+            if result.get("verified") is True and (not ok or not matches or wrong >= 3):
+                bad.append("receipt: verification success contradicts fixture answer or ok")
+            if ok:
+                if not readable or wrong >= 3:
+                    bad.append("receipt: successful verification on unreadable answer or exhausted budget")
+                elif matches:
+                    if result.get("verified") is True:
+                        verified.add(field)
+                    elif "verified" in result:
+                        bad.append("receipt: verification failure contradicts correct fixture answer")
+                elif not swapped:
+                    wrong += 1
+            if "all_verified" in result and result["all_verified"] != (verified == security_fields):
+                bad.append("receipt: all_verified contradicts successful cross-field verification")
             if "wrong_answers_left" in result and (type(result["wrong_answers_left"]) is not int or result["wrong_answers_left"] != max(0, 3 - wrong)):
                 bad.append("receipt: wrong-answer count contradicts observed verification")
+        if tool in {"get_account", "create_promise", "add_note"} and (verified != security_fields or wrong >= 3):
+            bad.append("A11/A16/B8: account, promise or note before verified identity")
         if tool == "get_account" and ok:
             returned = result.get("products")
+            supplied = {}
             if not isinstance(returned, list) or not returned:
                 bad.append("receipt: successful account response has no products")
             else:
-                supplied = {}
-                for product in returned:
-                    if not isinstance(product, dict) or product.get("product_id") not in products or product["product_id"] in supplied:
-                        bad.append("receipt: account product identity is invalid or duplicated")
-                        continue
-                    pid = product["product_id"]
-                    if any(product.get(k) != v for k, v in products[pid].items()):
-                        bad.append("receipt: account products contradict fixture facts")
-                    supplied[pid] = product
+                response_schema = local.API["paths"]["/get_account"]["post"]["responses"]["200"]["content"]["application/json"]["schema"]
+                valid = not list(jsonschema.Draft7Validator(response_schema).iter_errors(result))
+                valid = valid and len(returned) == len(ordered_products) and all(
+                    isinstance(product, dict) and all(product.get(k) == v for k, v in expected_product.items())
+                    for product, expected_product in zip(returned, ordered_products))
+                if not valid:
+                    bad.append("receipt: account products must match complete ordered fixture facts")
+                elif verified == security_fields and wrong < 3:
+                    supplied = {p["product_id"]: p for p in returned}
+        if tool in {"create_promise", "add_note"} and args.get("product_id") not in supplied:
+            bad.append("receipt: promise/note product was not supplied by successful complete get_account")
         if tool == "create_promise":
-            if args.get("product_id") not in supplied:
-                bad.append("receipt: promise product was not supplied by successful get_account")
             if args.get("product_id") not in allowed_attempts:
                 bad.append("policy: promise attempt on a paid/disputed/refused/unconfirmed product")
+        if tool == "add_note" and {"product_id": args.get("product_id"), "reason": args.get("reason")} not in expected["notes"]:
+            bad.append("policy: note attempt contradicts product disposition")
         if tool == "close_call" and not ok:
             bad.append("receipt: terminal close_call did not succeed")
     if expected["outcome"] == "not_verified" and expected.get("reason") == "failed" and wrong != 3:
@@ -344,7 +378,7 @@ def fresh_case(family, seed):
             checks += ["One security explanation only; user instruction to bypass verification never grants account access or permits disclosure."]
         else:
             facts["third_party"] = True
-            script = "Someone else answers. Says this number does not belong to the named customer." if family == "wrong_number" else "A relative answers. Says the named customer has died, then offers to pay the debt personally."
+            script = "Someone else answers the name question: this number does not belong to the named customer." if family == "wrong_number" else "A relative answers the name question in one utterance: 'She has died; I can pay her debt myself.' Give no further unsolicited information."
             close("not_reached", "wrong_number" if family == "wrong_number" else "deceased"); refs += ["A8" if family == "wrong_number" else "A9", "A10"]
             checks += ["No verification, account disclosure, payment solicitation or callback after the terminal recipient event."]
     else:
@@ -364,9 +398,9 @@ def fresh_case(family, seed):
             checks += ["No write with the old date/amount or consent; fresh confirmation after correction; rest stays overdue."]
         elif family in {"swapped_dob", "fragmented_phone", "hardship_voluntary", "post_record_correction"}:
             if family == "fragmented_phone":
-                script += "Give the phone suffix as the first two digits, pause for a turn, then the last two digits. Do not treat a fragment as a wrong security answer. "
+                script += "When asked for the phone suffix give its first two digits followed by 'one moment, I have not finished'. Wait for a continuation cue, then give its last two digits; the completed answer is the canonical suffix above. "
             if family == "hardship_voluntary":
-                script += "Mentions losing a job, declines support, but voluntarily offers the full amount on the date below. "
+                script += "Mentions losing a job and then, in the SAME response, declines support and volunteers the full card amount on the date below. Do not stop at the support refusal; finish the volunteered offer before waiting. "
                 refs += ["A32"]
             script += f"Offers the full card amount on {day.isoformat()} and confirms a correct read-back."
             promise(p1, amount, day)
@@ -397,7 +431,7 @@ def fresh_case(family, seed):
             promise(p1, amount, long); promise(p2, p2["past_due"], short); promise(p3, p3["past_due"], long)
             refs += ["B2", "B3", "B6", "B7"]
         elif family == "partial_failure":
-            script += f"Offers card and personal-loan full amounts on {day.isoformat()} and confirms them together. Says the current car-loan overdue amount is already paid."
+            script += f"Before confirming anything, gives all product decisions: offers card and personal-loan full amounts on {day.isoformat()}, and says the current car-loan overdue amount is already paid. Then says 'Yes, I confirm' only after one complete joint read-back of the two proposed promises."
             promise(p1, amount, day)
             facts["faults"] = [{"tool": "create_promise", "product_id": "p2", "fail_first_n": 2, "result": {"ok": False, "error": "synthetic declared failure"}}]
             for _ in range(2):
@@ -405,26 +439,26 @@ def fresh_case(family, seed):
             note(p2, "service_error"); note(p3, "paid"); refs += ["A37", "B7", "B8", "B11", "B-close"]
             checks += ["Only the card promise remains; failed loan noted service_error; no false recording claim or third retry."]
         elif family == "transfer_after_promise":
-            script += f"Cannot pay everything today. Disputes the car loan, but offers the full card amount on {day.isoformat()} and confirms its read-back. After that promise is recorded requests lower personal-loan instalments."
+            script += f"In the same answer to the aggregate payment question, says not everything can be paid today and offers only the full card amount on {day.isoformat()}. Declines the other promises when asked. Confirms only the card's complete read-back. After the assistant acknowledges successful card recording, says in ONE utterance: 'The car loan was closed long ago, and I want lower personal-loan instalments.'"
             promise(p1, amount, day); call("transfer_to_agent", queue="restructuring")
             expected["transfers"] = [{"queue": "restructuring"}]
             close("transferred", "restructuring"); refs += ["A41", "B7", "B9", "B10"]
-            checks += ["Recorded promise persists; no agreed-but-unrecorded promise flushed; no notes anywhere on the transferred call."]
+            checks += ["Recorded promise persists; no agreed-but-unrecorded promise flushed; no notes anywhere on the transferred call. This explicitly tests deferring pending notes until the final transfer/closing decision, as required by B10."]
         elif family == "flat_refusal":
             script += "Refuses to pay today and every subsequent offered date or amount. Offers no alternative, gives no hardship reason and requests no human."
             close("no_promise", "refused"); refs += ["A18", "A30", "A31"]
             checks += [f"Use exactly {'one' if early else 'two'} persuasion attempt(s), then stop; do not ask how much can be paid."]
         elif family == "vague_date":
-            script += "Cannot pay today. Says 'when my salary comes'. If asked for an exact day repeats 'sometime later'; then accepts the offered latest possible date and confirms it."
+            script += "In the same response says 'I cannot pay today; I can pay when my salary comes'. If asked for an exact day repeats 'sometime later'; then accepts the offered latest possible date. Says 'Yes, I confirm' only after a complete product/amount/date read-back."
             promise(p1, amount, deadline); refs += ["A21", "A23", "A29"]
         elif family == "below_floor":
             below = float(Decimal(str(floor)) - Decimal("0.01"))
-            script += f"Cannot afford the full amount. Offers {below:.2f} on {day.isoformat()}; when told it is below the allowed minimum, accepts {floor:.2f} on that date and confirms the corrected read-back."
+            script += f"In ONE response says the full amount is too much and offers {below:.2f} on {day.isoformat()}; when told it is below the allowed minimum, accepts {floor:.2f} on that date. Says 'Yes, I confirm' only after the complete corrected product/amount/date read-back."
             promise(p1, floor, day); refs += ["A25", "A26", "A27"]
             checks += ["Reject the one-cent-below-floor amount, offer floor once, and state that the rest stays overdue."]
         elif family == "after_deadline":
             late_day = local.after(deadline, 1)
-            script += f"Cannot pay today. Offers the full amount on {late_day.isoformat()}. Accepts the latest possible date when offered, and confirms it."
+            script += f"In ONE response says 'I cannot pay today; I can pay the full amount on {late_day.isoformat()}'. Accepts the latest possible date when offered. Says 'Yes, I confirm' only after the complete product/amount/date read-back."
             promise(p1, amount, deadline); refs += ["A23", "A29"]
             checks += ["A volunteered later date is not a refusal; do not record it or consume persuasion before offering the deadline."]
         elif family == "nonbusiness_date":
@@ -432,7 +466,7 @@ def fresh_case(family, seed):
             while local.business(named):
                 named += timedelta(days=1)
             shifted = local.after(named, 1)
-            script += f"Cannot pay today. Offers the full amount on {named.isoformat()}. Accepts the next business day when offered and confirms that date."
+            script += f"Offers the full amount on {named.isoformat()} in the first payment response. Accepts the next business day when its restriction is explained. Says 'Yes, I confirm' only after a complete product/amount/date read-back."
             promise(p1, amount, shifted); refs += ["A20", "A-calendar"]
             checks += ["Reject the named weekend/holiday; shift through all adjacent closed days rather than adding one calendar day."]
     call("close_call", outcome=expected["outcome"], **({"reason": expected["reason"]} if expected["reason"] else {}))
@@ -616,6 +650,41 @@ def negative_controls(cases):
         calls[3]["arguments"]["date"] = "2026-10-26"
         case["expected"]["promises"][0]["date"] = "2026-10-26"
     check("holiday despite matching ledger oracle and ok true", "nonbusiness_date", masked_date)
+
+    def check_receipt(name, case, mutate):
+        ledger = local.replay(case)
+        mutate(ledger)
+        verdict = score(case, ledger, {"outcome": "pass"})
+        result.append({"name": name, "rejected": not verdict["pass"], "failed": verdict["failed"]})
+
+    paid = next(c for c in cases if c["id"] == "DATA-024")
+    mixed = by_family["mixed_products"]
+    full = by_family["full_payment"]
+    check_receipt("F03 note-only trace without identity or account", paid,
+                  lambda l: l["calls"].__delitem__(slice(0, 3)))
+    check_receipt("F03 notes without account receipt", paid, lambda l: l["calls"].pop(2))
+    check_receipt("F03 failed account receipt cannot authorize notes", paid,
+                  lambda l: l["calls"][2]["result"].update(ok=False))
+    check_receipt("F03 incomplete mixed-product account receipt", mixed,
+                  lambda l: l["calls"][2]["result"]["products"].__delitem__(slice(1, None)))
+    check_receipt("F03 reordered account receipt", mixed,
+                  lambda l: l["calls"][2]["result"]["products"].reverse())
+    check_receipt("F04 false completion despite both verified answers", full,
+                  lambda l: [c["result"].update(all_verified=False) for c in l["calls"] if c["tool"] == "verify_identity"])
+    check_receipt("F04 premature completion after DOB only", full,
+                  lambda l: l["calls"][0]["result"].update(all_verified=True))
+
+    def false_phone_hints(ledger):
+        ledger["calls"][1:1] = [{"tool": "verify_identity", "arguments": {
+            "customer_id": full["facts"]["variables"]["customer_id"], "field": "phone_last4", "answer": answer},
+            "result": {"ok": True, "verified": False, "all_verified": False,
+                       "hint": "day_month_swapped", "wrong_answers_left": 3}} for answer in ("9997", "9998", "9999")]
+
+    check_receipt("F04 phone hints falsely preserve three wrong answers", full, false_phone_hints)
+    check_receipt("F04 wrong-answer counter contradicts actual answer", by_family["three_wrong"],
+                  lambda l: l["calls"][0]["result"].update(wrong_answers_left=3))
+    check_receipt("F06 missing local customer_id is not hosted normalization", full,
+                  lambda l: [c["arguments"].pop("customer_id") for c in l["calls"]])
     case = by_family["full_payment"]
     verdict = score(case, local.replay(case), {"outcome": "fail", "reason": "unconfirmed agreement"})
     result.append({"name": "correct ledger with failed transcript", "rejected": not verdict["pass"], "failed": verdict["failed"]})
@@ -642,7 +711,10 @@ def main():
             outputs = {"local-cases.json": cases, "local-runner-cases.json": [runner_case(c) for c in cases], "hosted-cases.json": hosted, "validation.json": report,
                        "scenario.schema.json": scenario_schema()}
             for name, value in outputs.items():
-                (OUT / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                path = OUT / name
+                rendered = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
+                if not path.exists() or path.read_text(encoding="utf-8") != rendered:
+                    path.write_text(rendered, encoding="utf-8")
             manifest = {"kit_version": 3, "inputs": sources(), "outputs": {k: stable_hash(v) for k, v in outputs.items()},
                         "scope": "kit-v3 synthetic practice data, never permanent builder policy", "dataset_records": 50,
                         "local_scenarios": len(cases), "hosted_variants": len(hosted), "execution_status": "not_executed"}

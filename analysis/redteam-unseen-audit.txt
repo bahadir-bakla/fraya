@@ -1,0 +1,236 @@
+INDEPENDENT RED-TEAM AUDIT — FREYA BUILD THE BUILDER
+2026-10-10. Starting HEAD observed: 79fdbee3fce20f26ae10036562252b260ae40abb.
+
+Only writes: this NEW file and NEW research/customer-benchmark/redteam-challenges.json.
+No hosted calls, model/extractor/judge execution, secret reads, git mutation,
+official-kit changes, existing artifact edits or parent-owned code changes.
+Findings below describe the inspected pre-patch source. The parent subsequently
+announced patches for URL/method/coverage/case binding and replay transport/DOB;
+this audit does not claim those gaps persist after the parent's fixes. Adapter
+changes were deferred by the parent until the active B run finishes, preserving
+the runner's source freeze. No main-code patch was made by this audit.
+Local probes used the specified venv Python with -X utf8 -B, an inert freya
+module before persona-helper imports, blocked HTTP and in-memory persistence.
+These findings concern source/validator/harness behavior. None proves a failure
+or a pass of the latest real generated agent. No model identity is inferred.
+
+HIGHEST CONCRETE FINDINGS
+
+F01 [P1] Builder validates the name's schema without binding it to URL/method.
+competition/validation.py:49-61 accepts any allowlisted bank URL, then chooses
+'/'+function.name before considering the URL. The method is never checked.
+Reproducer: logical verify_identity; correct identity body properties/required;
+url default https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise;
+method default DELETE; maxRetries=0. Put it in a conversation node with a valid
+initial_node and nonempty TTS entry. Observed validate(workflow, api) == [].
+POST against that wrong endpoint also passes local validation. Freya dry-run or
+real bank execution might reject it; this is a local false acceptance.
+Patch: resolve rendered URL + method to one supplied operation, require logical
+identity consistency, resolve request-schema references, validate fixed defaults.
+
+F02 [P1] The new kernel replay masks the same binding error.
+integrations/customer-datasets/workflow_replay.py:294-299 resolves only body and
+calls Bank.call(function['name'], body), ignoring URL/method and final transport
+binding. Reproducer: an in-memory five-action graph from EDGE-full_payment-00's
+canonical DOB, phone, account, promise, close calls. Preserve body schemas and
+defaults; set EVERY API URL to /v1/create_promise and EVERY method to DELETE.
+Silent API nodes route with always to an end_call node. Replay(...).run([])
+returned kernel_ledger_pass=True, error=None. No generated export/model ran.
+The zero-actor toy control establishes a dispatch blind spot; replay correctly
+disclaims voice/judge coverage. Patch: validate URL/method before Bank dispatch
+or explicitly reject unsupported transport semantics. See RT-16.
+
+F03 [P1] B note-only traces bypass identity and returned account provenance.
+benchmark_adapter.py:246-264 checks supplied-product provenance for promises
+only. research/field-cases/local_runner.py:170-175 gates account/promise, while
+notes need only match ids privately known by the oracle; Bank:122-123 accepts
+notes without verification/account access. This is a local simulator loophole,
+not evidence that the hosted bank authorizes such actions.
+Reproducer: load DATA-024 and replay reference_tool_calls[3:] — three paid notes
+and close, with both verification calls and get_account removed. score(case,
+ledger) returned ledger_and_trace_pass=True. Overall pass=False solely because
+conversation was not assessed. A mistaken passing transcript verdict removes
+that last gate. Second reproducer: EDGE-mixed_products-00, truncate the successful
+get_account result.products to its first/card record. Notes on absent p2/p3 still
+pass ledger/trace checks. Patch: notes also need verification, successful account
+provenance, a complete ordered product receipt, and actual product disposition.
+Keep all notes pending until the eventual transfer decision. RT-01/02/10/12.
+
+F04 [P1] Explicitly contradictory verification receipts remain accepted.
+benchmark_adapter.py:234-245 collects per-field success but does not validate
+all_verified against those fields. local_runner.py:165-171 trusts verified flags.
+Reproducer: replay EDGE-full_payment-00; set BOTH identity result all_verified
+fields to False, keeping verified=True, ok=True and the final ledger unchanged.
+Observed ledger_and_trace_pass=True. The guide correctly requires a real backend
+completion response (competition/skills/build-phone-agent.md:13).
+Another control adds three wrong phone results after DOB passes, each falsely
+carrying hint=day_month_swapped and wrong_answers_left=3. It also passes: adapter
+:242 exempts any hint, without checking field, enum or actual swapped answer.
+These are corrupted-evidence negative controls, NOT lawful simulator responses.
+Patch: reconstruct completion, constrain the hint to the documented DOB relation,
+and validate counters when present. Missing optional API fields alone are not a
+proven API-contract violation. RT-05/07.
+
+F05 [P1/P2] Runner collects call evidence but does not reconcile it with ledger.
+benchmark_runner.py:436-450 requires nonempty messages, accepts missing binding
+fields via get(key, expected), then passes only case/ledger/judge to score. It
+does not join function_call_start/complete events to bank receipts or compare
+observed call customerVariables.customer_id when that field is present.
+Reproducer: existing FakeClient yields a canonical ledger, outcome='pass' stub
+verdict, and call.messages=[one user 'UNIT TEST MOCK ONLY']. Execute one PUB-01
+variant x3 with fake clock/client, inert credential environment, verify_pack
+stub and all persistence/mkdir operations intercepted in memory. Observed aggregate
+pass=True, completed_repetitions=3, zero assistant/tool conversation events.
+No agent/judge/network ran. The stub isolated evidence assembly; real pack
+integrity was separately verified. This is not an observed live provenance breach.
+Patch: require available call/session binding evidence and reconcile request/result
+pairs with the ledger. Distinguish a reported judge verdict from a pass with
+validated provenance. Do not fabricate binding fields to obtain that distinction.
+
+F06 [P2] Local required customer_id evidence is silently repaired.
+benchmark_adapter.py:198-200 applies setdefault(customer_id) to local AND hosted
+traces. Reproducer: EDGE-full_payment-00 replay; remove customer_id from every
+call.arguments. Ledger/trace still passes. Hosted omission has a documented
+normalization boundary, but local OpenAPI requests require the actual field.
+Patch: normalize only the observed hosted shape after session binding; reject
+missing local arguments rather than importing fixture truth.
+
+F07 [P2] Empty/omitted coverage passes the host coverage validator.
+competition/validation.py:5-16 returns [] for {}, {'rules':[]}, A11 with status
+'omitted'/implementation 'none', and A34 with status 'unknown'. publish in
+builder.py:213-215 accepts it; policy.json is not checked for rule completeness
+or unresolved conflicts. Patch: nonempty typed rule inventory from the actual
+supplied brief, valid implementation references, explicit omissions/conflicts
+rejected or reported untested. Do not hardcode the public A/B rule count.
+
+F08 [P2] Public-case scope guard depends on one path, not specification binding.
+competition/builder.py:22-24 rejects an unseen brief with KIT/public-test-set.json
+but accepts competition-v3/build-the-builder/public-test-set.json. Observed:
+validate_case_scope([build-phone-agent.md], kit2_public, False) raises; the same
+call with kit3_public returns normally. The inspected two kits' briefs/API/scorer/
+public cases/runner normalize to identical LF contents; raw bytes differ by CRLF.
+Patch: bind the cases to their source specification, including aliases/copies.
+An arbitrary --cases path is not evidence that a new brief is evaluated.
+builder.py:294 also sets completed for --skip-tests. That is an untested build
+completion, and must stay distinct from evaluated success.
+
+F09 [P2] Structural diversity remains narrow; replay adds fixture assumptions.
+All 362 cases have DOB 1985-04-09. Product-id arrays are p1 only (308), p1/p2/p3
+(52), or p1/p2 (2), always credit-card first. workflow_replay.py:60-61 assumes
+products[0]['minimum_payment']; :83 assigns dob but :91 always supplies
+'9 April 1985'. Three-wrong/swap programs also hardcode that identity.
+In-memory probes: changed DOB 1988-02-29 still emits 9 April 1985; reversing
+mixed_products' products raises KeyError('minimum_payment'). Existing reported
+276 kernel results remain evidence within their supported fixture domain, not
+arbitrary identity/order/new-policy coverage. RT-06/11/12/15 address these seams.
+
+F10 [P2] Failed requests are not bound to the proposal actually confirmed.
+benchmark_adapter.py:221-264 whitelists attempts by final expected product id; local trace
+checks numeric/date ranges, not real read-back correspondence. Reproducer:
+EDGE-partial_failure-00 replay; change BOTH failed p2 request dates from
+2026-10-14 to 2026-10-15, keeping script/expected ledger unchanged. Ledger/trace
+passes. This is a transcript/event-state obligation, not a fact a receipt-only
+scorer can infer. Capture pending tuple/set and fresh confirmation; reconcile
+requests against actual events, especially before retry. RT-03/04/13/14.
+
+EVIDENCE BOUNDARIES AND PATCH ORDER
+
+- No ledger-only acceptance above is agent success. Probes passed no judge, so
+  their overall score remained False. The runner acceptance used an explicitly
+  canned stub judge, not a real verdict.
+- verify_pack() passed: 362 local scenarios and 117 hosted variants. Existing
+  reference_is_agent_pass=false and the replay's extraction/voice disclaimers
+  correctly prevent inflated claims and should be retained.
+- A control above the full amount was rejected. No new basic arithmetic flaw is
+  claimed. Existing duplicate-close, forbidden A-note, transfer-note and retry
+  guards already exist; this catalog targets their event/provenance interactions.
+- Parent reports 9 real selected A calls passing ledger/trace/judge, 15 selected B
+  calls in progress, 240 A + 36 B kernel cases passing, and the Windows fcntl
+  blocker fixed with 25 competition tests. These are parent-reported context,
+  not independently rerun here. The old Windows blocker is not an open finding.
+- No true audio interruption or actual extraction model was exercised. If a
+  timing-gated turn is not delivered at its stated boundary, use
+  scenario_not_exercised, not an agent pass. Do not invent commit-on-500 behavior:
+  the official API says its 500 response records nothing.
+- No extensive literature work was performed. These are concrete code checks.
+
+Patch HTTP binding validation/replay first, then B note/account provenance,
+verification receipt consistency, call-to-ledger provenance, and coverage/case
+binding. Keep guidance evidence-driven and generic. New candidates need actual
+extraction and transcript checks in addition to kernel replay.
+
+The separate JSON contains 16 authored challenges with preconditions, actor turns,
+exact tool/outcome assertions, evidence and feasibility. Three reuse immutable
+PUB bank facts via a separate actor/turn driver; thirteen require independent
+mocks/event/API harnesses. It is not a signed pack or existing runner input.
+Final owned-artifact QA: JSON parses; 16 ids are unique; fixture, opening-sequence
+and source references resolve; 49 explicit official tool-argument assertions
+validate against the untouched OpenAPI; the 3 hosted-feasible fixture identities,
+variables, products and expected ledgers exactly match their immutable PUB cases.
+Official brief A/B/OpenAPI source pins still match. No challenge was agent-run.
+Latest parent context: four first-batch B failures were reported (three ledger
+and judge failures; one ledger pass/judge failure). Actual runtime calls were
+preserved by the parent. No cause or new score is inferred here.
+
+PARENT PATCH STATUS AFTER THE AUDIT — 2026-10-10
+Historical reproducers below intentionally describe the pre-patch source.
+F01/F02: supplied operation URL/method and function name are now bound in host
+validation and kernel dispatch. A mismatched operation makes no local bank call.
+F03: notes and promises require verified identity plus a successful complete
+ordered account product receipt; notes also match the intended disposition.
+F04: contradictory optional completion/budget/hint metadata is rejected; lawful
+optional omissions alone remain accepted. Swapped DOB relation is fixture-bound.
+F05: real HTTP customer/request/receipt events reconcile with ledger order;
+assistant/workspace and available session bindings are checked. Three repeats
+must share the same actual published version; no stub conversation can pass.
+F06: only the documented session-bound hosted args shape is normalized. Missing
+customer_id in local/explicit arguments is rejected, without repairing evidence.
+F07: empty/degraded/unknown/omitted inventories are rejected. This is PARTIAL:
+full source-rule completeness and implementation-reference semantics are not
+proved by the structural coverage validator.
+F08: semantic JSON copies of public tests are also rejected for unrelated
+briefs. This is PARTIAL: arbitrary custom test specification binding still needs
+a supplied independent oracle. Untested builds now say evaluation=not_evaluated.
+F09: actor DOB comes from actual fixture and floor selection follows product
+type. This is PARTIAL: the 362-case identity/product-order matrix is still narrow;
+three-wrong/swap authored programs retain their declared identity assumptions.
+F10: still an event/read-back/confirmation obligation. HTTP receipt reconciliation
+does not prove customer consent or proposal correspondence; retain transcript
+judge and timing-aware event probes. No final hidden-case claim is made.
+Observed tests: 103 customer integration tests, 32 competition tests, 26 rejected
+corrupt-evidence controls; 362 reference fixtures retained. These are harness
+checks, not new hosted agent passes. Actual B calls reconcile 102 operations;
+their recorded score remains 7/15 and all-three-repeats aggregate 1/5.
+
+REPRODUCIBLE READ-ONLY SCORER PROBES (repository root; specified Python -X utf8 -B)
+
+import sys, types, pathlib, json, urllib.request
+sys.dont_write_bytecode = True
+sys.modules['freya'] = types.ModuleType('freya')  # prevents credential reads
+def no_http(*args, **kwargs): raise AssertionError('offline audit')
+urllib.request.urlopen = no_http
+sys.path.insert(0, str(pathlib.Path.cwd()/'integrations/customer-datasets'))
+import benchmark_adapter as b
+cases = json.loads((b.OUT/'local-cases.json').read_text(encoding='utf-8'))
+by = {c['id']: c for c in cases}
+c = by['DATA-024']
+led = b.local.replay(c, c['execution']['reference_tool_calls'][3:])
+assert b.score(c, led)['ledger_and_trace_pass'] is True  # F03 blind spot
+c = by['EDGE-full_payment-00']; led = b.local.replay(c)
+for call in led['calls']:
+    if call['tool'] == 'verify_identity': call['result']['all_verified'] = False
+assert b.score(c, led)['ledger_and_trace_pass'] is True  # F04 blind spot
+assert b.score(c, led)['pass'] is False                 # no conversation judged
+
+INSPECTED SOURCE PINS (raw SHA-256 before parent patches)
+competition/validation.py 97bbce3e280458a4fac5d96d1eb2c1e5ffafa473ebcdcef3c332d032bcb34272
+integrations/customer-datasets/benchmark_adapter.py 16b20a56a8bc0c4a9194313c9e5ee8156a0311d813a625847e539e4804ce225a
+integrations/customer-datasets/benchmark_runner.py 6af5c9ec373f5db81105765308e58ee6f196c1ca2d96d98b64b87bdaab26fb88
+research/field-cases/local_runner.py 23122cb937af3fd332cf282d6385c4e611f87c6965c3536a2f9bdff51bc49231
+competition/skills/build-phone-agent.md be180c4bc739a8d872c3286e2e40ce36efb0e8e73bdcc78e50355948bf0d0e9d
+Official brief A LF-normalized d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7
+Official brief B LF-normalized c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550
+Official OpenAPI LF-normalized 9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8
+Official scorer LF-normalized daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7
+Parent-owned code may change concurrently; findings describe these inspected
+contents and the replay lines read on 2026-10-10. No source patch is claimed.

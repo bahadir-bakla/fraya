@@ -1,10 +1,36 @@
 """Autonomous evidence -> Freya -> official tests -> repair -> export. Standard library only."""
-import argparse, codecs, datetime, getpass, hashlib, json, os, pathlib, queue, re, shutil, signal, subprocess, sys, threading, time, tomllib, uuid
+import argparse, codecs, contextlib, datetime, getpass, hashlib, json, os, pathlib, queue, re, shutil, signal, subprocess, sys, threading, time, tomllib, uuid
 from validation import validate,validate_coverage
 from transcripts import compact_messages
 
 ROOT=pathlib.Path(__file__).resolve().parent
 KIT=ROOT.parent/'build-the-builder 2'
+
+def model_permissions(environment):
+    """Inherit a built-in parent permission profile; never silently widen it."""
+    profile=environment.get('CODEX_PERMISSION_PROFILE',':workspace')
+    if profile not in {':read-only',':workspace',':danger-full-access'}:
+        raise ValueError('Unsupported inherited model permission profile')
+    return profile
+
+@contextlib.contextmanager
+def slot_lock(path):
+    """Nonblocking OS lock, including Windows; release on exception/process exit."""
+    path=pathlib.Path(path);path.parent.mkdir(parents=True,exist_ok=True)
+    with path.open('a+b') as handle:
+        if os.name=='nt':
+            import msvcrt
+            if handle.seek(0,os.SEEK_END)==0:handle.write(b'\0');handle.flush()
+            handle.seek(0)
+            try:msvcrt.locking(handle.fileno(),msvcrt.LK_NBLCK,1)
+            except OSError:raise BlockingIOError('Workflow slot already locked') from None
+            unlock=lambda: (handle.seek(0),msvcrt.locking(handle.fileno(),msvcrt.LK_UNLCK,1))
+        else:
+            import fcntl
+            fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
+            unlock=lambda: fcntl.flock(handle,fcntl.LOCK_UN)
+        try:yield handle
+        finally:unlock()
 
 def stamp(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
 def write_json(path,value):
@@ -20,7 +46,13 @@ def infer_practice_group(brief_paths):
     return None
 
 def validate_case_scope(brief_paths,case_path,skip_tests):
-    if not skip_tests and pathlib.Path(case_path).resolve()==(KIT/'public-test-set.json').resolve() and infer_practice_group(brief_paths) is None:
+    case_path=pathlib.Path(case_path)
+    public_path=KIT/'public-test-set.json'
+    is_public=case_path.resolve()==public_path.resolve()
+    if not is_public and case_path.is_file():
+        try:is_public=json.loads(case_path.read_text())==json.loads(public_path.read_text())
+        except (OSError,ValueError):pass
+    if not skip_tests and is_public and infer_practice_group(brief_paths) is None:
         raise ValueError('Unseen briefs require their own --cases test set or --skip-tests; public A/B customers do not evaluate a new specification')
 
 def validate_practice_seed(work,seed,sources):
@@ -193,12 +225,13 @@ Round {round_number}. Remaining full build budget: {int(self.remaining())} secon
 Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=False)}
 '''
         (self.path/f'prompt-{round_number}.txt').write_text(prompt)
-        command=['codex','exec','--ignore-user-config','--skip-git-repo-check','--ephemeral','--sandbox','workspace-write','--json','--color','never','--output-schema',str(self.path/'response.schema.json'),'--output-last-message',str(self.path/f'answer-{round_number}.json')]
+        profile=model_permissions(os.environ)
+        command=['codex','exec','--ignore-user-config','--skip-git-repo-check','--ephemeral','--config','default_permissions='+profile,'--config','approval_policy=never','--json','--color','never','--output-schema',str(self.path/'response.schema.json'),'--output-last-message',str(self.path/f'answer-{round_number}.json')]
         if self.args.model:command+=['--model',self.args.model]
         command+=['-']
         # The model process never inherits bank or API credentials.
         env={key:value for key,value in os.environ.items() if not any(word in key.upper() for word in ('API_KEY','TEAM_KEY','TOKEN','SECRET','PASSWORD'))}
-        self.event('model_call',model=self.args.model or 'Codex CLI default',purpose=purpose,round=round_number)
+        self.event('model_call',model=self.args.model or 'Codex CLI default',purpose=purpose,round=round_number,permission_profile=profile)
         self.child(command,timeout=model_seconds,env=env,stdin=prompt,log_name=f'model-{round_number}.jsonl',purpose=purpose)
         answer=json.loads((self.path/f'answer-{round_number}.json').read_text())
         for key,name in [('workflow_file','workflow.json'),('policy_file','policy.json'),('coverage_file','coverage.json')]:
@@ -295,7 +328,7 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                 if self.remaining()<120:self.event('test_skipped',reason='Insufficient remaining run budget');break
                 last_result=self.test(ids,number)
                 if last_result['passed']==last_result['total']:completed=True;break
-            self.phase('completed' if completed else 'needs_attention',ended=stamp(),latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
+            self.phase('completed' if completed else 'needs_attention',ended=stamp(),evaluation='not_evaluated' if self.args.skip_tests else 'official_practice' if last_result else 'incomplete',latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
         except Exception as error:
             self.phase('failed',ended=stamp(),error=self.clean(str(error)))
             raise
@@ -337,10 +370,7 @@ def main():
         os.environ['FREYA_BANK_TEAM_KEY']='freya-practice-'+hashlib.sha256(os.environ['FREYA_API_KEY'].encode()).hexdigest()[:32]
     sys.path.insert(0,str(KIT))
     lock=ROOT/'.state/slots'/f'{args.slot}.lock';lock.parent.mkdir(parents=True,exist_ok=True)
-    import fcntl
-    with lock.open('w') as handle:
-        try:fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        except BlockingIOError:sys.exit('A builder run for this workflow slot is already active. Wait for it to finish.')
+    with slot_lock(lock):
         run=Run(args)
         awake=None
         if sys.platform=='darwin' and shutil.which('caffeinate'):

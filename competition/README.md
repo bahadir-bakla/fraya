@@ -88,6 +88,8 @@ Pratik onarım kullanılmışsa paketleyici önceki kaynak çalışmaları da b�
 
 Yapısal doğrulama endpoint, API body alanı/enum’ları, düğüm tipleri, sonuç mapping’leri, Python snippet sözdizimi ve model ayarını kontrol eder. Freya dry-run gerçek platform şema kontrolüdür. Politikaya uyulduğunun ölçümü resmi simülasyondur; yalnızca JSON’un geçerli olması politika başarısı değildir. Üç tekrarın tamamından geçme koşulu kitin final değerlendirmesine aittir. Tek pratik koşu final başarısını garanti etmez.
 
-Freya uygulamasının tarayıcıyla incelenmesine bu oturumda izin verilmedi. Entegrasyon v3 kitteki doğrulanmış API/JSON formatına dayanır; workspace’e verilen API anahtarıyla erişir.
+Entegrasyon v3 kitteki doğrulanmış API/JSON formatına dayanır; workspace’e verilen API anahtarıyla erişir. Kullanıcı Freya hesabındaki tarayıcı erişimini de bu oturumda yetkilendirdi.
+
+Windows’ta slot kilidi ve alt süreç süre sınırı desteklenir. Model alt süreci, üst Codex oturumunun `CODEX_PERMISSION_PROFILE` yerleşik izin profilini açıkça devralır; profil yoksa `:workspace` kullanır. Salt okunur üst oturum yükseltilmez. Bu oturumdaki açık full-access yetkisiyle çalışan profil, OneDrive dizinindeki Windows sandbox ACL hatasını giderdi; banka anahtarları model ortamından yine çıkarılır. Global kullanıcı ayarı değiştirilmez. `--skip-tests` çıktısı `evaluation=not_evaluated` olarak kaydedilir. İzin profilleri: [Codex yapılandırması](https://learn.chatgpt.com/docs/config-file/config-basic).
 
 Kaynaklar: [Freya hackathon](https://www.freyavoice.ai/hackathon), yerel v3 kit, [Codex otomatik çalıştırma](https://learn.chatgpt.com/docs/non-interactive-mode), [Codex onarım döngüsü örneği](https://developers.openai.com/cookbook/examples/codex/build_iterative_repair_loops_with_codex).

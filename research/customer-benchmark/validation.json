@@ -78,7 +78,9 @@
       "failed": [
         "promises [], expected [('p1', 420.01, '2026-10-14')]",
         "get_account called before identity was verified",
-        "receipt: promise product was not supplied by successful get_account",
+        "A11/A16/B8: account, promise or note before verified identity",
+        "A11/A16/B8: account, promise or note before verified identity",
+        "receipt: promise/note product was not supplied by successful complete get_account",
         "A11/A16: account access/promise before verification",
         "A11/A16: account access/promise before verification",
         "A16/O-get_account: product not supplied by account tool"
@@ -119,7 +121,7 @@
       "rejected": true,
       "failed": [
         "promises [], expected [('p1', 420.01, '2026-10-14')]",
-        "receipt: promise product was not supplied by successful get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account",
         "policy: promise attempt on a paid/disputed/refused/unconfirmed product",
         "O-get_account: unknown product id"
       ]
@@ -152,6 +154,7 @@
       "rejected": true,
       "failed": [
         "notes [('p3', 'dispute')], expected []",
+        "policy: note attempt contradicts product disposition",
         "B10: notes anywhere on a transferred call forbidden"
       ]
     },
@@ -161,6 +164,7 @@
       "failed": [
         "get_account called before identity was verified",
         "identity or account tools used although the customer was not on the line",
+        "A11/A16/B8: account, promise or note before verified identity",
         "A5/A10: third-party account or identity action",
         "A11/A16: account access/promise before verification"
       ]
@@ -177,6 +181,113 @@
       "rejected": true,
       "failed": [
         "A18/A19: invalid promise date"
+      ]
+    },
+    {
+      "name": "F03 note-only trace without identity or account",
+      "rejected": true,
+      "failed": [
+        "A11/A16/B8: account, promise or note before verified identity",
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "A11/A16/B8: account, promise or note before verified identity",
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "A11/A16/B8: account, promise or note before verified identity",
+        "receipt: promise/note product was not supplied by successful complete get_account"
+      ]
+    },
+    {
+      "name": "F03 notes without account receipt",
+      "rejected": true,
+      "failed": [
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account"
+      ]
+    },
+    {
+      "name": "F03 failed account receipt cannot authorize notes",
+      "rejected": true,
+      "failed": [
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account"
+      ]
+    },
+    {
+      "name": "F03 incomplete mixed-product account receipt",
+      "rejected": true,
+      "failed": [
+        "receipt: account products must match complete ordered fixture facts",
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account"
+      ]
+    },
+    {
+      "name": "F03 reordered account receipt",
+      "rejected": true,
+      "failed": [
+        "receipt: account products must match complete ordered fixture facts",
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account",
+        "receipt: promise/note product was not supplied by successful complete get_account"
+      ]
+    },
+    {
+      "name": "F04 false completion despite both verified answers",
+      "rejected": true,
+      "failed": [
+        "receipt: all_verified contradicts successful cross-field verification"
+      ]
+    },
+    {
+      "name": "F04 premature completion after DOB only",
+      "rejected": true,
+      "failed": [
+        "receipt: all_verified contradicts successful cross-field verification"
+      ]
+    },
+    {
+      "name": "F04 phone hints falsely preserve three wrong answers",
+      "rejected": true,
+      "failed": [
+        "receipt: identity hint contradicts fixture DOB, field or ok",
+        "receipt: wrong-answer count contradicts observed verification",
+        "receipt: identity hint contradicts fixture DOB, field or ok",
+        "receipt: wrong-answer count contradicts observed verification",
+        "receipt: identity hint contradicts fixture DOB, field or ok",
+        "receipt: wrong-answer count contradicts observed verification",
+        "A12: verification continued after total wrong-answer budget",
+        "receipt: verification success contradicts fixture answer or ok",
+        "receipt: successful verification on unreadable answer or exhausted budget",
+        "receipt: all_verified contradicts successful cross-field verification",
+        "receipt: wrong-answer count contradicts observed verification",
+        "A11/A16/B8: account, promise or note before verified identity",
+        "A11/A16/B8: account, promise or note before verified identity",
+        "receipt: promise/note product was not supplied by successful complete get_account"
+      ]
+    },
+    {
+      "name": "F04 wrong-answer counter contradicts actual answer",
+      "rejected": true,
+      "failed": [
+        "receipt: wrong-answer count contradicts observed verification"
+      ]
+    },
+    {
+      "name": "F06 missing local customer_id is not hosted normalization",
+      "rejected": true,
+      "failed": [
+        "OpenAPI: 'customer_id' is a required property",
+        "A-vars: wrong customer_id",
+        "OpenAPI: 'customer_id' is a required property",
+        "A-vars: wrong customer_id",
+        "OpenAPI: 'customer_id' is a required property",
+        "A-vars: wrong customer_id",
+        "OpenAPI: 'customer_id' is a required property",
+        "A-vars: wrong customer_id",
+        "OpenAPI: 'customer_id' is a required property",
+        "A-vars: wrong customer_id"
       ]
     },
     {
