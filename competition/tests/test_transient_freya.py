@@ -23,11 +23,27 @@ class TransientFreyaTests(unittest.TestCase):
         freya,urlopen,events,sleeps,calls=self.client([urllib.error.URLError('timed out'),http_error(503,'busy'),{'v':1}])
         with patch('urllib.request.urlopen',urlopen):self.assertEqual(freya.api('GET','/api/v2/workflow/x'),{'v':1})
         self.assertEqual(len(calls),3)
-    def test_ambiguous_create_is_not_resent(self):
-        for path in ('/api/v2/workflow','/api/v2/simulations'):
-            freya,urlopen,events,sleeps,calls=self.client([http_error(504,'error code: 504'),{'ok':True}])
-            with patch('urllib.request.urlopen',urlopen),self.assertRaises(RuntimeError):freya.api('POST',path,{'w':1})
-            self.assertEqual(len(calls),1)
+    def test_ambiguous_simulation_create_is_not_resent(self):
+        freya,urlopen,events,sleeps,calls=self.client([http_error(504,'error code: 504'),{'ok':True}])
+        with patch('urllib.request.urlopen',urlopen),self.assertRaises(RuntimeError):freya.api('POST','/api/v2/simulations',{'w':1})
+        self.assertEqual(len(calls),1)
+    def test_ambiguous_workflow_create_adopts_the_created_workflow(self):
+        listed={'workflows':[{'id':'other','name':'slot 1011-1','agentId':'x'},{'id':'wf1','name':'slot 1011-2','agentId':'ag1'}]}
+        freya,urlopen,events,sleeps,calls=self.client([http_error(504,'error code: 504'),listed])
+        freya.workspace_id=lambda:'ws'
+        with patch('urllib.request.urlopen',urlopen):result=freya.api('POST','/api/v2/workflow',{'name':'slot 1011-2','workflow':{}})
+        self.assertEqual(result,{'workflow':{'id':'wf1','agentId':'ag1'}})
+        self.assertEqual([m for m,_ in calls],['POST','GET']);self.assertIn('freya_create_adopted',events)
+    def test_ambiguous_workflow_create_resends_when_nothing_was_created(self):
+        empty={'workflows':[]}
+        freya,urlopen,events,sleeps,calls=self.client([http_error(504,'x'),empty,empty,empty,{'workflow':{'id':'wf2','agentId':'ag2'}}])
+        freya.workspace_id=lambda:'ws'
+        with patch('urllib.request.urlopen',urlopen):result=freya.api('POST','/api/v2/workflow',{'name':'slot 1011-3','workflow':{}})
+        self.assertEqual(result['workflow']['id'],'wf2');self.assertEqual([m for m,_ in calls],['POST','GET','GET','GET','POST'])
+    def test_publish_of_a_version_is_resent(self):
+        freya,urlopen,events,sleeps,calls=self.client([http_error(504,'x'),{'ok':True}])
+        with patch('urllib.request.urlopen',urlopen):freya.api('POST','/api/v2/versions/workflow/w/publish',{'versionId':'v'})
+        self.assertEqual(len(calls),2)
     def test_unprocessed_auth_503_allows_any_method(self):
         text=json.dumps({'success':False,'data':{'message':'API key validation is temporarily unavailable. Retry shortly.'}})
         freya,urlopen,events,sleeps,calls=self.client([http_error(503,text),{'id':'s'}])
