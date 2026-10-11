@@ -1,0 +1,119 @@
+{
+  "status": "VERIFIED_NATIVE_GENERATED_C_SOURCE_REVIEW",
+  "started_utc": "2026-10-11T13:13:39.372659+00:00",
+  "requested_model": "claude-opus-5-5",
+  "actual_opus_inference_verified": true,
+  "native_inference_attempts": 1,
+  "timeout_seconds": 180,
+  "run_status_at_capture": {
+    "phase": "failed",
+    "error": "Build the phone agent from evidence exceeded the run time budget",
+    "freya": null
+  },
+  "source_hashes": {
+    "competition/runs/20261011-160237-d82126/work/workflow.json": "aa25bf73f4a1a2fff8d5d9812be86adcf85a8ebbe32974eb2f9183574609ed46",
+    "competition/runs/20261011-160237-d82126/work/policy.json": "ed5c6fc85c675b394b85cf8ef4b7b4f6c9737f3d19392d8fcb8b0f3da80dfb6f",
+    "competition/runs/20261011-160237-d82126/work/coverage.json": "f68d43f7df4a1993a6c8b4c74710e71c32978b0defd5dc352ad2f3e09a5678c5",
+    "analysis/mock-final-20261011/briefs/brief-c.md": "8c968cd2f93d8a8c7b115a3d7d5b69959a2d5f63d399c5aff51ee083f45f80b5",
+    "competition/runs/20261011-160237-d82126/work/inputs/openapi.json": "fa5ef2aec75e41c7f0be454cde1f6ffd69c5a4735ebe364ee065b13090b74d02"
+  },
+  "scope": "Automatically authored local artifacts from failed/expired original builder run, not completed or published qualification. Model-authored checks are not independent evidence.",
+  "raw_prompts_stdout_thinking_saved": false,
+  "new_hosted_calls": 0,
+  "auth_status": {
+    "loggedIn": true,
+    "authMethod": "claude.ai",
+    "apiProvider": "firstParty",
+    "subscriptionType": "pro"
+  },
+  "cli_sha256": "76de74f7694a5bdc03378a5f837c9e132827bf004c98c276bc4e9094ff06769a",
+  "prompt_sha256": "b12c602a3ca188f569b891edec274338d028e738965bd77951b6127e110c019d",
+  "prompt_bytes": 107584,
+  "native_seconds": 83.157,
+  "exit_code": 0,
+  "failure_tag": "RATE_LIMIT_BLOCKED",
+  "inference_evidence": {
+    "assistant_response_models": [
+      "claude-opus-5-5",
+      "claude-opus-5-5"
+    ],
+    "exclusive_model_usage_keys": [
+      "claude-opus-5-5"
+    ],
+    "model_usage": {
+      "claude-opus-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 7679,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 43469,
+        "webSearchRequests": 0,
+        "costUSD": 0.50134,
+        "canonicalModel": "claude-opus-5-5",
+        "provider": "firstParty"
+      }
+    },
+    "tool_calls": 0
+  },
+  "model_claims": {
+    "assessments": [
+      {
+        "id": "C-RT-1",
+        "priority": "P1",
+        "title": "A third party who mentions the customer's name is treated as the customer",
+        "source_pointer": "workflow.json controller recipient(): `has=any(n and re.search(...name...))` returns True before `act` is consulted; the opening branch runs `elif recipient(raw,act,v): say(question(),'security')` before the act=='other' branch",
+        "concrete_contract": "Brief C C3 accepts only 'yes', 'speaking', 'that's me' or the person saying the customer's own name, meaning self-identification. C6 says a non-customer gets no reason and cannot give security answers. C5 applies to everyone who answers.",
+        "positive_control": "Utterance 'Ines isn't here right now' (or 'Ines is at work, can I take a message?') with recipient_act=other. The False regex only matches 'not here' or '(he|she)'s at work'. It does not match \"isn't here\" or 'is at work'. The first name is present and there is no if/would/pretend, so recipient() returns True.",
+        "producer_conformance": "The extractor schema correctly labels this act 'other', but the controller ignores that label because the name-presence test comes first. This is a controller precedence defect, not an extractor defect.",
+        "expected_source_observable": "Source-only trace: phase goes from opening to security and the line is 'Please tell me the last four digits of the phone number on file.' The C6 line ('Nordhaven would like to speak with ... personally. When can they be reached?') is never reached. Security answers from a non-customer become possible, which violates C6.",
+        "claim_limit": "Derived from static reading of controller code. The behaviour of the hosted extractor and runtime was not observed. Whether the hosted scorer treats a bare name mention as confirmation is unverified."
+      },
+      {
+        "id": "C-RT-2",
+        "priority": "P1",
+        "title": "A DOB given year-first poisons the buffer and causes an unbounded re-prompt loop with no close_call",
+        "source_pointer": "controller security branch `elif part and safe:` for date_of_birth. It appends to s['buffer'], and on date_value failure says 'Please continue with the missing part...' without clearing the buffer or incrementing s['format']. The answer-validation path builds its operand from the same buffer and on failure only calls say(question()).",
+        "concrete_contract": "Brief C C12/C13/C15/C16 require a bounded check: verify after each answer, end after two wrong answers or a refusal. C50 requires close_call exactly once.",
+        "positive_control": "At the DOB step the caller says '1985' (security_part=1985), then '14 March', then '14 March 1985'. The buffer becomes '1985', then '1985 14 march', and so on. Neither normalize_date_words nor date_value accepts a leading year, so every turn fails. Even a later complete extractor answer fails the 'source conflict' check because the stale buffer is prepended.",
+        "producer_conformance": "The producer follows its schema: security_part examples include '1985' as a valid fragment. The controller cannot consume that documented fragment order.",
+        "expected_source_observable": "The same prompt repeats with no verify_identity call and no growth in the format counter. This continues until max_node_turns or ticks>150, which leads to the safe_end/NOP fallback or to safe_end with no close_call. The C50 close is missing or carries the wrong reason.",
+        "claim_limit": "Derived from static tracing of the regexes. Not executed against the hosted runtime. The exact termination path depends on the platform's max_node_turns behaviour."
+      },
+      {
+        "id": "C-RT-3",
+        "priority": "P2",
+        "title": "'Too much' offers the floor on the agent's own today-offer instead of keeping the customer's date or asking for one",
+        "source_pointer": "In the get_account completion, s.update(... date=today.isoformat() ...) runs. The too_much branch then calls offer(s['floor'], s.get('date', s['deadline']), 'floor').",
+        "concrete_contract": "Brief C C31: offer the floor once, keep the date already proposed or agreed, and if there is none yet, ask for a date (section 7). 'Today' in C33 is the agent's opening ask. It is not a date proposed or agreed by the customer.",
+        "positive_control": "Right after the opening, the customer says 'No, the full amount is too much for me' with no date. The line becomes 'The remaining amount stays overdue. Can you pay <floor> euros on <today>?' The brief requires a date question instead.",
+        "producer_conformance": "The producer emits k=too_much|c=1 per its schema. The defect lies in how the controller seeds its state.",
+        "expected_source_observable": "The floor is offered for today. If the customer refuses, refuse() records '<floor>/<today>' as a refused key and spends an attempt path that differs from C34, so the attempt sequence and line content diverge from the brief.",
+        "claim_limit": "Derived from static reading. Whether the hosted scorer penalises today versus a date question is unverified."
+      }
+    ],
+    "recommendations": [
+      "Evaluate explicit third-party acts (recipient_act other/wrong/death and generic negations such as \"isn't\" or 'is at/out') before any name-presence acceptance. Accept a name only in self-identification form (for example 'this is <name>' or '<name> speaking').",
+      "Make DOB fragment assembly order-independent (accept day, month and year in any order) or reset the buffer on parse failure. Count failed fragment turns toward the bounded format limit so every path reaches farewell and close_call.",
+      "Track the customer-proposed or agreed date separately from the agent's initial today-offer. Under C31, use only the customer-proposed or agreed date, and otherwise route to a date question.",
+      "Phone tokenization: 'forty-eight twenty-one' yields '81' and a leading 'oh' adds a digit. Prefer a validated four-digit extractor answer when the raw speech contains compound number words, rather than per-word digit mapping.",
+      "C25 wording: the deadline offer line does not say that the deadline is the latest date that can be recorded. Add that general phrase for offer_mode 'deadline'."
+    ],
+    "limits": [
+      "Source-only static review. No tools, network, hosted extractor or runtime execution.",
+      "The builder phase FAILED and nothing was published. These artifacts are not evidence of a completed run.",
+      "The 100 locally authored passing checks are self-authored and do not establish independent quality.",
+      "Fixes are framed generally. No fixture hardcoding, score or actor changes, or candidate edits are proposed."
+    ]
+  },
+  "final_answer_sha256": "addeb79f3708ad83b440e4dcf7deff25486b367870f0da4832e594c7c6e86781",
+  "finished_utc": "2026-10-11T13:15:04.104186+00:00",
+  "sources_unchanged": {
+    "competition/runs/20261011-160237-d82126/work/workflow.json": true,
+    "competition/runs/20261011-160237-d82126/work/policy.json": true,
+    "competition/runs/20261011-160237-d82126/work/coverage.json": true,
+    "analysis/mock-final-20261011/briefs/brief-c.md": true,
+    "competition/runs/20261011-160237-d82126/work/inputs/openapi.json": true
+  },
+  "run_status_at_finish": {
+    "phase": "failed"
+  }
+}

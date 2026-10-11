@@ -249,3 +249,31 @@ Entegrasyon v3 kitteki doğrulanmış API/JSON formatına dayanır; workspace’
 Windows’ta slot kilidi ve alt süreç süre sınırı desteklenir. Model alt süreci, üst Codex oturumunun `CODEX_PERMISSION_PROFILE` yerleşik izin profilini açıkça devralır; profil yoksa `:workspace` kullanır. Salt okunur üst oturum yükseltilmez. Bu oturumdaki açık full-access yetkisiyle çalışan profil, OneDrive dizinindeki Windows sandbox ACL hatasını giderdi; banka anahtarları model ortamından yine çıkarılır. Global kullanıcı ayarı değiştirilmez. `--skip-tests` çıktısı `evaluation=not_evaluated` olarak kaydedilir. İzin profilleri: [Codex yapılandırması](https://learn.chatgpt.com/docs/config-file/config-basic).
 
 Kaynaklar: [Freya hackathon](https://www.freyavoice.ai/hackathon), yerel v3 kit, [Codex otomatik çalıştırma](https://learn.chatgpt.com/docs/non-interactive-mode), [Codex onarım döngüsü örneği](https://developers.openai.com/cookbook/examples/codex/build_iterative_repair_loops_with_codex).
+
+
+## MiniLM V2: Türkçe ve son düzeltmeler
+
+V2, gerçek encoder güncellemesiyle eski156.341 ve yeni12.480 örneğin tamamında
+iki tur eğitildi. Güncel konuşmanın tamamı, son penceresi ve önceki iki
+gözlenen konuşma turu ayrı özelliklerdir. V1 ve klasik A10/B14 korunur.
+Yeni96 bağımsız sentetik vakada V1 ortak doğru etiketler
+17/96, V2 20/96;
+macroF1 0.3244 → 0.4574.
+Önceden sabitlenen varsayılan yükseltme kapısı: `False`.
+Tam eğitim, seçilmiş eşik, ablation, regresyon ve sınırlamalar
+[teslim notunda](../analysis/MINILM-V2-HANDOFF-20261011.txt) ve
+[gerçek sonuçlarda](../analysis/minilm-v2-results.json) bulunur.
+
+`--finetuned-version v2 --finetuned-assist required` V2'yi açıkça seçer;
+`--finetuned-version v1` önceki modeli seçer. `auto`, ölçülen kapı açıksaV2,
+aksi haldeV1 kullanır. `--semantic-assist off` klasik sürümü seçer.
+Eylem modeli, başarısız gözlenen konuşmalar olduğunda builder onarımına
+bağlanır; ilk brief üretiminin belge retrieval modeli ayrı korunur.
+Freya ses ajanının sabit LLM/banka araç sözleşmesi değişmez.
+
+Bu sprintte arkadaşın workspace'i kullanırken yalnız yerel test yapıldı.
+C/D yeni üretimleri son model cevabı zaman aşımıyla FAILED kaldı; ayrı
+yapısal kontroller C0 hata/D1 coverage belirsizliği ve C kaynak audit'i
+üç gerçek guard sorununu gösterdi. Bunlar temiz submission değildir.
+Rehberdeki yeni genel onarımlar sonraki otomatik üretim içindir.
+Yeni Modal harcaması0; önceki ihtiyatlı üst muhasebe30USD/hard35USD.

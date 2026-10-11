@@ -1,0 +1,71 @@
+MiniLM V2 / klasik builder teslim notu — 11 Ekim 2026
+
+Gerçek eğitim: yerel NVIDIA GeForce RTX 3070 Ti Laptop GPU; 168.821 TRAIN örneği x 2 tur,
+10552 optimizer adımı; 101 encoder tensörü değişti.
+Eğitim+CAL/export ölçülen süre: 1449.6 saniye.
+156.341 eski TRAIN aynen korundu; 12.480 yeni örnek eklendi.
+Yeni örneklerin 7.488'i Türkçe; 4.160'ı geç gelen anlam/düzeltme içeriyor.
+11.514 MASSIVE Türkçe TRAIN kaydı kaynak/lisans/hash ile toplandı.
+Genel intentleri banka izin etiketi olarak kullanmadık; 39 tanık Türkçe kelime
+eğitimde ilgisiz konuşma çeşitliliği sağlıyor. Finans etiketleri açık sentetik
+ödeme/itiraz/düzeltme/izin tariflerinden geliyor. 480 yeni CAL, 12 ayrı aile.
+Toplam CAL 16.896; CAL eğitimde kullanılmadı. Seçim eşikleri yalnız CAL'dan.
+
+Mimari: güncel konuşmanın tüm pencerelerinden ortalama + son pencere +
+son iki gözlenen USER/ASSISTANT turu. Uzun konuşmada son düzeltme ayrı kanalda.
+Kırpılan konuşma yok; en fazla48 pencere/encoder çağrısı, büyük örneklerde
+checkpoint ve tam gradient. 7 anlam +4 genel konuşma eylemi; öneri katmanı.
+Kimlik, izin, para/tarih/politika/başarılı banka receipt yetkisi deterministik.
+MiniLM builder'ın başarısız konuşma analizine bağlandı; Freya canlı ses modeline
+harici GPU inference aracı eklenmedi. Yalnız kaynak değiştirme/onarım rehberi.
+
+Eğitimden önce ayrı yazarca hazırlanan96 yeni EVAL vakası mühürlendi.
+V1 yeni96: macroF1=0.3244,
+ortak bilinen etiketler doğru=17/96.
+V2 yeni96: macroF1=0.4574,
+ortak bilinen etiketler doğru=20/96.
+Önceden tanımlanan varsayılan release kapısı: False.
+Eski32 yeniden kullanılan tanı: V1 12/32,
+V2 16/32. Yeni bağımsız96 ile karıştırılmaz.
+Eski384 macroF1: V1 0.8207,
+V2 0.8986; bu da regresyon tanısıdır.
+Uzun konuşma, önceki kendi yanıtı ve no-tail/no-context sonuçları JSON'da.
+EVAL görüldükten sonra bu ağırlıklar/eşikler/test beklentileri değiştirilmedi.
+Sonuçlar mühendislik amaçlı sentetik ailelerdir; IID/insan altın etiket,
+bankacılık yetkisi, gerçek ASR/aksan veya Freya geçme oranı değildir.
+
+Arkadaş branch'i origin/tau-hardening ca1565bd35ab4773ecd8afd13ee23a729c1b169d
+önceki6706017 merge'inde korunarak birleşti. Son fetch'te yeni push yoktu.
+Raw mock C5/30,D0/26; ayarlı gayriresmi C8/30 ayrı. Yeni hosted başarı iddiası yok.
+Gerçek Opus5.5 rehber incelemesi ve103 literal CPU çağrısı: altı genel rehber
+onarımı; isim/unvan bağlamı, kolektif tarih, sıralı düzeltmeler, toparlanan yeni
+teklif, işleme özgü tekrar ve ödeme sözü iptali ile zorunlu not ayrımı.
+Yeni otomatik klasik C/D yerel üretim kayıtları ve ayrı kaynak incelemesi
+analysis/classic-v2-*.json altında; failed/expired original durumlar değişmez.
+Klasik A10/B14 yedekleri ve V1 model hashleri değişmedi.
+
+Çalıştırma:
+  python competition/builder.py <briefler> --finetuned-version v2 --finetuned-assist required --semantic-python <torch-python> --local-only
+  --finetuned-version v1 eski modeli açıkça seçer.
+  --semantic-assist off tüm MiniLM yardımcılarını kapatır, klasik üretimi seçer.
+  auto, yalnız predefined karşılaştırma kapısı açıksaV2; aksi haldeV1 kullanır.
+  Eğitilmiş eylem yardımcısı, önceki başarısız konuşma bulunduğunda devreye girer.
+  İlk brief üretiminde belge retrieval MiniLM'i ayrı model olarak korunur.
+  --practice-repair <durmuş-public-run> --repair-first yerel onarım karşılaştırır.
+  Arkadaş workspace'i kullandığı için bu sprintte Freya publish/test yapılmadı.
+
+Bütçe: yeni Modal başlatması0, yeni bulut harcaması0. Önceki üç koşunun
+ihtiyatlı muhasebe toplam üst zarfı30USD; hard35USD. Gerçek fatura doğrulanmadı.
+Yerel kaynak91 test, bağımsız17 mekanik test, actualCUDA8 kontrol geçti.
+Model/adapter/packet/hash, credential ve orijinal ZIP kontrolleri son kayıtta.
+Kit16 dosya değişmez; actor/judge/scorer/expected değişmedi, gizli test erişimi yok.
+
+Ölçüm arayüzünde iki hata ayrı korundu: bağımsız yazar role/text kullandı;
+speaker/text olarak aynı konuşma projekte edildi. Eski32 tanıda2den fazla
+önceki tur, V1in zaten yaptığı last2 projeksiyonuna eşlendi. Beklentiler,
+metin, modeller/eşikler değişmedi. Tamamlanmış V1 ölçümü yeniden çalıştırılmadı.
+V2 son arayüz düzeltmesi sonrası skorlandı; bu fiziksel tek inference iddiası değildir.
+Son C/D değerlendirme: C0 yapısal hata ama3 kaynakguardfault; D1 zorunlu
+coverage belirsizliği. Her ikisi FAILED original, unpublisheddiagnostic.
+İkinci nativeOpus5.5 review83.157s +19CPUchecks;13met,6unmet; bulgular için
+rehbere4 yeni genel paragraf eklendi. Bu kaynak onarımı henüz yeni adayda koşturulmadı.

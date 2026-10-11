@@ -15,8 +15,8 @@ def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',required=True);p.add_argument('--output',required=True)
-    p.add_argument('--worker',choices=['v1','v2']);a=p.parse_args();out=Path(a.output)
-    if out.exists():raise ValueError('Do not overwrite evaluation evidence')
+    p.add_argument('--worker',choices=['v1','v2']);p.add_argument('--summarize-existing',action='store_true');a=p.parse_args();out=Path(a.output)
+    if out.exists() and not (a.summarize_existing and out.is_dir() and not (out/'comparison.json').exists()):raise ValueError('Do not overwrite evaluation evidence')
     plan=json.loads((ROOT/'analysis/minilm-v2-plan.json').read_text(encoding='utf8'))
     freshpath=ROOT/plan['fresh_EVAL_path']
     if sha(freshpath)!=plan['fresh_EVAL_sha256']:raise ValueError('Completed independent EVAL seal changed')
@@ -25,12 +25,13 @@ def main():
     if not a.worker:
         fit=json.loads((modelpath/'training.json').read_text(encoding='utf8'))
         if fit['status']!='COMPLETED' or fit['completed_epochs']!=2 or fit['TRAIN_rows']!=168821:raise ValueError('Full frozen fit required before opening independent EVAL')
-        out.mkdir(parents=True)
+        out.mkdir(parents=True,exist_ok=a.summarize_existing)
         paths={'v1':HERE/'minilm_ft_v1/model','v2':modelpath}
         env={k:v for k,v in os.environ.items() if not any(s in k.upper() for s in ('TOKEN','SECRET','PASSWORD','API_KEY','TEAM_KEY'))}
         started=time.monotonic()
-        for version,path in paths.items():
-            subprocess.run([sys.executable,'-X','utf8','-B',str(__file__),'--worker',version,'--model',str(path),'--output',str(out/(version+'.json'))],env=env,check=True,timeout=900)
+        if not a.summarize_existing:
+            for version,path in paths.items():
+                subprocess.run([sys.executable,'-X','utf8','-B',str(__file__),'--worker',version,'--model',str(path),'--output',str(out/(version+'.json'))],env=env,check=True,timeout=900)
         arms={v:json.loads((out/(v+'.json')).read_text(encoding='utf8')) for v in paths}
         gains={'fresh_macro_F1':arms['v2']['fresh']['raw']['domain_macro_F1']-arms['v1']['fresh']['raw']['domain_macro_F1'],
                'fresh_joint_correct_rows':arms['v2']['fresh']['joint_raw']['correct']-arms['v1']['fresh']['joint_raw']['correct'],
@@ -54,10 +55,27 @@ def main():
     fresh=json.loads(freshpath.read_text(encoding='utf8'))
     if not isinstance(fresh,list):raise ValueError('Expected sealed flat independent probe list')
     if len(fresh)!=96 or any(r['split']!='EVAL' for r in fresh):raise ValueError('Independent cohort schema/count')
+    # The frozen independent author used role/text; normalize that observed-only
+    # spelling for both arms, leaving labels, masks, text, order and IDs intact.
+    for row in fresh:
+        previous=row['input']['previous_utterances']
+        converted=[]
+        for turn in previous:
+            if set(turn)=={'role','text'}:
+                if turn['role'] not in ('USER','ASSISTANT'):raise ValueError('Observed author role')
+                converted.append({'speaker':turn['role'],'text':turn['text']})
+            elif set(turn)=={'speaker','text'}:converted.append(turn)
+            else:raise ValueError('Observed author context fields')
+        row['input']={'current_utterance':row['input']['current_utterance'],'previous_utterances':converted}
     for r in fresh:targets(r)
     reused=read_rows(ROOT/'research/customer-benchmark/minilm-finetune-v1/eval.jsonl');reused=[r for r in reused if r['source']=='new-authored']
     old=json.loads((ROOT/'analysis/minilm-ft-adversarial-probes.json').read_text(encoding='utf8'))
     if len(reused)!=384 or len(old)!=32:raise ValueError('Frozen diagnostic cohorts')
+    # V1 observed_text already takes the last two. Match that projection for
+    # the older diagnostics; retain the original files and all expectations.
+    for row in reused+old:
+        row['input']={'current_utterance':row['input']['current_utterance'],
+                      'previous_utterances':row['input']['previous_utterances'][-2:]}
     model,manifest=load_model(modelpath,device)
     def measure(rows,values):
         known=np.asarray([targets(r)[1][:7] for r in rows],dtype=bool);y=np.asarray([targets(r)[0][:7] for r in rows])
@@ -71,7 +89,8 @@ def main():
     logits=model.predict(combined,16,deadline=deadline)
     result={'version':a.worker,'manifest_sha256':sha(modelpath/'manifest.json'),'thresholds':manifest['thresholds'],'device':device,
             'fresh':measure(fresh,logits[:96]),'reused384':measure(reused,logits[96:480]),'reused32':measure(old,logits[480:]),
-            'fresh_groups':len({r['group'] for r in fresh}),'bank_authority':False,'fresh_EVAL_sha256':sha(freshpath)}
+            'fresh_groups':len({r['group'] for r in fresh}),'bank_authority':False,'fresh_EVAL_sha256':sha(freshpath),
+            'context_projection':'Frozen author role/text projected to speaker/text identically for both arms; text/labels/masks/order/IDs unchanged.'}
     subsets={'long_over350words':[i for i,r in enumerate(fresh) if len(r['input']['current_utterance'].split())>350],
              'prior_own_turn':[i for i,r in enumerate(fresh) if any(t['speaker']=='USER' for t in r['input']['previous_utterances'])]}
     for label in ['tr','en']:
