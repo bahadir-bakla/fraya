@@ -1,0 +1,95 @@
+Diyalog döngüsü ve onay onarımı — 11 Ekim 2026
+
+Durum: Yerel regresyonlar geçti. Canlı yeterlilik henüz doğrulanmadı.
+
+Kaynak değişikliği: 9ff0802, fix/v2-dialogue-recovery.
+Taban: origin/codex/builder-rd f141ae8d8c33394246dbbcff207620e2c4bb05cb.
+Çalışma: /tmp/fraya-dialogue-recovery.
+
+DÜZELTMELER
+- Tam ödeme kabulü artık dar bir yes/will-pay listesine bağlı değil. Kabul,
+  eksik tutar gibi yorumlanıp boş bir hazır/continue döngüsüne düşürülmüyor.
+- Hazır olma ifadelerinde güncel eksik bilgiye yönelik soru veya geçerli
+  tam readback kullanılıyor; hazır olmak finansal onay sayılmıyor.
+- Yarım kalan koşul, eksik tutar/tarihten ayrı izleniyor. Koşul çözülmeden
+  ödeme yazılmıyor; yeni açık taahhüt uygun kapsamda yeniden readback gerektiriyor.
+- Eski recovery teklifi yeni açık tutar, ürün, teklif sürümü veya readback
+  tarafından geçersizleşiyor. Son onay yalnız son okunan şartlara bağlanıyor.
+- Rakam rakam söylenen tam doğum yılı korunuyor. Eksik, olumsuz, üçüncü kişi,
+  alıntı ve çelişkili cevaplar reddediliyor; gerçek kimlik yetkisi banka yanıtında.
+- Pazarlama vb. başka bir işleme verilen onay ödeme onayı sayılmıyor.
+- ML Python yolunda symlink çözümünün sanal ortamı kaybettirmesi düzeltildi.
+
+ÜRETİM VE BAĞIMSIZ KONTROL
+Eski release elle değiştirilmedi. Gerçek eski platform kayıtlarından yeni
+otomatik builder üretimi yapıldı. Frozen V2 92 USER turunda gerçekten çalıştı;
+full/no-context audit AVAILABLE. Belge navigasyon yardımcısı unavailable oldu;
+bu, gerçek V2 yardımcısının kullanılmadığı anlamına gelmez. Yeni eğitim yok.
+Canlı ses katmanına MiniLM eklenmedi; çalışma zamanı yetkisi klasik guard'larda.
+
+İlk otomatik üretim: 20261011-181159-77db0d, 508 saniye.
+Bağımsız kontrol bu adayda stale recovery_offer regresyonu buldu. İlk aday
+yayınlanmadan reddedildi; dosyaları ve başarısız testleri korundu.
+İkinci otomatik onarım: 20261011-dialogue-recovery-followup, 187 saniye.
+Bu hazırlık işlemi görülmemiş/final brief için yarışma süre başarısı değildir.
+
+Son aday: competition/releases/minilm-v2-dialogue-recovery-a-r2-20261011
+Workflow SHA256: 4a9234579e68d350ffcaf77553c859aeade5ba888815ec78a85d6b7c5fbcf182
+Release manifestindeki source_commit taban checkout'u gösterir; onarılan
+builder kaynağı 9ff0802 ve kaydedilen generation/followup-generation kanıtlarıdır.
+release.json üretim anının değişmez manifestidir; yayın/evaluation durumu
+evaluation.json ve hosted-diagnostics.json ile ayrıca kaydedilir.
+
+Yerel kontroller:
+- Builder/harness unittest: 153/153 geçti.
+- Aynı güncel kabul/döngü sözleşmeleri: eski 13/18, ilk aday 17/18, son aday 18/18.
+- Aynı güncel güvenlik sözleşmeleri: eski 18/27, son aday 27/27.
+- Üreticinin ek yerel kontrolleri: 91 ve 24 geçti; bağımsız testlerle örtüşür,
+  ayrı toplam başarı/heldout sayısı olarak toplanmaz.
+Yerel testler enjekte edilmiş extraction adayları ve sentetik banka receipt'leri
+kullanır. Platform extractor'ının veya gerçek görüşmenin yerine geçmez.
+
+Test sözleşmesi geçmişi açıkça korunmuştur: ilk kabul suite'i 14/15 sonucu
+verdi. Yeni açık tekliften sonra verilen yes'in kabul olabileceğini hesaba
+katmayan eski varsayım gerekçeli biçimde düzeltildi; eski çıktılar saklandı.
+Yeni ürün bağlama alanı için fixture elle eksik state kurmak yerine üretilen
+offer() fonksiyonunu çağırır. Ayrıntı: acceptance/CANDIDATE-REVIEW.txt ve
+acceptance/FOLLOWUP-REVIEW.txt. Güvenlik ayrıntısı: security/FINDINGS.txt.
+
+PLATFORM
+Public A üç tekrar: 0/30, üç tekrarı da geçen senaryo 0/10.
+30 çağrının tamamında ilk kod adımı ve açılış var; ilk müşteri cevabından
+sonra extraction/routing kaydı yok. Medyan cevapsız bekleyiş 60,2 saniye.
+Orijinal scorer bu cevapsız son turu gecikme metriğinde 0 gösterir; ayrı
+tanı metriği bunu görünür kılar, orijinal puana müdahale etmez.
+
+Daha önce aynı gün 24/30 veren DEĞİŞTİRİLMEMİŞ eski release ayrıca yeni
+kontrol slot'unda PUB-01/PUB-03 ile denendi: 0/2, aynı açılış sonrası sessizlik.
+Recipient düğümü ve model ayarları önceki başarılı export ile aynıdır.
+Bu bulgu ortak platform/model hattını işaret eder; kesin servis kök nedeni
+kanıtlanmış değildir. Hatalı puanlar silinmez veya başarıya çevrilmez.
+Yeni aday için canlı iyileşme iddiası yapılmaz; teslim yeterliliği bekler.
+
+in_words üç tekrar: 0/9, üç tekrarı da geçen senaryo 0/3. Tüm 9 çağrı aynı
+açılış sonrası sessizlikte kaldı. Ayrıca daha önce çalışan ÖZGÜN yayın sürümü
+(0887bd59 / b25c926c, version1) hiçbir güncelleme yapılmadan PUB-01/PUB-03 ile
+tekrar kontrol edildi: 0/2, aynı sessizlik. Böylece yeni slot kurulumuna özgü
+bir hata açıklaması da desteklenmedi. Toplam yeni aday39 ve kontrol4 çağrısının
+gerçek agent/workflow/version/persona/session bağları doğrulandı; hiçbirinde
+banka aracı çalışmadığı için banka customer gözlemi unobserved olarak kaydedildi.
+Bu raporun sayısal platform özeti: hosted-diagnostics.json.
+Ham görüşmeler, resmi skorlar, bank ledger, export ve tam sürüm bağları:
+/home/yusuf/Masaüstü/fraya/local-runs/customer-benchmark-dialogue-recovery-20261011
+
+KORUNANLAR VE TEKRARLAMA
+Klasik A10/B14, eski V2 release, iki brief, resmi score.py ve public vakalar
+değişmedi; 7 kaynak SHA'sı preserved-source-pins.json ile doğrulandı.
+Yeni testler ayrı slot, yeni persona/session ve sabit yayın sürümü kullanır.
+İstek zaman aşımında belirsiz POST/PUT tekrarı yapılmaz.
+
+python3 -m unittest discover -s competition/tests -q
+python3 analysis/dialogue-recovery/acceptance/witness.py --workflow competition/releases/minilm-v2-dialogue-recovery-a-r2-20261011/workflow.json --output /tmp/acceptance.json --require-fixed
+python3 analysis/dialogue-recovery/security/witness.py --workflow competition/releases/minilm-v2-dialogue-recovery-a-r2-20261011/workflow.json --output /tmp/security.json
+
+Servis yanıt vermeye başladıktan sonra aynı immutable adayın hosted testleri
+yeni çıktı klasörüne yeniden koşulmalı. Final/production'a yükseltme yapılmadı.

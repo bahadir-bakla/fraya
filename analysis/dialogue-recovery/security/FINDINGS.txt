@@ -1,0 +1,34 @@
+DOB SECURITY RECOVERY: SOURCE-GENERAL BUILDER CHANGE
+
+Observed release: /tmp/fraya-rd-eval-f141ae8/competition/releases/minilm-v2-context-a-20261011/workflow.json
+SHA256: fc6be6e77945e61c29112051acee9998a502e68698ffce8a5b8e0c8fd16c1092
+Evidence: local-runs/customer-benchmark-v2-context-20261011/stress-in-words/failed-call-review.json, corroborated with the release's literal dispatch source.
+
+Root cause
+The scalar security_value extractor returns a complete canonical DOB. The controller nevertheless requires security_fallback(raw) to rederive it. Its parse_date -> number_words treats a digit-by-digit year as an additive number, which then fails the minimum year check. No identity comparison is dispatched. security_cue detects years only with a four-digit regex, misleadingly requests a missing year, and increments its clarification counter until termination. Returning only the requested year also fails because the raw buffer retains the preceding complete-but-unrecognized answer. This is a controller representation error, not a bank mismatch or actual missing information.
+
+Proposed source-general requirement (main guide owned by builder_guidance)
+Separate current-answer qualification from normalization. Qualify the actual self-answer span and its complete required components; do not use question operands, third-party/quoted/negated/hypothetical spans, stale completed answers or unresolved corrections. Validate a canonical extracted DOB as a whole YYYY-MM-DD calendar value. Preserve that candidate unchanged for mandatory verify_identity when its current self-answer evidence is complete. A narrower raw parser's unsupported spoken year form must not by itself invalidate this candidate or consume the genuine wrong-answer budget. Recognized conflicting source evidence still blocks dispatch, and a canonical extractor value cannot invent a missing year. Support both four explicit spoken year digits and supported century-plus-year words without additive reinterpretation. Raw fallback is only a candidate producer, never identity authority. Existing same-question fragment scope, explicit replacement/restart behavior, clearing on consumed answers and field changes remain mandatory. Clarification wording must identify a genuinely absent component instead of claiming an unsupported complete year is absent. Count bank wrong answers only from the current documented bank comparison response; keep format/recovery budgets separate.
+
+Related blend-13 change
+26eadb0 removes mandatory word-year reparsing and says to submit canonical extracted DOB as is. It identifies the same failure family, but its literal 'ask for the year only when the extractor reports it missing' is too broad for the current source-evidence protections: an erroneous canonical value may accompany a partial, contradictory or third-party utterance. Retain the normalization insight, not unconditional trust in extractor completeness.
+
+Executable witness
+python3 analysis/dialogue-recovery/security/witness.py --workflow PATH --output RESULT.json
+
+Uses arbitrary workflow path within the existing tagged-event/run(vars) family. Other generated architectures fail explicitly as incompatible and need a real-contract adapter. No generated artifact is edited. Synthetic identities and dates differ from observed practice facts. The controller runs through serialized persistent state; identity receipts execute the real pre/post hooks and current operation counters with synthetic documented response fields.
+
+Baseline: 18/23 checks pass. The five failures are complete digit-year self-answers (bare, introductory wording/comma, plus purpose, balance or other independent question). All 11 adverse-source controls pass. Four bank/phone authority checks pass. Cardinal and canonical DOB forms pass. This is offline decoder evidence, not actual hosted extraction, a Freya score or proof of a regenerated candidate fix.
+
+Regenerated candidate snapshot verification
+Source: competition/runs/20261011-181159-77db0d/work/workflow.json
+Snapshot: analysis/dialogue-recovery/security/candidate-snapshot.workflow.json
+SHA256: b3fc1597cb4713348659267469781b8ec04a78b08b3ef550d938239fac0fbfac
+The generator was still finishing; these results apply only to this pinned content, not any subsequent edits. No interface adaptation was necessary.
+The witness now contains 27 checks, adding explicit spoken-digit DOB bank-success/full-identity, mismatch and unreadable-result receipt paths. Candidate passes 27/27. Original release, rerun with the same expanded harness, passes 18/27: the original five failures plus four dependent bank paths that cannot be reached from that unsupported DOB form. All 11 adverse-source assertions remain rejected by the candidate without incorrect bank attempts. Both successful identity stages still require their current synthetic documented bank receipts. This remains local controller/hook evidence; no actual producer or hosted evaluation was run.
+
+Automatic followup verification
+Source: competition/runs/20261011-dialogue-recovery-followup/work/workflow.json
+Snapshot: analysis/dialogue-recovery/security/followup-snapshot.workflow.json
+SHA256: 4a9234579e68d350ffcaf77553c859aeade5ba888815ec78a85d6b7c5fbcf182
+Independent unchanged 27-control witness: 27/27 pass. Result in followup-results.json. No workflow edits or interface changes. These pinned-content results remain offline literal-input/controller/receipt checks, not hosted extraction or evaluation.

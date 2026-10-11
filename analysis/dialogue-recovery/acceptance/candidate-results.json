@@ -1,0 +1,958 @@
+{
+  "scope": "Original generated code executed locally with seeded post-verification state and recorded/synthetic extractor rows. No extractor, model, bank, or scorer executed.",
+  "workflow": "analysis/dialogue-recovery/acceptance/candidate-input.json",
+  "dispatch_sha256": "030b298a02210313a54dea0a582c7e2928eed87a85488b1f93010910eba79010",
+  "passed": 17,
+  "total": 18,
+  "checks": [
+    {
+      "contract": "complete_offer_acceptance_produces_readback_without_write",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "I can pay the full amount today.",
+          "event": "k=agree;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "Yes, I confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "create_promise",
+          "line": "",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        }
+      ]
+    },
+    {
+      "contract": "distinct_later_consent_can_dispatch_exact_promise",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "I can pay the full amount today.",
+          "event": "k=agree;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "Yes, I confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "create_promise",
+          "line": "",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        }
+      ]
+    },
+    {
+      "contract": "readiness_never_writes_or_enters_vague_continuation",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "I am ready.",
+          "event": "k=agree;c=1;END",
+          "route": "talk",
+          "line": "Please repeat that clearly. Can you pay 420.0 for your credit card ending 4821 on 14 October 2026?",
+          "phase": "offer",
+          "pending": {},
+          "readback": null
+        }
+      ]
+    },
+    {
+      "contract": "unfinished_condition_preserves_terms_but_blocks_write",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Are you a robot? I'll take that date if",
+          "event": "k=proposal;c=0;u=amount;d=23 October 2026;END",
+          "route": "talk",
+          "line": "I am Freya Bank's digital assistant. What condition did you mean before I read the payment terms back?",
+          "phase": "offer",
+          "pending": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2,
+            "incomplete": true,
+            "missing": "condition",
+            "required_components": [
+              "condition"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        }
+      ]
+    },
+    {
+      "contract": "unconditional_offer_restatement_recovers_without_missing_amount_lock",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Are you a robot? I'll take that date if",
+          "event": "k=proposal;c=0;u=amount;d=23 October 2026;END",
+          "route": "talk",
+          "line": "I am Freya Bank's digital assistant. What condition did you mean before I read the payment terms back?",
+          "phase": "offer",
+          "pending": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2,
+            "incomplete": true,
+            "missing": "condition",
+            "required_components": [
+              "condition"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "I will pay on the twenty-third of October then",
+          "event": "k=proposal;c=1;d=twenty-third of October;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 1250.0 on 23 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2
+          },
+          "readback": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2
+          }
+        },
+        {
+          "raw": "Yes, I accept that date.",
+          "event": "k=confirm;c=1;END",
+          "route": "create_promise",
+          "line": "",
+          "phase": "readback",
+          "pending": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2
+          },
+          "readback": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2
+          }
+        }
+      ]
+    },
+    {
+      "contract": "unrelated_numbers_do_not_resolve_or_mutate_payment_fragment",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Actually, change the amount to one hundred and",
+          "event": "k=change;c=0;u=amount;END",
+          "route": "talk",
+          "line": "I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "My appointment is on 19 October at 2.",
+          "event": "k=question;c=1;END",
+          "route": "talk",
+          "line": "I do not have that information. I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        }
+      ]
+    },
+    {
+      "contract": "assent_only_resolves_amount_after_actual_fresh_fixed_offer_without_write",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Actually, change the amount to one hundred and",
+          "event": "k=change;c=0;u=amount;END",
+          "route": "talk",
+          "line": "I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "My appointment is on 19 October at 2.",
+          "event": "k=question;c=1;END",
+          "route": "talk",
+          "line": "I do not have that information. I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "Yes, I confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          },
+          "readback": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          }
+        }
+      ]
+    },
+    {
+      "contract": "recovery_offer_adoption_requires_distinct_later_consent",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Actually, change the amount to one hundred and",
+          "event": "k=change;c=0;u=amount;END",
+          "route": "talk",
+          "line": "I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "My appointment is on 19 October at 2.",
+          "event": "k=question;c=1;END",
+          "route": "talk",
+          "line": "I do not have that information. I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "Yes, I confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          },
+          "readback": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          }
+        },
+        {
+          "raw": "Yes, I confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "create_promise",
+          "line": "",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          },
+          "readback": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          }
+        }
+      ]
+    },
+    {
+      "contract": "explicit_amount_completes_fragment_retaining_original_date",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Actually, change the amount to one hundred and",
+          "event": "k=change;c=0;u=amount;END",
+          "route": "talk",
+          "line": "I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "My appointment is on 19 October at 2.",
+          "event": "k=question;c=1;END",
+          "route": "talk",
+          "line": "I do not have that information. I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "Yes, I confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          },
+          "readback": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          }
+        },
+        {
+          "raw": "Two hundred.",
+          "event": "k=proposal;c=1;a=200;END",
+          "route": "talk",
+          "line": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 200.0
+          },
+          "readback": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 200.0
+          }
+        }
+      ]
+    },
+    {
+      "contract": "generic_yes_without_fresh_amount_offer_cannot_resolve_missing_amount",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Yes, I confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        }
+      ]
+    },
+    {
+      "contract": "completed_correction_consent_uses_latest_readback_not_stale_recovery_offer",
+      "passed": false,
+      "turns": [
+        {
+          "raw": "Yes, I agree.",
+          "event": "k=agree;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "Actually, change the amount to one hundred and",
+          "event": "k=change;c=0;u=amount;END",
+          "route": "talk",
+          "line": "I can offer 420.0 for your credit card ending 4821. Do you accept that amount?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "amount",
+            "required_components": [
+              "amount"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "Two hundred.",
+          "event": "k=proposal;c=1;a=200;END",
+          "route": "talk",
+          "line": "The rest stays overdue. For your credit card ending 4821, you will pay 200.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 200.0
+          },
+          "readback": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 200.0
+          }
+        },
+        {
+          "raw": "Yes, I confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          },
+          "readback": {
+            "date": "2026-10-14",
+            "revision": 1,
+            "amount": 420.0
+          }
+        }
+      ]
+    },
+    {
+      "contract": "nonconsent_does_not_authorize: No, I cannot pay today.",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "No, I cannot pay today.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "Which part of the payment arrangement did you mean to change: the date or a condition?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "unknown",
+            "required_components": [
+              "amount",
+              "date"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        }
+      ]
+    },
+    {
+      "contract": "nonconsent_does_not_authorize: I do not confirm.",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "I do not confirm.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        }
+      ]
+    },
+    {
+      "contract": "nonconsent_does_not_authorize: She said \"yes, I confirm\".",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "She said \"yes, I confirm\".",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        }
+      ]
+    },
+    {
+      "contract": "nonconsent_does_not_authorize: “Yes, I confirm,” is what my friend said.",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "“Yes, I confirm,” is what my friend said.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        }
+      ]
+    },
+    {
+      "contract": "nonconsent_does_not_authorize: If I said yes, would that record a payment?",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "If I said yes, would that record a payment?",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "I do not have that information. What condition did you mean before I read the payment terms back?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1,
+            "incomplete": true,
+            "missing": "condition",
+            "required_components": [
+              "condition"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        }
+      ]
+    },
+    {
+      "contract": "nonconsent_does_not_authorize: Yes, I agree to receive marketing emails.",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Yes, I agree to receive marketing emails.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        }
+      ]
+    },
+    {
+      "contract": "nonconsent_does_not_authorize: Yes, I confirm, but change the date to tomorrow.",
+      "passed": true,
+      "turns": [
+        {
+          "raw": "Yes, I confirm, but change the date to tomorrow.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "What exact day will you pay that amount?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "revision": 1,
+            "incomplete": true,
+            "missing": "date",
+            "required_components": [
+              "date"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        }
+      ]
+    }
+  ],
+  "observed_replays": [
+    {
+      "case": "PUB-01",
+      "rep": 2,
+      "turns": [
+        {
+          "raw": "I can pay the full amount today.",
+          "event": "k=agree;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "I am ready.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "I am ready.",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "I am ready, what do I need to",
+          "event": "k=unknown;c=1;END",
+          "route": "talk",
+          "line": "I do not have that information. For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "I am ready to make the payment.",
+          "event": "k=agree;c=1;END",
+          "route": "farewell",
+          "line": "I could not complete the information. Please use the mobile app or a branch. Thank you. Goodbye.",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        }
+      ]
+    },
+    {
+      "case": "PUB-04",
+      "rep": 2,
+      "turns": [
+        {
+          "raw": "My salary arrives on the sixth of November and I can pay then.",
+          "event": "k=proposal;c=1;d=sixth of November;END",
+          "route": "talk",
+          "line": "The latest date I can record is 23 October 2026. Can you pay 1250.0 for your credit card ending 4821 on 23 October 2026?",
+          "phase": "offer",
+          "pending": {},
+          "readback": null
+        },
+        {
+          "raw": "Are you a robot? I'll take that date if",
+          "event": "k=proposal;c=0;u=amount;d=23 October 2026;END",
+          "route": "talk",
+          "line": "I am Freya Bank's digital assistant. What condition did you mean before I read the payment terms back?",
+          "phase": "offer",
+          "pending": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2,
+            "incomplete": true,
+            "missing": "condition",
+            "required_components": [
+              "condition"
+            ],
+            "completed_components": []
+          },
+          "readback": null
+        },
+        {
+          "raw": "I will pay on the twenty-third of October then",
+          "event": "k=proposal;c=1;d=twenty-third of October;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 1250.0 on 23 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2
+          },
+          "readback": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2
+          }
+        },
+        {
+          "raw": "Yes, I accept that date.",
+          "event": "k=confirm;c=1;END",
+          "route": "create_promise",
+          "line": "",
+          "phase": "readback",
+          "pending": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2
+          },
+          "readback": {
+            "amount": 1250.0,
+            "date": "2026-10-23",
+            "revision": 2
+          }
+        }
+      ]
+    },
+    {
+      "case": "PUB-01",
+      "rep": 3,
+      "turns": [
+        {
+          "raw": "I can pay the full amount today.",
+          "event": "k=agree;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "I am ready to make the payment",
+          "event": "k=agree;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "I am ready, how should I proceed?",
+          "event": "k=confirm;c=1;END",
+          "route": "talk",
+          "line": "I do not have that information. For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "I'm ready to pay now.",
+          "event": "k=agree;c=1;END",
+          "route": "talk",
+          "line": "For your credit card ending 4821, you will pay 420.0 on 14 October 2026. Do you confirm?",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        },
+        {
+          "raw": "I am ready, please go ahead.",
+          "event": "k=agree;c=1;END",
+          "route": "farewell",
+          "line": "I could not complete the information. Please use the mobile app or a branch. Thank you. Goodbye.",
+          "phase": "readback",
+          "pending": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          },
+          "readback": {
+            "amount": 420.0,
+            "date": "2026-10-14",
+            "revision": 1
+          }
+        }
+      ]
+    }
+  ]
+}

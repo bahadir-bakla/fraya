@@ -4,6 +4,14 @@ Bu klasör gerçek yarışma akışını uygular: **bankanın belgeleri + o brie
 
 Önceki `demo/` klasörü ayrı bir yerel açıklama prototipidir. Yarışma için `competition/builder.py` ve bunun gerçek Freya export’u kullanılır.
 
+## 11 Ekim diyalog onarımı
+
+Yeni otomatik aday `releases/minilm-v2-dialogue-recovery-a-r2-20261011/` içinde. Tam ödeme kabulü/hazır döngüsü, yarım koşul, eski teklifin yeni tutarı ezmesi, rakam rakam doğum yılı ve başka işleme ait onayın ödeme onayı sayılması için bağımsız yerel kontroller **18/18 + 27/27**, builder/harness testleri **153/153** geçti.
+
+Canlı yeterlilik doğrulanmadı: üç public tekrarda **0/30**; aynı anda kontrol edilen değiştirilmemiş eski adayda **0/2**. Çağrılar ilk kullanıcı cevabından sonra yaklaşık 60 saniye sessizlikle kapandı; extraction/routing devam etmedi. Ortak platform/model hattı şüpheli, kesin servis kök nedeni bilinmiyor. Resmi başarısız skorlar korunur; bu aday için canlı iyileşme veya teslim başarısı iddiası yoktur. Klasik A10/B14 yedeği korunur.
+
+[Onarım, test ve teslim durumu](../analysis/dialogue-recovery/REPORT.txt) ve [ham ölçüm özeti](../analysis/dialogue-recovery/hosted-diagnostics.json). Tam sürüm sabitlemeli tekrarlar için `scripts/evaluate_shared_candidate.py --help` kullanılabilir.
+
 ## Doğrulanmış public demo
 
 Son uygun hazırlık koşuları: Brief A `20261010-173717-1b9196`, Freya sürüm 7, **10/10**; Brief B `20261010-173746-6ed19b`, Freya sürüm 6, **3/3**. İkisi de 30 dakikalık UTC sınırı içinde tamamlandı. Bunlar ayrı public pratik koşularıdır; tek bir karma 13 müşterilik koşu veya gizli final başarısı değildir. Önceki başarısız ve süre aşmış koşular provenance olarak korunur.

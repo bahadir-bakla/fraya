@@ -1,0 +1,20 @@
+Snapshot generation 20261011-181159-77db0d
+Workflow SHA256: b3fc1597cb4713348659267469781b8ec04a78b08b3ef550d938239fac0fbfac
+Dispatch SHA256: 030b298a02210313a54dea0a582c7e2928eed87a85488b1f93010910eba79010
+Input: candidate-input.json (snapshot; generated workflow was not modified).
+Results: candidate-results.json. Existing harness worked unchanged; one newly discovered stateful regression contract was added, no old assertion weakened.
+
+Candidate 14/16; immutable baseline 11/16 under the same expanded suite.
+Fixes demonstrated: complete full-offer acceptance reaches readback, separate later confirmation dispatches exact terms, readiness gets actionable speech, trailing condition recovers, negative/quoted/hypothetical/wrong-operation consent controls reject writing.
+
+Blocking regression: recovery_offer survives explicit correction and new readback.
+Sequence: accept 420 offer -> start incomplete amount correction -> agent offers 420 as recovery -> caller completes amount 200 -> agent correctly reads back 200 -> caller confirms -> candidate adopts stale recovery offer and reads back 420. Expected current 200 dispatch. It does not immediately write 420, but discards a valid correction and misbinds the later confirmation. Original candidate correctly dispatches 200 in this sequence. Full state evidence in stale-recovery-witness.json and new contract completed_correction_consent_uses_latest_readback_not_stale_recovery_offer.
+General fix: bind recovery offer to the latest actual awaiting question, target and revision; invalidate/consume it when an explicit component arrives, another offer/readback supersedes it, or context changes. A reply to a current full readback cannot adopt an earlier recovery offer.
+
+Other failing legacy assertion: generic_yes_cannot_complete_real_missing_amount. Candidate explicitly asks "I can offer 420...Do you accept that amount?" before yes, then produces a fresh full readback rather than a write. This failure needs semantic interpretation: the original assertion presumed no newly spoken recovery amount. An explicit offered amount plus current assent may legitimately complete that component without asking an open amount question. The assertion is retained as requested; do not call it an unauthorized write. A replacement acceptance must never fill a genuinely missing date or unresolved condition.
+
+Observed transcript replays are diagnostic only after the first changed assistant response. The recorded old user continuations were generated against the old filler prompts, not this candidate's full readback. Therefore PUB01 old-stream exhaustion after repeated readiness is not a new end-to-end failure measurement. The independent positive contract uses a new explicit confirmation responding to the new readback and passes. PUB04 old stream reaches create_promise after a fresh readback.
+
+Justified contract refinement (after explicit parent review)
+Historical original-15 outcome remains 14/15 candidate versus 10/15 baseline; preserved separately in candidate-results.original15.json and baseline.original15.json. Adding the genuine stale-offer regression gave 14/16 versus 11/16, preserved in *.pre-refinement16.json. These were not silently reclassified as all passing.
+The revised suite explicitly permits assent to a freshly spoken fixed amount, requires a new full readback and distinct later confirmation, and independently seeds a real missing amount with no fresh offer to verify that generic yes cannot silently borrow cached terms. Both candidates run the same 18 named contracts. Revised outcome: candidate 17/18, baseline 13/18. The sole remaining revised candidate failure is the genuine stale recovery-offer regression described above. No runtime workflow was edited.

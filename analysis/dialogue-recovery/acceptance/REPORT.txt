@@ -1,0 +1,39 @@
+Acceptance and unfinished-turn recovery: source-grounded baseline diagnosis
+
+Evidence and scope
+- Immutable candidate: /tmp/fraya-rd-eval-f141ae8/competition/releases/minilm-v2-context-a-20261011/workflow.json.
+- Original Python dispatch extracted unchanged as original-dispatch.py, SHA256 9c07e10c08cf92cfce8ca4ae0b601f73b1fbf74e0b64e6279e60c78c1fd358dd.
+- Actual extraction/transcript evidence: /home/yusuf/Masaüstü/fraya/local-runs/customer-benchmark-v2-context-20261011/public-a/failed-call-review.json (PUB-01 repetition 2 and 3; PUB-04 repetition 2).
+- witness.py runs original Python functions with explicitly seeded verified account state, then recorded or synthetic current event rows. No model, live extractor, bank API, official scorer or fixture was executed or modified. Results are local transition evidence, not end-to-end performance.
+
+Findings
+1. Complete offer acceptance is misclassified as an unfinished amount.
+   PUB-01 reps 2/3 user: "I can pay the full amount today."
+   Both actual extractors: k=agree;c=1;END.
+   original-dispatch.py:133-137 blocked_acceptance requires one of a tiny affirmative phrase set; "can pay" fails, while "will pay" succeeds. Lines 594-595 turn valid complete agree into c=0; correction_component at 375-388 sees the word "amount" and sets u=amount. Lines 390-400 invalidate amount and establish required_components=[amount].
+   This is a deterministic guard failure after a correct observed extraction, not evidence the semantic model failed on this turn.
+
+2. A trailing condition poisons the amount requirement permanently.
+   PUB-04: active offer is 1250 on 23 October. "Are you a robot? I'll take that date if" emits proposal c=0 u=amount d=23 October 2026. The source contains an unfinished condition, not an unfinished numeric amount. invalidate_component accepts the producer's component guess, creating a new missing amount. "I will pay on the twenty-third of October then" completes only date, so lines 692-715 cannot clear required amount. Later "Yes, I accept that date" reaches line 736 and merely repeats question().
+   The initial block on writing is correct. Inventing an amount hole from a conditional speech act and making it irrecoverable is wrong.
+
+3. Recovery speech gives the user no usable way to resolve the state.
+   question():179-181 renders unknown/both/amount as "Please continue when you are ready." The user says "I am ready" and blocked_acceptance rejects that too. recover():410 returns the same question while pending.incomplete remains true. A no_progress guard at 776-782 eventually closes with service_error; this bounds the damage but does not recover. Repeated changes to missing/components can reset the signature and extend the loop.
+
+4. Affirmative source checks also permit wrong-operation consent.
+   New negative control: after a valid readback, "Yes, I agree to receive marketing emails." with k=confirm;c=1 dispatches create_promise. This does not establish a live extractor error; it establishes that this source guard does not enforce operation scope when an erroneous affirmative label arrives. Negated, quoted, hypothetical and amended examples in this witness are blocked by the baseline.
+
+Generic builder requirements (sent to guide owner)
+- Track offer acceptance, complete payment proposal, and final financial authorization as distinct acts. A complete affirmative self statement can accept uniquely spoken current offered terms and produce a full readback; it cannot itself authorize the bank write.
+- Bind source-supported offer references to the exact current target and offer revision. Do not require users to restate a numeric amount when they unambiguously accept the active full-amount offer. Do not use bare readiness as financial permission.
+- Separate unfinished condition/intent from actual amount/date corrections. Preserve active offer context without turning unclear consent into deletion of factual terms. An unconditional restatement can resolve an earlier unfinished conditional act only with current positive source support; a real incomplete amount still requires its completed amount.
+- Preserve complete siblings through unrelated questions and extraction failure. Unrelated numbers/date references never fill financial components. Generic yes does not complete a real missing amount/date.
+- Respond with a specific question or full current offer/readback appropriate to what remains unresolved. Do not repeatedly emit a context-free readiness prompt.
+- Validate consent as a present, unquoted self act for the current readback and operation. Reject negation, quotes, another speaker, conditional permission, unrelated operations, or changed terms even if the producer labels the utterance confirm.
+- Preserve identity receipts, brief constraints, actual API success gates, separate later confirmation, and bounded recovery. Do not solve by loosening the final-write gate or hard-coding public examples.
+
+Run
+python3 analysis/dialogue-recovery/acceptance/witness.py --output analysis/dialogue-recovery/acceptance/baseline.json
+python3 analysis/dialogue-recovery/acceptance/witness.py --workflow PATH/TO/NEW/workflow.json --require-fixed --output analysis/dialogue-recovery/acceptance/new-candidate.json
+
+Baseline historical original suite: 10/15 pass; revised 18-contract suite: 13/18 pass. See CANDIDATE-REVIEW.txt for the justified fresh fixed-offer assertion refinement and preserved historical outputs. baseline.json includes original call event replay plus all intermediate pending/readback states. The harness currently expects a generated dispatch exposing run(vars) and readback(s); if a new candidate deliberately changes that runtime interface, adapt the harness explicitly rather than asserting an unsupported success. Its seeded verified state isolates this issue and is not proof of the candidate's identity verification or actual write receipt behavior.

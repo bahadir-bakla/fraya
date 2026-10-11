@@ -1,0 +1,11 @@
+Independent followup acceptance/recovery witness
+Workflow snapshot: candidate-followup-input.json
+Workflow SHA256: 4a9234579e68d350ffcaf77553c859aeade5ba888815ec78a85d6b7c5fbcf182
+Dispatch SHA256: e23710ed66ed5f14674d27528aac6037864a2d3dd795828897f1af43e9fcc221
+Result: followup-results.json, 18/18 revised behavioral contracts pass.
+
+Harness interface adaptation: initial fixture hand-constructed an offer dictionary without a product_id. The followup runtime newly enforces offer/product binding and correctly rejected this stale seed; the initial 12/18 output is retained as followup-results.old-seed.json. The seed now calls the actual generated offer() function and retains its emitted line instead of fabricating offer internals. No behavior assertion was weakened and no generated workflow was edited. The same adapted harness reruns give original baseline 13/18, first generated candidate 17/18, followup 18/18. Historical original-15 results remain separate.
+
+The stale recovery-offer case now preserves the explicitly corrected 200 readback and dispatches exactly 200 only after distinct confirmation. Complete original offer acceptance, conditional recovery, unrelated-number isolation, missing-amount refusal absent a fresh offer, fresh fixed-offer acceptance, and negated/quoted/hypothetical/wrong-operation consent controls pass.
+
+Scope remains offline generated-code transitions with a deliberately seeded verified account. No live model/extractor, bank, scorer or proof of end-to-end call behavior. Recheck workflow hash against final generation artifact before using these results.
