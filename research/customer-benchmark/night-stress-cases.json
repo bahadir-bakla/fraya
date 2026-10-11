@@ -1,0 +1,1458 @@
+[
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "family": "Happy path",
+    "level": "hard",
+    "title": "Fragmented phone suffix amid unrelated digits and numeric DOB",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "script": "You are Daniel Reyes. Confirm with 'Speaking, Daniel Reyes'. When asked DOB, give the complete numeric answer 'fourteen, three, nineteen eighty-eight' in that order, meaning 14 March 1988. When separately asked for the phone suffix, say 'Seven one one four is a shelf label unrelated to security. My phone suffix starts four four...' and stop for that turn. On the caller's next clarification or prompt, finish 'Seven one completes it: four four seven one.' The shelf label and the two incomplete suffix pieces are never standalone security answers. After both security answers pass and the debt and full-payment-today question are stated, say 'I can pay the full four hundred twenty today.' Only after all scripted fragments and qualifications are complete and a full read-back matches the credit card ending 4821, the full 420.00 and today, 14 October 2026, say 'Yes, I confirm' exactly once. A fragment, quoted yes, negative or qualified yes is not confirmation. If the read-back is wrong or premature, finish any pending fragment and restate these same terms without confirming; require a complete matching read-back before the single clear confirmation. Do not change terms or request anything after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 420.0,
+          "date": "2026-10-14"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "both security questions passed before get_account",
+      "the word 'collections' is not said before identity is verified",
+      "create_promise called exactly once",
+      "text-message sentence said after the promise",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[ledger] Verify DOB as 1988-03-14 before the one completed phone answer 4471; never submit 7114, 44 or 71 as a security answer, and introduce no wrong-answer or swapped-date event.",
+      "[actor] Finish both suffix fragments after a continuation cue; the final answer remains 4471, and identity/willingness/event order remain official PUB-01.",
+      "[ledger] Exact promise is p1=420.00 on 2026-10-14, outcome=promise and reason=null; no note, callback or transfer."
+    ],
+    "variant_id": "PUB-01__speech_night_suffix_not_shelf",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "R-styles",
+      "A12",
+      "A13"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "numeric_dob",
+        "fragmented_phone",
+        "unrelated_fragments",
+        "security_field_binding"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "family": "Happy path",
+    "level": "hard",
+    "title": "Fragmented whole amount amid decimal and floor-like unrelated numbers",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "script": "You are Daniel Reyes. Confirm the recipient question with 'Speaking, Daniel Reyes'. Answer DOB with '14 March 1988' and, only when separately asked, phone suffix 'four four seven one'. After the caller states the debt and asks for the full payment today, say 'One two six is a puzzle entry and four point two is its score; both are unrelated to payment. I can pay the full amount today: four hundred...' and stop for that turn. On the next clarification or prompt, finish '...and twenty, zero cents: the full four hundred twenty today.' The fragments form one full amount; neither fragment is a separate offer. Do not say the full amount is too much, accept a reduced amount, or name another payment day. Only after all scripted fragments and qualifications are complete and a full read-back matches the credit card ending 4821, the full 420.00 and today, 14 October 2026, say 'Yes, I confirm' exactly once. A fragment, quoted yes, negative or qualified yes is not confirmation. If the read-back is wrong or premature, finish any pending fragment and restate these same terms without confirming; require a complete matching read-back before the single clear confirmation. Do not change terms or request anything after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 420.0,
+          "date": "2026-10-14"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "both security questions passed before get_account",
+      "the word 'collections' is not said before identity is verified",
+      "create_promise called exactly once",
+      "text-message sentence said after the promise",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[dialogue] Puzzle entry 126, score 4.2 and unfinished 400 are not reduced offers, floor acceptance, hardship or refusal; the completed proposal is the full 420.00 today.",
+      "[actor] Deliver the two amount fragments on separate turns and complete the whole amount before final confirmation. If completion follows a premature read-back, require a fresh complete matching read-back before that confirmation; do not replace the fragments with an ordinary full-amount answer.",
+      "[ledger] No create_promise occurs while the amount is unfinished; the only promise is p1=420.00 on 2026-10-14 with no other side effects."
+    ],
+    "variant_id": "PUB-01__speech_night_whole_amount_not_puzzle",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "R-styles",
+      "A26"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "fragmented_amount",
+        "whole_vs_decimal",
+        "unrelated_fragments",
+        "unrelated_floor_like_number",
+        "completion_before_consent"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "family": "Happy path",
+    "level": "hard",
+    "title": "AI and security-purpose questions with hypothetical third-party assistance",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "script": "You are Daniel Reyes. Confirm with 'Speaking, Daniel Reyes. Are you a robot?' When the caller answers and asks DOB, say 'Is that to protect my account? My date of birth is 14 March 1988.' This question accompanies the complete correct answer and is not a refusal. Give phone suffix 'four four seven one' only when separately asked. After both checks, the debt statement and the full-payment-today question, say 'I can pay the full four hundred twenty today. Hypothetically, if a relative had answered instead, could they answer security or pay for me?' Wait for the answer. If asked who is actually speaking, say 'Daniel Reyes; the relative was only hypothetical.' No relative actually answers, supplies security or makes a payment offer. Only after all scripted fragments and qualifications are complete and a full read-back matches the credit card ending 4821, the full 420.00 and today, 14 October 2026, say 'Yes, I confirm' exactly once. A fragment, quoted yes, negative or qualified yes is not confirmation. If the read-back is wrong or premature, finish any pending fragment and restate these same terms without confirming; require a complete matching read-back before the single clear confirmation. Do not change terms or request anything after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 420.0,
+          "date": "2026-10-14"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "both security questions passed before get_account",
+      "the word 'collections' is not said before identity is verified",
+      "create_promise called exactly once",
+      "text-message sentence said after the promise",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[dialogue] Daniel remains the actual verified recipient; the hypothetical relative never acquires security or payment authority and never causes a callback, transfer or not_reached disposition.",
+      "[dialogue] Answer the robot question as the digital assistant and the pre-verification security-purpose question as account protection. Do not count the accompanying complete correct DOB as declining; answer the hypothetical question before read-back.",
+      "[ledger] Both original security answers pass before account access; the only account action is p1=420.00 on 2026-10-14, with exactly the official PUB-01 closing ledger."
+    ],
+    "variant_id": "PUB-01__speech_night_hypothetical_relative_self",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "R-styles",
+      "A3",
+      "A4",
+      "A5",
+      "A10",
+      "A15",
+      "A43",
+      "A44"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "mixed_multiintent",
+        "hypothetical_third_party",
+        "security_purpose",
+        "robot_question",
+        "speaker_role_scope"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "family": "Happy path",
+    "level": "hard",
+    "title": "Vague willingness becomes exact ordinal today amid unrelated dates",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "script": "You are Daniel Reyes. Confirm the recipient question with 'Speaking, Daniel Reyes'. Answer DOB with '14 March 1988' and, only when separately asked, phone suffix 'four four seven one'. After the debt statement and the full-payment-today question, say 'I can pay the full four hundred twenty very soon; I have not given the exact payment day yet.' When asked once for the exact day, say 'The thirtieth is a page number and next Friday is a diary heading, neither a payment date. For this payment I mean today, Wednesday the fourteenth of October twenty twenty-six, all four hundred twenty.' If the caller proposes a deadline without asking for the exact day, clarify immediately that your intended payment is today, fourteen October, not that proposed deadline. Never accept another payment date or change the full amount. Only after all scripted fragments and qualifications are complete and a full read-back matches the credit card ending 4821, the full 420.00 and today, 14 October 2026, say 'Yes, I confirm' exactly once. A fragment, quoted yes, negative or qualified yes is not confirmation. If the read-back is wrong or premature, finish any pending fragment and restate these same terms without confirming; require a complete matching read-back before the single clear confirmation. Do not change terms or request anything after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 420.0,
+          "date": "2026-10-14"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "both security questions passed before get_account",
+      "the word 'collections' is not said before identity is verified",
+      "create_promise called exactly once",
+      "text-message sentence said after the promise",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[dialogue] Ask once for an exact day after very soon rather than inventing a date, substituting the deadline, or treating the vague proposed timing as flat refusal.",
+      "[actor] Begin with the authored vague phrase, then supply the complete precise date on clarification; the only final payment decision is full 420 today, and unrelated diary/page fragments never become offers.",
+      "[ledger] Use fixture now=2026-10-14T11:00: record only p1=420.00 on 2026-10-14, not the machine date, Friday, the thirtieth or the early deadline 2026-11-02."
+    ],
+    "variant_id": "PUB-01__speech_night_vague_then_precise_today",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "R-styles",
+      "A21",
+      "A22"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "vague_then_precise",
+        "ordinal_dates",
+        "fixture_clock_binding",
+        "unrelated_fragments",
+        "unrelated_relative_date"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "family": "Happy path",
+    "level": "hard",
+    "title": "Negated paid/refusal phrases with a short English-framed interjection",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "script": "You are Daniel Reyes. Confirm the recipient question with 'Speaking, Daniel Reyes'. Answer DOB with '14 March 1988' and, only when separately asked, phone suffix 'four four seven one'. After the debt statement and the full-payment-today question, say 'Tamam, okay: I did not say I already paid, and I did not say I cannot pay. I can pay the full four hundred twenty today.' Tamam is only a short interjection; keep the remaining conversation in English. If the caller mistakes the negated phrases for an actual decision, clarify 'Those were negated phrases; my decision is to pay the full amount today.' Do not claim an earlier payment, historical payoff, dispute, inability to pay or hardship. Only after all scripted fragments and qualifications are complete and a full read-back matches the credit card ending 4821, the full 420.00 and today, 14 October 2026, say 'Yes, I confirm' exactly once. A fragment, quoted yes, negative or qualified yes is not confirmation. If the read-back is wrong or premature, finish any pending fragment and restate these same terms without confirming; require a complete matching read-back before the single clear confirmation. Do not change terms or request anything after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 420.0,
+          "date": "2026-10-14"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "both security questions passed before get_account",
+      "the word 'collections' is not said before identity is verified",
+      "create_promise called exactly once",
+      "text-message sentence said after the promise",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[dialogue] The negated already-paid/refusal phrases are not an actual payment, dispute or inability to pay; no paid/dispute close, hardship/support or persuasion attempt results from them.",
+      "[actor] Retain only the explicitly scripted Tamam interjection and otherwise speak English; retain the positive full-420-today decision and the negated preceding fragments.",
+      "[ledger] The only final disposition is p1=420.00 on 2026-10-14; no note, callback or transfer and no premature paid close."
+    ],
+    "variant_id": "PUB-01__speech_night_not_paid_not_refusing",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "R-styles",
+      "A30",
+      "A31",
+      "A32",
+      "A39",
+      "A40",
+      "A44"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "negated_payment",
+        "double_negation",
+        "paid_vs_future_intent",
+        "refusal_scope",
+        "code_switch_text"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "family": "Happy path",
+    "level": "hard",
+    "title": "Qualified read-back permission withdrawn then reissued after fresh read-back",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "script": "You are Daniel Reyes. Confirm the recipient question with 'Speaking, Daniel Reyes'. Answer DOB with '14 March 1988' and, only when separately asked, phone suffix 'four four seven one'. After the debt statement and full-payment-today question, say 'I can pay the full four hundred twenty today; please read that back before I confirm.' At the FIRST complete matching read-back, say in one turn 'Yes, but hold on--no, withdraw that provisional permission; do not record yet. I still intend the card ending four eight two one, full four hundred twenty today, fourteen October; read those same terms back once more before I give my final confirmation.' This qualified response is never the clear yes required to record and does not change the product, amount, date or payment willingness. At the SECOND complete matching read-back, give the single clear confirmation prescribed below. Do not withdraw or change anything after that final confirmation or after recording. Only after all scripted fragments and qualifications are complete and a full read-back matches the credit card ending 4821, the full 420.00 and today, 14 October 2026, say 'Yes, I confirm' exactly once. A fragment, quoted yes, negative or qualified yes is not confirmation. If the read-back is wrong or premature, finish any pending fragment and restate these same terms without confirming; require a complete matching read-back before the single clear confirmation. Do not change terms or request anything after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 420.0,
+          "date": "2026-10-14"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "both security questions passed before get_account",
+      "the word 'collections' is not said before identity is verified",
+      "create_promise called exactly once",
+      "text-message sentence said after the promise",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[actor] Deliver the qualified yes followed by explicit withdrawal at the first matching read-back, then give exactly one unqualified yes only after the fresh matching read-back.",
+      "[dialogue] No create_promise occurs on the first qualified/withdrawn answer. The procedural hold is not a payment refusal, a recorded-promise cancellation or a reason for mobile-app redirection; the amount/date remain unchanged.",
+      "[ledger] Exactly one create_promise follows the second complete read-back and sole clear confirmation: p1=420.00 on 2026-10-14, with the original expected outcome and empty other collections."
+    ],
+    "variant_id": "PUB-01__speech_night_qualified_consent_reissue",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "R-styles",
+      "A30",
+      "A31"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "consent_withdrawn_reissued",
+        "qualified_yes",
+        "negative_confirmation",
+        "fresh_readback",
+        "single_final_confirmation"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Grouped full amounts amid lexical and floor distractors",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "You are Sofia Almeida. Confirm the recipient question by saying 'Sofia Almeida'. Answer the date-of-birth question with 'Third of June, nineteen eighty-seven', and the subsequent phone question with 'Two two eight eight', only when each is asked. Both answers are correct on their first submission. Wait for all three product disclosures before discussing payment. At the common today question, say the entire following aggregate answer in ONE turn, completing both sentences before waiting: \"No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.\" Do not defer any clause until an individual product question. If subsequently asked about individual products, restate the final terms in account order without introducing another correction or confirmation. All repairs, provisional withdrawals and renewed proposals finish in that aggregate answer before the grouped read-back. Give no unqualified confirmation of payment earlier. At the sole complete grouped read-back of credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, each on sixteen October twenty twenty-six, say exactly 'Yes, I confirm.' Never confirm an incorrect or incomplete group. Do not request changes after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-10-16"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all three products stated before any ask",
+      "one read-back and one confirmation for all three",
+      "one create_promise per product",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[dialogue] Normalize the card/loan/car lexical amounts to 220/640/75; neither 2.20/6.40 nor floors 66/213/25 are final proposals or a request for lower instalments.",
+      "[dialogue] Keep each exclusion attached to its named product and do not move a floor or full amount between products. One grouped read-back and one confirmation cover all three.",
+      "[ledger] Exact promises are p1=220, p2=640, p3=75, each on 2026-10-16; outcome=promise, reason=null; notes/callbacks/transfers are empty.",
+      "[actor] Deliver the complete scripted aggregate answer before the grouped read-back, whether or not individual product questions follow; missing stress is an actor delivery failure and does not require the agent to manufacture additional questions."
+    ],
+    "variant_id": "PUB-11__speech_night_fulls_not_floors",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "B-inherits",
+      "B2",
+      "B3",
+      "B4",
+      "B7",
+      "B-close"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "grouped_product_terms",
+        "lexical_amount_ambiguity",
+        "pounds_vs_pence",
+        "floor_contamination",
+        "product_binding"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Multiple correction reversals restore all canonical full terms",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "You are Sofia Almeida. Confirm the recipient question by saying 'Sofia Almeida'. Answer the date-of-birth question with 'Third of June, nineteen eighty-seven', and the subsequent phone question with 'Two two eight eight', only when each is asked. Both answers are correct on their first submission. Wait for all three product disclosures before discussing payment. At the common today question, say the entire following aggregate answer in ONE turn, completing both sentences before waiting: \"No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore six hundred forty; for the car loan, twenty-five--no, seventy-five, all verbal slips rather than requests for smaller payments. The date is next Friday--sorry, this Friday, not the twenty-third; my final proposal is credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.\" Do not defer any clause until an individual product question. If subsequently asked about individual products, restate the final terms in account order without introducing another correction or confirmation. All repairs, provisional withdrawals and renewed proposals finish in that aggregate answer before the grouped read-back. Give no unqualified confirmation of payment earlier. At the sole complete grouped read-back of credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, each on sixteen October twenty twenty-six, say exactly 'Yes, I confirm.' Never confirm an incorrect or incomplete group. Do not request changes after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-10-16"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all three products stated before any ask",
+      "one read-back and one confirmation for all three",
+      "one create_promise per product",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[actor] Complete each reversal within its turn before any read-back; explicitly restore the full amounts and this Friday rather than silently omitting temporary terms.",
+      "[dialogue] Retain only final 220/640/75 on 2026-10-16; superseded floors and 2026-10-23 never become confirmed terms, notes or a restructuring request.",
+      "[ledger] Exactly one create_promise per product follows the sole grouped confirmation; promises are p1=220, p2=640, p3=75 on 2026-10-16, with no other dispositions.",
+      "[actor] Deliver the complete scripted aggregate answer before the grouped read-back, whether or not individual product questions follow; missing stress is an actor delivery failure and does not require the agent to manufacture additional questions."
+    ],
+    "variant_id": "PUB-11__speech_night_reversal_restore",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "A22",
+      "B-inherits",
+      "B2",
+      "B3",
+      "B4",
+      "B7",
+      "B-close"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "correction_reversal",
+        "grouped_product_terms",
+        "superseded_floor",
+        "this_next_friday",
+        "canonical_restoration"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Provisional permission withdrawn and reissued before grouped confirmation",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "You are Sofia Almeida. Confirm the recipient question by saying 'Sofia Almeida'. Answer the date-of-birth question with 'Third of June, nineteen eighty-seven', and the subsequent phone question with 'Two two eight eight', only when each is asked. Both answers are correct on their first submission. Wait for all three product disclosures before discussing payment. At the common today question, say the entire following aggregate answer in ONE turn, completing both sentences before waiting: \"No, not today; yes, but only provisionally to paying on Friday, and I am not saying I will not pay, yet neither phrase authorizes recording; I withdraw that provisional agreement before anything is recorded. I now propose, without authorizing recording yet, the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.\" Do not defer any clause until an individual product question. If subsequently asked about individual products, restate the final terms in account order without introducing another correction or confirmation. All repairs, provisional withdrawals and renewed proposals finish in that aggregate answer before the grouped read-back. Give no unqualified confirmation of payment earlier. At the sole complete grouped read-back of credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, each on sixteen October twenty twenty-six, say exactly 'Yes, I confirm.' Never confirm an incorrect or incomplete group. Do not request changes after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-10-16"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all three products stated before any ask",
+      "one read-back and one confirmation for all three",
+      "one create_promise per product",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[actor] Deliver the qualified yes, double negative, explicit withdrawal and reissued willingness before the sole grouped read-back; give only one successful confirmation after it.",
+      "[dialogue] Provisional willingness and a procedural hold are not a flat payment refusal. No create_promise occurs until the final unqualified yes to the whole group.",
+      "[ledger] The final renewed terms produce p1=220, p2=640, p3=75 on 2026-10-16. No refused note, transfer or provisional promise write is allowed.",
+      "[actor] Deliver the complete scripted aggregate answer before the grouped read-back, whether or not individual product questions follow; missing stress is an actor delivery failure and does not require the agent to manufacture additional questions."
+    ],
+    "variant_id": "PUB-11__speech_night_provisional_consent",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "B-inherits",
+      "B2",
+      "B4",
+      "B7",
+      "B-close"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "consent_withdrawn_reissued",
+        "qualified_yes",
+        "double_negation",
+        "grouped_product_terms",
+        "consent_vs_willingness"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Security date and suffix roles amid hypothetical third-party fragments",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "You are Sofia Almeida. Confirm the recipient question by saying 'Sofia Almeida'. When asked for DOB, say 'Fourteenth October twenty twenty-six is an unrelated diary-entry date, not my birthday; my birthday is third June nineteen eighty-seven.' Only when subsequently asked for the phone suffix, say 'Six four zero is an unrelated parcel label, not a phone suffix; my phone ends two two eight eight.' These are the complete correct first answers, and the unrelated numbers are explicitly excluded. Wait for all three product disclosures before discussing payment. At the common today question, say the entire following aggregate answer in ONE turn, completing both sentences before waiting: \"No, not today; a cousin answering is purely hypothetical, since I am Sofia Almeida speaking for myself; two two eight eight identifies the credit card, not a payment amount. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.\" Do not defer any clause until an individual product question. If subsequently asked about individual products, restate the final terms in account order without introducing another correction or confirmation. All repairs, provisional withdrawals and renewed proposals finish in that aggregate answer before the grouped read-back. Give no unqualified confirmation of payment earlier. At the sole complete grouped read-back of credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, each on sixteen October twenty twenty-six, say exactly 'Yes, I confirm.' Never confirm an incorrect or incomplete group. Do not request changes after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-10-16"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all three products stated before any ask",
+      "one read-back and one confirmation for all three",
+      "one create_promise per product",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[ledger] Submit DOB 1987-06-03 and then phone 2288, both correct first time; the diary date and parcel label are excluded. No security retry or callback is manufactured.",
+      "[dialogue] The cousin remains hypothetical; the actual speaker is Sofia Almeida. No third-party authority or role change is inferred. Card ending 2288 is not a payment amount.",
+      "[ledger] Only p1=220, p2=640, p3=75 on 2026-10-16 are recorded after one grouped confirmation; no notes, callbacks or transfers.",
+      "[actor] Deliver the complete scripted aggregate answer before the grouped read-back, whether or not individual product questions follow; missing stress is an actor delivery failure and does not require the agent to manufacture additional questions."
+    ],
+    "variant_id": "PUB-11__speech_night_security_scope",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "A10",
+      "A44",
+      "B-inherits",
+      "B2",
+      "B3",
+      "B4",
+      "B7",
+      "B-close"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "security_purpose",
+        "security_numeric_distractors",
+        "date_role_binding",
+        "hypothetical_third_party",
+        "unrelated_fragments",
+        "grouped_product_terms"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Negated bank payments amid matching unrelated paid receipts",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "You are Sofia Almeida. Confirm the recipient question by saying 'Sofia Almeida'. Answer the date-of-birth question with 'Third of June, nineteen eighty-seven', and the subsequent phone question with 'Two two eight eight', only when each is asked. Both answers are correct on their first submission. Wait for all three product disclosures before discussing payment. At the common today question, say the entire following aggregate answer in ONE turn, completing both sentences before waiting: \"No, not today; 'already paid two hundred twenty' on an unrelated shop receipt, 'six hundred forty paid' on an unrelated supplier receipt and seventy-five on another unrelated receipt refer to none of these bank products, and I have not paid any of these bank arrears. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.\" Do not defer any clause until an individual product question. If subsequently asked about individual products, restate the final terms in account order without introducing another correction or confirmation. All repairs, provisional withdrawals and renewed proposals finish in that aggregate answer before the grouped read-back. Give no unqualified confirmation of payment earlier. At the sole complete grouped read-back of credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, each on sixteen October twenty twenty-six, say exactly 'Yes, I confirm.' Never confirm an incorrect or incomplete group. Do not request changes after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-10-16"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all three products stated before any ask",
+      "one read-back and one confirmation for all three",
+      "one create_promise per product",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[actor] Each paid receipt remains explicitly unrelated; actual bank-payment claims remain negated and all three final proposals remain active.",
+      "[dialogue] Do not classify explicitly unrelated receipts or negated bank-payment claims as paid or disputed arrears, add corresponding notes, or end the call early; neutral clarification is permitted. Keep product scope through the grouped read-back.",
+      "[ledger] Official PUB-11 ledger is unchanged: p1=220, p2=640, p3=75 on 2026-10-16; outcome=promise, reason=null and no notes/callbacks/transfers.",
+      "[actor] Deliver the complete scripted aggregate answer before the grouped read-back, whether or not individual product questions follow; missing stress is an actor delivery failure and does not require the agent to manufacture additional questions."
+    ],
+    "variant_id": "PUB-11__speech_night_unrelated_paid_language",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "A39",
+      "A40",
+      "B-inherits",
+      "B2",
+      "B4",
+      "B7",
+      "B8",
+      "B9",
+      "B-close"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "negated_payment",
+        "unrelated_fragments",
+        "unrelated_receipt",
+        "product_scope",
+        "paid_disposition_trap",
+        "grouped_product_terms"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "family": "Multi-product",
+    "level": "hard",
+    "title": "Ordinal shared Friday amid other explicitly unrelated dates",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "script": "You are Sofia Almeida. Confirm the recipient question by saying 'Sofia Almeida'. Answer the date-of-birth question with 'Third of June, nineteen eighty-seven', and the subsequent phone question with 'Two two eight eight', only when each is asked. Both answers are correct on their first submission. Wait for all three product disclosures before discussing payment. At the common today question, say the entire following aggregate answer in ONE turn, completing both sentences before waiting: \"No, not today; the third Friday of October twenty twenty-six means this Friday, the sixteenth; the fourteenth on an unrelated diary entry, next Friday the twenty-third on an unrelated appointment note and the thirtieth on an unrelated reminder are not payment dates. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.\" Do not defer any clause until an individual product question. If subsequently asked about individual products, restate the final terms in account order without introducing another correction or confirmation. All repairs, provisional withdrawals and renewed proposals finish in that aggregate answer before the grouped read-back. Give no unqualified confirmation of payment earlier. At the sole complete grouped read-back of credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, each on sixteen October twenty twenty-six, say exactly 'Yes, I confirm.' Never confirm an incorrect or incomplete group. Do not request changes after recording. When the caller says goodbye, say 'Thank you, goodbye' and stop.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-16"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-10-16"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "all three products stated before any ask",
+      "one read-back and one confirmation for all three",
+      "one create_promise per product",
+      "[ledger] Both verify_identity answers succeed in DOB-then-phone order before get_account; each product ID used in a write comes from the successful account response. No partial or unrelated security value is submitted.",
+      "[ledger] There is exactly one close_call, it is last, and its outcome/reason equal the official expected ledger. No extra promise, note, callback or transfer is permitted.",
+      "[dialogue] The first sentence identifies Freya Bank's digital assistant and recording. No debt, collection purpose, amount or product is disclosed before both security checks succeed; questions are answered before continuing.",
+      "[dialogue] No promise write is authorized by a proposal, qualified yes, quoted words or temporary corrected value. Read back the final complete product/amount/date terms and obtain the authored final clear yes before any create_promise.",
+      "[dialogue] Claim recording only after ok:true; after recorded promises say exactly: You will receive a text message confirming this promise. Thank the customer and say goodbye before the last close_call.",
+      "[actor] The customer must actually deliver the authored corrections, exclusions, questions and permission cues at their specified stages. Omitting the delivery challenge or changing the final decisions fails even when the ledger matches.",
+      "[dialogue] Resolve this Friday and the third Friday of October 2026 to 2026-10-16 using fixture now, excluding unrelated October 14/23/30 from every payment.",
+      "[dialogue] Validate the common date per product: p1/p2 latest date 2026-10-23 and p3 latest date 2026-11-02, including the October 26 bank holiday. This is a per-product validity check; no spoken deadline calculation, deadline offer or date change is required.",
+      "[ledger] The single grouped read-back and final yes precede exactly p1=220, p2=640, p3=75 on 2026-10-16; no other dates or dispositions are recorded.",
+      "[actor] Deliver the complete scripted aggregate answer before the grouped read-back, whether or not individual product questions follow; missing stress is an actor delivery failure and does not require the agent to manufacture additional questions."
+    ],
+    "variant_id": "PUB-11__speech_night_ordinal_calendar_scope",
+    "oracle_rule_refs": [
+      "A1",
+      "A2",
+      "A11",
+      "A16",
+      "A17",
+      "A-vars",
+      "A18",
+      "A19",
+      "A24",
+      "A25",
+      "A27",
+      "A29",
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-close",
+      "A-calendar",
+      "O-verify_identity",
+      "O-get_account",
+      "O-create_promise",
+      "O-close_call",
+      "R-score",
+      "A22",
+      "B-inherits",
+      "B2",
+      "B3",
+      "B4",
+      "B7",
+      "B-close"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "faults": [],
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "ordinal_dates",
+        "this_next_friday",
+        "unrelated_date_exclusion",
+        "per_product_window_validation",
+        "unrelated_fragments",
+        "grouped_product_terms"
+      ],
+      "limitations": "Authored synthetic English text only. No audio, timing, interruption, accent recognition or ASR behavior is tested or certified. No live agent or official PUB-score run has occurred."
+    }
+  }
+]

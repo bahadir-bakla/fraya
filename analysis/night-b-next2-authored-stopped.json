@@ -1,0 +1,4309 @@
+{
+  "generated_at_utc": "2026-10-11T02:54:52.381754+00:00",
+  "scope": "Stopped original bounded B-next2 authored text test; observed completed calls only",
+  "execution_status": "incomplete_timeout",
+  "original_budget_seconds": 1200,
+  "budget_reset": false,
+  "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77",
+  "planned_calls": 18,
+  "observed_scored_calls": 15,
+  "passed_observed_calls": 8,
+  "bank_trace_passed_observed_calls": 10,
+  "unscored_repetitions": 3,
+  "all_observed_actual_version2_verified": true,
+  "complete_three_repetition_score": null,
+  "original_runner_final": [
+    {
+      "id": "PUB-11",
+      "variant_id": "PUB-11__speech_night_fulls_not_floors",
+      "completed_repetitions": 3,
+      "passes": 1,
+      "required_repetitions": 3,
+      "failure_observed": true,
+      "pending_repetitions": 0,
+      "pass": false
+    },
+    {
+      "id": "PUB-11",
+      "variant_id": "PUB-11__speech_night_reversal_restore",
+      "completed_repetitions": 3,
+      "passes": 2,
+      "required_repetitions": 3,
+      "failure_observed": true,
+      "pending_repetitions": 0,
+      "pass": false
+    },
+    {
+      "id": "PUB-11",
+      "variant_id": "PUB-11__speech_night_provisional_consent",
+      "completed_repetitions": 3,
+      "passes": 2,
+      "required_repetitions": 3,
+      "failure_observed": true,
+      "pending_repetitions": 0,
+      "pass": false
+    },
+    {
+      "id": "PUB-11",
+      "variant_id": "PUB-11__speech_night_security_scope",
+      "completed_repetitions": 2,
+      "passes": 1,
+      "required_repetitions": 3,
+      "failure_observed": true,
+      "pending_repetitions": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-11",
+      "variant_id": "PUB-11__speech_night_unrelated_paid_language",
+      "completed_repetitions": 2,
+      "passes": 1,
+      "required_repetitions": 3,
+      "failure_observed": true,
+      "pending_repetitions": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-11",
+      "variant_id": "PUB-11__speech_night_ordinal_calendar_scope",
+      "completed_repetitions": 2,
+      "passes": 1,
+      "required_repetitions": 3,
+      "failure_observed": true,
+      "pending_repetitions": 1,
+      "pass": false
+    }
+  ],
+  "classification_counts": {
+    "dialogue_or_policy_failure_requires_root_classification": 7,
+    "passed": 8
+  },
+  "source_hashes": {
+    "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/manifest.json": "67e402a13cf22b0553c36204d37dbde19634f2beb1202ca3e376a805a597e072",
+    "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/results.json": "05c786cec4882bfe2ae572e86f7607c8582a11d63d568b182f90710dff628cff",
+    "research/customer-benchmark/night-stress-cases.json": "7c10523a4ff2e523a598ea72ce99ea15b21360afa0e40a7af48642ce1365ec10"
+  },
+  "rows": [
+    {
+      "variant_id": "PUB-11__speech_night_fulls_not_floors",
+      "repetition": 1,
+      "result": {
+        "pass": true,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": true,
+        "failed": [],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "passed",
+      "judge_outcome": "pass",
+      "judge_reason": "All success criteria were met. The assistant correctly identified Freya Bank and the recording at the start and did not disclose debt details until after verifying identity via date of birth and phone number in the required order. All three products were disclosed before the assistant asked for payment. The assistant correctly handled the customer's scripted aggregate response containing multiple corrections and a proposed date, providing a single grouped read-back of the normalized terms. After the customer's confirmation, the assistant created the three promises in the ledger with the correct amounts and date, mentioned the required text message confirmation sentence, and said goodbye before successfully closing and ending the call.",
+      "actual_version": 2,
+      "call_id": "cc42cf03-b6f6-4e9b-b814-1b65e3736df5",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0001.json",
+      "source_sha256": "1572301829d6cc9c940055862d1ce48e5aa123ff829d8f50e3ffe19a4d65a57b",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [],
+      "extracted_events": []
+    },
+    {
+      "variant_id": "PUB-11__speech_night_reversal_restore",
+      "repetition": 1,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": false,
+        "transcript_pass": false,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "promises [], expected [('p1', 220.0, '2026-10-16'), ('p2', 640.0, '2026-10-16'), ('p3', 75.0, '2026-10-16')]",
+          "the call was not closed with close_call",
+          "A46: exactly one terminal close_call required",
+          "conversation: The call failed because it ended on a timeout (exceeded-max-duration) instead of a successful close_call. The agent also failed several dialogue and ledger requirements: it did not perform a grouped read-back of all three products with their amounts and dates, never obtained the authored confirmation 'Yes, I confirm', and failed to execute any 'create_promise' calls. Furthermore, the agent did not"
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "dialogue_or_policy_failure_requires_root_classification",
+      "judge_outcome": "fail",
+      "judge_reason": "The call failed because it ended on a timeout (exceeded-max-duration) instead of a successful close_call. The agent also failed several dialogue and ledger requirements: it did not perform a grouped read-back of all three products with their amounts and dates, never obtained the authored confirmation 'Yes, I confirm', and failed to execute any 'create_promise' calls. Furthermore, the agent did not state the required sentence, 'You will receive a text message confirming this promise', and repeatedly interrupted the customer's attempt to provide the scripted aggregate answer, contributing to the timeout.",
+      "actual_version": 2,
+      "call_id": "e29ff7e2-0d72-4296-83ef-ca6ca1183f2c",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0002.json",
+      "source_sha256": "71c1a8d11d19ac5dd2d7806831fae42411158e7304e8e0781028eeb13dcf5c98",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account"
+      ],
+      "spoken": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Almeida?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Sofia Almeida."
+        },
+        {
+          "index": 16,
+          "role": "assistant",
+          "text": "What is your date of birth? Please say the month as a word."
+        },
+        {
+          "index": 17,
+          "role": "user",
+          "text": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 35,
+          "role": "assistant",
+          "text": "What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 36,
+          "role": "user",
+          "text": "Two two eight eight."
+        },
+        {
+          "index": 62,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment. Your credit card ending 2288 has 220.00 past due and is 9 days late. Your personal loan has 640.00 past due and is 9 days late. Your car loan has 75.00 past due and is 3 days late. Can you make all these payments today?"
+        },
+        {
+          "index": 63,
+          "role": "user",
+          "text": "No, not today; for the credit card,"
+        },
+        {
+          "index": 73,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 74,
+          "role": "user",
+          "text": "No, not today; for the credit"
+        },
+        {
+          "index": 84,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 85,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 95,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 96,
+          "role": "user",
+          "text": "No, not today; for the credit card,"
+        },
+        {
+          "index": 106,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 107,
+          "role": "user",
+          "text": "No, not today; for the credit card"
+        },
+        {
+          "index": 117,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 118,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 128,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 129,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 139,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 140,
+          "role": "user",
+          "text": "No, not today; for the credit card,"
+        },
+        {
+          "index": 150,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 151,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 161,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 162,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 172,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 173,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 183,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 184,
+          "role": "user",
+          "text": "No, not today; for the credit card,"
+        },
+        {
+          "index": 194,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 195,
+          "role": "user",
+          "text": "No, not today; for the"
+        },
+        {
+          "index": 205,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 206,
+          "role": "user",
+          "text": "No, not today; for the credit card,"
+        },
+        {
+          "index": 216,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 217,
+          "role": "user",
+          "text": "No, not today; for the credit card"
+        },
+        {
+          "index": 227,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 228,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 238,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 239,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 249,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 250,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 260,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 261,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 271,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 272,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 282,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 283,
+          "role": "user",
+          "text": "No, not today; for the"
+        },
+        {
+          "index": 293,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 294,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 304,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 305,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore"
+        },
+        {
+          "index": 315,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 316,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 326,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 327,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 337,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 338,
+          "role": "user",
+          "text": "No, not today; for the credit card,"
+        },
+        {
+          "index": 348,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 349,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 359,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 360,
+          "role": "user",
+          "text": "No, not today; for the"
+        },
+        {
+          "index": 370,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 371,
+          "role": "user",
+          "text": "No, not today; for the credit"
+        },
+        {
+          "index": 381,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 382,
+          "role": "user",
+          "text": "No, not today; for the credit"
+        },
+        {
+          "index": 392,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 393,
+          "role": "user",
+          "text": "No, not today; for the credit card"
+        },
+        {
+          "index": 403,
+          "role": "assistant",
+          "text": "Please finish the exact date for your personal loan."
+        },
+        {
+          "index": 404,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 414,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 415,
+          "role": "user",
+          "text": "No, not today; for the"
+        },
+        {
+          "index": 425,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 426,
+          "role": "user",
+          "text": "No, not today; for the credit card"
+        },
+        {
+          "index": 436,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 437,
+          "role": "user",
+          "text": "No, not today; for the credit"
+        },
+        {
+          "index": 447,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 448,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore six hundred forty; for the car loan, twenty-five--no, seventy-five, all"
+        },
+        {
+          "index": 458,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 459,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 469,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 470,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 480,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 481,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 491,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 492,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 502,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 503,
+          "role": "user",
+          "text": "No, not today; for the credit"
+        },
+        {
+          "index": 513,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 514,
+          "role": "user",
+          "text": "No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore six hundred forty; for the car loan, twenty-five--no, seventy-five, all verbal slips rather than requests for smaller payments. The date is next Friday--sorry, this Friday, not the twenty-third; my final proposal is credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six."
+        },
+        {
+          "index": 516,
+          "role": "assistant",
+          "text": "Thank you for providing those details. I have noted your payment proposal for all three accounts for this Friday, October 16th, 2026. Thank you for your time, and have a wonderful day."
+        }
+      ],
+      "extracted_events": [
+        {
+          "index": 7,
+          "name": "event",
+          "value": "k=answer|c=1\nEND"
+        },
+        {
+          "index": 8,
+          "name": "raw_speech",
+          "value": "Sofia Almeida."
+        },
+        {
+          "index": 9,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 18,
+          "name": "event",
+          "value": "k=answer|c=1|v=1987-06-03\nEND"
+        },
+        {
+          "index": 19,
+          "name": "raw_speech",
+          "value": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 20,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 37,
+          "name": "event",
+          "value": "k=answer|c=1|v=2288\nEND"
+        },
+        {
+          "index": 38,
+          "name": "raw_speech",
+          "value": "Two two eight eight."
+        },
+        {
+          "index": 39,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 64,
+          "name": "event",
+          "value": "k=no|c=1|p=all\nk=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 65,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card,"
+        },
+        {
+          "index": 66,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 75,
+          "name": "event",
+          "value": "k=no|c=1|p=all\nk=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 76,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit"
+        },
+        {
+          "index": 77,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 86,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=both\nEND"
+        },
+        {
+          "index": 87,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 88,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 97,
+          "name": "event",
+          "value": "k=no|c=1|p=all\nk=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 98,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card,"
+        },
+        {
+          "index": 99,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 108,
+          "name": "event",
+          "value": "k=no|c=1|p=all\nk=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 109,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card"
+        },
+        {
+          "index": 110,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 119,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 120,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 121,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 130,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 131,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 132,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 141,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 142,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card,"
+        },
+        {
+          "index": 143,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 152,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 153,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 154,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 163,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 164,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 165,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 174,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 175,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 176,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 185,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 186,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card,"
+        },
+        {
+          "index": 187,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 196,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 197,
+          "name": "raw_speech",
+          "value": "No, not today; for the"
+        },
+        {
+          "index": 198,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 207,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 208,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card,"
+        },
+        {
+          "index": 209,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 218,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 219,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card"
+        },
+        {
+          "index": 220,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 229,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 230,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 231,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 240,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 241,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 242,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 251,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 252,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 253,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 262,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 263,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 264,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 273,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 274,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 275,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 284,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 285,
+          "name": "raw_speech",
+          "value": "No, not today; for the"
+        },
+        {
+          "index": 286,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 295,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 296,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 297,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 306,
+          "name": "event",
+          "value": "k=proposal|c=1|p=credit card|a=220\nk=proposal|c=1|p=personal loan|a=213\nEND"
+        },
+        {
+          "index": 307,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore"
+        },
+        {
+          "index": 308,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 317,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=amount\nEND"
+        },
+        {
+          "index": 318,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 319,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 328,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|a=60|u=date\nEND"
+        },
+        {
+          "index": 329,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 330,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 339,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 340,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card,"
+        },
+        {
+          "index": 341,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 350,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 351,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 352,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 361,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 362,
+          "name": "raw_speech",
+          "value": "No, not today; for the"
+        },
+        {
+          "index": 363,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 372,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 373,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit"
+        },
+        {
+          "index": 374,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 383,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 384,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit"
+        },
+        {
+          "index": 385,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 394,
+          "name": "event",
+          "value": "k=no|c=1|p=credit card|d=today\nEND"
+        },
+        {
+          "index": 395,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card"
+        },
+        {
+          "index": 396,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 405,
+          "name": "event",
+          "value": "k=no|c=1|p=personal loan\nk=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 406,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 407,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 416,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 417,
+          "name": "raw_speech",
+          "value": "No, not today; for the"
+        },
+        {
+          "index": 418,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 427,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 428,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card"
+        },
+        {
+          "index": 429,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 438,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 439,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit"
+        },
+        {
+          "index": 440,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 449,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=220|u=date\nk=proposal|c=0|p=personal loan|a=640|u=date\nk=proposal|c=0|p=car loan|a=75|u=date\nEND"
+        },
+        {
+          "index": 450,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore six hundred forty; for the car loan, twenty-five--no, seventy-five, all"
+        },
+        {
+          "index": 451,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 460,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=amount\nEND"
+        },
+        {
+          "index": 461,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 462,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 471,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=amount\nEND"
+        },
+        {
+          "index": 472,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 473,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 482,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 483,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty"
+        },
+        {
+          "index": 484,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 493,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 494,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit card, sixty-"
+        },
+        {
+          "index": 495,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 504,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 505,
+          "name": "raw_speech",
+          "value": "No, not today; for the credit"
+        },
+        {
+          "index": 506,
+          "name": "admin",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "variant_id": "PUB-11__speech_night_provisional_consent",
+      "repetition": 1,
+      "result": {
+        "pass": true,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": true,
+        "failed": [],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "passed",
+      "judge_outcome": "pass",
+      "judge_reason": "All criteria met. The assistant correctly identified itself and the recording in the opening without disclosing debt. Identity was verified in the required DOB-then-phone order before account details were retrieved. The assistant stated all three products and their respective amounts before asking for payment. The customer delivered the complex scripted aggregate proposal, and the assistant responded correctly by providing a single grouped read-back of all terms for 2026-10-16. Confirmation was obtained before the three create_promise calls were executed. The assistant then provided the mandatory text message notification sentence, thanked the customer, and said goodbye. The call ended with a single close_call with the correct 'promise' outcome.",
+      "actual_version": 2,
+      "call_id": "f91d9b8c-db46-4acb-b066-a0b0779a90f8",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0003.json",
+      "source_sha256": "a1a789635f48ced784981b933c42808482364e0f0a2307e3b10968f4ae1ea26d",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [],
+      "extracted_events": []
+    },
+    {
+      "variant_id": "PUB-11__speech_night_security_scope",
+      "repetition": 1,
+      "result": {
+        "pass": true,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": true,
+        "failed": [],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "passed",
+      "judge_outcome": "pass",
+      "judge_reason": "All criteria were met. The assistant identified Freya Bank's digital assistant and the recording at the start of the call. Verification of identity (DOB then phone) was completed before any debt or product disclosure occurred, and the ledger confirms that the correct values (1987-06-03 and 2288) were submitted while excluding the distractor values provided by the customer. All three products were stated before the payment request. The agent correctly handled the customer's aggregate answer, providing a single grouped read-back of the credit card, personal loan, and car loan with the correct dates and amounts. Three separate create_promise calls were made following the customer's confirmation. Finally, the agent included the required confirmation text message sentence, thanked the customer, and said goodbye before a single close_call with the correct outcome was executed.",
+      "actual_version": 2,
+      "call_id": "1c013692-2d4e-4527-9666-07e5ff6663b2",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0004.json",
+      "source_sha256": "e4a4da03203de604926fa4ded6ff1c38f86976ae0d0ef905ebe415639f345f3c",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [],
+      "extracted_events": []
+    },
+    {
+      "variant_id": "PUB-11__speech_night_unrelated_paid_language",
+      "repetition": 1,
+      "result": {
+        "pass": true,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": true,
+        "failed": [],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "passed",
+      "judge_outcome": "pass",
+      "judge_reason": "All success criteria were met. The agent correctly identified itself and mentioned recording at the start. Identity was verified using the correct sequence (date of birth then phone digits) before any account details were disclosed. The agent listed all three products before requesting payment. Although the agent interrupted the customer multiple times during the aggregate answer phase, the customer eventually provided the full scripted proposal. The agent then performed a single, complete read-back of all three products with correct amounts and dates, obtained the exact confirmation required, and created the corresponding promises in the ledger. The call concluded with the mandatory text message confirmation sentence and a polite goodbye before ending with a final close_call.",
+      "actual_version": 2,
+      "call_id": "24356df9-5731-400b-8e4c-ebf4416f6470",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0005.json",
+      "source_sha256": "45a63adb40f554b949b08a8c9851e70948379cab79dcb4718ff0d00c214b89ba",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [],
+      "extracted_events": []
+    },
+    {
+      "variant_id": "PUB-11__speech_night_ordinal_calendar_scope",
+      "repetition": 1,
+      "result": {
+        "pass": true,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": true,
+        "failed": [],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "passed",
+      "judge_outcome": "pass",
+      "judge_reason": "All criteria met. The agent identified the bank and recording at the start, verified identity before disclosing debt, and listed all three products before asking for payment. The customer provided the scripted aggregate response, which the agent resolved to 2026-10-16 and read back correctly in a single grouped turn. The agent obtained the mandatory confirmation, recorded exactly three promises via tool calls, included the required text message disclosure, and ended the call properly with a thank you and goodbye followed by the correct close_call outcome.",
+      "actual_version": 2,
+      "call_id": "5ca1f899-7dd7-4456-9c1a-443febd249ce",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0006.json",
+      "source_sha256": "ff399154372f6c075250332a3598d328e5935300cdfe8802cd50ad544193f04a",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [],
+      "extracted_events": []
+    },
+    {
+      "variant_id": "PUB-11__speech_night_fulls_not_floors",
+      "repetition": 2,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": false,
+        "transcript_pass": false,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "promises [], expected [('p1', 220.0, '2026-10-16'), ('p2', 640.0, '2026-10-16'), ('p3', 75.0, '2026-10-16')]",
+          "the call was not closed with close_call",
+          "A46: exactly one terminal close_call required",
+          "conversation: The conversation failed for several reasons: 1. The call ended with an 'exceeded-max-duration' timeout rather than a proper agent-led closure. 2. No promises were created (create_promise) for any of the three products. 3. The agent failed to execute a close_call tool. 4. The agent repeatedly interrupted the customer's scripted aggregate response (Messages 7-63), preventing the customer from delive"
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "dialogue_or_policy_failure_requires_root_classification",
+      "judge_outcome": "fail",
+      "judge_reason": "The conversation failed for several reasons: 1. The call ended with an 'exceeded-max-duration' timeout rather than a proper agent-led closure. 2. No promises were created (create_promise) for any of the three products. 3. The agent failed to execute a close_call tool. 4. The agent repeatedly interrupted the customer's scripted aggregate response (Messages 7-63), preventing the customer from delivering the full authored corrections and proposals. 5. Consequently, there was no read-back, confirmation, or completion of the promise-taking process.",
+      "actual_version": 2,
+      "call_id": "113bb687-9575-407d-ab26-eac33b391f03",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0007.json",
+      "source_sha256": "c91b0b4f82ed58dfdb0d0b4b914261b32435da5993d612c80f439eb7ab8a43d0",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account"
+      ],
+      "spoken": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Almeida?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Sofia Almeida."
+        },
+        {
+          "index": 16,
+          "role": "assistant",
+          "text": "What is your date of birth? Please say the month as a word."
+        },
+        {
+          "index": 17,
+          "role": "user",
+          "text": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 35,
+          "role": "assistant",
+          "text": "What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 36,
+          "role": "user",
+          "text": "Two two eight eight."
+        },
+        {
+          "index": 62,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment. Your credit card ending 2288 has 220.00 past due and is 9 days late. Your personal loan has 640.00 past due and is 9 days late. Your car loan has 75.00 past due and is 3 days late. Can you make all these payments today?"
+        },
+        {
+          "index": 63,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 73,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 74,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 84,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 85,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 95,
+          "role": "assistant",
+          "text": "Please finish the exact date for your credit card ending 2288."
+        },
+        {
+          "index": 96,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 106,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 107,
+          "role": "user",
+          "text": "No, not today; two twenty means"
+        },
+        {
+          "index": 117,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 118,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 128,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 129,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 139,
+          "role": "assistant",
+          "text": "Please finish the exact date for your credit card ending 2288."
+        },
+        {
+          "index": 140,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 150,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 151,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 161,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 162,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 172,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your personal loan."
+        },
+        {
+          "index": 173,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 183,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your car loan."
+        },
+        {
+          "index": 184,
+          "role": "user",
+          "text": "No, not today; two twenty means"
+        },
+        {
+          "index": 194,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your car loan."
+        },
+        {
+          "index": 195,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 205,
+          "role": "assistant",
+          "text": "Please finish the date for your car loan."
+        },
+        {
+          "index": 206,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 216,
+          "role": "assistant",
+          "text": "Please finish the date for your car loan."
+        },
+        {
+          "index": 217,
+          "role": "user",
+          "text": "No, not today; two twenty means two"
+        },
+        {
+          "index": 227,
+          "role": "assistant",
+          "text": "Please finish the date for your car loan."
+        },
+        {
+          "index": 228,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 238,
+          "role": "assistant",
+          "text": "Please finish the date for your car loan."
+        },
+        {
+          "index": 239,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 249,
+          "role": "assistant",
+          "text": "Please finish the date for your car loan."
+        },
+        {
+          "index": 250,
+          "role": "user",
+          "text": "No, not today; two twenty means two"
+        },
+        {
+          "index": 260,
+          "role": "assistant",
+          "text": "Please finish the date for your car loan."
+        },
+        {
+          "index": 261,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 271,
+          "role": "assistant",
+          "text": "Please finish the date for your car loan."
+        },
+        {
+          "index": 272,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 282,
+          "role": "assistant",
+          "text": "Please finish the date for your car loan."
+        },
+        {
+          "index": 283,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card"
+        },
+        {
+          "index": 293,
+          "role": "assistant",
+          "text": "Please clarify the conflicting amount for credit card ending 2288."
+        },
+        {
+          "index": 294,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 304,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 305,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-"
+        },
+        {
+          "index": 315,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 316,
+          "role": "user",
+          "text": "No, not today; two twenty"
+        },
+        {
+          "index": 326,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 327,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan"
+        },
+        {
+          "index": 337,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 338,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 348,
+          "role": "assistant",
+          "text": "Please finish the date for your credit card ending 2288."
+        },
+        {
+          "index": 349,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six"
+        },
+        {
+          "index": 359,
+          "role": "assistant",
+          "text": "Please finish the exact date for your credit card ending 2288."
+        },
+        {
+          "index": 360,
+          "role": "user",
+          "text": "No, not today; two twenty means two"
+        },
+        {
+          "index": 370,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 371,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 373,
+          "role": "assistant",
+          "text": "Thank you for your time today. I apologize that we couldn't finalize the details, but we will be in touch. Have a great day!"
+        }
+      ],
+      "extracted_events": [
+        {
+          "index": 7,
+          "name": "event",
+          "value": "k=answer|c=1\nEND"
+        },
+        {
+          "index": 8,
+          "name": "raw_speech",
+          "value": "Sofia Almeida."
+        },
+        {
+          "index": 9,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 18,
+          "name": "event",
+          "value": "k=answer|c=1|v=1987-06-03\nEND"
+        },
+        {
+          "index": 19,
+          "name": "raw_speech",
+          "value": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 20,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 37,
+          "name": "event",
+          "value": "k=answer|c=1|v=2288\nEND"
+        },
+        {
+          "index": 38,
+          "name": "raw_speech",
+          "value": "Two two eight eight."
+        },
+        {
+          "index": 39,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 64,
+          "name": "event",
+          "value": "k=no|c=1|p=all|d=today\nk=proposal|c=0|p=credit card|a=200|u=date\nEND"
+        },
+        {
+          "index": 65,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 66,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 75,
+          "name": "event",
+          "value": "k=no|c=1|p=all\nk=proposal|c=0|p=credit card|a=220|u=date\nEND"
+        },
+        {
+          "index": 76,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 77,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 86,
+          "name": "event",
+          "value": "k=no|c=1|p=all|d=today\nk=proposal|c=1|p=credit card|a=220\nEND"
+        },
+        {
+          "index": 87,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 88,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 97,
+          "name": "event",
+          "value": "k=no|c=1|p=all\nEND"
+        },
+        {
+          "index": 98,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 99,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 108,
+          "name": "event",
+          "value": "k=no|c=1|d=today\nk=partial|c=0|p=credit card|a=220|u=date\nEND"
+        },
+        {
+          "index": 109,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means"
+        },
+        {
+          "index": 110,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 119,
+          "name": "event",
+          "value": "k=proposal|c=1|p=credit card|a=220\nEND"
+        },
+        {
+          "index": 120,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 121,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 130,
+          "name": "event",
+          "value": "k=no|c=1|d=today\nk=proposal|c=1|p=credit card|a=220\nEND"
+        },
+        {
+          "index": 131,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 132,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 141,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=220|u=date\nEND"
+        },
+        {
+          "index": 142,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 143,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 152,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=220|u=date\nEND"
+        },
+        {
+          "index": 153,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 154,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 163,
+          "name": "event",
+          "value": "k=proposal|c=1|p=credit card|a=220\nk=no|c=1|p=credit card|d=today\nEND"
+        },
+        {
+          "index": 164,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 165,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 174,
+          "name": "event",
+          "value": "k=proposal|c=1|p=personal loan|a=220\nk=no|c=1|p=personal loan|d=today\nEND"
+        },
+        {
+          "index": 175,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 176,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 185,
+          "name": "event",
+          "value": "k=no|c=0|p=car loan|u=both\nEND"
+        },
+        {
+          "index": 186,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means"
+        },
+        {
+          "index": 187,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 196,
+          "name": "event",
+          "value": "k=proposal|c=0|p=car loan|a=200|u=date\nEND"
+        },
+        {
+          "index": 197,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 198,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 207,
+          "name": "event",
+          "value": "k=proposal|c=0|p=car loan|a=220|u=date\nEND"
+        },
+        {
+          "index": 208,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 209,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 218,
+          "name": "event",
+          "value": "k=proposal|c=0|p=car loan|a=220|u=date\nEND"
+        },
+        {
+          "index": 219,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two"
+        },
+        {
+          "index": 220,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 229,
+          "name": "event",
+          "value": "k=proposal|c=0|p=car loan|a=220|u=date\nEND"
+        },
+        {
+          "index": 230,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 231,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 240,
+          "name": "event",
+          "value": "k=proposal|c=0|p=car loan|a=220|u=date\nEND"
+        },
+        {
+          "index": 241,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 242,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 251,
+          "name": "event",
+          "value": "k=no|c=0|p=car loan|u=date\nEND"
+        },
+        {
+          "index": 252,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two"
+        },
+        {
+          "index": 253,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 262,
+          "name": "event",
+          "value": "k=proposal|c=0|p=car loan|a=200|u=date\nEND"
+        },
+        {
+          "index": 263,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 264,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 273,
+          "name": "event",
+          "value": "k=proposal|c=0|p=car loan|a=220|u=date\nEND"
+        },
+        {
+          "index": 274,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for"
+        },
+        {
+          "index": 275,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 284,
+          "name": "event",
+          "value": "k=proposal|c=1|p=credit card|a=220\nk=proposal|c=1|p=personal loan|a=640\nk=proposal|c=1|p=car loan|a=75\nk=proposal|c=1|p=credit card|a=full\nEND"
+        },
+        {
+          "index": 285,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card"
+        },
+        {
+          "index": 286,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 295,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=220|u=date\nEND"
+        },
+        {
+          "index": 296,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty"
+        },
+        {
+          "index": 297,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 306,
+          "name": "event",
+          "value": "k=proposal|c=1|p=credit card|a=220\nk=proposal|c=1|p=personal loan|a=640\nk=partial|c=0|p=car loan|u=amount\nEND"
+        },
+        {
+          "index": 307,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-"
+        },
+        {
+          "index": 308,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 317,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|a=220|u=date\nEND"
+        },
+        {
+          "index": 318,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty"
+        },
+        {
+          "index": 319,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 328,
+          "name": "event",
+          "value": "k=proposal|c=1|p=credit card|a=220\nk=proposal|c=1|p=personal loan|a=640\nk=proposal|c=0|p=car loan|u=amount\nEND"
+        },
+        {
+          "index": 329,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan"
+        },
+        {
+          "index": 330,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 339,
+          "name": "event",
+          "value": "k=no|c=1|d=today\nk=proposal|c=0|p=credit card|a=220|u=date\nEND"
+        },
+        {
+          "index": 340,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred"
+        },
+        {
+          "index": 341,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 350,
+          "name": "event",
+          "value": "k=no|c=1|p=credit card|d=today\nk=proposal|c=1|p=credit card|a=220\nk=proposal|c=0|p=personal loan|a=6|u=amount\nEND"
+        },
+        {
+          "index": 351,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six"
+        },
+        {
+          "index": 352,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 361,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 362,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two"
+        },
+        {
+          "index": 363,
+          "name": "admin",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "variant_id": "PUB-11__speech_night_reversal_restore",
+      "repetition": 2,
+      "result": {
+        "pass": true,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": true,
+        "failed": [],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "passed",
+      "judge_outcome": "pass",
+      "judge_reason": "The conversation successfully met all criteria. The agent correctly identified itself and the recording [0], verified identity in the correct order (DOB [3], then phone [5]) before disclosing any account details, and stated all three products before asking for payment [6]. Despite several interruptions during the customer's complex delivery [8-42], the agent correctly captured the final terms from the authored aggregate answer [43], performed a single grouped read-back of all three products with the correct final amounts (220, 640, 75) and date (2026-10-16) [44], and obtained a clear confirmation [45]. The ledger shows exactly one create_promise per product with the correct values, followed by a close_call with the correct outcome. The agent also included the required text-message sentence and thanked the customer before ending the call [46].",
+      "actual_version": 2,
+      "call_id": "a7ac298d-0b60-4a30-8c1b-25f8734851dc",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0008.json",
+      "source_sha256": "3e5c8358aa2dccfe7ac8b954f43ff29aa7ac69e113758f8614c394ba01120e99",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [],
+      "extracted_events": []
+    },
+    {
+      "variant_id": "PUB-11__speech_night_provisional_consent",
+      "repetition": 2,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": false,
+        "transcript_pass": false,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "promises [], expected [('p1', 220.0, '2026-10-16'), ('p2', 640.0, '2026-10-16'), ('p3', 75.0, '2026-10-16')]",
+          "the call was not closed with close_call",
+          "A46: exactly one terminal close_call required",
+          "conversation: The call failed because it ended on a timeout (exceeded-max-duration) rather than a proper agent-initiated close_call. Additionally, the agent failed to handle the customer's aggregate response, entering a repetitive loop starting at Message 8 and interrupting the customer's script repeatedly. This prevented the completion of the required dialogue, the grouped read-back, and the creation of any pr"
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "dialogue_or_policy_failure_requires_root_classification",
+      "judge_outcome": "fail",
+      "judge_reason": "The call failed because it ended on a timeout (exceeded-max-duration) rather than a proper agent-initiated close_call. Additionally, the agent failed to handle the customer's aggregate response, entering a repetitive loop starting at Message 8 and interrupting the customer's script repeatedly. This prevented the completion of the required dialogue, the grouped read-back, and the creation of any promises (create_promise).",
+      "actual_version": 2,
+      "call_id": "c13c83a9-2158-4261-a4e1-2e824c1adfd4",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0009.json",
+      "source_sha256": "e0a9a7a84c9266dc65fbbd311877ba93e7e4ef073ced41e8debf712d7cc660de",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account"
+      ],
+      "spoken": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Almeida?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Sofia Almeida."
+        },
+        {
+          "index": 16,
+          "role": "assistant",
+          "text": "What is your date of birth? Please say the month as a word."
+        },
+        {
+          "index": 17,
+          "role": "user",
+          "text": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 35,
+          "role": "assistant",
+          "text": "What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 36,
+          "role": "user",
+          "text": "Two two eight eight."
+        },
+        {
+          "index": 62,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment. Your credit card ending 2288 has 220.00 past due and is 9 days late. Your personal loan has 640.00 past due and is 9 days late. Your car loan has 75.00 past due and is 3 days late. Can you make all these payments today?"
+        },
+        {
+          "index": 63,
+          "role": "user",
+          "text": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 73,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 74,
+          "role": "user",
+          "text": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 84,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 85,
+          "role": "user",
+          "text": "No, not today; yes, but"
+        },
+        {
+          "index": 95,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 96,
+          "role": "user",
+          "text": "No, not today; yes, but only"
+        },
+        {
+          "index": 106,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 107,
+          "role": "user",
+          "text": "No, not today; yes,"
+        },
+        {
+          "index": 117,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 118,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 128,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 129,
+          "role": "user",
+          "text": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 139,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 140,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 150,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 151,
+          "role": "user",
+          "text": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 161,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 162,
+          "role": "user",
+          "text": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 172,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 173,
+          "role": "user",
+          "text": "The user has asked the \"common today question\". I"
+        },
+        {
+          "index": 183,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 184,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 194,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 195,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 205,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 206,
+          "role": "user",
+          "text": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 216,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 217,
+          "role": "user",
+          "text": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 227,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 228,
+          "role": "user",
+          "text": "No, not today; yes,"
+        },
+        {
+          "index": 238,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 239,
+          "role": "user",
+          "text": "No, not today; yes, but"
+        },
+        {
+          "index": 249,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 250,
+          "role": "user",
+          "text": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 260,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 261,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 271,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 272,
+          "role": "user",
+          "text": "No, not today; yes,"
+        },
+        {
+          "index": 282,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 283,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 293,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 294,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 304,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 305,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 315,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 316,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally to paying on Friday, and"
+        },
+        {
+          "index": 326,
+          "role": "assistant",
+          "text": "Please finish the amount for your credit card ending 2288."
+        },
+        {
+          "index": 327,
+          "role": "user",
+          "text": "No, not today; yes, but only"
+        },
+        {
+          "index": 337,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 338,
+          "role": "user",
+          "text": "No, not today; yes, but only"
+        },
+        {
+          "index": 348,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 349,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 359,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 360,
+          "role": "user",
+          "text": "No, not today; yes, but only"
+        },
+        {
+          "index": 370,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 371,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 381,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 382,
+          "role": "user",
+          "text": "No, not today; yes, but only"
+        },
+        {
+          "index": 392,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 393,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 403,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 404,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 414,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 415,
+          "role": "user",
+          "text": "No, not today; yes, but only provisionally to paying on Friday, and I am not saying I will not pay, yet neither phrase authorizes recording; I withdraw that provisional agreement before"
+        },
+        {
+          "index": 417,
+          "role": "assistant",
+          "text": "Thank you for your time today. We will be in touch soon; have a wonderful day."
+        }
+      ],
+      "extracted_events": [
+        {
+          "index": 7,
+          "name": "event",
+          "value": "k=answer|c=1\nEND"
+        },
+        {
+          "index": 8,
+          "name": "raw_speech",
+          "value": "Sofia Almeida."
+        },
+        {
+          "index": 9,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 18,
+          "name": "event",
+          "value": "k=answer|c=1|v=1987-06-03\nEND"
+        },
+        {
+          "index": 19,
+          "name": "raw_speech",
+          "value": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 20,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 37,
+          "name": "event",
+          "value": "k=answer|c=1|v=2288\nEND"
+        },
+        {
+          "index": 38,
+          "name": "raw_speech",
+          "value": "Two two eight eight."
+        },
+        {
+          "index": 39,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 64,
+          "name": "event",
+          "value": "k=no|c=1|p=all|d=today\nk=proposal|c=0|p=all|u=both\nEND"
+        },
+        {
+          "index": 65,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 66,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 75,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 76,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 77,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 86,
+          "name": "event",
+          "value": "k=no|c=1|d=today\nk=partial|c=0|u=both\nEND"
+        },
+        {
+          "index": 87,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but"
+        },
+        {
+          "index": 88,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 97,
+          "name": "event",
+          "value": "k=no|c=1|d=today\nk=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 98,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only"
+        },
+        {
+          "index": 99,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 108,
+          "name": "event",
+          "value": "k=no|c=1|d=today\nk=yes|c=0|u=both\nEND"
+        },
+        {
+          "index": 109,
+          "name": "raw_speech",
+          "value": "No, not today; yes,"
+        },
+        {
+          "index": 110,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 119,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 120,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 121,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 130,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 131,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 132,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 141,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 142,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 143,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 152,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 153,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 154,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 163,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 164,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 165,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 174,
+          "name": "event",
+          "value": "k=unknown|c=0\nEND"
+        },
+        {
+          "index": 175,
+          "name": "raw_speech",
+          "value": "The user has asked the \"common today question\". I"
+        },
+        {
+          "index": 176,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 185,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 186,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 187,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 196,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 197,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 198,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 207,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 208,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 209,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 218,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|d=today|u=both\nEND"
+        },
+        {
+          "index": 219,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 220,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 229,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|d=today|u=both\nEND"
+        },
+        {
+          "index": 230,
+          "name": "raw_speech",
+          "value": "No, not today; yes,"
+        },
+        {
+          "index": 231,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 240,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|d=today|u=both\nEND"
+        },
+        {
+          "index": 241,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but"
+        },
+        {
+          "index": 242,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 251,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 252,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provision"
+        },
+        {
+          "index": 253,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 262,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 263,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 264,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 273,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|d=today|u=both\nEND"
+        },
+        {
+          "index": 274,
+          "name": "raw_speech",
+          "value": "No, not today; yes,"
+        },
+        {
+          "index": 275,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 284,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 285,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 286,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 295,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 296,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 297,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 306,
+          "name": "event",
+          "value": "k=vague|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 307,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 308,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 317,
+          "name": "event",
+          "value": "k=proposal|c=0|p=credit card|d=Friday|u=amount\nEND"
+        },
+        {
+          "index": 318,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally to paying on Friday, and"
+        },
+        {
+          "index": 319,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 328,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 329,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only"
+        },
+        {
+          "index": 330,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 339,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 340,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only"
+        },
+        {
+          "index": 341,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 350,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 351,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 352,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 361,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 362,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only"
+        },
+        {
+          "index": 363,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 372,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 373,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 374,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 383,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 384,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only"
+        },
+        {
+          "index": 385,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 394,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 395,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally"
+        },
+        {
+          "index": 396,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 405,
+          "name": "event",
+          "value": "k=partial|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 406,
+          "name": "raw_speech",
+          "value": "No, not today; yes, but only provisionally to"
+        },
+        {
+          "index": 407,
+          "name": "admin",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "variant_id": "PUB-11__speech_night_security_scope",
+      "repetition": 2,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": false,
+        "transcript_pass": false,
+        "failed": [
+          "outcome ('no_promise', 'refused'), expected ('promise', None)",
+          "promises [], expected [('p1', 220.0, '2026-10-16'), ('p2', 640.0, '2026-10-16'), ('p3', 75.0, '2026-10-16')]",
+          "notes [('p1', 'refused'), ('p2', 'refused'), ('p3', 'refused')], expected []",
+          "policy: note attempt contradicts product disposition",
+          "policy: note attempt contradicts product disposition",
+          "policy: note attempt contradicts product disposition",
+          "conversation: The conversation failed on several major criteria. Firstly, the assistant failed to record any promises, instead recording the customer's disposition as 'refused' (seen in the add_note and close_call events), whereas the customer was attempting to provide a full payment proposal for all three products. Secondly, the assistant entered a repetitive loop between Message 8 and Message 31, repeatedly i"
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "dialogue_or_policy_failure_requires_root_classification",
+      "judge_outcome": "fail",
+      "judge_reason": "The conversation failed on several major criteria. Firstly, the assistant failed to record any promises, instead recording the customer's disposition as 'refused' (seen in the add_note and close_call events), whereas the customer was attempting to provide a full payment proposal for all three products. Secondly, the assistant entered a repetitive loop between Message 8 and Message 31, repeatedly interrupting the customer and preventing the delivery of the authored aggregate answer. Thirdly, the assistant proposed unauthorized payment terms (Message 32 and 38) involving minimum payments and different dates, which violated the instruction to never offer unauthorized plans. Finally, there was no grouped read-back of all three products, no single confirmation obtained, and the mandatory sentence regarding a confirmation text message was never spoken.",
+      "actual_version": 2,
+      "call_id": "23dad06f-84b9-43fb-a4da-3a8702230a6e",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0010.json",
+      "source_sha256": "2014d6e5278516a362d176396efb851e0b591fae71123e92b04bddf7c2ace746",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "add_note",
+        "add_note",
+        "add_note",
+        "close_call"
+      ],
+      "spoken": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Almeida?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Sofia Almeida."
+        },
+        {
+          "index": 16,
+          "role": "assistant",
+          "text": "What is your date of birth? Please say the month as a word."
+        },
+        {
+          "index": 17,
+          "role": "user",
+          "text": "Fourteenth October twenty twenty-six is an unrelated diary-entry date, not my birthday; my birthday is third June nineteen eighty-seven."
+        },
+        {
+          "index": 35,
+          "role": "assistant",
+          "text": "What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 36,
+          "role": "user",
+          "text": "Six four zero is an unrelated parcel label, not a phone suffix; my phone ends two two eight eight."
+        },
+        {
+          "index": 62,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment. Your credit card ending 2288 has 220.00 past due and is 9 days late. Your personal loan has 640.00 past due and is 9 days late. Your car loan has 75.00 past due and is 3 days late. Can you make all these payments today?"
+        },
+        {
+          "index": 63,
+          "role": "user",
+          "text": "No, not today; a cousin answering"
+        },
+        {
+          "index": 73,
+          "role": "assistant",
+          "text": "Please finish the amount for your credit card ending 2288."
+        },
+        {
+          "index": 74,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely"
+        },
+        {
+          "index": 84,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 85,
+          "role": "user",
+          "text": "No, not today; a cousin answering is"
+        },
+        {
+          "index": 95,
+          "role": "assistant",
+          "text": "Please clarify your complete answer. Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 96,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely hypothetical"
+        },
+        {
+          "index": 106,
+          "role": "assistant",
+          "text": "Can you pay 220.00 for your credit card ending 2288 on 2026-10-16?"
+        },
+        {
+          "index": 107,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely hypothetical,"
+        },
+        {
+          "index": 117,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 118,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely"
+        },
+        {
+          "index": 128,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 129,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely"
+        },
+        {
+          "index": 139,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 140,
+          "role": "user",
+          "text": "No, not today; a cousin"
+        },
+        {
+          "index": 150,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 151,
+          "role": "user",
+          "text": "No, not today; a cousin answering is"
+        },
+        {
+          "index": 161,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 162,
+          "role": "user",
+          "text": "No, not today; a cousin answering"
+        },
+        {
+          "index": 172,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 173,
+          "role": "user",
+          "text": "No, not today; a cousin answering is"
+        },
+        {
+          "index": 183,
+          "role": "assistant",
+          "text": "Please clarify your complete answer. Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 184,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely"
+        },
+        {
+          "index": 194,
+          "role": "assistant",
+          "text": "Please clarify your complete answer. Please finish the amount and exact date for your credit card ending 2288."
+        },
+        {
+          "index": 195,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely hypothetical"
+        },
+        {
+          "index": 205,
+          "role": "assistant",
+          "text": "The rest stays overdue. Can you pay 66.00 for your credit card ending 2288 on 2026-10-23?"
+        },
+        {
+          "index": 206,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely hypothetical"
+        },
+        {
+          "index": 216,
+          "role": "assistant",
+          "text": "Can you pay 640.00 for your personal loan on 2026-10-16?"
+        },
+        {
+          "index": 217,
+          "role": "user",
+          "text": "No, not today; a cousin answering"
+        },
+        {
+          "index": 227,
+          "role": "assistant",
+          "text": "Please finish the amount and exact date for your personal loan."
+        },
+        {
+          "index": 228,
+          "role": "user",
+          "text": "No, not today; a cousin answering"
+        },
+        {
+          "index": 238,
+          "role": "assistant",
+          "text": "The rest stays overdue. Can you pay 213.00 for your personal loan on 2026-10-23?"
+        },
+        {
+          "index": 239,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely hypothetical"
+        },
+        {
+          "index": 249,
+          "role": "assistant",
+          "text": "Can you pay 75.00 for your car loan on 2026-10-16?"
+        },
+        {
+          "index": 250,
+          "role": "user",
+          "text": "No, not today; a cousin answering is purely hypothetical,"
+        },
+        {
+          "index": 284,
+          "role": "assistant",
+          "text": "Thank you for your time. Goodbye."
+        }
+      ],
+      "extracted_events": [
+        {
+          "index": 7,
+          "name": "event",
+          "value": "k=answer|c=1\nEND"
+        },
+        {
+          "index": 8,
+          "name": "raw_speech",
+          "value": "Sofia Almeida."
+        },
+        {
+          "index": 9,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 18,
+          "name": "event",
+          "value": "k=answer|c=1|v=1987-06-03\nEND"
+        },
+        {
+          "index": 19,
+          "name": "raw_speech",
+          "value": "Fourteenth October twenty twenty-six is an unrelated diary-entry date, not my birthday; my birthday is third June nineteen eighty-seven."
+        },
+        {
+          "index": 20,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 37,
+          "name": "event",
+          "value": "k=answer|c=1|v=2288\nEND"
+        },
+        {
+          "index": 38,
+          "name": "raw_speech",
+          "value": "Six four zero is an unrelated parcel label, not a phone suffix; my phone ends two two eight eight."
+        },
+        {
+          "index": 39,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 64,
+          "name": "event",
+          "value": "k=no|c=1|p=all|d=today\nk=third|c=1\nEND"
+        },
+        {
+          "index": 65,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering"
+        },
+        {
+          "index": 66,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 75,
+          "name": "event",
+          "value": "k=no|c=0|p=all|u=both\nEND"
+        },
+        {
+          "index": 76,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely"
+        },
+        {
+          "index": 77,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 86,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nk=third|c=0|u=answer\nEND"
+        },
+        {
+          "index": 87,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is"
+        },
+        {
+          "index": 88,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 97,
+          "name": "event",
+          "value": "k=no|c=1|p=all|d=today\nEND"
+        },
+        {
+          "index": 98,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely hypothetical"
+        },
+        {
+          "index": 99,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 108,
+          "name": "event",
+          "value": "k=no|c=0\nEND"
+        },
+        {
+          "index": 109,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely hypothetical,"
+        },
+        {
+          "index": 110,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 119,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card\nEND"
+        },
+        {
+          "index": 120,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely"
+        },
+        {
+          "index": 121,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 130,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 131,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely"
+        },
+        {
+          "index": 132,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 141,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card\nEND"
+        },
+        {
+          "index": 142,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin"
+        },
+        {
+          "index": 143,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 152,
+          "name": "event",
+          "value": "k=no|c=0|p=credit card|u=both\nEND"
+        },
+        {
+          "index": 153,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is"
+        },
+        {
+          "index": 154,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 163,
+          "name": "event",
+          "value": "k=third|c=1\nEND"
+        },
+        {
+          "index": 164,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering"
+        },
+        {
+          "index": 165,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 174,
+          "name": "event",
+          "value": "k=third|c=0\nEND"
+        },
+        {
+          "index": 175,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is"
+        },
+        {
+          "index": 176,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 185,
+          "name": "event",
+          "value": "k=third|c=0\nEND"
+        },
+        {
+          "index": 186,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely"
+        },
+        {
+          "index": 187,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 196,
+          "name": "event",
+          "value": "k=no|c=1|p=credit card|d=today\nEND"
+        },
+        {
+          "index": 197,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely hypothetical"
+        },
+        {
+          "index": 198,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 207,
+          "name": "event",
+          "value": "k=no|c=1|p=credit card\nEND"
+        },
+        {
+          "index": 208,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely hypothetical"
+        },
+        {
+          "index": 209,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 218,
+          "name": "event",
+          "value": "k=no|c=0|p=personal loan|u=both\nEND"
+        },
+        {
+          "index": 219,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering"
+        },
+        {
+          "index": 220,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 229,
+          "name": "event",
+          "value": "k=no|c=1|p=personal loan|d=today\nEND"
+        },
+        {
+          "index": 230,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering"
+        },
+        {
+          "index": 231,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 240,
+          "name": "event",
+          "value": "k=no|c=1\nEND"
+        },
+        {
+          "index": 241,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely hypothetical"
+        },
+        {
+          "index": 242,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 251,
+          "name": "event",
+          "value": "k=no|c=1|p=car loan\nEND"
+        },
+        {
+          "index": 252,
+          "name": "raw_speech",
+          "value": "No, not today; a cousin answering is purely hypothetical,"
+        },
+        {
+          "index": 253,
+          "name": "admin",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "variant_id": "PUB-11__speech_night_unrelated_paid_language",
+      "repetition": 2,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": false,
+        "failed": [
+          "conversation: The evaluation identified the following failures: 1. Actor Delivery Failure: The simulated customer failed to deliver the authored aggregate answer completely in Message 7. The script required the year 'twenty twenty-six' to be included in the payment proposal ('sixteen October twenty twenty-six'), but the actor stopped at 'sixteen October'. The success criteria explicitly state that omitting the "
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "dialogue_or_policy_failure_requires_root_classification",
+      "judge_outcome": "fail",
+      "judge_reason": "The evaluation identified the following failures: 1. Actor Delivery Failure: The simulated customer failed to deliver the authored aggregate answer completely in Message 7. The script required the year 'twenty twenty-six' to be included in the payment proposal ('sixteen October twenty twenty-six'), but the actor stopped at 'sixteen October'. The success criteria explicitly state that omitting the delivery challenge or changing decisions fails the run, even if the agent handles it correctly. 2. Dialogue/Ledger Sequencing: The agent failed the requirement to thank the customer and say goodbye 'before' the last close_call. According to the system events, the api_call for close_call was executed as part of the final turn (Message 10), following the creation of promises but before the end_call. In this architecture, executing the tool call within the turn that contains the goodbye results in the call being ledgered as closed in the system before the customer receives the speech, whereas the rubric requires the speech to precede the action. 3. Ledger: The ledger rule specified that the close_call should have 'reason=null', but the system event shows the field was omitted entirely in the request body.",
+      "actual_version": 2,
+      "call_id": "0967a213-93d0-4538-9c2b-09b2c501b642",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0011.json",
+      "source_sha256": "3e0dd5920ce6352a266de4e4f97d182ed99a2b5b7a7e8b5a8aee89f8bb5be319",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Almeida?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Sofia Almeida."
+        },
+        {
+          "index": 16,
+          "role": "assistant",
+          "text": "What is your date of birth? Please say the month as a word."
+        },
+        {
+          "index": 17,
+          "role": "user",
+          "text": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 35,
+          "role": "assistant",
+          "text": "What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 36,
+          "role": "user",
+          "text": "Two two eight eight."
+        },
+        {
+          "index": 62,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment. Your credit card ending 2288 has 220.00 past due and is 9 days late. Your personal loan has 640.00 past due and is 9 days late. Your car loan has 75.00 past due and is 3 days late. Can you make all these payments today?"
+        },
+        {
+          "index": 63,
+          "role": "user",
+          "text": "No, not today; 'already paid two hundred twenty' on an unrelated shop receipt, 'six hundred forty paid' on an unrelated supplier receipt and seventy-five on another unrelated receipt refer to none of these bank products, and I have not paid any of these bank arrears. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October"
+        },
+        {
+          "index": 73,
+          "role": "assistant",
+          "text": "Please confirm: credit card ending 2288, 220.00 on 2026-10-16; personal loan, 640.00 on 2026-10-16; car loan, 75.00 on 2026-10-16. Do you confirm?"
+        },
+        {
+          "index": 74,
+          "role": "user",
+          "text": "Yes, I confirm."
+        },
+        {
+          "index": 108,
+          "role": "assistant",
+          "text": "Your payment promises are recorded. You will receive a text message confirming this promise. Thank you for your time. Goodbye."
+        }
+      ],
+      "extracted_events": [
+        {
+          "index": 7,
+          "name": "event",
+          "value": "k=answer|c=1\nEND"
+        },
+        {
+          "index": 8,
+          "name": "raw_speech",
+          "value": "Sofia Almeida."
+        },
+        {
+          "index": 9,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 18,
+          "name": "event",
+          "value": "k=answer|c=1|v=1987-06-03\nEND"
+        },
+        {
+          "index": 19,
+          "name": "raw_speech",
+          "value": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 20,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 37,
+          "name": "event",
+          "value": "k=answer|c=1|v=2288\nEND"
+        },
+        {
+          "index": 38,
+          "name": "raw_speech",
+          "value": "Two two eight eight."
+        },
+        {
+          "index": 39,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 64,
+          "name": "event",
+          "value": "k=no|c=1\nk=proposal|c=1|p=credit card|a=220|d=Friday, 16 October\nk=proposal|c=1|p=personal loan|a=640|d=Friday, 16 October\nk=proposal|c=1|p=car loan|a=75|d=Friday, 16 October\nEND"
+        },
+        {
+          "index": 65,
+          "name": "raw_speech",
+          "value": "No, not today; 'already paid two hundred twenty' on an unrelated shop receipt, 'six hundred forty paid' on an unrelated supplier receipt and seventy-five on another unrelated receipt refer to none of these bank products, and I have not paid any of these bank arrears. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October"
+        },
+        {
+          "index": 66,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 75,
+          "name": "event",
+          "value": "k=confirm|c=1|p=all\nEND"
+        },
+        {
+          "index": 76,
+          "name": "raw_speech",
+          "value": "Yes, I confirm."
+        },
+        {
+          "index": 77,
+          "name": "admin",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "variant_id": "PUB-11__speech_night_ordinal_calendar_scope",
+      "repetition": 2,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": false,
+        "transcript_pass": false,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "promises [], expected [('p1', 220.0, '2026-10-16'), ('p2', 640.0, '2026-10-16'), ('p3', 75.0, '2026-10-16')]",
+          "the call was not closed with close_call",
+          "A46: exactly one terminal close_call required",
+          "conversation: The agent failed to meet the success criteria because it repeatedly interrupted the customer while they were attempting to deliver the required scripted aggregate answer. Specifically, in Message 7 and Message 9, the customer began the scripted response detailing the dates and payment amounts, but the agent interrupted in Message 8 and Message 10 with a repetitive prompt to clarify the date. As a "
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "dialogue_or_policy_failure_requires_root_classification",
+      "judge_outcome": "fail",
+      "judge_reason": "The agent failed to meet the success criteria because it repeatedly interrupted the customer while they were attempting to deliver the required scripted aggregate answer. Specifically, in Message 7 and Message 9, the customer began the scripted response detailing the dates and payment amounts, but the agent interrupted in Message 8 and Message 10 with a repetitive prompt to clarify the date. As a result, the customer never completed the aggregate answer, no promises were recorded in the ledger (missing create_promise calls), no grouped read-back occurred, and the call ended prematurely when the customer hung up. Furthermore, the required closing dialogue (thanking the customer, saying goodbye, and mentioning the text message confirmation) and the single final close_call ledger entry were not present.",
+      "actual_version": 2,
+      "call_id": "0c4db97e-6302-4571-b0de-efd37fc52a8c",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0012.json",
+      "source_sha256": "753c709990d07d164f6b67a63cc21d5cb5ccb18db94d35aac25e12358f165732",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account"
+      ],
+      "spoken": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Almeida?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Sofia Almeida."
+        },
+        {
+          "index": 16,
+          "role": "assistant",
+          "text": "What is your date of birth? Please say the month as a word."
+        },
+        {
+          "index": 17,
+          "role": "user",
+          "text": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 35,
+          "role": "assistant",
+          "text": "What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 36,
+          "role": "user",
+          "text": "Two two eight eight."
+        },
+        {
+          "index": 62,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment. Your credit card ending 2288 has 220.00 past due and is 9 days late. Your personal loan has 640.00 past due and is 9 days late. Your car loan has 75.00 past due and is 3 days late. Can you make all these payments today?"
+        },
+        {
+          "index": 63,
+          "role": "user",
+          "text": "No, not today; the third"
+        },
+        {
+          "index": 73,
+          "role": "assistant",
+          "text": "Please clarify the exact date for all."
+        },
+        {
+          "index": 74,
+          "role": "user",
+          "text": "No, not today; the third Friday of October twenty twenty"
+        },
+        {
+          "index": 84,
+          "role": "assistant",
+          "text": "Please clarify the exact date for all."
+        }
+      ],
+      "extracted_events": [
+        {
+          "index": 7,
+          "name": "event",
+          "value": "k=answer|c=1\nEND"
+        },
+        {
+          "index": 8,
+          "name": "raw_speech",
+          "value": "Sofia Almeida."
+        },
+        {
+          "index": 9,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 18,
+          "name": "event",
+          "value": "k=answer|c=1|v=1987-06-03\nEND"
+        },
+        {
+          "index": 19,
+          "name": "raw_speech",
+          "value": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 20,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 37,
+          "name": "event",
+          "value": "k=answer|c=1|v=2288\nEND"
+        },
+        {
+          "index": 38,
+          "name": "raw_speech",
+          "value": "Two two eight eight."
+        },
+        {
+          "index": 39,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 64,
+          "name": "event",
+          "value": "k=proposal|c=1|p=all|d=the third\nEND"
+        },
+        {
+          "index": 65,
+          "name": "raw_speech",
+          "value": "No, not today; the third"
+        },
+        {
+          "index": 66,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 75,
+          "name": "event",
+          "value": "k=proposal|c=1|p=all|d=third Friday of October 2020\nEND"
+        },
+        {
+          "index": 76,
+          "name": "raw_speech",
+          "value": "No, not today; the third Friday of October twenty twenty"
+        },
+        {
+          "index": 77,
+          "name": "admin",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "variant_id": "PUB-11__speech_night_fulls_not_floors",
+      "repetition": 3,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": false,
+        "failed": [
+          "conversation: The call failed primarily due to actor delivery failures by the simulated customer. According to the success criteria, the customer must follow the authored script precisely, and 'missing stress is an actor delivery failure'. In [Message 7], the user omitted the specific date 'sixteen October twenty twenty-six' from the required aggregate answer, providing only 'all on this Friday'. Additionally, "
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "dialogue_or_policy_failure_requires_root_classification",
+      "judge_outcome": "fail",
+      "judge_reason": "The call failed primarily due to actor delivery failures by the simulated customer. According to the success criteria, the customer must follow the authored script precisely, and 'missing stress is an actor delivery failure'. In [Message 7], the user omitted the specific date 'sixteen October twenty twenty-six' from the required aggregate answer, providing only 'all on this Friday'. Additionally, the customer failed to deliver the final scripted farewell ('Thank you, goodbye') after the assistant said goodbye in [Message 10], as the assistant terminated the call immediately. Other criteria, such as identity verification, product disclosure, and promise recording, were handled correctly by the agent.",
+      "actual_version": 2,
+      "call_id": "13983b23-16b1-467d-98ac-5eb2dd1c7d83",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0013.json",
+      "source_sha256": "5c887be816abdd88ba86835f721257f3662ab2d45cd1f9f0869a687f0a11815a",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Almeida?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Sofia Almeida."
+        },
+        {
+          "index": 16,
+          "role": "assistant",
+          "text": "What is your date of birth? Please say the month as a word."
+        },
+        {
+          "index": 17,
+          "role": "user",
+          "text": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 35,
+          "role": "assistant",
+          "text": "What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 36,
+          "role": "user",
+          "text": "Two two eight eight."
+        },
+        {
+          "index": 62,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment. Your credit card ending 2288 has 220.00 past due and is 9 days late. Your personal loan has 640.00 past due and is 9 days late. Your car loan has 75.00 past due and is 3 days late. Can you make all these payments today?"
+        },
+        {
+          "index": 63,
+          "role": "user",
+          "text": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday"
+        },
+        {
+          "index": 73,
+          "role": "assistant",
+          "text": "Please confirm: credit card ending 2288, 220.00 on 2026-10-16; personal loan, 640.00 on 2026-10-16; car loan, 75.00 on 2026-10-16. Do you confirm?"
+        },
+        {
+          "index": 74,
+          "role": "user",
+          "text": "Yes, I confirm."
+        },
+        {
+          "index": 108,
+          "role": "assistant",
+          "text": "Your payment promises are recorded. You will receive a text message confirming this promise. Thank you for your time. Goodbye."
+        }
+      ],
+      "extracted_events": [
+        {
+          "index": 7,
+          "name": "event",
+          "value": "k=answer|c=1\nEND"
+        },
+        {
+          "index": 8,
+          "name": "raw_speech",
+          "value": "Sofia Almeida."
+        },
+        {
+          "index": 9,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 18,
+          "name": "event",
+          "value": "k=answer|c=1|v=1987-06-03\nEND"
+        },
+        {
+          "index": 19,
+          "name": "raw_speech",
+          "value": "Third of June, nineteen eighty-seven."
+        },
+        {
+          "index": 20,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 37,
+          "name": "event",
+          "value": "k=answer|c=1|v=2288\nEND"
+        },
+        {
+          "index": 38,
+          "name": "raw_speech",
+          "value": "Two two eight eight."
+        },
+        {
+          "index": 39,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 64,
+          "name": "event",
+          "value": "k=proposal|c=1|p=credit card|a=220|d=this Friday\nk=proposal|c=1|p=personal loan|a=640|d=this Friday\nk=proposal|c=1|p=car loan|a=75|d=this Friday\nEND"
+        },
+        {
+          "index": 65,
+          "name": "raw_speech",
+          "value": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday"
+        },
+        {
+          "index": 66,
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 75,
+          "name": "event",
+          "value": "k=confirm|c=1|p=all\nEND"
+        },
+        {
+          "index": 76,
+          "name": "raw_speech",
+          "value": "Yes, I confirm."
+        },
+        {
+          "index": 77,
+          "name": "admin",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "variant_id": "PUB-11__speech_night_reversal_restore",
+      "repetition": 3,
+      "result": {
+        "pass": true,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": true,
+        "failed": [],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "passed",
+      "judge_outcome": "pass",
+      "judge_reason": "All criteria met. The agent correctly identified the bank and recording at the start. It verified identity via date of birth and then phone number before disclosing any account information. The agent listed all three products and then handled the customer's complex aggregate answer, which included various corrections and verbal slips. Despite several interruptions during the customer's long scripted turn, the agent eventually allowed the customer to complete the authored script. The agent then provided a single grouped read-back of the final terms (220/640/75 on 2026-10-16) and obtained the specific confirmation 'Yes, I confirm' before creating the promises in the ledger. The required text-message sentence, thank you, and goodbye were all delivered before the call was ended via the appropriate tool calls.",
+      "actual_version": 2,
+      "call_id": "887befec-3179-4df1-bc15-9d78957ed224",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0014.json",
+      "source_sha256": "d0f3784481f7f0083eca2e57cc3b84ab87c9f51516ec8bd11efa4fa40e56dc8c",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [],
+      "extracted_events": []
+    },
+    {
+      "variant_id": "PUB-11__speech_night_provisional_consent",
+      "repetition": 3,
+      "result": {
+        "pass": true,
+        "ledger_and_trace_pass": true,
+        "transcript_pass": true,
+        "failed": [],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      },
+      "classification": "passed",
+      "judge_outcome": "pass",
+      "judge_reason": "All criteria were met. The assistant identified the bank and recording in [Message 0]. Identity was verified using Date of Birth and Phone in the correct order before any debt was disclosed in [Message 6]. The assistant stated all three products (credit card, personal loan, car loan) and their amounts before asking for payment. The customer provided the specific scripted aggregate proposal in [Message 7]. The assistant performed a single grouped read-back of all terms in [Message 8], received the exact confirmation 'Yes, I confirm' in [Message 9], and then created three promises (p1, p2, p3) for the correct amounts and date (2026-10-16). In [Message 10], the assistant stated the required text message notification sentence, thanked the customer, and said goodbye before the final close_call and end_call events.",
+      "actual_version": 2,
+      "call_id": "8dc0d95f-7326-4bef-b4f7-9c48f0e49fd8",
+      "source": "local-runs/customer-benchmark/20261011T022945Z-c541f4ef5c77/evidence/0015.json",
+      "source_sha256": "14406e85a11b8635e2ed40cbf907d5bc29d5dc3f61b64c564ec2ab50ce8859e2",
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "spoken": [],
+      "extracted_events": []
+    }
+  ],
+  "limits": [
+    "Three remaining repetitions are unobserved; no complete18-call score is inferred.",
+    "Original timeout, failed scores/actors/expected bank records and judges remain unchanged.",
+    "Caller checked all three created simulations completed before starting a separate fresh first A-next1 test; B-next2 expired budget is not resumed.",
+    "Conditional CPU faults are not automatically the cause of a hosted failure; root classifications remain provisional until event/body/ledger replay.",
+    "Text stress is not ASR, audio, accents or hidden-case qualification."
+  ]
+}

@@ -1,0 +1,1153 @@
+{
+  "schema_version": "learned_layer_evaluation.v1",
+  "status": "planned_gates_with_pinned_v1_observation_not_deployment_approval",
+  "objective": "Increase correctly handled independent bank scenarios by recovering useful semantics at bounded selective error and latency, without relaxing deterministic authority gates.",
+  "v1_observed_snapshot": {
+    "source": "analysis/night-learned-dialogue.eval.json",
+    "model_sha256": "719228b3b1751f05e6df4f9faff5cb12d7ba03454c4a8516e75aeb60b3ca7516",
+    "split_rows": {
+      "train": 52,
+      "calibration": 22,
+      "holdout": 22
+    },
+    "holdout_raw_four_head_exact": 0.45454545454545453,
+    "holdout_accepted": 4,
+    "holdout_accepted_errors": 0,
+    "holdout_coverage": 0.18181818181818182,
+    "reported_holdout_error_wilson95_upper": 0.48990002040399916,
+    "calibration_accepted": 7,
+    "reported_calibration_error_wilson95_upper_approx": 0.3543,
+    "holdout_uncertainty_abstention_recall": 1.0,
+    "bundle_bytes": 1377743,
+    "persistence_roundtrip_exact": true,
+    "interpretation": "Real fitted sparse model and useful plumbing observation. Zero errors among four accepted rows is not quality/generalization/safety evidence. Wilson limits assume independent Bernoulli units and are not group-valid guarantees here. Same-author data and shared templates, reused calibration and guard effects remain limitations. Existing holdout becomes diagnostic for later adaptive iterations.",
+    "v1_noncapabilities": [
+      "no target prediction",
+      "no learned amount/date completeness",
+      "no scoped polarity",
+      "no security/offer/readback context features",
+      "consent unassessed",
+      "no Freya runtime qualification",
+      "no bank-score comparison"
+    ]
+  },
+  "experiment_freeze": {
+    "before_confirmation": "Pin code, weights, feature vocabulary, all lexical guards, calibration, OOD cutoffs, data/label/split hashes and hypotheses before opening new confirmation/OOD labels.",
+    "independence": "Whole lineage groups and independent authors/template sources per label spec. Repetitions, turns and paraphrases of a case do not count as new independent groups.",
+    "adaptation": "Any change after diagnostic/confirmation inspection requires a fresh qualification set or explicit exploratory status. Keep prior predictions and failed thresholds. No best-of-unreported-run selection.",
+    "seeds": "Use three predeclared fit seeds for stability; select configuration by development only. Report seed variation. Repeated fits of one dataset are not new independent test cases.",
+    "software": "Do not rerun worker training just to inspect it; use pinned outputs and new requested experiment versions. Designer owns plan files only."
+  },
+  "metrics": {
+    "semantic": "Per-head macro/micro precision/recall/F1, confusion, negative/unknown masks, exact target-set match, component completion/polarity accuracy, evidence-span overlap/exact match, offer-reference accuracy, secondary multi-label recall, complete-frame exact match.",
+    "safety": "False accepted affirmation, missed correction/negation, wrong target, fabricated/stale fact, unsafe reference to superseded offer, dropped mandatory admin question, malformed accepted frame. Report counts/denominators per slice, including abstention misses.",
+    "selection": "Accepted coverage, accepted precision=correct accepted/accepted, safe recall=correct accepted/all eligible gold opportunities, selective error, risk-coverage curve and area, per-head and whole-frame metrics. Empty accepted set has undefined precision and zero coverage, not 100% accuracy.",
+    "calibration": "NLL and Brier per head on annotated examples; reliability bins with counts and confidence bands; ECE as descriptive only. Separate raw learned predictions, rule-modified predictions and final accepted set. The minimum marginal score is not a joint correctness probability.",
+    "ood": "OOD false-accept rate and known-domain coverage at frozen thresholds, per shift axis; include near-domain semantic ambiguity as well as obviously unrelated text. New words alone do not prove OOD and familiar words do not prove in-domain.",
+    "state": "Fresh-turn binding, exact offer identity, retained sibling facts, unresolved-set transitions, consent invalidation, target isolation, stale receipt non-replay, pending vs recorded separation, and next spoken clarification.",
+    "latency": "Warm/cold model load and inference p50/p95/p99, feature count, UTF-8 bundle/proposal size, peak local allocation, exported snippet size, code-node duration, full customer-turn silence and total clarification turns. Offline timing is not hosted timing.",
+    "bank": "Untouched official ledger and transcript judge combined case pass; all-three-repetition scenario pass; correct bank amounts only on passed scenarios; actual forbidden action attempts; bank failure/actor/judge/infra causes separately.",
+    "confidence_unit": "Use independent group outcomes (e.g. any unsafe accepted turn in group) for finite-sample risk bounds; show accepted rows and accepted groups. Cluster bootstrap groups for descriptive confidence intervals on recall/coverage/score; do not bootstrap individual turns."
+  },
+  "risk_procedure": {
+    "fit": "Fit model on train, choose architecture/regularization/guard changes on development, fit calibration parameters on calibration_fit.",
+    "threshold_selection": "On calibration_risk search only a preregistered finite grid of acceptance and OOD settings. Either use simultaneous one-sided tests with alpha/K for K candidate settings, or call selection exploratory and obtain bound on independent confirmation after freezing.",
+    "group_definition": "For each eligible lineage group g, A_g=1 if it contains any accepted authority-relevant semantic proposal; E_g=1 if any such accepted proposal is wrong. Estimate group-conditional error sum(E_g)/sum(A_g). Report also row error; do not substitute one for the other.",
+    "bound": "For independent accepted groups use exact one-sided binomial upper confidence bound; zero-error formula U=1-alpha^(1/n). If n=0, unqualified. At alpha=.05, n=4 gives U about .527 and n=7 gives about .348; these differ from v1's two-sided Wilson values and are illustrative independence-assuming bounds only.",
+    "qualification_target": "Provisional high-impact semantic adoption target: upper bound <=1% at 95% one-sided confidence, plus zero observed critical kernel violations and useful coverage. With zero errors this needs at least 299 independent accepted groups, before multiple-testing corrections. Small current data cannot qualify this target.",
+    "lower_risk": "Clarification suggestions may remain experimental shadow outputs below that evidence threshold, but false stops/transfers/refusals still harm bank score and must be measured. No numerical threshold turns a model into permission.",
+    "recall_coverage": "Publish group-cluster confidence intervals and raw counts for accepted coverage, blocker recall and bankscore differences. Preregister a practically useful improvement margin on development before new qualification; do not pick it after seeing test results.",
+    "nonexchangeability": "Final briefs, actors and language may shift. Neither Wilson, exact-binomial nor conformal calibration implies a bound under arbitrary OOD. Use scenario-specific stress and source-schema validation; label OOD findings empirical."
+  },
+  "ablations": [
+    {
+      "id": "A0",
+      "variant": "existing fixed-AGENT_LLM extractor + unchanged kernel",
+      "isolates": "operational baseline; hash/version pinned"
+    },
+    {
+      "id": "A1",
+      "variant": "rules/uncertainty_guard/component_observations only, learned logits disabled",
+      "isolates": "whether abstention success comes from lexical guards rather than learning"
+    },
+    {
+      "id": "A2",
+      "variant": "learned heads only in OFFLINE scoring, no lexical uncertainty overrides",
+      "isolates": "raw model competence; never deploy without gates"
+    },
+    {
+      "id": "A3",
+      "variant": "same model+guards with shuffled TRAIN labels, never shuffled qualification labels",
+      "isolates": "label learning versus guard dominance; refit and calibrate each control under same protocol"
+    },
+    {
+      "id": "A4",
+      "variant": "zero/random weights and majority classifier",
+      "isolates": "nonlearning baselines and imbalanced class effects"
+    },
+    {
+      "id": "A5",
+      "variant": "context-conditioned model vs text-only model",
+      "isolates": "identical yes/no/date/digit turns across phases and offer/readback revisions"
+    },
+    {
+      "id": "A6",
+      "variant": "component/target/polarity heads vs current whole-utterance completion label",
+      "isolates": "actual sibling retention, scoped negation and heterogeneous targets"
+    },
+    {
+      "id": "A7",
+      "variant": "immutable offer-reference feature/graph vs no offer-reference",
+      "isolates": "accepted adjusted offer lost to recomputed default/deadline"
+    },
+    {
+      "id": "A8",
+      "variant": "uncalibrated ranking vs calibrated selective layer at matched coverage",
+      "isolates": "calibration and selection benefit without hiding it behind more abstention"
+    },
+    {
+      "id": "A9",
+      "variant": "char-only, word-only and combined sparse features; optional frozen-encoder offline comparator",
+      "isolates": "lexical robustness, footprint and representation ceiling"
+    },
+    {
+      "id": "A10",
+      "variant": "full precision sparse vs pruned/quantized export",
+      "isolates": "footprint savings and any threshold/semantic regression; recalibrate changed model"
+    },
+    {
+      "id": "A11",
+      "variant": "consumer fix only vs consumer fix plus learned proposal on same baseline",
+      "isolates": "B9 reducer bug repair from actual learned-layer contribution"
+    },
+    {
+      "id": "A12",
+      "variant": "gold semantic input into kernel, labelled ORACLE UPPER BOUND only",
+      "isolates": "consumer ceiling; never counted as trained or end-to-end result"
+    }
+  ],
+  "sequence_contracts": [
+    {
+      "id": "C1",
+      "steps": "Known terms -> complete replacement amount + unfinished date -> date completion -> fresh full readback -> later clear affirmation",
+      "assert": "New amount survives; no fragment normalization; need=date only; no write until actual confirmation."
+    },
+    {
+      "id": "C2",
+      "steps": "Both components correction -> amount -> unrelated target turn -> date; repeat reverse order",
+      "assert": "Per-target epoch stores explicit completions without resetting or borrowing sibling values."
+    },
+    {
+      "id": "C3",
+      "steps": "Unfinished amount -> date-only -> yes",
+      "assert": "Cached full/floor/old amount cannot clear unresolved amount; no readback/write."
+    },
+    {
+      "id": "C4",
+      "steps": "Policy-adjusted offer O -> user acceptance of O -> admin question -> full readback O -> confirmation",
+      "assert": "Exact O terms/revisions retained; source-derived calendar date not replaced by a recomputed deadline. Derived from recovered A5 mechanism; parameterize all fixture values."
+    },
+    {
+      "id": "C5",
+      "steps": "Same utterance yes at recipient, security clarification, offer, readback, support, no-context",
+      "assert": "Correct contextual act/reference or abstention; same classifier surface is not unconditional consent."
+    },
+    {
+      "id": "C6",
+      "steps": "Security answer plus purpose question, in both sentence orders",
+      "assert": "Complete current answer not refusal; admin response retained within pre-verification privacy; leading zeros and whole DOB preserved."
+    },
+    {
+      "id": "C7",
+      "steps": "Third-party plus payment offer/question; restructuring plus incidental fragment; support decline plus discount question",
+      "assert": "All acts retained; policy chooses branch; payment fragment cannot erase complete nonpayment intent."
+    },
+    {
+      "id": "C8",
+      "steps": "Negated paid/dispute/date clause plus positive sibling proposal; yes plus admin aside; yes plus new terms",
+      "assert": "Scoped polarity, complete corrections and administrative qualification distinct; no blanket keyword override."
+    },
+    {
+      "id": "C9",
+      "steps": "Collective common date encoded one group vs multiple per-target clauses; explicit total vs each amount",
+      "assert": "Representation equivalence preserves collective_id and source-defined date behavior; no aggregate duplication."
+    },
+    {
+      "id": "C10",
+      "steps": "Valid readback -> missing/malformed extraction -> retained facts -> new readback -> later yes",
+      "assert": "Fresh confirmation required; no infinite empty-readback phase; no old consent reuse."
+    },
+    {
+      "id": "C11",
+      "steps": "Promise success -> stale receipt -> second target failure -> source-defined exit",
+      "assert": "No duplicate write/attempt inflation, prior record immutable, success acknowledgement/SMS obligations tracked separately from pending facts."
+    },
+    {
+      "id": "C12",
+      "steps": "Oversize, unknown keys, duplicate fields, empty text, Unicode offsets, stale state/policy, exception, output truncation",
+      "assert": "Explicit abstention/current neutral patch and bounded safe fallback; no silent truncation or side effects."
+    },
+    {
+      "id": "C13",
+      "steps": "Delayed refusal for target -> new explicit valid proposal for same target -> sibling/administrative turn -> readback",
+      "assert": "Delayed refusal bound to superseded revision cannot restore old persuasion date or alter new accepted terms; no claim learning alone fixes reducer."
+    },
+    {
+      "id": "C14",
+      "steps": "Same speech facts encoded amount-row+date-row, reverse row order and coalescedrow",
+      "assert": "One atomic target patch retains both; equivalent next required speech; no premature intermediate transition."
+    },
+    {
+      "id": "C15",
+      "steps": "Two competing same-component values with and without explicit speech-grounded replacement; reorder serialization only",
+      "assert": "Respect actual correction relation; unresolved conflict clarifies, never last serialized value wins."
+    },
+    {
+      "id": "C16",
+      "steps": "TargetA unfinished date then complete targetB paid/proposal; quoted ellipsis control; terminal Bfragment control",
+      "assert": "Only actual unfinished component blocked; complete sibling preserved, historical receipt never fabricated."
+    },
+    {
+      "id": "C17",
+      "steps": "Current readback with other paid/recorded siblings -> idiomatic affirmative vsnegative vsnewterms",
+      "assert": "Scoped interpretation; failed confirmation cannot fall through to all-target refusal or reopen resolved siblings."
+    },
+    {
+      "id": "C18",
+      "steps": "Incomplete deceased/hardship/restructure/stop versus complete act plus separate payment fragment",
+      "assert": "Known but unfinished act cannot acquire completed-primary policy precedence; completed independent act remains available."
+    },
+    {
+      "id": "C19",
+      "steps": "Actual name-only/generic confirm recipient event; yes in offer/readback/support and ambiguous/no-question controls",
+      "assert": "Recipient-self advances only source-required security; no identity verification or financial consent from a generic confirm."
+    },
+    {
+      "id": "C20",
+      "steps": "Finite complete amount with unfinished date; malformednan/inf/overflow in complete/partial/pending/readback paths",
+      "assert": "Uniform grammar/finite validation before state mutation/readback; retain valid sibling and bounded clarification, no NaN equality loop."
+    },
+    {
+      "id": "C21",
+      "steps": "Datecomplete+timeunfinished, vaguecomplete, quotedellipsis, explicitdatefragment and orderedrepair contrasts",
+      "assert": "Completion, act commitment and unique normalization remain separate; scope survives clause/row serialization changes."
+    }
+  ],
+  "footprint_contract": {
+    "current": "Original v1 model.json remains1,377,743bytes. A pinned later local export report is357,336bytes with96-row decision parity; later runtime source snapshot357,535bytes is distinct. Local size engineering gate is satisfied by these sizes, while semantic/runtime qualification remains open.",
+    "next_hard_local_gate": "Exported UTF-8 bundle <=500,000 bytes and <=100,000 retained nonzero weights for initial deployment candidate; output <=16,384 bytes and input<=4,096 chars. These are engineering gates, not Freya-documented limits.",
+    "method": "Train-only vocabulary cutoff/min-frequency; shared feature indices; compact sparse arrays; zero and magnitude pruning chosen on development; int8/int16 per-head scale only after parity/regression evaluation. Renormalization and quantization alter scores, so calibrate the final exported representation.",
+    "fallback": "If meaningful coverage at the risk target cannot fit the budget, remain offline/shadow or use model for offline builder analysis only. Do not hide weights in repeated vars patches or call external inference.",
+    "runtime": "Export adapter must use only json/re/datetime and builtins under current guide. Current inference imports hashlib/math/collections are fine for offline prototype but require replacement or explicit future runtime qualification. Use upstream builder hash and dict/sqrt-by-power/stable exp-by-power as needed; no invented imported-module support.",
+    "latency_targets": "Local p95<=50ms and p99<=100ms per bounded input, report cold load separately; hosted full-turn latency must not regress beyond a preregistered margin (proposed p95 +250ms). Platform sample too small means unqualified, not pass. No extra model/API call per customer turn."
+  },
+  "end_to_end_acceptance": {
+    "owner": "Parent and traditional builder/testing owner; designer makes no platform call or candidate edit.",
+    "preconditions": [
+      "competition runtime interpretation resolved",
+      "trusted raw-input adapter or clearly restricted extractor-assisted variant qualified",
+      "source-derived policy/API and semantic contract hashes pinned",
+      "actual producer examples and exported persistent graph pass",
+      "all required heads calibrated/qualified or explicitly abstaining",
+      "footprint/latency gates pass"
+    ],
+    "protocol": "Same fixed AGENT_LLM, brief/API, scorer, customer contract/style, calendar and fault schedule for baseline and treatment. New independent bank session per repetition, stable published version, one platform simulation at a time. Keep A publication lock and existing test queue. Three repetitions per customer, all three required. Randomize/order-balance paired runs where permitted and retain actual model-service latency.",
+    "score": "Report original official combined score and all-three metric without reinterpretation. Authored stress, independent local mock, literal kernel replay, shadow extraction and speech/ASR each have separate denominators. Unknown/missing/inconclusive is not a pass.",
+    "promotion": "Zero observed new critical violations is necessary. Require paired per-scenario nonregression on protected official scenarios and prespecified useful improvement on independent authored/qualification cases, with group-level uncertainty and a frozen practical margin. Tiny samples may support continued experiment but not a generalization claim.",
+    "safety_rejection": "Any premature/misattributed write, disclosure before verification, target/offer substitution, stale consent, false success acknowledgement or prohibited action attempt rejects promotion even if aggregate score improves. Additional guards may reject an official pass, never convert an official failure to pass.",
+    "diagnosis": "Separate semantic model error, extraction transport, kernel reducer, source-policy ambiguity, bank/infra, actor adherence and judge disagreement. Maintain original verdicts and full ordered evidence with SHA/version bindings.",
+    "tie_breakers": "Only after primary official score and safety gates: total promised amount for passed cases, then builder time and submission time per README. No risky promise inflation."
+  },
+  "first_implementation_requests": [
+    "Keep v1 files/results frozen; add versioned context-aware API with phase/question/offer/readback and current-turn provenance.",
+    "Factor independent completion/polarity/correction and target/component labels; add multilabel secondary acts and explicit untrained masks.",
+    "Separate raw model from guards-only metrics, and add shuffled-label/random controls before attributing abstention success to learning.",
+    "Generate a fresh independently reviewed v2 pack with calibration-fit/risk/confirmation/OOD roles; diagnostic v1 holdout cannot requalify v2.",
+    "Prune/export below 500 KB, calibrate final representation, and report actual parity/footprint/latency; no package/network at runtime.",
+    "Send versioned interfaces, data groups and measured failure examples to designer; parent supplies Opus witnesses and pinned bank-score evidence."
+  ],
+  "research_refs": [
+    "https://proceedings.mlr.press/v70/guo17a.html",
+    "https://proceedings.mlr.press/v130/gangrade21a.html",
+    "https://proceedings.iclr.cc/paper_files/paper/2024/hash/f3549ef9b5ff520a7e41ff3cc306ab2b-Abstract-Conference.html"
+  ],
+  "source_refs": [
+    "analysis/learned-layer-design.json#/source_manifest",
+    "analysis/night-learned-dialogue.eval.json",
+    "analysis/night-learned-dialogue.train.json",
+    "analysis/night-a5-recovered-first-iteration.json",
+    "integrations/learned-dialogue/inference.py",
+    "integrations/learned-dialogue/train_eval.py"
+  ],
+  "gpu_experiment_gate": {
+    "reference": "analysis/learned-layer-design.json#/bounded_modal_h100_experiment",
+    "status": "authorized budget envelope; no execution by designer; data gate currently unsatisfied",
+    "global_budget_hard_usd": 35,
+    "global_credit_target_usd": 30,
+    "proposed_experiment_reservation_usd": 10,
+    "max_gpu_jobs_serial": 3,
+    "max_gpus_per_job": 1,
+    "frozen_teacher_vs_student_comparison": "Gold-only sparse student vs compact teacher vs distilled sparse student; calibrate final export; use new independent qualification.",
+    "timeout_and_billing_contract": "analysis/learned-layer-design.json#/bounded_modal_h100_experiment/timeout_contract",
+    "automatic_upgrade_billing": "Modal H100 automatic H200 substitution retains H100 GPU cost. A higher H200-price reservation is conservative only, not a billing rule. Explicit H200 selection remains outside the request.",
+    "launch_preconditions": [
+      "Existing data/CPU-limitation/freeze gates remain unchanged.",
+      "Parent verifies installed SDK capabilities, zero retries, explicit startup limit where supported, total-wall watchdog and remote-stop verification before execution.",
+      "Parent alone reserves aggregate budget; no GPU job started is the user-reported state at this amendment."
+    ]
+  },
+  "conditional_opus_witness_status": {
+    "A5_rows": 9,
+    "B9_rows": 13,
+    "scope": "Hand-authored producer rows/synthetic receipts through unchanged snippets; no actual producer or bank call. Two source-model claims corrected: cache retention and existing-promise acknowledgement.",
+    "sources": [
+      "analysis/night-opus-a5-witnesses.json",
+      "analysis/night-opus-b9-witnesses.json"
+    ]
+  },
+  "effective_checkpoint_id": "checkpoint-08-frozen-r3-detector-diagnosis",
+  "updated_at_utc": "2026-10-11T03:01:36.466207+00:00",
+  "checkpoints": [
+    {
+      "id": "checkpoint-02-context-risk-source-binding",
+      "utc": "2026-10-11T01:49:38.226266+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/0/source_manifest",
+      "scope": "Additive design clarification; no v1 data/model/metrics edits or new experiment claims."
+    },
+    {
+      "id": "checkpoint-02a-modal-docs-correction",
+      "utc": "2026-10-11T01:54:04.367398+00:00",
+      "previous_owned_file_hashes": {
+        "analysis/learned-layer-design.json": "4eaacf419c3bd3bdef58eb309756f7d22d40414a683e8a8eaec010b4c255fbf4",
+        "analysis/learned-layer-design.txt": "1cb8e012b7f3da15ddf03012dd2c4a92e53f78917a1bb6e26b996b79371f077d",
+        "analysis/learned-layer-evaluation-plan.json": "a5776227b94b360a51d3879dfcff40229c3f977ab7146b47923cc2f4fcc607b1"
+      },
+      "sources": [
+        {
+          "url": "https://modal.com/docs/guide/gpu",
+          "section": "Automatic upgrades to H200s",
+          "evidence": "Official documentation read directly; automatic substitution preserves GPU cost."
+        },
+        {
+          "url": "https://modal.com/docs/guide/timeouts",
+          "section": "Execution timeout, Container startup timeout, Timeout accuracy",
+          "evidence": "Official documentation read directly; execution/startup/total-wall distinction and SDK capability preflight."
+        }
+      ],
+      "scope": "Documentation/design correction only. No cloud job, SDK installation, credentials, budget-ledger write, or data-readiness promotion."
+    },
+    {
+      "id": "checkpoint-03-b10-scoped-merge-and-narrow-head",
+      "utc": "2026-10-11T02:05:42.353027+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/2/source_manifest"
+    },
+    {
+      "id": "checkpoint-04-act-completion-and-date-negative-pilot",
+      "utc": "2026-10-11T02:12:19.841036+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/3/source_manifest"
+    },
+    {
+      "id": "checkpoint-05-reviewed-lineage-freshness-detector-contract",
+      "utc": "2026-10-11T02:22:55.476948+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/4/source_manifest"
+    },
+    {
+      "id": "checkpoint-06-cpu-date-pilot-and-student-decoder",
+      "utc": "2026-10-11T02:29:48.362926+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/5/source_manifest"
+    },
+    {
+      "id": "checkpoint-07-source-bound-regression-vectors",
+      "utc": "2026-10-11T02:44:12.984306+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/6/source_manifest"
+    },
+    {
+      "id": "checkpoint-08-frozen-r3-detector-diagnosis",
+      "utc": "2026-10-11T03:01:36.466207+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/7/source_manifest"
+    }
+  ],
+  "finite_sample_group_contract": {
+    "sampling_assumptions": [
+      "Freeze predictor, normalizer, kernel/adapter, scores, thresholds, eligible population, group generation protocol and analysis before opening qualification. Calibration_fit and calibration_risk are different lineage pools; qualification is new and blind.",
+      "Exact binomial inference requires independent identically distributed group outcomes from a stated sampling distribution. Exchangeable labels or distinct group names alone do not establish this. Connected-component lineage separation removes known overlap but is not a probabilistic independence certificate.",
+      "Different authors help source diversity but do not turn purposively authored cases into random population samples or independently adjudicated gold. On a curated contrast suite, report finite-suite counts; any population bound is explicitly conditional on a justified sampling model.",
+      "Keep all turns, repetitions, augmented siblings and contrast-family members in their group. Fix group size/turn exposure protocol; any-error risk depends on exposure. Do not plug a guessed effective sample size or number of repeated seeds into a binomial formula.",
+      "For heterogeneous source strata, do not pool non-identically-distributed group Bernoullis into an exact binomial claim. Report per-stratum evidence with predeclared multiplicity and mixture assumptions; absent enough data, remain unqualified."
+    ],
+    "estimands": {
+      "eligible_group": "A sampled scenario/lineage unit containing the full prespecified exposure protocol, including all planned repetitions.",
+      "A_g": "1 if at least one authority-relevant proposal is accepted in group g, else 0. Accepted means admitted to the specified semantic consumer, not permission to execute a bank action.",
+      "E_g": "1 if any accepted proposal in group g is semantically wrong on ANY dependency required by that consumer, else 0. E_g <= A_g. Missing adjudication makes the observation unusable for certification; publish exclusions and reasons.",
+      "group_selective_risk": "P(E_g=1 | A_g=1); observed k/m where k=sum E_g and m=sum A_g. Conditional on m, exact binomial applies only under the frozen iid joint-group model.",
+      "group_coverage": "P(A_g=1); observed m/G. A single trivial accepted turn can make A_g=1, so this is insufficient utility by itself.",
+      "row_coverage": "Accepted eligible semantic frames / all eligible frames, with group-cluster descriptive uncertainty; never replace group risk denominator by row count.",
+      "safe_recall": "Correct accepted eligible gold frames / all eligible gold frames, including abstention misses. Report target/component/intent-specific counts and complete authority-relevant frame recall; no credit for an irrelevant easy head.",
+      "critical_event": "Any forbidden bank action, stale consent, target/offer substitution or privacy violation is a separate rejection event even when a coarse semantic label was correct."
+    },
+    "exact_upper": {
+      "input": "Integer m >= 0, 0 <= k <= m, prespecified one-sided alpha in (0,1).",
+      "empty": "m=0: status=unqualified, observed_risk=null, upper=1 (vacuous bound), never accuracy=1.",
+      "all_wrong": "k=m: upper=1.",
+      "zero_wrong": "k=0<m: upper=1-alpha**(1/m).",
+      "general": "For 0<k<m, unique U in (0,1) with sum(j=0..k) binom(m,j)*U**j*(1-U)**(m-j)=alpha; equivalently Beta(k+1,m-k) quantile at 1-alpha.",
+      "implementation": "Offline statistics implementation only: use a trusted beta quantile or log-space binomial-CDF bisection to avoid underflow; cross-check k=0, k=m and monotonicity. Do not hand-roll floating probability tails inside phone code.",
+      "interpretation": "Frequentist coverage over repeated sampled qualification sets under the stated assumptions. Not a posterior probability that this model is safe, nor an OOD guarantee."
+    },
+    "zero_error_examples": [
+      {
+        "accepted_independent_groups": 4,
+        "errors": 0,
+        "alpha": 0.05,
+        "one_sided_upper": 0.5271291954984121,
+        "assumptions": "iid frozen accepted-group protocol; illustrative, not current qualification"
+      },
+      {
+        "accepted_independent_groups": 7,
+        "errors": 0,
+        "alpha": 0.05,
+        "one_sided_upper": 0.3481636551311609,
+        "assumptions": "iid frozen accepted-group protocol; illustrative, not current qualification"
+      },
+      {
+        "accepted_independent_groups": 20,
+        "errors": 0,
+        "alpha": 0.05,
+        "one_sided_upper": 0.13910834066826516,
+        "assumptions": "iid frozen accepted-group protocol; illustrative, not current qualification"
+      },
+      {
+        "accepted_independent_groups": 100,
+        "errors": 0,
+        "alpha": 0.05,
+        "one_sided_upper": 0.029513049607039932,
+        "assumptions": "iid frozen accepted-group protocol; illustrative, not current qualification"
+      },
+      {
+        "accepted_independent_groups": 299,
+        "errors": 0,
+        "alpha": 0.05,
+        "one_sided_upper": 0.009969146792899286,
+        "assumptions": "iid frozen accepted-group protocol; illustrative, not current qualification"
+      },
+      {
+        "accepted_independent_groups": 598,
+        "errors": 0,
+        "alpha": 0.05,
+        "one_sided_upper": 0.004997058694246492,
+        "assumptions": "iid frozen accepted-group protocol; illustrative, not current qualification"
+      }
+    ],
+    "zero_error_sample_sizes": [
+      {
+        "risk_target": 0.01,
+        "alpha": 0.05,
+        "minimum_accepted_groups": 299
+      },
+      {
+        "risk_target": 0.005,
+        "alpha": 0.05,
+        "minimum_accepted_groups": 598
+      },
+      {
+        "risk_target": 0.01,
+        "alpha": 0.025,
+        "minimum_accepted_groups": 368
+      },
+      {
+        "risk_target": 0.005,
+        "alpha": 0.025,
+        "minimum_accepted_groups": 736
+      },
+      {
+        "risk_target": 0.01,
+        "alpha": 0.004545454545454546,
+        "minimum_accepted_groups": 537
+      },
+      {
+        "risk_target": 0.005,
+        "alpha": 0.004545454545454546,
+        "minimum_accepted_groups": 1077
+      }
+    ],
+    "coverage_lower": "For m successes among G iid groups, the exact one-sided lower limit solves P_p[X>=m]=alpha for 0<m<=G (Beta(m,G-m+1) alpha quantile); m=0 gives 0. State its own alpha. At G=m, lower=alpha**(1/G).",
+    "multiplicity_and_looks": [
+      "The default primary claim is one frozen whole-frame group risk at alpha=.05. Per-head/slice values are descriptive unless alpha is allocated to them in advance.",
+      "If qualification requires simultaneous risk and coverage confidence statements, allocate e.g. alpha_risk=.025 and alpha_coverage=.025 for joint >=95% coverage by union bound. With zero errors, risk<=1% then requires368 accepted iid groups, not299.",
+      "If searching K risk/OOD/threshold rules on calibration_risk and certifying there, allocate alpha/K (and any extra endpoints/slices/looks) before inspection. For K=11 and risk<=1%, zero errors needs537 accepted iid groups per qualifying rule at alpha=.05/11.",
+      "Alternative: use calibration_risk for exploratory selection, freeze exactly one candidate, then test once on fresh independent qualification. The independent final test does not pay for earlier searches unless selecting among multiple candidates on that final set.",
+      "Do not repeatedly inspect growing fixed-sample CP intervals and stop when a favorable bound appears. Fix group count/decision time, or predeclare a finite look schedule with alpha spending; a future anytime-valid confidence sequence would require its own implementation/review.",
+      "Any adaptive changes from qualification failures retire those data to diagnostic. A new model requires new blind qualification for a fresh primary claim. Reporting only the best version or favorable slice is prohibited."
+    ],
+    "threshold_procedure_now": "With current small v2 training/development resources, implement these report fields but return unqualified unless calibration/qualification actually exist. A chosen confidence threshold is an engineering research setting, not a risk certificate."
+  },
+  "paired_bank_score_contract": {
+    "unit": "For each scenario g and arm a, Y_ga=1 iff every one of the original three repetitions passes the untouched combined judge+ledger rules. Missing/inconclusive stays not pass. Use the observed all-three outcome, not estimated single-call rate cubed.",
+    "comparison": "Freeze baseline and treatment versions. Compare paired scenario differences D_g=Y_g,treatment-Y_g,baseline in {-1,0,1}; report all four paired outcome counts and mean difference. Pairing controls scenario composition, not stochastic equivalence between service calls.",
+    "inference": "Original small fixed official bank suite gives its exact finite-suite score. Generalization intervals require independently sampled new scenarios and the exposure protocol. Group bootstrap of paired scenarios is descriptive at small n; exact discordant-pair tests require their null/exchangeability assumptions and may have very low power.",
+    "practical_gate": "Before new blind evaluation, parent freezes a useful improvement margin and tolerated latency margin using development. Require no observed new critical violation and no protected-scenario regression. No chosen margin exists merely because this document proposes a procedure.",
+    "A5_evidence": "Original full A5 baseline is29/30calls and9/10all-three. It is not a learned-layer gain. PUB07rep2 accepted a holiday-adjusted date, agent substituted a later deadline, and user later confirmed the substituted terms. Diagnose offer substitution, not an unconfirmed-write claim.",
+    "attribution": "Ablate consumer fixes separately: baseline vs fixed consumer vs fixed consumer+learned proposals. Bank improvements from traditional policy repair cannot establish learned semantic contribution."
+  },
+  "checkpoint_02_runtime_evidence": {
+    "source": "analysis/night-learned-dialogue.export.json; analysis/night-learned-dialogue.handoff.json; pinned hashes in design checkpoint",
+    "saved_export": {
+      "bytes": 357336,
+      "retained_coefficients": 31131,
+      "shared_features": 1153,
+      "local_parity_rows": 96,
+      "max_confidence_absolute_difference": 2.220446049250313e-16,
+      "cold_compile_decode_ms": 84.2818,
+      "smoke_tests": 20,
+      "warm_local_p95_ms": 0.535,
+      "warm_local_p99_ms": 0.618
+    },
+    "source_drift": "Saved export report and later runtime_embedded.py snapshot have different source hashes/sizes (later357535bytes). The report qualifies only its pinned artifact; do not silently transfer exact parity/timing evidence to a later revision.",
+    "scope": "Local implementation/export improvement. No new semantic labels, independent safety result, v2 qualification, actual code-node timing or bank-score result.",
+    "raw_binding": "Original system.conversation template exists, but code-node latest-user lossless mapping/freshness/authenticity is not established. See design runtime_source_binding_review; no platform call is proposed here."
+  },
+  "checkpoint_02_ablation_refinements": [
+    {
+      "id": "A5-context-paths",
+      "requirement": "A true text-only control disables context features AND context-dependent candidate/reference heuristics. If only learned crosses are removed, name it learned-context-feature ablation."
+    },
+    {
+      "id": "A6-scope",
+      "requirement": "Compare global lexical veto vs span-scoped qualifier diagnostics with identical trained heads, calibration roles and consumer; report missed stop/correction, false correction and complete-sibling retention at matched risk/coverage."
+    },
+    {
+      "id": "A6-masks",
+      "requirement": "Report each head capability and adjudicated label coverage; no joint exact score over absent heads and no multiplying identical completion/unresolved predictions."
+    },
+    {
+      "id": "N-normalizer",
+      "requirement": "Measure complete-but-vague date, exact-unparsed value, negated value, multiple candidates, unsupported language and overflow separately. Parser no-match is not absence; valid semantic input with unresolved normalization cannot write."
+    },
+    {
+      "id": "B-binding",
+      "requirement": "Separate offline trusted saved-turn replay from extracted_copy shadow. End-to-end errors include extractor transport. Same caller-provided stale snapshot matching itself cannot qualify freshness."
+    }
+  ],
+  "checkpoint_02_opus_disposition": "Native source review findings are evaluated against29 typed local witness observations and explicit corrections. They are neither29 customers nor platform executions. V1 documented its score as non-probabilistic already; exact duplicate weights independently witnessed; newer small export was not inspected by native review. No changes to saved v1 artifacts.",
+  "latest_amendment_id": "checkpoint-07-source-bound-regression-vectors",
+  "checkpoint_03_risk_and_coverage_controls": {
+    "current_data_coverage_ref": "analysis/learned-layer-design.json#/checkpoint_03_actual_v2/current_data_coverage",
+    "current_acceptance": "Saved v2 accepted_groups=0, calibration=false. Selective risk undefined/vacuous upper1; do not treat174abstentions as174safe predictions.",
+    "minority_baselines": "Always-empty secondary21/22 and always-asserted component polarity13/15 match reported accuracy. Report per-class TP/FP/FN, observed groups, macro metrics and positive-act recall; majority labels cannot substantiate scope competence.",
+    "stage_denominators": [
+      "Candidate detection recall against all reviewed gold component spans, including missed spans.",
+      "Completion/polarity conditional on oracle spans, clearly labelled diagnostic ceiling for that component stage.",
+      "Predicted-span classification and target/clause-link exactness with detector misses counted as failures.",
+      "Accepted complete semantic frame risk and safe recall over independent sampled groups.",
+      "End-to-end original combined score after fixed deterministic consumer and source binding gates."
+    ],
+    "B10_official": "Saved results confirm6/9combined calls and1/3all-three;3missing conversation verdicts remainfail.9/9bankpass is parent-reported separate evidence, not reconstructed from tools list. Missing judge verdicts are not semantic negative labels or permission to impute pass.",
+    "A6": "Parent reports automatic140secondbuild publishedv6,newinitialize-controller-speechgraph; hostednotyet and independentaudit active. No learned improvement or repaired behavior asserted.",
+    "candidate_merge_properties": "Add C14same-turn nonconflicting row permutation and partition/coalescing, C15explicit speech-ordered corrections/conflict, C16nonterminal/quoted ellipsis with complete sibling, C17idiomatic confirmation preserves exact readback target set and paid/recorded dispositions. ExistingC13refusal supersession extended across sibling completion.",
+    "narrow_trial": "Binary primary-payment subset may proceed as an explicitly exploratory training/annotation experiment; no requirement that unrelatedrareheads be learned. Admission and GPU gates apply to exactly its claimed capabilities, negatives and operating domain, not a false global101group count.",
+    "invariance_statistics": "Metamorphic variants of one source form onegroup. Passing10or32localcontracttests is no binomial qualification evidence. Count failures per root and retain all variants for diagnosis.",
+    "freeze_and_reuse": "Metrics pin artifact bytes plus stable lineage/event identity, not example IDs alone. Current data renumbering/content changes require newrun; oldmodel results cannot be joined to newlabels by reused IDs."
+  },
+  "checkpoint_04_evaluation": {
+    "frozen_final_v2": "model4b96a26d0b99ed2ff2d774d7678131c4cb14960b462ba48bcc3790972d31b427;180parity/schema rows,298186bytes,14.97sfit; primary12/22vs6/22no-context; componentcompletion5/15. All runtime abstain, uncalibrated; no qualified precision or bank-score gain.",
+    "act_completion_errors": [
+      "false completed-act admission from unfinished/hypothetical/quoted/conditional primary",
+      "missed complete independent act due to unrelated unfinished amount/date/admin",
+      "wrong-person deceased/recipient act",
+      "counter/close/transfer/support transition caused solely by incomplete kind membership"
+    ],
+    "date_completion_metrics": [
+      "Per-class precision/recall with row AND lineage counts; majority/always-complete baseline.",
+      "Separately score linguistic completion, normalization resolvability, polarity and correction scope.",
+      "Candidate detector recall plus classifier oracle-span accuracy plus predicted-span full-pipeline accuracy.",
+      "Group-level error at accepted decision after fresh calibration/qualification; all reviewed dev remains developmental."
+    ],
+    "transport_discrimination": "Actual generic confirm emitted for recipient name-only reply must be tested with that phase-specific producer/consumer contract. Do not count recipient classification as verified identity or financial consent.",
+    "numeric_faults": "NaNpartial witness is explicit producer grammar violation and readback-loop outcome; uniform rejection tests are robustness evidence, not sampled customer semantic gold.",
+    "GPU_scope": "Data/quality/adapter/budget gates may be satisfied for a narrow reviewed task without allrareheads or positive qualified deployment coverage. Statistical/phone-runtime qualification is still separate."
+  },
+  "checkpoint_05_evaluation": {
+    "readiness_counts": {
+      "authored_train_rows": 158,
+      "authored_train_groups": 101,
+      "conservative_canonical_train_groups": 98,
+      "authored_positive_groups": 21,
+      "union_only_positive_groups": 19,
+      "union_plus_review_primary_masks_positive_groups": 18,
+      "mask_overlay_status": "Audit proposal, not adjudicated/applied labels",
+      "packet_declared_groups": 40,
+      "packet_rows": 81,
+      "packet_canonical_groups": 38,
+      "packet_weak_positive_canonical_groups": 18,
+      "packet_additional_negative_canonical_groups": 20,
+      "packet_closure_rows": 82,
+      "packet_missing_closure_example_ids": [
+        "CSv2-E-0073"
+      ],
+      "independent_second_review_rows": 40,
+      "fully_second_reviewed_canonical_groups": 17,
+      "fully_second_reviewed_weak_positive_canonical_groups": [
+        "CSv2-G-407fded569a23acf"
+      ],
+      "independently_adjudicated_gold_rows": 0,
+      "readiness": "NO-GO"
+    },
+    "reference_controls": [
+      "Earlier completed speech revision3/current4 with matching components resolves candidate; unrelated global revision/tool hop preserves reference.",
+      "Change referenced token with identical value: reject. Change unrelated sibling token: keep target-local reference unless shared dependency.",
+      "Same global revision and stale component: reject. Missing/bool revision, empty speech ID, uncompleted speech, duplicate ID, cross-call ID, policy/API change: reject.",
+      "Opaque string refusal event matches real pending shape; new voluntary target terms supersede it independently of sibling completion.",
+      "Trusted context fixture and payload built independently. Mutate payload only, and separately registry/pending only. Do not build expected context from mutated payload.",
+      "Repeated identical Yes on two source events and assistant/user event reorder test freshness without text hashes.",
+      "Turn ID1/125/126/128 all yield valid wire using local clause IDs c0..c15. Producer self-checks finite numbers, spans, enums, uniqueness and caps before return."
+    ],
+    "detector_metrics": [
+      "Exact typed-span precision/recall; overlap only secondary",
+      "False-candidate groups among reviewed absent-component groups per kind/role",
+      "Unreviewed candidate counts separately",
+      "Completion/polarity conditional on exact detector match",
+      "End-to-end typed span+completion+polarity+target+relations including missed candidates",
+      "Group any-wrong-accepted risk, coverage and safe recall after calibration; no product of marginal accuracies"
+    ],
+    "detector_current_limit": "Frozen audit TRAIN75/129 exact; dev2/15 exact, overlap6/15. Observed annotated-instance denominators do not measure false-positive rate. Need independently reviewed absent-region audit; no detector readiness claim.",
+    "baselines_and_experiment": {
+      "status": "NO-GO. Lineage/annotation, v3 reference controls and actual-detector coupling gates first. No reservation or job by designer.",
+      "hypothesis": "A frozen compact encoder plus same permitted context improves group-average reviewed-development binary primary-payment classification versus sparse CPU and phase-prior controls. TRAIN-only distillation might transfer gain to stdlib student. Falsifiable offline representation hypothesis, not deployment/safety claim.",
+      "subset": "Primary-payment-versus-other only. No learned target/consent/reference/detector/completion capability implied. Date-completion trial separately needs reviewed genuine unfinished negatives; vague expressions are complete and cannot fill that class.",
+      "prelaunch": [
+        "Adopt versioned union/adjudication overlay; full canonical closure, >=20reviewed/adjudicated positive and20additional negative TRAIN groups. Authored19 or disputed-mask18 is not readiness.",
+        "Pass v3 independent source-reference controls and actual-detector/false-candidate audits. Fix failures before GPU research; this does not qualify live ingress.",
+        "Freeze separate reviewed development groups/masks/context scope, with later disjoint calibration-fit/risk/blind qualification. TRAIN audit and old v1 holdout cannot be promoted.",
+        "Fit sparse CPU context, text-only, majority and phase-only controls on exact same canonical TRAIN labels and evaluate same dev. Label/detection/freshness/missing-context errors need repair, not GPU.",
+        "Pin encoder/tokenizer/license; no raw security-value cache/features. Verify offline training adapter, actual installed Modal SDK startup_timeout support, cancellation/stop semantics before launch.",
+        "Parent-only <=USD10 reservation within aggregate target30/hard35, explicit total wall deadline, one active GPU/job, zero automatic retries. Adapter scaffold is not launch authorization."
+      ],
+      "design": [
+        "First experiment frozen intfloat/multilingual-e5-small only, with binary head; no encoder fine-tuning or extra heads under this hypothesis. Exact revision/license/tokenizer pinned. Role-tag input, exact offsets; sequence overflow explicit, no suffix truncation.",
+        "Reuse frozen embeddings; same context/labels/group loss across CPU and teacher. Measure CPU embedding feasibility first: tiny reviewed corpus may not justify GPU.",
+        "Teacher logistic head group-average CE. Sparse student loss (1-alpha)*CE(y,pS)+alpha*T^2*KL(pT_teacher||pT_student), T=2 and alpha0.25 fixed. Gold-only alpha0 required control. Teacher soft labels from TRAIN only.",
+        "Normalize both terms within canonical group then across groups. Report teacher-gold disagreement; teacher cannot relabel gold. Fixed seed/config; no broad adaptive sweep.",
+        "Export sparse stdlib student <=500000UTF8bytes, <=100000coefficients; current298186bytes baseline, increased footprint needs measured benefit. Record local load/warm latency/memory, not hosted guarantee."
+      ],
+      "controls": [
+        "TRAIN-derived majority and phase-only prior, unseen-context abstention",
+        "Sparse text-only versus context with identical permitted information",
+        "Dimension-matched random-feature/projection control if dimension is a confound; never call it pretrained encoder",
+        "Group-compatible label-vector permutation where feasible; row shuffle only a named weaker null",
+        "Counterfactual context within lineage varying offer validity and pending status independently of phase; no generic model dependence on fixture constants",
+        "Gold-only versus distilled student, teacher versus exported student; detector-fed versus oracle-span for any component study"
+      ],
+      "decision": "Report paired per-group dev CE differences, class recall/confusion, contrast errors, footprint and distillation delta. Tiny curated-dev improvements exploratory; stop if no CPU/phase improvement or no transferred student benefit. Freeze useful candidate before fresh independent qualification; no successful safety/generalization gate inferred.",
+      "budget": "Existing parent Modal wall/attempt envelope is cap, not spending target. No endpoints/mincontainers/cron. Automatic H100->H200 upgrade uses same H100 GPU price; higher reservation is contingency, not billing rule. Function timeout excludes scheduling and resets per attempt; startup_timeout and parent total-wall cancellation require actual SDK capability. No designer cloud calls."
+    },
+    "qualification": "Calibration-fit separate from risk-threshold selection and final blind qualification after freeze. Lineage unions before every denominator. Exact one-sided CP only for sampled exchangeable independent group units, not these curated author groups. k=0,m=0 risk undefined/vacuous1; m>0 upper=1-alpha**(1/m). Split alpha for simultaneous risk/coverage; multiplicity for evaluated sweep and no ordinary-CP adaptive stopping. TRAIN review not statistical holdout.",
+    "evidence": "Opus111.781s source review and Wegener244 conditional CPU observations; no bank-score or gold inference. Primary12/22 vs phase-only9/22 and majority6/22. Runtime detector2/15 exact versus oracle-span metrics. Report target-scope and other heads separately; no every-head learning claim.",
+    "acceptance": "All-abstain remains. Future bank paired testing preserves original scorer/expectations, exact version/case/repetition provenance and combined verdict+ledger; missing/inconclusive unqualified. Separate consumer-only changes from learned-layer gains.",
+    "parent_corrected_A6_result": {
+      "provenance": "Latest user/parent report, not independently rerun by designer",
+      "combined_calls": 22,
+      "calls": 30,
+      "cases_all3": 6,
+      "cases": 10,
+      "all_calls_version": 6,
+      "failures": {
+        "PUB04": 2,
+        "PUB05": 2,
+        "PUB06": 1,
+        "PUB10": 3
+      },
+      "supersedes": "Earlier24/30 partial note; do not use it",
+      "A_next_slot": 26454,
+      "A6_authored_queue": 79575,
+      "diagnostic_only": true
+    }
+  },
+  "checkpoint_06_cpu_date_evaluation": {
+    "experiment": {
+      "experiment_id": "cpu_date_linguistic_completion.v3-pilot",
+      "status": "PROPOSED; no new data/fit/results. All outputs remain descriptive shadow abstentions.",
+      "learned_scope": "Exactly one binary head: complete DATE expression versus unfinished DATE expression, conditional on actual supported detector candidate. No added ontology/wire heads, no learned date values, target identity, consent or bank permissions.",
+      "interfaces": [
+        "prepare_date_candidates_v3(source_rows,detector_manifest,review_overlay,lineage_overlay)->candidate_table+alignment_audit",
+        "fit_date_complete_v3(candidate_table,config)->sparse_model+group_loss_log",
+        "score_date_complete_v3(candidate,admissible_context,bundle)->{raw_score,completion_candidate,decision:abstain,capability_diagnostics}",
+        "project existing Component(name=date,completion=complete|unfinished,polarity=unknown or independently supported,evidence=actual_span,confidence.decision=abstain); unresolved scope stays unresolved"
+      ],
+      "labels": {
+        "positive": "Linguistically complete date expression, even if vague, invalid, conditional, quoted or unresolved anaphor. Those other axes remain separate.",
+        "negative": "Genuinely unfinished date expression judged from delivered current source plus admissible prior context; not punctuation alone or the authors intended future script.",
+        "masked": "Linguistic finishedness disputed/ambiguous, unknown source framing, unreviewed span, unisolated secret, unsupported detector role, or normalization-only dispute mistakenly offered as negative.",
+        "absent": "Reviewed absence used in detector regression denominators, not forced complete/unfinished target.",
+        "continuation": "A fragment completing prior text requires an exact prior unresolved source-event link and component token. Without it, mark unsupported_context; no synthetic concatenation from future turns."
+      },
+      "data_collection": {
+        "target": "24 genuinely new conservatively grouped TRAIN roots, each aiming2-4 reviewed members;8 separately conceived dev roots;8 no-date/competing-kind detector-regression roots. Targets only, never claim achieved counts.",
+        "floor": "At least20 fully independently reviewed/adjudicated canonical TRAIN groups with complete examples AND20 with unfinished examples. SAME paired roots may contribute to both class-support counts; total independent denominator counts each once. This differs from primary20 additional-negative-root gate. No IID claim follows.",
+        "lineage": "Complete/unfinished/context/punctuation variants share root. Union reused carriers, source episodes and descendants across old/new packs before split. Never turn24 recipe variations from one carrier into24 groups. If unions leave fewer than20, gather new roots or keep readiness closed.",
+        "authoring": "New origins and constructions must be independently conceived before seeing candidate predictions. Store author/model/prompt/source hashes and actual delivered turns; source-author independence is not proven by a reviewer.",
+        "independent_annotation": "Two non-author reviewers annotate full source clause/date spans and completion before model/detector output exposure; preserve uncertainties and adjudication. Existing exposed reviews inform guidelines, not counterfeit fresh blind annotations.",
+        "actual_detector_annotation": "After source annotations frozen, attach frozen detector outputs and exact-span alignments. Review unmatched candidates and absent regions as a separate task; preserve original meanings. No detector-conditioned relabeling of missed gold to make predictions correct.",
+        "dev": "Separate reviewed dev roots with same axes and actual detector outputs. Used only for model diagnosis/selection; no calibration/risk/qualification claims. Freeze future qualification only after selected pipeline; never backfill it from these reviews."
+      },
+      "construction_requirements": [
+        "Open date complement versus a completed complement, without forcing same punctuation pattern across classes.",
+        "Complete vague period/reference versus true unfinished comparator; next week/another date/that date stay complete.",
+        "Date complete plus unfinished TIME or administrative question; date class must remain complete.",
+        "Negated/quoted/conditional complete date; polarity must not be mistaken for completion.",
+        "Nonterminal hesitation followed by complete same/sibling date; ordered correction tracked independently.",
+        "One target unfinished while another has complete date; annotate both and preserve target uncertainty.",
+        "Complete impossible or weekday-conflicting calendar expression; normalization failure separate.",
+        "Actual linked turn continuation versus unanchored fragment; same utterance in different preceding contexts shares root.",
+        "Date-like security answer, clock digits, card/account suffix, puzzle numbers: reviewed detector negatives/unsupported contexts, not date unfinished labels."
+      ],
+      "minimal_model": {
+        "features": "Binary word1/2-grams and bounded character3/4-grams from candidate/local clause left and right windows; open-complement/word-boundary/punctuation-position indicators. Optional phase/question-role categorical features and trusted linked-continuation flag. No IDs, canonical dates, gold spans/labels, future turns or global any-no/not flags.",
+        "limits": "Initial vocabulary<=512features, input<=4096codepoints, actual candidate<=512codepoints, left/right max96codepoints WITH explicit boundary clipping indicators. If required predicate/dependency falls outside window, abstain rather than silently treating clipped context as complete.",
+        "train": "Deterministic CPU sparse logistic binary CE, L2=.0002,80epochs, fixed seed1729;80 is an initial bounded config, not optimized. No encoder/GPU required.",
+        "objective": "L=(1/|G_h|)sum_g (1/|E_g,h|)sum_e (1/|C_e,h|)sum_c BCE(y_c,sigmoid(z_c)) + .0002/2*||w||^2. Only adjudicated matched candidates with mask1 enter. Report excluded/missed group/example/candidate counts; zero-eligible group cannot appear in loss denominator.",
+        "weighting": "Each root equal mass, then each source example, then candidates; many spans/descendants cannot dominate. Start unweighted classes. Optional cost-sensitive run only if predeclared as separate control; scores remain uncalibrated.",
+        "no_extra_head": "Typed deterministic proposer/guards supply candidate eligibility; do not add unreviewed learned validity/target/negation heads to rescue this pilot."
+      },
+      "controls": [
+        {
+          "name": "always_complete_and_always_unfinished",
+          "definition": "Both constant scores on same aligned candidates; no accuracy-only claim under class imbalance."
+        },
+        {
+          "name": "TRAIN_phase_only",
+          "definition": "Estimate class prior per phase/question role from TRAIN canonical-group weights with global TRAIN fallback; report unseen context separately."
+        },
+        {
+          "name": "text_only",
+          "definition": "Same candidate/local lexical window and model/config, omit phase/question/continuation features; detector held identical. This removes learned context, not all detector context."
+        },
+        {
+          "name": "candidate_surface_only",
+          "definition": "Same loss/vocabulary cap but no neighboring clauses, to test whether right/left scoped context helps."
+        },
+        {
+          "name": "deterministic_fragment_baseline",
+          "definition": "Frozen lexical/open-complement rule baseline on same candidate inputs; ellipsis alone cannot define unfinished."
+        },
+        {
+          "name": "full_local_context",
+          "definition": "Proposed CPU candidate head with permitted metadata; compare paired group outcomes with controls."
+        },
+        {
+          "name": "group_null",
+          "definition": "Seed4313 randomly flips all binary labels within each canonical TRAIN group with probability1/2; preserves group/contrast dependencies. Report realized class balance; no reselection to improve result. This is a negative control, not an exact randomization p-value."
+        }
+      ],
+      "metrics": "Report detector typed exact-span recall and false candidates on all reviewed turns first. Then completion balanced accuracy, per-class recall and group-average CE conditional on exact matches. Pipeline denominator includes missed true spans; separately false complete proposals on unfinished/nondate groups, scoped pair consistency and unknown/overflow abstentions. Group macro averages and all-member-correct counts; no pseudo-independent span CI.",
+      "progression": "CPU fit is permitted only after actual review/closure floor; until then implementation and hand-labelled engineering fixtures test mechanics only. Useful dev improvement must exceed relevant constants/phase/fragment controls and survive hard-negative groups. It is exploratory, not calibration. Freeze detector+features+model+decoder+schema then obtain independent calibration-fit/risk/qualification evidence."
+    },
+    "regressions": {
+      "source": "analysis/night-a6-authored-stress.json; actual v6 text-only traces, not independently adjudicated semantic gold",
+      "lineage": "All18calls are three repetitions of six authored variants on PUB-01 fixture. Repetitions/derived repairs inherit scenario/variant/source ancestry. Do not count them as18independent roots or promote observed failures/passes to blind gold. New qualification remains separate.",
+      "families": [
+        {
+          "family": "security_answer_plus_purpose_question",
+          "observed_failures": 2,
+          "sequence": "Security response co-occurs with Why this call / Is this protecting my account; later complete payment plus hypothetical third-party question.",
+          "detector_assertions": "Security span excludes independent question; hypothetical relative not actual recipient; payment date detector does not consume DOB/date-shaped secret. No raw secret values in teacher features.",
+          "decoder_assertions": "Retain unanswered administrative question independent of security/pending payment; hypothetical actor does not trigger transfer/security authority.",
+          "date_training_use": "Only independently conceived secret-free date/admin analogues may enter date subset; actual secret-bearing trace excluded from model/cache."
+        },
+        {
+          "family": "unfinished_admin_question_no_transfer",
+          "observed_failures": 1,
+          "sequence": "Recipient self-identification followed by Are you a...",
+          "detector_assertions": "Recipient clause complete; admin question unfinished. Missing final predicate is not human request.",
+          "decoder_assertions": "No transfer inferred; preserve recipient diagnostic, clarify/answer only supported intent.",
+          "date_training_use": "Analogue complete date plus unfinished unrelated admin tail labels date complete, not globally unfinished."
+        },
+        {
+          "family": "withdrawal_not_refusal",
+          "observed_failures": 1,
+          "sequence": "Yes but hold on no... then withdraw provisional permission; do not record yet.",
+          "detector_assertions": "Scope negative/withdrawal to confirmation, not all payment intent/terms; incomplete fragment blocks confirmation.",
+          "decoder_assertions": "No bank write; no payment-refusal escalation or stale refusal revival. Retain known terms with consent dependency invalid.",
+          "date_training_use": "Complete date remains complete despite later withdrawal; no completion-negative label from refusal-like token."
+        },
+        {
+          "family": "partial_amount_and_same_turn_confirm",
+          "observed_failures": 1,
+          "sequence": "Unrelated puzzle numerals, unfinished monetary amount across turns, then completion plus Yes in same user event.",
+          "detector_assertions": "Puzzle digits are not payment amount; date may be complete while amount remains unfinished. Linked continuation needs prior source token; no oracle future completion.",
+          "decoder_assertions": "No premature readback of missing amount. Completion advances amount revision, invalidating earlier readback; fresh completed readback and later user response needed.",
+          "date_training_use": "Amount-finishedness cannot mechanically label date. Test component-local preservation and current-reference invalidation separately."
+        }
+      ],
+      "pass_controls": [
+        "A complete ordinary date with no extra clause remains detectable.",
+        "Complete date plus unrelated unfinished time/admin retains date diagnostic.",
+        "Explicit scoped same-target date correction replaces only that target date.",
+        "Equivalent serialized row reorder leaves results unchanged; speech-order correction direction still matters.",
+        "No problem is not blanket negation; quoted refusal is not current refusal."
+      ],
+      "verification": "Each regression names source event, candidate spans, expected scoped diagnostics and withheld consequences. Owner executes true detector->features->student->decoder->schema path; isolated oracle-span tests reported separately. Fixtures are engineering controls, not deployment qualification."
+    },
+    "failure_to_abstention": {
+      "admissibility": "G(h,S)=I_valid_ingress*I_valid_span*I_supported_detector*I_in_scope*I_no_unisolated_secret*I_unique_component_scope*I_consistent_reference*I_no_unresolved_same-component_repair. Each indicator is an explicit deterministic check; unknown=0. High score cannot override G=0.",
+      "failure_to_abstention_objective": "Train date CE only for semantic discrimination. Runtime acceptance A(h)=qualified_for_scope AND G(h,S) AND frozen_score_test(h); currently qualified=false, hence A=0. Structural failure cost is prohibitive: gate cannot be learned away. Future threshold selection minimizes abstention subject to one-sided GROUP selective-risk upper bound<=predeclared r* and coverage/recall requirements on independent risk units. m=0 is unqualified/vacuous risk1, not successful safety.",
+      "risk_event": "Accepted date proposal is wrong if span/kind/completion or required target/reference dependency is wrong, including false detector candidates. Per-source group error is ANY such accepted error. Unfinished/nondate failure->abstention recall and correctly retained complete-date coverage both reported, so all-abstain receives no utility credit.",
+      "partial_behavior": "Fail only affected dependencies; a date-complete/time-unfinished pair retains date diagnostic, blocks time-dependent promise. Global abstention remains for unqualified bundle/ingress. No fabricated extra graph heads to resolve unknown relations."
+    },
+    "teacher_student_comparison": {
+      "version": "offline_teacher_student.v3 minimal contract",
+      "purpose": "Weak-primary comparator explores representation value; CPU date pilot is separate task/label contract. Do not reuse primary soft targets as date completion supervision or imply bank authority.",
+      "model_pin": "Use existing worker manifest only after independent exact-file verification: intfloat/multilingual-e5-small revision614241f622f53c4eeff9890bdc4f31cfecc418b3, declared MIT,384embedding dimensions. Metadata pin is not proof weights were downloaded or evaluated. H100 availability is not evidence GPU needed.",
+      "interfaces": [
+        "encode_frozen_v3(admissible_views,model_manifest,feature_manifest,device=cpu)->embedding_cache+source_bindings",
+        "fit_teacher_head_v3(TRAIN_embeddings,adjudicated_labels,canonical_groups,config)->frozen_binary_head",
+        "score_frozen_teacher_v3(frozen_head,DEV_views,read_only_encoder)->dev_diagnostics_without_fit",
+        "distill_student_v3(TRAIN_views,TRAIN_soft_logits,adjudicated_labels,canonical_groups,config)->stdlib_bundle",
+        "predict_student_v3(bound_input,bundle)->same frozen proposal envelope or bound neutral abstention"
+      ],
+      "cache_contract": "Rows bind actual source input hash, transformed-view hash, feature/detector/lineage/review/model/tokenizer revisions and split. TRAIN and DEV caches disjoint. Metadata IDs not embeddings. Sensitive rows excluded before hashing/caching text. Explicit typed finite arrays/JSON only; no pickle or network inference at runtime.",
+      "teacher_outputs": "TRAIN-only logits preferred, one per exact admitted candidate/example and canonical group. Export head weights/bias and preprocessing revision for frozen DEV scoring; no dev soft targets enter training. Clamp/check numerical inputs explicitly; preserve exact finite logits to avoid probability logit saturation.",
+      "objective": "For same binary task: grouped mean [(1-a)*BCE(y,sigmoid(zS)) + a*T^2*KL(Bernoulli(sigmoid(zT/T)) || Bernoulli(sigmoid(zS/T)))] + L2; T=2,a=.25; a=0 mandatory gold-only control. Date task uses group->example->candidate averaging. Teacher is a soft reference, not adjudication.",
+      "numerics": "Teacher Torch sigmoid and exported student approximation are different functions. Either implement and document a common stable approximation for student training/export or bound their maximum score error over supported logit range and include error in abstention margin. Verify exact generated/exported student parity; test logits0,near0,extremes,nonfinite and threshold neighbors. No probability calibration claim from arithmetic parity.",
+      "deployment_bundle": [
+        "task and label-axis version",
+        "frozen input/output schema hashes",
+        "feature/detector/decoder/normalizer hashes",
+        "sorted vocabulary and finite weights/bias",
+        "context/language/candidate capability allowlist",
+        "canonical reviewed support/masks provenance",
+        "score function and numerical-error bound",
+        "calibration/qualification manifests null until actually produced",
+        "model_id and footprint"
+      ],
+      "stdlib_runtime": "No Torch/tokenizer/encoder/model download/external API on phone. Inline sparse student with json/re/builtins only if those remain verified runtime imports; <=500000UTF8bytes and<=100000coefficients. Measure actual exported path;298186byte current reference is a baseline, not allowance to bloat without benefit.",
+      "decision": "Teacher must improve paired reviewed-dev loss/contrast errors over CPU/phase/constant controls, then student must retain useful improvement within footprint/latency. If no gain, keep CPU/date work and stop comparator. Current source-transform defect and data gate close launch. GPU use additionally requires parent cost-benefit evidence, reservation and existing timeout/stop controls; no implied launch from scaffold."
+    },
+    "report_table_columns": [
+      "canonical_root",
+      "source_example",
+      "review_masks",
+      "detector_version",
+      "gold_kind_and_span",
+      "actual_candidates",
+      "false_or_missed_candidate",
+      "constant/phase/fragment/text/local model outputs",
+      "completion_loss",
+      "unsafe_complete_proposal",
+      "abstention_reason",
+      "eligible_reference",
+      "schema_valid",
+      "full_pipeline_correct"
+    ],
+    "test_boundaries": "No test/qualification labels in feature selection, tuning, teacher soft labels or source normalization. Dev diagnostic selection allowed but makes dev unqualified for confirmation. Final independent risk/qualification follows freeze. All repeated/derived roots union before group CI; class support counts can overlap without inflating independent unit denominator.",
+    "current_result": "No date experiment executed. New primary review81rows is TRAIN proposal only. Actual A6hard13/18combined,16/18bank,3/6all3 remains diagnostic evidence with unchanged original scores.",
+    "Bnext2_atomic_regressions": [
+      "Same speech: partial row has complete amount and unfinished date; sibling row supplies complete date. Both serialization orders retain amount/date and empty date need when explicit completion link is consistent.",
+      "Same speech: complete date plus partial amount row retains date while amount remains unresolved. Missing field in complete date row does not erase a known amount.",
+      "Two all-complete nonconflicting rows in both orders match existing passing control; separate-turn completion retains earlier sibling.",
+      "Explicit later speech correction/retraction overrides earlier evidence only through scoped relation. Changing speech correction order is NOT an invariance requirement.",
+      "Complete primary with unrelated conditional clause is retained; condition on primary itself remains conditional/blocked. c1 alone never authorizes deceased/stop/transfer.",
+      "Complete date in a conditional/quoted sentence is still linguistically complete; decoder separately blocks commitment when unsupported. No global if/no/not veto.",
+      "Benign negative idiom attached to mind/problem does not mechanically negate confirmation; withdrawal or new terms still block exact-readback consent. Keep semantic uncertainty abstaining, not a canned acceptance allowlist.",
+      "Actual transport receipt must bind original dispatched operation ID if adapter supports it. Ambient current request ID cannot authenticate old receipt. This is deterministic transport work; no model learns HTTP retry policy."
+    ],
+    "Bnext2_evidence_ref": "analysis/learned-layer-design.json#/checkpoint_06_Bnext2_amendment",
+    "adapter_source_refresh": {
+      "utc": "2026-10-11T02:33:19.159059+00:00",
+      "reason": "Implementer changed three adapter sources concurrently after designer first fixture check; historical observations bind earlier hashes, not current files. Designer made no sibling edits.",
+      "source_manifest": [
+        {
+          "path": "integrations/learned-dialogue/modal_narrow_core.py",
+          "sha256": "81c6637bc9e90950bc8257f5c1e62512e99249dc19fce3dc4b4bfb48d7eb845a",
+          "bytes": 16492
+        },
+        {
+          "path": "integrations/learned-dialogue/modal_narrow_teacher.py",
+          "sha256": "c99ba561ddf313cde97fc6d09385d47853c2b9e302386baf33230237e4590dbc",
+          "bytes": 7929
+        },
+        {
+          "path": "integrations/learned-dialogue/modal_narrow_student.py",
+          "sha256": "800fca92b474f455ed09535efacae23321156450a6d84e3eb9dc4cd6574d8d4f",
+          "bytes": 5159
+        }
+      ],
+      "source_verified_updates": [
+        "source_view now reads targets[].index and nested pending components/status, uses relative target relations, and delexicalizes lexical segments before serialization. Original KeyError witness is historical.",
+        "New source_view requires whole-turn+question value-free privacy review and source-map metadata; these flags/hash binding still need actual parent evidence, not self-asserted qualification.",
+        "Student sigmoid now uses range reduction/Taylor expansion rather than original repeated-squaring formula, with export support. Numerical parity remains an owner verification requirement; designer did not fit/test the revised model.",
+        "Teacher now applies24GiB process allocation cap before CUDA loading. No CUDA execution or allocation performed by designer.",
+        "Current teacher still exposes run_teacher only; frozen independent DEV-scoring interface remains required for comparative utility."
+      ],
+      "status": "Source-level follow-up only; no new model/data admission, no training or GPU readiness."
+    },
+    "collection_admission": {
+      "id": "checkpoint-06a-primary-review-versus-weak-support",
+      "utc": "2026-10-11T02:35:45.560264+00:00",
+      "previous_owned_file_hashes": {
+        "analysis/learned-layer-design.json": "30388467f79ebcfe63e2e28fdf4427422598bf534ed0836c1e932ee35e16eaf8",
+        "analysis/learned-layer-design.txt": "76da93c53b1695e74b1ea2f27e4e640791f36f07378f543d3a82fbbc1d8e58cc",
+        "research/customer-benchmark/learned-layer-label-spec.json": "fa31a0c2a0cf8b22bae1b92fdf30f8f6c8456dcf87cea9652a67d238335d4f5c",
+        "analysis/learned-layer-evaluation-plan.json": "80cbf306b791b3f1731d1497220b353f03ec0bda56f77b497552f47ee5a19d79"
+      },
+      "review_source": {
+        "path": "research/customer-benchmark/context-narrow-v3-reviewed.json",
+        "sha256": "f019586f49f1203bdef93b9e950b2fa66531f262840ce89addaca0a8169542ac"
+      },
+      "counts_separated": {
+        "weak_authored_packet": {
+          "canonical_positive_groups": 18,
+          "additional_negative_groups": 20,
+          "meaning": "Original author-label sampling support after conservative unions; not independent review."
+        },
+        "actual_Zeno_packet_review": {
+          "canonical_positive_groups": 16,
+          "additional_negative_groups": 19,
+          "primary_ambiguous_masked_rows": 7,
+          "annotation_count_per_member": 1,
+          "reviewed_members": 81,
+          "selected_canonical_groups": 38,
+          "required_closure_members": 82,
+          "missing_closure_members": [
+            "CSv2-E-0073"
+          ],
+          "fully_one_review_canonical_groups": 37,
+          "fully_one_review_positive_groups": 15,
+          "reviewer_exposure": "Partly exposed; not fresh blind gold. Parent reports reviewer task closed.",
+          "independently_adjudicated_gold_rows": 0,
+          "training_gate": "NO-GO"
+        }
+      },
+      "new_collection_parent_report": {
+        "location": "research/customer-benchmark/semantic-v3-collection",
+        "author": "Parent-dispatched fresh author without history fork; identity/exposure evidence to be recorded by owner, not inferred from directory name.",
+        "primary_supplement_target": {
+          "new_origin_roots": 12,
+          "variants_per_root": 2
+        },
+        "date_target": {
+          "TRAIN_roots": 24,
+          "DEV_roots": 8,
+          "variants": "Within-root contrasts"
+        },
+        "old_packet_closure_supplement": [
+          "CSv2-E-0073",
+          "CSv2-E-0109"
+        ],
+        "deliverables": "Full versioned label-free TRAIN review packet and separate weak authored labels/provenance; original packet and previous review immutable.",
+        "actual_local_check": "Collection directory not yet present at amendment check. Targets are parent-reported work in progress, not delivered/adjudicated group counts.",
+        "independence": "New author/source roots still undergo carrier/conversation/augmentation unions. Twelve authored root names or fresh history do not automatically establish12 independent groups."
+      },
+      "review_protocol": [
+        "Freeze exact full packet, all source inputs, semantic guidelines, lineage union/closure manifest and hashes before reviewer dispatch. Preserve source-only input fields; keep weak labels, prior reviews, predictions and sampling strata inaccessible.",
+        "Two fresh non-author reviewers each annotate every member of the SAME versioned packet independently. Neither sees the other answers before their annotations freeze. Store actual identity, exposure and completed-member evidence; no fabricated blind registry.",
+        "Guidelines may define axes using separate illustrative examples, but must exclude prior row-specific adjudications/answers for this packet. Source-specific decisions in designer documents are adjudicator material, not fresh-blind reviewer input.",
+        "Parent adjudicates disagreements after both reviews freeze; ambiguous primary labels remain masked rather than forced to reach a quota. Canonical unions and full closure apply before final support counts.",
+        "Any supplemental member or lineage union discovered later requires packet revision and review coverage for affected full groups; keep previous annotation snapshots. All annotation work remains TRAIN development, not calibration or qualification."
+      ],
+      "different_group_floors": {
+        "primary": "At least20fully reviewed/adjudicated positive canonical groups AND20additional negative groups outside positive group set. Mixed groups count once overall; preserve any stricter explicit GPU-adapter floor pending parent reconciliation.",
+        "date": "At least20fully reviewed/adjudicated groups containing complete dates AND20containing genuinely unfinished dates. The same paired canonical roots may support both classes. They count once in loss/independent-unit denominators; do not require20additional negative date roots.",
+        "runtime": "Neither floor qualifies live ingress, risk/coverage, bank permission or generalization. GPU remains closed until actual data/CPU/control and parent-budget gates pass."
+      }
+    }
+  },
+  "checkpoint_07_vector_evaluation": {
+    "handoff": {
+      "vectors_json": "analysis/learned-layer-design.checkpoint07-vectors.json",
+      "vectors_text": "analysis/learned-layer-design.checkpoint07-vectors.txt",
+      "vector_count": 50,
+      "counts": {
+        "detector": 9,
+        "scoped_semantics": 8,
+        "atomic_merge": 9,
+        "reference": 18,
+        "ingress": 6
+      },
+      "reference_algebra_checks": {
+        "merge": 9,
+        "reference": 18,
+        "ingress": 6,
+        "total": 33,
+        "all_expected": true,
+        "candidate_pass_claim": false
+      },
+      "schema_templates_checked": 50,
+      "source_span_checks": 28,
+      "actual_candidate_runs": 0,
+      "wire_unchanged": true,
+      "applicability": {
+        "integrations/learned-dialogue/detector_v3.py": "D01..D09: typed candidates, numeric roles, security/admin boundaries and no-candidate diagnosis. No implementation source inspected.",
+        "integrations/learned-dialogue/context_v3.py": "S01..S08: source-meaning axes and masks; actual diagnostic agreement assessed only after implementation run.",
+        "integrations/learned-dialogue/reference_v3.py": "R01..R18: registry/opaque component tokens and event order; failed ingress blocks reference lookup.",
+        "integrations/learned-dialogue/guard_v3.py": "G01..G06 and all vectors: strict abstention/schema/no-authority; R15 tests bounded local clause ID with full128char turn ID.",
+        "owner atomic-merge adapter, no assumed filename": "M01..M09: exact immutable rows, explicit completion/correction links and expected facts/needs; not extra input-wire fields."
+      },
+      "semantic_coverage_rule": "Unsupported capability or neutral fallback counts not_exercised, not semantic pass. Synthetic observer success never qualifies real ingress or bank action.",
+      "handoff": "Hooke maps exact vectors to actual new implementation entrypoints; report layer-specific observed outputs and pinned implementation hashes. Parent handles source review and independent data gates. No new learned heads required."
+    },
+    "evaluation_protocol": {
+      "logical_layers": [
+        "source_snapshot_and_independent_observer",
+        "actual_detector",
+        "semantic_head_diagnostics_if_implemented",
+        "reference_and_component_algebra",
+        "wire_projection_and_guard"
+      ],
+      "result_states": [
+        "contract_pass",
+        "contract_fail",
+        "semantic_match",
+        "semantic_mismatch",
+        "not_exercised"
+      ],
+      "rules": [
+        "Input snapshots are exact ordinary semantic_input.v1. Observer, expected axes, merge relations and reference-case expected answers are test sidecars; never feed expected labels/relations to a learned head as predictive features.",
+        "For merge-only contract tests, supplying source-grounded immutable rows/edges intentionally isolates the algebra. End-to-end tests must derive them from actual detector/parser and report this different denominator.",
+        "Same-turn component update map in R13 is deterministic decoder fixture input; in a full-pipeline test derive the update from actual current source evidence, never from expected_answer.",
+        "Synthetic verified observer proves only fixture dependence. Unqualified live/raw ingress remains closed and every wire decision abstains even on successful reference eligibility.",
+        "Current bundle capability flags are all false. A neutral fallback satisfies no-authority checks but counts not_exercised for expected semantic/detector outputs, never a successful semantic interpretation.",
+        "Meaning-only controls S01..S08 may remain unresolved until their scoped capability exists. Do not add or train new heads to inflate this smoke count; preserve unknown scope and masks.",
+        "All fixed numerals/identifiers in vectors are fictional engineering constants, not generic model/policy rules, final-brief values or public-test patches.",
+        "lineage_family groups related engineering cases; it is not a claim of statistically independent source roots. Reused source witnesses/variants retain ancestry. Do not use these diagnostics for qualification or rename them fresh TRAIN gold.",
+        "No expected bank write, consent grant, identity verification, transfer, close, refusal action or mutable state patch in this bundle. Values in merge expectations are descriptive facts only.",
+        "Run production-independent schema validator on actual outputs and record exact implementation/bundle/adapter hashes. Do not substitute the included schema example for candidate output."
+      ],
+      "suggested_result_row": [
+        "vector_id",
+        "implementation_hashes",
+        "adapter_version",
+        "layer",
+        "capability_exercised",
+        "observed_typed_spans_or_axes",
+        "observed_reference_id_and_reason",
+        "actual_output_schema_valid",
+        "status_and_per_head_decisions",
+        "mutations_or_calls_detected",
+        "comparison_state",
+        "source_refs"
+      ],
+      "evidence_status": "50vectors authored from frozen witness families,33own-spec algebra checks,50schema template checks,zero candidate executions. No training/generalization/selective-risk claim."
+    },
+    "algebra_report": {
+      "utc": "2026-10-11T02:42:57.125782+00:00",
+      "algebra_cases": 33,
+      "merge_cases": 9,
+      "reference_cases": 18,
+      "ingress_cases": 6,
+      "all_algebra_expectations_met": true,
+      "source_witness_ids_verified": 50,
+      "component_fact_spans_checked": 28,
+      "schema_template_checks": 50,
+      "schema_templates_are_not_candidate_outputs": true,
+      "semantic_detector_model_cases_executed": 0,
+      "candidate_passes_claimed": 0,
+      "qualification_claimed": false,
+      "falsification_examples": [
+        {
+          "invalid_rule": "global_if_veto",
+          "counterexample": "LLD07/S01-complete-primary-idiomatic-if",
+          "status": "Spec has explicit contradicting expected output; not an executed candidate mutant."
+        },
+        {
+          "invalid_rule": "all_digit_tokens_are_amount",
+          "counterexample": "LLD07/D01-card-ending-is-not-amount",
+          "status": "Spec has explicit contradicting expected output; not an executed candidate mutant."
+        },
+        {
+          "invalid_rule": "reference_requires_equal_global_revision",
+          "counterexample": "LLD07/R01-earlier-spoken-reference-valid",
+          "status": "Spec has explicit contradicting expected output; not an executed candidate mutant."
+        },
+        {
+          "invalid_rule": "unchanged_value_implies_fresh_reference",
+          "counterexample": "LLD07/R17-same-value-new-token-still-stale",
+          "status": "Spec has explicit contradicting expected output; not an executed candidate mutant."
+        },
+        {
+          "invalid_rule": "missing_key_in_complete_row_means_unfinished",
+          "counterexample": "LLD07/M01-partial-then-complete",
+          "status": "Spec has explicit contradicting expected output; not an executed candidate mutant."
+        },
+        {
+          "invalid_rule": "last_serialized_row_wins_over_explicit_correction",
+          "counterexample": "LLD07/M06-serialized-repair-row-order-invariant",
+          "status": "Spec has explicit contradicting expected output; not an executed candidate mutant."
+        }
+      ]
+    },
+    "forbidden_inference": "Spec success and schema templates do not demonstrate v3 code correctness, detector precision, model generalization, qualified risk or bank score."
+  },
+  "checkpoint_08_detector_evaluation": {
+    "artifact": "analysis/learned-layer-design.checkpoint08-detector.json",
+    "frozen_observed": {
+      "dev_records": 22,
+      "dev_declared_groups": 20,
+      "component_denominator": 15,
+      "components_by_kind": {
+        "date": 8,
+        "amount": 4,
+        "recipient": 2,
+        "time": 1
+      },
+      "match_partition": {
+        "no_same_kind_candidate": 10,
+        "overlap_only": 3,
+        "exact": 2
+      },
+      "oracle_completion_correct": 5,
+      "pipeline_exact_completion_correct": 2,
+      "oracle_polarity_correct": 13,
+      "pipeline_exact_polarity_correct": 2,
+      "oracle_completion_prediction_distribution": {
+        "complete": 15
+      },
+      "authored_completion_distribution": {
+        "ambiguous": 9,
+        "unfinished": 1,
+        "complete": 5
+      },
+      "actual_candidates": 5,
+      "unmatched_candidates": 3,
+      "false_candidate_precision": null,
+      "exact_matches_source_rows": 1,
+      "exact_matches_source_groups": 1,
+      "qualified_decisions": 0,
+      "metric_definition": "Joint exact kind/start/end AND axis argmax on frozen authored evidence; not accepted proposal accuracy. Placeholder wire axes are abstentions."
+    },
+    "TRAIN_input_only_audit": {
+      "packet_rows": 72,
+      "declared_roots": 24,
+      "canonical_roots": 22,
+      "rows_with_any_date_candidate": 12,
+      "groups_with_any_date_candidate": 7,
+      "date_candidate_count": 13,
+      "annotation_status": "Two fresh independent TRAIN reviews pending parent adjudication; no author labels or reviewer outputs read in this checkpoint.",
+      "mathematical_upper_bound": "With frozen R3 and this packet, each aligned positive/negative class can cover at most 7 canonical groups, before exact alignment or review. Thus 20/20 actual-candidate class floor cannot pass. This is not a label-recall estimate.",
+      "primary_status": "119/49 full TRAIN review packet parent reported, actual 20 positive/20 additional negative qualification gate unknown. Prior single review16/19 remains separate, not independent gold."
+    },
+    "acceptance": {
+      "engineering_before_fit": [
+        "Next-source hashes pinned; all original frozenR3 andv1/v2 hashes unchanged",
+        "Exact source offsets and maximal expression/cross-clause masks checked on source-reviewed TRAIN",
+        "Independently reviewed actual-candidate class support>=20each aftercanonicalclosure; absence audit coverage separately reported",
+        "Source/feature/export contracts agree; wrong version and unsupported/clipped cases abstain",
+        "Actual semantic expectations in applicable07vectors exercised and reported individually; structural parity alone notsemanticpass"
+      ],
+      "CPU_controls": [
+        "always_complete",
+        "always_unfinished",
+        "TRAIN_phase_only",
+        "candidate_surface_only",
+        "text_only_same_detector",
+        "deterministic_fragment_baseline",
+        "full_local_context",
+        "fixed_seed4313_group_label_flip_null"
+      ],
+      "metric_table": "For each frozen version show true reviewed spans, exact typed matches, overlap-only, missed, candidate count, reviewed-invalid candidates/unreviewed, source/window exclusions, conditional balanced accuracy, perclass recall, groupmean CE, all-member-correct groups and pipeline exact+axis counts. False-complete on unfinished/nondate source groups is a separate failure table. Preserve oldDEV15 denominator and old labels in historical comparison.",
+      "group_math": "Root count after closure is statistical unit; multiple spans/pairs do not multiply independent n. Overall22newTRAINgroups does not imply20perclass exact-matched groups. The current7group upper bound is prelabel eligibility only, not a measured class count. Existing one-sided group risk/multiplicity contract remains unchanged; no success/safety estimate here.",
+      "readiness": "NO-GO fit under current frozenR3 DATE coverage. No_GPU_needed_for_detector_repair. Useful CPU evidence must exceed relevant constant/phase/fragment controls; no claim new annotations, successful training, deployed quality or generalization."
+    },
+    "old_DEV_status": "Exposeddiagnostic; originallabels/scorespreserved; no freshqualification.",
+    "semantic_vector_status": "50checkpoint07semanticexpectations NOT_EXERCISED; structuralparitynotsemanticpass."
+  }
+}

@@ -1,0 +1,858 @@
+{
+  "schema": {
+    "$defs": {
+      "Abstention": {
+        "additionalProperties": false,
+        "properties": {
+          "clause_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "components": {
+            "items": {
+              "enum": [
+                "amount",
+                "date",
+                "time",
+                "security_answer",
+                "recipient",
+                "allocation",
+                "unknown"
+              ]
+            },
+            "maxItems": 7,
+            "minItems": 0,
+            "type": "array"
+          },
+          "reason": {
+            "enum": [
+              "missing_input",
+              "untrusted_text",
+              "transport_truncated",
+              "unknown_schema",
+              "stale_binding",
+              "untrained_head",
+              "uncalibrated",
+              "low_confidence",
+              "ood",
+              "invalid_span",
+              "unknown_target",
+              "ambiguous_target",
+              "unknown_correction_scope",
+              "unresolved_reference",
+              "unparsed_qualifier",
+              "inconsistent_heads",
+              "size_limit",
+              "runtime_failure"
+            ]
+          },
+          "target_indices": {
+            "items": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array"
+          }
+        },
+        "required": [
+          "reason",
+          "clause_id",
+          "target_indices",
+          "components"
+        ],
+        "type": "object"
+      },
+      "Binding": {
+        "additionalProperties": false,
+        "properties": {
+          "api_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "policy_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "state_revision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "turn_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "turn_id",
+          "state_revision",
+          "policy_hash",
+          "api_hash"
+        ],
+        "type": "object"
+      },
+      "Clause": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_scope": {
+            "enum": [
+              "per_target",
+              "each",
+              "aggregate_total",
+              "absent",
+              "unresolved"
+            ]
+          },
+          "clause_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "collective_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "components": {
+            "items": {
+              "$ref": "#/$defs/Component"
+            },
+            "maxItems": 6,
+            "minItems": 0,
+            "type": "array"
+          },
+          "intent": {
+            "$ref": "#/$defs/ScoredIntent"
+          },
+          "offer_reference": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "qualifiers": {
+            "items": {
+              "$ref": "#/$defs/Span"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array"
+          },
+          "scope": {
+            "enum": [
+              "single",
+              "explicit_set",
+              "all_returned",
+              "current_question",
+              "unresolved"
+            ]
+          },
+          "target_refs": {
+            "items": {
+              "$ref": "#/$defs/TargetReference"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array"
+          }
+        },
+        "required": [
+          "clause_id",
+          "intent",
+          "scope",
+          "target_refs",
+          "collective_id",
+          "amount_scope",
+          "components",
+          "qualifiers",
+          "offer_reference"
+        ],
+        "type": "object"
+      },
+      "Component": {
+        "additionalProperties": false,
+        "properties": {
+          "completion": {
+            "enum": [
+              "absent",
+              "complete",
+              "unfinished",
+              "ambiguous"
+            ]
+          },
+          "confidence": {
+            "$ref": "#/$defs/ScoredDecision"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/$defs/Span"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array"
+          },
+          "name": {
+            "enum": [
+              "amount",
+              "date",
+              "time",
+              "security_answer",
+              "recipient",
+              "allocation"
+            ]
+          },
+          "polarity": {
+            "enum": [
+              "asserted",
+              "negated",
+              "conditional",
+              "questioned",
+              "quoted",
+              "unknown"
+            ]
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/OfferComponentReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "completion",
+          "polarity",
+          "evidence",
+          "reference",
+          "confidence"
+        ],
+        "type": "object"
+      },
+      "ConsentSignal": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate_readback_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decision": {
+            "enum": [
+              "descriptive_only"
+            ]
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/$defs/Span"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array"
+          },
+          "has_new_terms": {
+            "enum": [
+              true,
+              false,
+              "unknown"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "none",
+              "affirmative",
+              "negative",
+              "qualified",
+              "ambiguous"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "evidence",
+          "candidate_readback_id",
+          "has_new_terms",
+          "decision"
+        ],
+        "type": "object"
+      },
+      "Correction": {
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "items": {
+              "enum": [
+                "amount",
+                "date",
+                "time",
+                "security_answer",
+                "recipient",
+                "allocation",
+                "unknown"
+              ]
+            },
+            "maxItems": 7,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/$defs/Span"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "candidate"
+            ]
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 16,
+                "minItems": 0,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_refs": {
+            "items": {
+              "$ref": "#/$defs/TargetReference"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array"
+          }
+        },
+        "required": [
+          "target_refs",
+          "components",
+          "evidence",
+          "supersedes",
+          "status"
+        ],
+        "type": "object"
+      },
+      "OOD": {
+        "additionalProperties": false,
+        "properties": {
+          "decision": {
+            "enum": [
+              "in_distribution_candidate",
+              "abstain",
+              "unassessed"
+            ]
+          },
+          "known_feature_fraction": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nearest_train_similarity": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": -1,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reasons": {
+            "items": {
+              "enum": [
+                "missing_input",
+                "untrusted_text",
+                "transport_truncated",
+                "unknown_schema",
+                "stale_binding",
+                "untrained_head",
+                "uncalibrated",
+                "low_confidence",
+                "ood",
+                "invalid_span",
+                "unknown_target",
+                "ambiguous_target",
+                "unknown_correction_scope",
+                "unresolved_reference",
+                "unparsed_qualifier",
+                "inconsistent_heads",
+                "size_limit",
+                "runtime_failure"
+              ]
+            },
+            "maxItems": 24,
+            "minItems": 0,
+            "type": "array"
+          }
+        },
+        "required": [
+          "decision",
+          "known_feature_fraction",
+          "nearest_train_similarity",
+          "margin",
+          "reasons"
+        ],
+        "type": "object"
+      },
+      "OfferComponentReference": {
+        "additionalProperties": false,
+        "properties": {
+          "component": {
+            "enum": [
+              "amount",
+              "date",
+              "time",
+              "security_answer",
+              "recipient",
+              "allocation"
+            ]
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/$defs/Span"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array"
+          },
+          "offer_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "offer_id",
+          "component",
+          "evidence"
+        ],
+        "type": "object"
+      },
+      "ScoredDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "abstain_reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "missing_input",
+                  "untrusted_text",
+                  "transport_truncated",
+                  "unknown_schema",
+                  "stale_binding",
+                  "untrained_head",
+                  "uncalibrated",
+                  "low_confidence",
+                  "ood",
+                  "invalid_span",
+                  "unknown_target",
+                  "ambiguous_target",
+                  "unknown_correction_scope",
+                  "unresolved_reference",
+                  "unparsed_qualifier",
+                  "inconsistent_heads",
+                  "size_limit",
+                  "runtime_failure"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calibrated_probability": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calibration_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decision": {
+            "enum": [
+              "accept",
+              "abstain"
+            ]
+          },
+          "score": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "score",
+          "calibrated_probability",
+          "calibration_id",
+          "decision",
+          "abstain_reason"
+        ],
+        "type": "object"
+      },
+      "ScoredIntent": {
+        "additionalProperties": false,
+        "properties": {
+          "abstain_reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "missing_input",
+                  "untrusted_text",
+                  "transport_truncated",
+                  "unknown_schema",
+                  "stale_binding",
+                  "untrained_head",
+                  "uncalibrated",
+                  "low_confidence",
+                  "ood",
+                  "invalid_span",
+                  "unknown_target",
+                  "ambiguous_target",
+                  "unknown_correction_scope",
+                  "unresolved_reference",
+                  "unparsed_qualifier",
+                  "inconsistent_heads",
+                  "size_limit",
+                  "runtime_failure"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calibrated_probability": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calibration_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decision": {
+            "enum": [
+              "accept",
+              "abstain"
+            ]
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/$defs/Span"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array"
+          },
+          "label": {
+            "enum": [
+              "recipient_self",
+              "third_party",
+              "wrong_number",
+              "deceased",
+              "security_answer",
+              "security_decline",
+              "payment_proposal",
+              "offer_acceptance",
+              "readback_affirmation",
+              "payment_refusal",
+              "amount_too_high",
+              "current_arrears_paid_claim",
+              "historical_closed_or_paid_off_claim",
+              "debt_dispute",
+              "hardship",
+              "restructuring_request",
+              "human_request",
+              "stop_request",
+              "callback_proposal",
+              "support_acceptance",
+              "support_decline",
+              "ai_question",
+              "purpose_question",
+              "legitimacy_question",
+              "discount_question",
+              "information_question",
+              "correction",
+              "other",
+              "unknown"
+            ]
+          },
+          "score": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "evidence",
+          "score",
+          "calibrated_probability",
+          "calibration_id",
+          "decision",
+          "abstain_reason"
+        ],
+        "type": "object"
+      },
+      "Span": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "role": {
+            "enum": [
+              "intent",
+              "target",
+              "value",
+              "negation",
+              "qualifier",
+              "correction",
+              "reference"
+            ]
+          },
+          "start": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "turn_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "turn_id",
+          "start",
+          "end",
+          "role"
+        ],
+        "type": "object"
+      },
+      "TargetReference": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "items": {
+              "$ref": "#/$defs/Span"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array"
+          },
+          "index": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source": {
+            "enum": [
+              "explicit_span",
+              "current_question",
+              "spoken_offer",
+              "unresolved"
+            ]
+          }
+        },
+        "required": [
+          "index",
+          "evidence",
+          "source"
+        ],
+        "type": "object"
+      }
+    },
+    "$id": "urn:fraya:semantic-proposal:v1",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "abstentions": {
+        "items": {
+          "$ref": "#/$defs/Abstention"
+        },
+        "maxItems": 24,
+        "minItems": 0,
+        "type": "array"
+      },
+      "binding": {
+        "$ref": "#/$defs/Binding"
+      },
+      "clauses": {
+        "items": {
+          "$ref": "#/$defs/Clause"
+        },
+        "maxItems": 12,
+        "minItems": 0,
+        "type": "array"
+      },
+      "consent_signal": {
+        "$ref": "#/$defs/ConsentSignal"
+      },
+      "corrections": {
+        "items": {
+          "$ref": "#/$defs/Correction"
+        },
+        "maxItems": 12,
+        "minItems": 0,
+        "type": "array"
+      },
+      "model_id": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "ood": {
+        "$ref": "#/$defs/OOD"
+      },
+      "primary": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ScoredIntent"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "schema_version": {
+        "enum": [
+          "semantic_proposal.v1"
+        ]
+      },
+      "secondary": {
+        "items": {
+          "$ref": "#/$defs/ScoredIntent"
+        },
+        "maxItems": 16,
+        "minItems": 0,
+        "type": "array"
+      },
+      "status": {
+        "enum": [
+          "proposed",
+          "partial",
+          "abstain"
+        ]
+      }
+    },
+    "required": [
+      "schema_version",
+      "binding",
+      "model_id",
+      "status",
+      "primary",
+      "secondary",
+      "clauses",
+      "corrections",
+      "consent_signal",
+      "ood",
+      "abstentions"
+    ],
+    "type": "object"
+  },
+  "schema_semantic_checks": [
+    "Reject duplicate JSON object keys and NaN/infinity before schema validation.",
+    "Span turn_id must equal binding.turn_id; 0<=start<end<=len(original_text); evidence must actually support the labelled role. Offset equality alone is not semantic support.",
+    "Binding hashes/revision/turn must exactly equal current input; wrapper controls model_id and bindings.",
+    "Unique clause IDs, unique component names per clause, finite scores and valid calibration/model references.",
+    "Every target index and offer/readback/supersedes reference exists in the legitimate input state, with current permissible scope.",
+    "No positive asserted complete value may be inferred from a negated/conditional/quoted/questioned span or unfinished token. Source normalization remains independent.",
+    "status=proposed requires no unresolved authority-relevant field in the proposed scope; otherwise partial/abstain. Partial is never joint permission.",
+    "Accept decision requires independently qualified trained/calibrated head and frozen thresholds; non-null score alone cannot set decision=accept.",
+    "Empty input yields primary=null and abstain; no invalid zero-length evidence span. Unknown schema, budget overflow and runtime exception return a bound neutral abstain wrapper.",
+    "No current raw text binding in platform means no unqualified promotion from extracted_copy to trusted_turn."
+  ],
+  "source_path": "analysis\\learned-layer-design.json",
+  "source_sha256": "7821b15d06c1ef1f1f70477cf1ba7940a2cc671a79fd161fde163f88af23f280",
+  "source_warning": "Syntax is not semantic support, authentication or safety proof"
+}

@@ -1,0 +1,1605 @@
+{
+  "generated_at_utc": "2026-10-11T02:24:20.196708+00:00",
+  "scope": "Original supplied public A runner, actors and scoring; three independent repetitions",
+  "passed_calls": 22,
+  "total_calls": 30,
+  "passed_all3_scenarios": 6,
+  "total_scenarios": 10,
+  "final": [
+    {
+      "id": "PUB-01",
+      "family": "Happy path",
+      "passes": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "id": "PUB-02",
+      "family": "Third party",
+      "passes": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "id": "PUB-03",
+      "family": "Identity",
+      "passes": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "id": "PUB-04",
+      "family": "Dates",
+      "passes": 1,
+      "runs": 3,
+      "pass": false
+    },
+    {
+      "id": "PUB-05",
+      "family": "Hardship",
+      "passes": 1,
+      "runs": 3,
+      "pass": false
+    },
+    {
+      "id": "PUB-06",
+      "family": "Amounts",
+      "passes": 2,
+      "runs": 3,
+      "pass": false
+    },
+    {
+      "id": "PUB-07",
+      "family": "Dates",
+      "passes": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "id": "PUB-08",
+      "family": "Already paid",
+      "passes": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "id": "PUB-09",
+      "family": "Restructuring",
+      "passes": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "id": "PUB-10",
+      "family": "Tool failure",
+      "passes": 0,
+      "runs": 3,
+      "pass": false
+    }
+  ],
+  "agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+  "actual_version": 6,
+  "all_call_versions_verified": true,
+  "source": "local-runs/autonomous-rd/official-a-v6-1791684688",
+  "source_hashes": {
+    "local-runs/autonomous-rd/official-a-v6-1791684688/manifest.json": "cb773eb4345a7b606c30bab9ab01421d812e749f7a2323b4533e39e97fe7828d",
+    "local-runs/autonomous-rd/official-a-v6-1791684688/results.json": "672e93bb55d76efa90897a249715ef8616849787392577da06994c93dfea66ee",
+    "competition-v3/build-the-builder/tools/score.py": "daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7",
+    "competition/runs/20261011-045432-e9e963/codex-stress-a.workflow.json": "d26248d1d6dc3059b2a106786e862349446806ec626044432031b8aeeab784bc"
+  },
+  "failures": [
+    {
+      "row": {
+        "rep": 1,
+        "id": "PUB-04",
+        "level": "medium",
+        "family": "Dates",
+        "pass": false,
+        "failed": [
+          "conversation: The agent failed to identify itself as a digital assistant when asked in Message 9. Although the agent proactively stated it was a digital assistant in the introduction (Message 0), the criterion requires it to say so when asked; in Message 10, the agent ignored the user's question 'Are you a robot?' and proceeded with the payment flow. The other criteria were successfully met: the user's proposed"
+        ],
+        "call_id": "38e1350c-f225-4173-8bf9-69ec859f61d9",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_d016d66a-a01",
+        "slowest_turn_s": 6.8,
+        "ended": "assistant-ended-call"
+      },
+      "classification": "independent_admin_question_dropped",
+      "source": "local-runs/autonomous-rd/official-a-v6-1791684688/38e1350c-f225-4173-8bf9-69ec859f61d9.json",
+      "sha256": "dba703a942a3f8761a14c7e2fb54e0f7161067bd89b3acfd3beb0c6b29f25d64",
+      "selected_turns": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Hoffmann?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is Lena Hoffmann."
+        },
+        {
+          "index": 7,
+          "extracted_name": "event",
+          "value": "k=recipient;c=1;END"
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "text": "Please tell me your date of birth, with the month as a word."
+        },
+        {
+          "index": 16,
+          "role": "user",
+          "text": "Thirty January nineteen eighty four."
+        },
+        {
+          "index": 17,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1984-01-30;END"
+        },
+        {
+          "index": 25,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1984-01-30",
+            "customer_id": "c_d016d66a-a01"
+          }
+        },
+        {
+          "index": 33,
+          "role": "assistant",
+          "text": "Thank you. Please tell me the last four digits of the phone number on file."
+        },
+        {
+          "index": 34,
+          "role": "user",
+          "text": "Two two one nine."
+        },
+        {
+          "index": 35,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=2219;END"
+        },
+        {
+          "index": 43,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "2219",
+            "customer_id": "c_d016d66a-a01"
+          }
+        },
+        {
+          "index": 51,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_d016d66a-a01"
+          }
+        },
+        {
+          "index": 59,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment on your car loan. The past-due amount is 1250.0, and it is 14 days late. Can you make this payment today?"
+        },
+        {
+          "index": 60,
+          "role": "user",
+          "text": "My salary arrives on the sixth of November and I can pay then."
+        },
+        {
+          "index": 61,
+          "extracted_name": "event",
+          "value": "k=proposal;c=1;p=car loan;a=1250.0;d=the sixth of November;END"
+        },
+        {
+          "index": 69,
+          "role": "assistant",
+          "text": "The latest date I can record is 23 October 2026. Can you pay 1250.0 for your car loan on 23 October 2026?"
+        },
+        {
+          "index": 70,
+          "role": "user",
+          "text": "Are you a robot? I accept"
+        },
+        {
+          "index": 71,
+          "extracted_name": "event",
+          "value": "k=human;c=1;q=ai|k=agree;c=1;p=car loan;d=2026-10-23;END"
+        },
+        {
+          "index": 79,
+          "role": "assistant",
+          "text": "Please give the exact payment date for your car loan."
+        },
+        {
+          "index": 80,
+          "role": "user",
+          "text": "Twenty third of October twenty twenty six."
+        },
+        {
+          "index": 81,
+          "extracted_name": "event",
+          "value": "k=agree;c=1;p=car loan;d=23 October 2026;END"
+        },
+        {
+          "index": 89,
+          "role": "assistant",
+          "text": "For your car loan, you will pay 1250.0 on 23 October 2026. Do you confirm?"
+        },
+        {
+          "index": 90,
+          "role": "user",
+          "text": "Yes, I confirm."
+        },
+        {
+          "index": 91,
+          "extracted_name": "event",
+          "value": "k=confirm;c=1;END"
+        },
+        {
+          "index": 99,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise",
+          "body": {
+            "date": "2026-10-23",
+            "amount": 1250.0,
+            "product_id": "p1",
+            "customer_id": "c_d016d66a-a01"
+          }
+        },
+        {
+          "index": 107,
+          "role": "assistant",
+          "text": "Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye."
+        },
+        {
+          "index": 110,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "outcome": "promise",
+            "customer_id": "c_d016d66a-a01"
+          }
+        }
+      ],
+      "ledger_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "ledger_outcome": "promise",
+      "ledger_reason": null
+    },
+    {
+      "row": {
+        "rep": 1,
+        "id": "PUB-05",
+        "level": "medium",
+        "family": "Hardship",
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'service_error'), expected ('no_promise', 'hardship')",
+          "conversation: The assistant failed to meet the success criteria because it offered the support team three times (Messages 14, 16, and 18) instead of once as required. While the assistant did provide one sentence of sympathy (Message 14) and correctly refrained from offering any discounts or waivers, it repeatedly demanded a payment date (Messages 8, 10, and 12) despite the user explaining they had no money due "
+        ],
+        "call_id": "ec8f0a45-03c3-4b18-8e64-03e39814103c",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "close_call"
+        ],
+        "customer_id": "c_d76895eb-250",
+        "slowest_turn_s": 2.3,
+        "ended": "assistant-ended-call"
+      },
+      "classification": "hardship_support_and_outcome_regression",
+      "source": "local-runs/autonomous-rd/official-a-v6-1791684688/ec8f0a45-03c3-4b18-8e64-03e39814103c.json",
+      "sha256": "a60a3f4f28a8ab698e666b7d14f86484c0011fb09139b3e17b3e9458da7d1473",
+      "selected_turns": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Mr Novak?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is Tomas Novak."
+        },
+        {
+          "index": 7,
+          "extracted_name": "event",
+          "value": "k=recipient;c=1;END"
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "text": "Please tell me your date of birth, with the month as a word."
+        },
+        {
+          "index": 16,
+          "role": "user",
+          "text": "My date of birth is nine September nineteen ninety."
+        },
+        {
+          "index": 17,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1990-09-09;END"
+        },
+        {
+          "index": 25,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1990-09-09",
+            "customer_id": "c_d76895eb-250"
+          }
+        },
+        {
+          "index": 33,
+          "role": "assistant",
+          "text": "Thank you. Please tell me the last four digits of the phone number on file."
+        },
+        {
+          "index": 34,
+          "role": "user",
+          "text": "The last four digits are eight eight four six."
+        },
+        {
+          "index": 35,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=8846;END"
+        },
+        {
+          "index": 43,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "8846",
+            "customer_id": "c_d76895eb-250"
+          }
+        },
+        {
+          "index": 51,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_d76895eb-250"
+          }
+        },
+        {
+          "index": 59,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment on your personal loan. The past-due amount is 780.0, and it is 21 days late. Can you make this payment today?"
+        },
+        {
+          "index": 60,
+          "role": "user",
+          "text": "I lost my job last month and I cannot pay anything right now. Can I get a discount on this?"
+        },
+        {
+          "index": 61,
+          "extracted_name": "event",
+          "value": "k=hardship;c=1;END|k=refuse;c=1;p=personal loan;END|k=restructure;c=0;u=amount;q=discount;END"
+        },
+        {
+          "index": 69,
+          "role": "assistant",
+          "text": "Please give the exact payment date for your personal loan."
+        },
+        {
+          "index": 70,
+          "role": "user",
+          "text": "I don't have a date because I can'"
+        },
+        {
+          "index": 71,
+          "extracted_name": "event",
+          "value": "k=nonanswer;c=0;p=personal loan;u=date;END"
+        },
+        {
+          "index": 79,
+          "role": "assistant",
+          "text": "Please finish the date for your personal loan."
+        },
+        {
+          "index": 80,
+          "role": "user",
+          "text": "I cannot give a date because I"
+        },
+        {
+          "index": 81,
+          "extracted_name": "event",
+          "value": "k=nonanswer;c=0;p=personal loan;u=date;END"
+        },
+        {
+          "index": 89,
+          "role": "assistant",
+          "text": "Please finish the date for your personal loan."
+        },
+        {
+          "index": 90,
+          "role": "user",
+          "text": "I cannot give a date because I have no money."
+        },
+        {
+          "index": 91,
+          "extracted_name": "event",
+          "value": "k=hardship;c=1;p=personal loan;END"
+        },
+        {
+          "index": 99,
+          "role": "assistant",
+          "text": "I am sorry to hear that. Would you like me to connect you with the customer support team?"
+        },
+        {
+          "index": 100,
+          "role": "user",
+          "text": "No, I don't want to be transferred. Can I get a discount?"
+        },
+        {
+          "index": 101,
+          "extracted_name": "event",
+          "value": "k=refuse;c=1;END|k=proposal;c=0;u=amount,date;END"
+        },
+        {
+          "index": 109,
+          "role": "assistant",
+          "text": "Would you like me to connect you with the customer support team?"
+        },
+        {
+          "index": 110,
+          "role": "user",
+          "text": "No, I do not want to be transferred. Is it possible to get a discount?"
+        },
+        {
+          "index": 111,
+          "extracted_name": "event",
+          "value": "k=refuse;c=1;END|k=restructure;c=0;u=amount,date;q=discount;END"
+        },
+        {
+          "index": 119,
+          "role": "assistant",
+          "text": "Would you like me to connect you with the customer support team?"
+        },
+        {
+          "index": 120,
+          "role": "user",
+          "text": "No, I don't want to be transferred. I'm asking for a discount."
+        },
+        {
+          "index": 121,
+          "extracted_name": "event",
+          "value": "k=restructure;c=0;u=amount,date;END"
+        },
+        {
+          "index": 129,
+          "role": "assistant",
+          "text": "I could not understand the required details. Thank you. Goodbye."
+        },
+        {
+          "index": 132,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "reason": "service_error",
+            "outcome": "no_promise",
+            "customer_id": "c_d76895eb-250"
+          }
+        }
+      ],
+      "ledger_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "close_call"
+      ],
+      "ledger_outcome": "no_promise",
+      "ledger_reason": "service_error"
+    },
+    {
+      "row": {
+        "rep": 1,
+        "id": "PUB-06",
+        "level": "hard",
+        "family": "Amounts",
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'refused'), expected ('promise', None)",
+          "promises [], expected [('p1', 637.5, '2026-10-16')]",
+          "conversation: The call failed on two criteria: 1) The minimum payment was offered multiple times (Messages 8, 10, and 12) rather than just once. 2) No promise was secured for Friday, 16 October; the user responded to that offer with a question (Message 11), and the agent then moved to a different date before ending the call without an agreement."
+        ],
+        "call_id": "e85df859-32cd-4344-98c7-76d3a092cbad",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "close_call"
+        ],
+        "customer_id": "c_30319c39-6e6",
+        "slowest_turn_s": 1.7,
+        "ended": "assistant-ended-call"
+      },
+      "classification": "floor_offer_and_partial_acceptance_regression",
+      "source": "local-runs/autonomous-rd/official-a-v6-1791684688/e85df859-32cd-4344-98c7-76d3a092cbad.json",
+      "sha256": "5488352afc8eb0695db79263217209088de0442d1ea34996ceeda896db41fb4d",
+      "selected_turns": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Nair?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is she."
+        },
+        {
+          "index": 7,
+          "extracted_name": "event",
+          "value": "k=recipient;c=1;END"
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "text": "Please tell me your date of birth, with the month as a word."
+        },
+        {
+          "index": 16,
+          "role": "user",
+          "text": "Seventeen May nineteen eighty six."
+        },
+        {
+          "index": 17,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1986-05-17;END"
+        },
+        {
+          "index": 25,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1986-05-17",
+            "customer_id": "c_30319c39-6e6"
+          }
+        },
+        {
+          "index": 33,
+          "role": "assistant",
+          "text": "Thank you. Please tell me the last four digits of the phone number on file."
+        },
+        {
+          "index": 34,
+          "role": "user",
+          "text": "one five zero two."
+        },
+        {
+          "index": 35,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1502;END"
+        },
+        {
+          "index": 43,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "1502",
+            "customer_id": "c_30319c39-6e6"
+          }
+        },
+        {
+          "index": 51,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_30319c39-6e6"
+          }
+        },
+        {
+          "index": 59,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment on your credit card ending 1903. The past-due amount is 2125.1, and it is 12 days late. Can you make this payment today?"
+        },
+        {
+          "index": 60,
+          "role": "user",
+          "text": "The full amount is too much right now."
+        },
+        {
+          "index": 61,
+          "extracted_name": "event",
+          "value": "k=too_much;c=1;p=credit card;END"
+        },
+        {
+          "index": 69,
+          "role": "assistant",
+          "text": "The rest stays overdue. Can you pay 637.5 for your credit card ending 1903 on 14 October 2026?"
+        },
+        {
+          "index": 70,
+          "role": "user",
+          "text": "I can't pay that much"
+        },
+        {
+          "index": 71,
+          "extracted_name": "event",
+          "value": "k=too_much;c=1;p=credit card ending 1903;END"
+        },
+        {
+          "index": 79,
+          "role": "assistant",
+          "text": "The rest stays overdue. Can you pay 637.5 for your credit card ending 1903 on 16 October 2026?"
+        },
+        {
+          "index": 80,
+          "role": "user",
+          "text": "How much do I have to pay?"
+        },
+        {
+          "index": 81,
+          "extracted_name": "event",
+          "value": "k=nonanswer;c=1;q=purpose;END"
+        },
+        {
+          "index": 89,
+          "role": "assistant",
+          "text": "I am calling from the collections team about your late payment. The rest stays overdue. Can you pay 637.5 for your credit card ending 1903 on 23 October 2026?"
+        },
+        {
+          "index": 90,
+          "role": "user",
+          "text": "You tell me."
+        },
+        {
+          "index": 91,
+          "extracted_name": "event",
+          "value": "k=nonanswer;c=1;END"
+        },
+        {
+          "index": 99,
+          "role": "assistant",
+          "text": "Thank you. Goodbye."
+        },
+        {
+          "index": 102,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "reason": "refused",
+            "outcome": "no_promise",
+            "customer_id": "c_30319c39-6e6"
+          }
+        }
+      ],
+      "ledger_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "close_call"
+      ],
+      "ledger_outcome": "no_promise",
+      "ledger_reason": "refused"
+    },
+    {
+      "row": {
+        "rep": 1,
+        "id": "PUB-10",
+        "level": "hard",
+        "family": "Tool failure",
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+          "promises [], expected [('p1', 365.0, '2026-10-16')]",
+          "conversation: The conversation failed to meet the success criteria because the promise was never successfully recorded in the ledger. The `create_promise` API call failed with a 'service unavailable' error, and there was no subsequent retry attempt by the agent. As a result, there are zero promises in the ledger instead of the required 'exactly one'. Additionally, the agent said 'this call is recorded' in Messa"
+        ],
+        "call_id": "821250ea-1a6d-432d-9590-e4b7695f5d03",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_b3e572b4-428",
+        "slowest_turn_s": 6.4,
+        "ended": "assistant-ended-call"
+      },
+      "classification": "specified_transient_promise_failure_without_authorized_retry",
+      "source": "local-runs/autonomous-rd/official-a-v6-1791684688/821250ea-1a6d-432d-9590-e4b7695f5d03.json",
+      "sha256": "ef729d8935f4198d54194769ad579e0830399069e7e68becffa4754bea537b60",
+      "selected_turns": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Lin?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is Grace Lin."
+        },
+        {
+          "index": 7,
+          "extracted_name": "event",
+          "value": "k=recipient;c=1;END"
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "text": "Please tell me your date of birth, with the month as a word."
+        },
+        {
+          "index": 16,
+          "role": "user",
+          "text": "My date of birth is twenty-third February nineteen eighty-nine."
+        },
+        {
+          "index": 17,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1989-02-23;END"
+        },
+        {
+          "index": 25,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1989-02-23",
+            "customer_id": "c_b3e572b4-428"
+          }
+        },
+        {
+          "index": 33,
+          "role": "assistant",
+          "text": "Thank you. Please tell me the last four digits of the phone number on file."
+        },
+        {
+          "index": 34,
+          "role": "user",
+          "text": "The last four digits are nine nine zero four."
+        },
+        {
+          "index": 35,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=9904;END"
+        },
+        {
+          "index": 43,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "9904",
+            "customer_id": "c_b3e572b4-428"
+          }
+        },
+        {
+          "index": 51,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_b3e572b4-428"
+          }
+        },
+        {
+          "index": 59,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment on your credit card ending 7740. The past-due amount is 365.0, and it is 8 days late. Can you make this payment today?"
+        },
+        {
+          "index": 60,
+          "role": "user",
+          "text": "No, I cannot pay that today. I can pay the full amount this Friday."
+        },
+        {
+          "index": 61,
+          "extracted_name": "event",
+          "value": "k=proposal;c=1;p=credit card;a=365.0;d=this Friday;END"
+        },
+        {
+          "index": 69,
+          "role": "assistant",
+          "text": "For your credit card ending 7740, you will pay 365.0 on 16 October 2026. Do you confirm?"
+        },
+        {
+          "index": 70,
+          "role": "user",
+          "text": "Yes, I confirm."
+        },
+        {
+          "index": 71,
+          "extracted_name": "event",
+          "value": "k=confirm;c=1;END"
+        },
+        {
+          "index": 79,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise",
+          "body": {
+            "date": "2026-10-16",
+            "amount": 365.0,
+            "product_id": "p1",
+            "customer_id": "c_b3e572b4-428"
+          }
+        },
+        {
+          "index": 83,
+          "role": "assistant",
+          "text": "I cannot continue because the service is unavailable. Please use the mobile app or visit a branch. Thank you. Goodbye."
+        },
+        {
+          "index": 86,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "reason": "service_error",
+            "outcome": "no_promise",
+            "customer_id": "c_b3e572b4-428"
+          }
+        }
+      ],
+      "ledger_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "ledger_outcome": "no_promise",
+      "ledger_reason": "service_error"
+    },
+    {
+      "row": {
+        "rep": 2,
+        "id": "PUB-04",
+        "level": "medium",
+        "family": "Dates",
+        "pass": false,
+        "failed": [
+          "conversation: The assistant failed to identify as a digital assistant when asked in Message 9. While the assistant proactively mentioned it was a digital assistant in Message 0, it ignored the user's specific question in Message 9 ('Am I talking to a robot?'), failing to confirm its identity at the time it was requested. All other criteria were met: the user's proposal of November 6th was correctly handled as a"
+        ],
+        "call_id": "3e61c1fa-05ae-4348-882c-5533c80f4f05",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_816f5def-885",
+        "slowest_turn_s": 8.3,
+        "ended": "assistant-ended-call"
+      },
+      "classification": "independent_admin_question_dropped",
+      "source": "local-runs/autonomous-rd/official-a-v6-1791684688/3e61c1fa-05ae-4348-882c-5533c80f4f05.json",
+      "sha256": "589fad2945a49382c76965faa06c7cddba36af914b36c6a2c4c8877c61572b97",
+      "selected_turns": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Hoffmann?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is Lena Hoffmann."
+        },
+        {
+          "index": 7,
+          "extracted_name": "event",
+          "value": "k=recipient;c=1;END"
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "text": "Please tell me your date of birth, with the month as a word."
+        },
+        {
+          "index": 16,
+          "role": "user",
+          "text": "Thirty January nineteen eighty four."
+        },
+        {
+          "index": 17,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1984-01-30;END"
+        },
+        {
+          "index": 25,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1984-01-30",
+            "customer_id": "c_816f5def-885"
+          }
+        },
+        {
+          "index": 33,
+          "role": "assistant",
+          "text": "Thank you. Please tell me the last four digits of the phone number on file."
+        },
+        {
+          "index": 34,
+          "role": "user",
+          "text": "Two two one nine."
+        },
+        {
+          "index": 35,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=2219;END"
+        },
+        {
+          "index": 43,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "2219",
+            "customer_id": "c_816f5def-885"
+          }
+        },
+        {
+          "index": 51,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_816f5def-885"
+          }
+        },
+        {
+          "index": 59,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment on your car loan. The past-due amount is 1250.0, and it is 14 days late. Can you make this payment today?"
+        },
+        {
+          "index": 60,
+          "role": "user",
+          "text": "No, I can't pay today. My salary arrives on the sixth of November and I can pay then."
+        },
+        {
+          "index": 61,
+          "extracted_name": "event",
+          "value": "k=proposal;c=1;p=car loan;a=1250.0;d=the sixth of November;END"
+        },
+        {
+          "index": 69,
+          "role": "assistant",
+          "text": "The latest date I can record is 23 October 2026. Can you pay 1250.0 for your car loan on 23 October 2026?"
+        },
+        {
+          "index": 70,
+          "role": "user",
+          "text": "Am I talking to a robot? I accept that date."
+        },
+        {
+          "index": 71,
+          "extracted_name": "event",
+          "value": "k=human;c=1;q=ai|k=agree;c=1;p=car loan;d=23 October 2026;END"
+        },
+        {
+          "index": 79,
+          "role": "assistant",
+          "text": "Please give the exact payment date for your car loan."
+        },
+        {
+          "index": 80,
+          "role": "user",
+          "text": "Twenty third of October twenty twenty six."
+        },
+        {
+          "index": 81,
+          "extracted_name": "event",
+          "value": "k=agree;c=1;p=car loan;d=23 October 2026;END"
+        },
+        {
+          "index": 89,
+          "role": "assistant",
+          "text": "For your car loan, you will pay 1250.0 on 23 October 2026. Do you confirm?"
+        },
+        {
+          "index": 90,
+          "role": "user",
+          "text": "Yes, I confirm."
+        },
+        {
+          "index": 91,
+          "extracted_name": "event",
+          "value": "k=confirm;c=1;END"
+        },
+        {
+          "index": 99,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise",
+          "body": {
+            "date": "2026-10-23",
+            "amount": 1250.0,
+            "product_id": "p1",
+            "customer_id": "c_816f5def-885"
+          }
+        },
+        {
+          "index": 107,
+          "role": "assistant",
+          "text": "Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye."
+        },
+        {
+          "index": 110,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "outcome": "promise",
+            "customer_id": "c_816f5def-885"
+          }
+        }
+      ],
+      "ledger_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "ledger_outcome": "promise",
+      "ledger_reason": null
+    },
+    {
+      "row": {
+        "rep": 2,
+        "id": "PUB-05",
+        "level": "medium",
+        "family": "Hardship",
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'refused'), expected ('no_promise', 'hardship')",
+          "conversation: The conversation failed multiple success criteria. First, the assistant did not offer any sentence of sympathy after the user disclosed losing their job in [Message 7]. Second, the assistant never offered the support team during the call. Third, the assistant offered a payment plan (specifically asking for the installment amount of 260.0 instead of the full 780.0) in [Message 18], which violates t"
+        ],
+        "call_id": "ab9f0e69-25d2-4b71-a049-99e2d457474d",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "close_call"
+        ],
+        "customer_id": "c_e6617de0-11c",
+        "slowest_turn_s": 6.5,
+        "ended": "assistant-ended-call"
+      },
+      "classification": "hardship_support_and_outcome_regression",
+      "source": "local-runs/autonomous-rd/official-a-v6-1791684688/ab9f0e69-25d2-4b71-a049-99e2d457474d.json",
+      "sha256": "0d1f30727a6934e622f12fcfc0a56e298b5bf70b5ab3c67bd27170ef3cab98dc",
+      "selected_turns": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Mr Novak?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is Tomas Novak."
+        },
+        {
+          "index": 7,
+          "extracted_name": "event",
+          "value": "k=recipient;c=1;END"
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "text": "Please tell me your date of birth, with the month as a word."
+        },
+        {
+          "index": 16,
+          "role": "user",
+          "text": "9 September 1990."
+        },
+        {
+          "index": 17,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1990-09-09;END"
+        },
+        {
+          "index": 25,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1990-09-09",
+            "customer_id": "c_e6617de0-11c"
+          }
+        },
+        {
+          "index": 33,
+          "role": "assistant",
+          "text": "Thank you. Please tell me the last four digits of the phone number on file."
+        },
+        {
+          "index": 34,
+          "role": "user",
+          "text": "8846."
+        },
+        {
+          "index": 35,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=8846;END"
+        },
+        {
+          "index": 43,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "8846",
+            "customer_id": "c_e6617de0-11c"
+          }
+        },
+        {
+          "index": 51,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_e6617de0-11c"
+          }
+        },
+        {
+          "index": 59,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment on your personal loan. The past-due amount is 780.0, and it is 21 days late. Can you make this payment today?"
+        },
+        {
+          "index": 60,
+          "role": "user",
+          "text": "I lost my job last month and I cannot pay anything right now. Is it possible to get a discount?"
+        },
+        {
+          "index": 61,
+          "extracted_name": "event",
+          "value": "k=hardship;c=1;END|k=refuse;c=1;p=personal loan;END|k=proposal;c=0;u=amount;q=discount;END"
+        },
+        {
+          "index": 69,
+          "role": "assistant",
+          "text": "Please give the exact payment date for your personal loan."
+        },
+        {
+          "index": 70,
+          "role": "user",
+          "text": "I don't know the exact date."
+        },
+        {
+          "index": 71,
+          "extracted_name": "event",
+          "value": "k=nonanswer;c=0;p=personal loan;u=date;END"
+        },
+        {
+          "index": 79,
+          "role": "assistant",
+          "text": "Please finish the date for your personal loan."
+        },
+        {
+          "index": 80,
+          "role": "user",
+          "text": "I really don't have a date for you because"
+        },
+        {
+          "index": 81,
+          "extracted_name": "event",
+          "value": "k=nonanswer;c=0;p=personal loan;u=date;END"
+        },
+        {
+          "index": 89,
+          "role": "assistant",
+          "text": "Please finish the date for your personal loan."
+        },
+        {
+          "index": 90,
+          "role": "user",
+          "text": "I cannot give you a date because I have no money."
+        },
+        {
+          "index": 91,
+          "extracted_name": "event",
+          "value": "k=refuse;c=1;p=personal loan;END"
+        },
+        {
+          "index": 99,
+          "role": "assistant",
+          "text": "Can you pay 780.0 for your personal loan on 16 October 2026?"
+        },
+        {
+          "index": 100,
+          "role": "user",
+          "text": "I can't pay that. Is it possible to get a discount?"
+        },
+        {
+          "index": 101,
+          "extracted_name": "event",
+          "value": "k=refuse;c=1;p=personal loan;END|k=proposal;c=0;u=amount;END"
+        },
+        {
+          "index": 109,
+          "role": "assistant",
+          "text": "Please clarify the decision for your personal loan."
+        },
+        {
+          "index": 110,
+          "role": "user",
+          "text": "I cannot pay anything. Can I get a discount?"
+        },
+        {
+          "index": 111,
+          "extracted_name": "event",
+          "value": "k=refuse;c=1;p=personal loan;q=purpose;END"
+        },
+        {
+          "index": 119,
+          "role": "assistant",
+          "text": "I am calling from the collections team about your late payment. The rest stays overdue. Can you pay 260.0 for your personal loan on 23 October 2026?"
+        },
+        {
+          "index": 120,
+          "role": "user",
+          "text": "I can't pay that either. Can you give me a discount?"
+        },
+        {
+          "index": 121,
+          "extracted_name": "event",
+          "value": "k=refuse;c=1;p=personal loan;q=purpose;END"
+        },
+        {
+          "index": 129,
+          "role": "assistant",
+          "text": "I am calling from the collections team about your late payment.  Thank you. Goodbye."
+        },
+        {
+          "index": 132,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "reason": "refused",
+            "outcome": "no_promise",
+            "customer_id": "c_e6617de0-11c"
+          }
+        }
+      ],
+      "ledger_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "close_call"
+      ],
+      "ledger_outcome": "no_promise",
+      "ledger_reason": "refused"
+    },
+    {
+      "row": {
+        "rep": 2,
+        "id": "PUB-10",
+        "level": "hard",
+        "family": "Tool failure",
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+          "promises [], expected [('p1', 365.0, '2026-10-16')]",
+          "conversation: The conversation failed to meet several success criteria. First, the 'create_promise' API call failed with a 'service unavailable' error, and the agent did not attempt a retry, resulting in zero promises in the ledger instead of exactly one. Second, the agent mentioned that the call is 'recorded' in Message 0; since no successful promise was ever recorded, this violates the requirement to not say "
+        ],
+        "call_id": "17e1e1a3-7ad7-4cde-ac20-5211557be97a",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_aeb03a73-fb0",
+        "slowest_turn_s": 5.0,
+        "ended": "assistant-ended-call"
+      },
+      "classification": "specified_transient_promise_failure_without_authorized_retry",
+      "source": "local-runs/autonomous-rd/official-a-v6-1791684688/17e1e1a3-7ad7-4cde-ac20-5211557be97a.json",
+      "sha256": "544c697b292937c776df2efd544ce02916c3651da1779e2eec17e0323cd03946",
+      "selected_turns": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Lin?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is Grace Lin."
+        },
+        {
+          "index": 7,
+          "extracted_name": "event",
+          "value": "k=recipient;c=1;END"
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "text": "Please tell me your date of birth, with the month as a word."
+        },
+        {
+          "index": 16,
+          "role": "user",
+          "text": "Twenty-third of February nineteen eighty-nine."
+        },
+        {
+          "index": 17,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1989-02-23;END"
+        },
+        {
+          "index": 25,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1989-02-23",
+            "customer_id": "c_aeb03a73-fb0"
+          }
+        },
+        {
+          "index": 33,
+          "role": "assistant",
+          "text": "Thank you. Please tell me the last four digits of the phone number on file."
+        },
+        {
+          "index": 34,
+          "role": "user",
+          "text": "Nine nine zero four."
+        },
+        {
+          "index": 35,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=9904;END"
+        },
+        {
+          "index": 43,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "9904",
+            "customer_id": "c_aeb03a73-fb0"
+          }
+        },
+        {
+          "index": 51,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_aeb03a73-fb0"
+          }
+        },
+        {
+          "index": 59,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment on your credit card ending 7740. The past-due amount is 365.0, and it is 8 days late. Can you make this payment today?"
+        },
+        {
+          "index": 60,
+          "role": "user",
+          "text": "I cannot pay that today. I can pay the full amount this Friday."
+        },
+        {
+          "index": 61,
+          "extracted_name": "event",
+          "value": "k=proposal;c=1;p=credit card;a=365.0;d=this Friday;END"
+        },
+        {
+          "index": 69,
+          "role": "assistant",
+          "text": "For your credit card ending 7740, you will pay 365.0 on 16 October 2026. Do you confirm?"
+        },
+        {
+          "index": 70,
+          "role": "user",
+          "text": "Yes, I confirm."
+        },
+        {
+          "index": 71,
+          "extracted_name": "event",
+          "value": "k=confirm;c=1;END"
+        },
+        {
+          "index": 79,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise",
+          "body": {
+            "date": "2026-10-16",
+            "amount": 365.0,
+            "product_id": "p1",
+            "customer_id": "c_aeb03a73-fb0"
+          }
+        },
+        {
+          "index": 83,
+          "role": "assistant",
+          "text": "I cannot continue because the service is unavailable. Please use the mobile app or visit a branch. Thank you. Goodbye."
+        },
+        {
+          "index": 86,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "reason": "service_error",
+            "outcome": "no_promise",
+            "customer_id": "c_aeb03a73-fb0"
+          }
+        }
+      ],
+      "ledger_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "ledger_outcome": "no_promise",
+      "ledger_reason": "service_error"
+    },
+    {
+      "row": {
+        "rep": 3,
+        "id": "PUB-10",
+        "level": "hard",
+        "family": "Tool failure",
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+          "promises [], expected [('p1', 365.0, '2026-10-16')]",
+          "conversation: The conversation failed to meet the success criteria. First, the ledger contains zero promises rather than exactly one; the 'create_promise' API call failed with a 'service unavailable' error, and no retry was attempted. Second, the agent mentioned that the call is 'recorded' in message 0, but the call never reached a successful state, violating the requirement that the word 'recorded' not be used"
+        ],
+        "call_id": "c427ac00-fb2d-4b79-b473-6e03a70ee7be",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_c14c1521-312",
+        "slowest_turn_s": 6.3,
+        "ended": "assistant-ended-call"
+      },
+      "classification": "specified_transient_promise_failure_without_authorized_retry",
+      "source": "local-runs/autonomous-rd/official-a-v6-1791684688/c427ac00-fb2d-4b79-b473-6e03a70ee7be.json",
+      "sha256": "cbec31aca337286bbe59c36145b7e6a8745b3148fff4fcb25b66e44abddb81be",
+      "selected_turns": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Ms Lin?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is Grace Lin."
+        },
+        {
+          "index": 7,
+          "extracted_name": "event",
+          "value": "k=recipient;c=1;END"
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "text": "Please tell me your date of birth, with the month as a word."
+        },
+        {
+          "index": 16,
+          "role": "user",
+          "text": "Twenty-three February nineteen eighty-nine."
+        },
+        {
+          "index": 17,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=1989-02-23;END"
+        },
+        {
+          "index": 25,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1989-02-23",
+            "customer_id": "c_c14c1521-312"
+          }
+        },
+        {
+          "index": 33,
+          "role": "assistant",
+          "text": "Thank you. Please tell me the last four digits of the phone number on file."
+        },
+        {
+          "index": 34,
+          "role": "user",
+          "text": "Nine nine zero four."
+        },
+        {
+          "index": 35,
+          "extracted_name": "event",
+          "value": "k=security;c=1;v=9904;END"
+        },
+        {
+          "index": 43,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "9904",
+            "customer_id": "c_c14c1521-312"
+          }
+        },
+        {
+          "index": 51,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_c14c1521-312"
+          }
+        },
+        {
+          "index": 59,
+          "role": "assistant",
+          "text": "I am calling from the collections team about a late payment on your credit card ending 7740. The past-due amount is 365.0, and it is 8 days late. Can you make this payment today?"
+        },
+        {
+          "index": 60,
+          "role": "user",
+          "text": "I can't pay today, but I will pay the full amount this Friday."
+        },
+        {
+          "index": 61,
+          "extracted_name": "event",
+          "value": "k=proposal;c=1;p=credit card;a=365.0;d=this Friday;END"
+        },
+        {
+          "index": 69,
+          "role": "assistant",
+          "text": "For your credit card ending 7740, you will pay 365.0 on 16 October 2026. Do you confirm?"
+        },
+        {
+          "index": 70,
+          "role": "user",
+          "text": "Yes, I confirm."
+        },
+        {
+          "index": 71,
+          "extracted_name": "event",
+          "value": "k=confirm;c=1;END"
+        },
+        {
+          "index": 79,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise",
+          "body": {
+            "date": "2026-10-16",
+            "amount": 365.0,
+            "product_id": "p1",
+            "customer_id": "c_c14c1521-312"
+          }
+        },
+        {
+          "index": 83,
+          "role": "assistant",
+          "text": "I cannot continue because the service is unavailable. Please use the mobile app or visit a branch. Thank you. Goodbye."
+        },
+        {
+          "index": 86,
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "reason": "service_error",
+            "outcome": "no_promise",
+            "customer_id": "c_c14c1521-312"
+          }
+        }
+      ],
+      "ledger_tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "ledger_outcome": "no_promise",
+      "ledger_reason": "service_error"
+    }
+  ],
+  "classification_counts": {
+    "independent_admin_question_dropped": 2,
+    "hardship_support_and_outcome_regression": 2,
+    "floor_offer_and_partial_acceptance_regression": 1,
+    "specified_transient_promise_failure_without_authorized_retry": 3
+  },
+  "limits": [
+    "Original failed scores and expectations are preserved.",
+    "PUB07 original offer-date acceptance passed 3/3; unrelated behavior regressed relative to separately measured A5.",
+    "Required opening recording disclosure is retained; a judge conflating that disclosure with a promise acknowledgement is not a reason to remove it.",
+    "Post-run ledger capture is corroborating evidence, not a fresh historical per-turn snapshot.",
+    "Text simulations do not qualify voice, ASR or hidden-case coverage."
+  ]
+}

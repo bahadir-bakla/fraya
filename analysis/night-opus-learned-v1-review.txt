@@ -1,0 +1,619 @@
+Learned semantic-proposal v1 review
+Status: completed_actual_opus_learned_v1_source_review
+Native requested model: claude-opus-5-5
+Baseline model SHA256: 719228b3b1751f05e6df4f9faff5cb12d7ba03454c4a8516e75aeb60b3ca7516
+No baseline edits, training, runtime embedding, bank or platform calls.
+Exact inference verified: True
+Inference elapsed seconds: 96.25
+
+OPUS SOURCE CLAIMS / ARCHITECTURAL PROPOSALS:
+{
+  "review_type": "learned_proposal_source_review_not_executed",
+  "readiness": "not_ready",
+  "limitations": [
+    "Source-only review. Nothing was executed, and no weights were inspected. model.json and runtime_embedded.py were registry hashes only; their contents were not visible.",
+    "Every source_predicted_observation is a prediction from visible code. It is not observed output. Where the outcome depends on learned weights, it is marked as weight-dependent.",
+    "Saved local CPU metrics (holdout 22 rows: raw joint 45.45%, accepted 4/22, 0 errors, Wilson95 upper 48.99%; warm p95 0.535 ms) are cited as saved artifacts only. They establish neither readiness nor statistical safety.",
+    "No hosted, Freya sandbox, extraction, ASR or bank-score evidence exists here. Source-compatible deployment would need a separate platform qualification, and none was performed.",
+    "Prototype scope: no learned quantity, target, polarity, offer or consent head exists. No graph adapter or state reducer is implemented. component_observations is a lexical v0 (inference.py:L77-L94).",
+    "The v1 holdout has been adaptively inspected (label-spec L59) and is diagnostic_only for every later version."
+  ],
+  "findings": [
+    {
+      "id": "L55-01",
+      "priority": "P0",
+      "title": "Same-author, carrier-shared splits and noisy policy-flavoured labels make holdout independence cosmetic",
+      "assessment": "design_gap",
+      "source_refs": [
+        "integrations/learned-dialogue/authoring.py:L45",
+        "integrations/learned-dialogue/authoring.py:L65",
+        "integrations/learned-dialogue/authoring.py:L90",
+        "integrations/learned-dialogue/build_data.py:L55",
+        "integrations/learned-dialogue/build_data.py:L66",
+        "integrations/learned-dialogue/train_eval.py:L42-L46",
+        "research/customer-benchmark/learned-layer-label-spec.json:L45",
+        "research/customer-benchmark/learned-layer-label-spec.json:L54"
+      ],
+      "mathematical_or_contract_argument": "Code-observed: integrity() only rejects reuse of a declared group string across splits (L42-L46). source_group is constructed per split as fictional-original-{split}-v1 (build_data L55), so the cross-split overlap is 0 by construction rather than by any independence test. A single author wrote every pack. Holdout-000 'My fictional card is missing and I need help with the card.' reuses the calibration-000 carrier 'My fictional card is ... help with the card' with one noun changed, which label-spec L54 says does not create an independent template. Label noise is code-observed. 'Do not contact me again.' is labelled primary=unknown/negated (authoring L45), while label-spec L45 says it is a complete stop_request. Unfinished rows keep their primary intent inconsistently: train-010 keeps dispute, but calibration-015 and holdout-015 get unknown. must_abstain is derived mechanically from completion (build_data L66), so it is not independent supervision. The effective independent unit count is therefore at most about 11 holdout families, possibly fewer, not 22 rows.",
+      "counterexample": {
+        "utterance": "Do not contact me again about the fictional account.",
+        "input_overrides": {
+          "raw_text_provenance": "verified_local_synthetic_fixture"
+        },
+        "setup": "Proposed new CPU probe on the frozen v1 bundle, offline, via local_snapshot.",
+        "expected_safe_contract": "A complete stop_contact act with negated contact polarity. Abstention is acceptable only if it is reported as a coverage miss.",
+        "source_predicted_observation": "The guard fires on 'not' (L61, L65) and forces primary=unknown, completion=negated and abstain=true. The oracle style would mark this as a correct abstention, so a semantically wrong label scores as success. The stop act is never surfaced.",
+        "producer_or_caller_assumptions": "The caller treats abstention as safe. A downstream kernel that needs a stop signal gets nothing."
+      },
+      "recommendation": "Freeze v1 as diagnostic. Build the v2 pack with lineage groups by template skeleton, at least two independent authors, and blind double annotation for negation, correction and stop cases. Record the stop act and polarity as orthogonal labels. Report the effective group count, not the row count.",
+      "validation": "Template-skeleton near-duplicate audit across splits with a published cluster list. Inter-annotator agreement per head. A v2 confirmation set that the model developer cannot see until weights, guards and thresholds are frozen."
+    },
+    {
+      "id": "L55-02",
+      "priority": "P0",
+      "title": "Temperature and threshold fitted on the same 22 rows; min-head score and Wilson upper misread as joint or safety guarantees",
+      "assessment": "source_defect",
+      "source_refs": [
+        "integrations/learned-dialogue/train_eval.py:L139-L163",
+        "integrations/learned-dialogue/train_eval.py:L168-L172",
+        "integrations/learned-dialogue/inference.py:L130-L132",
+        "analysis/learned-layer-evaluation-plan.json:L44",
+        "analysis/learned-layer-design.json:L320"
+      ],
+      "mathematical_or_contract_argument": "Code-observed: calibrate() picks per-head temperatures by NLL on the calibration rows. It then sweeps 11 thresholds on the same rows and accepts any setting with at least 3 accepted and empirical error of at most 0.10. The saved sweep shows the rule rejecting 1/8 = 12.5% at 0.4–0.6 and selecting 0.8 with 7 accepted and 0 errors. That is a selection on noise at K=11 with no multiplicity correction. joint_score = min over heads of max_score. Since P(all heads correct) ≤ min marginal, the minimum is only an upper bound on joint correctness under perfect calibration, never an estimate of it. Two further problems compound this. First, completion and unresolvedcomponent have identical bias vectors and temperature 1.5, which follows from their one-to-one label mapping, so one head is effectively counted twice. Second, primaryintent T=0.5 sharpens scores. wilson_upper uses the two-sided z=1.96 on rows. For 0/4, the one-sided exact bound is 1−0.05^(1/4) ≈ 0.527. Rows sharing templates violate independence. With 4 accepted rows in roughly 4 groups, the defensible statement is 'unqualified'.",
+      "counterexample": {
+        "utterance": "My fictional card is missing and I need help with the card.",
+        "input_overrides": {},
+        "setup": "Saved local metric: holdout-000 has joint 0.744 and abstains at 0.8. The calibration twin LD-v1-calibration-000 has 0.885 and is accepted. Proposed probe: refit temperatures on half of the calibration set, select the threshold on the other half, and score the holdout.",
+        "expected_safe_contract": "The threshold transfers within a stated tolerance, and accepted risk is bounded on independent confirmation groups.",
+        "source_predicted_observation": "Weight-dependent. Coverage is likely to swing by several rows between the split and joint procedures, because the 0.75–0.8 band contains several holdout rows. The saved holdout coverage already halved relative to calibration (7/22 to 4/22).",
+        "producer_or_caller_assumptions": "A consumer reads joint_score as a probability, despite the label 'not correctness probability' (inference.py:L143)."
+      },
+      "recommendation": "Split calibration_fit from calibration_risk. Predeclare the grid and apply alpha/K or reserve confirmation groups. Report the one-sided exact group bound. Deduplicate the redundant component head or check consistency instead of doubling it. Rename joint_score to min_marginal_score.",
+      "validation": "Measure the joint empirical accuracy of accepted rows against the min marginal score in reliability bins. Run the split-calibration probe across 3 seeds and report the variance of threshold and coverage."
+    },
+    {
+      "id": "L55-03",
+      "priority": "P1",
+      "title": "Global lexical guard overwrites learned labels; scoped negation and complete corrections become blanket unknowns",
+      "assessment": "source_defect",
+      "source_refs": [
+        "integrations/learned-dialogue/inference.py:L56-L74",
+        "integrations/learned-dialogue/inference.py:L119-L124",
+        "research/customer-benchmark/learned-layer-label-spec.json:L46-L48",
+        "analysis/learned-layer-evaluation-plan.json:L73"
+      ],
+      "mathematical_or_contract_argument": "Code-observed: any match of 'no', 'not', 'actually', 'revise' or 'if' anywhere in the utterance replaces all four learned outputs with primary=unknown (L121). Correction is checked before negation, so 'actually' masks negation. The guard is unscoped, so 'Yes, no problem' and the label-spec C8 cases ('I did not pay before, but I can pay Friday') collapse to unknown. Saved diagnostics show guards-only abstains on 10 of 13 must_abstain holdout rows. The learned-only control has the same accepted set of 4 with 0 errors, so guards contributed no accepted-risk reduction on v1 and act purely as a coverage cap. A guard firing is not a semantic success.",
+      "counterexample": {
+        "utterance": "Actually, I want to dispute the refund entry.",
+        "input_overrides": {},
+        "setup": "Proposed CPU probe with paired texts: with and without 'Actually,'; and 'No worries, please call me back after my journey.'",
+        "expected_safe_contract": "A complete dispute act, possibly flagged as discourse-marker 'actually' with no target change. The callback act is retained with the 'no' scoped to 'worries'.",
+        "source_predicted_observation": "Both are deterministically forced to primary=unknown, with completion correction or negated, abstain=true, and the candidate discarded. The corrections array gets an unresolved entry for the first utterance (L147).",
+        "producer_or_caller_assumptions": "The reducer would interpret a correction as invalidating prior components. A false correction signal could therefore invalidate valid state if consumed."
+      },
+      "recommendation": "Emit guard hits as scoped qualifier spans alongside the learned candidate rather than replacing it. Keep conservative abstention at decision level. Learn polarity and correction per clause in v2.",
+      "validation": "A minimal-pair suite of at least 30 independent groups covering discourse 'actually', idiomatic 'no', and negated sibling plus asserted clause. Report the false-correction rate and blocker recall separately for guard and learned paths."
+    },
+    {
+      "id": "L55-04",
+      "priority": "P1",
+      "title": "No context or OOD model; identical short turns and short security values get one context-free reading, and input_sha256 leaks short secrets",
+      "assessment": "conditional_risk",
+      "source_refs": [
+        "integrations/learned-dialogue/inference.py:L23-L30",
+        "integrations/learned-dialogue/inference.py:L70-L73",
+        "integrations/learned-dialogue/inference.py:L83-L85",
+        "integrations/learned-dialogue/inference.py:L125-L129",
+        "integrations/learned-dialogue/inference.py:L140",
+        "analysis/learned-layer-design.json:L127",
+        "analysis/learned-layer-design.json:L321"
+      ],
+      "mathematical_or_contract_argument": "Code-observed: features use the utterance only. There is no phase, question, offer or readback context, so 'Yes.' has one output in every phase, against label-spec L44. The OOD check is the known-word fraction below 0.6 over a 154-word vocabulary. It does not measure feature mass or similarity, so in-vocabulary off-domain text passes. Saved evidence: holdout-021 'Yes, that one.' was not OOV-flagged and was caught only by threshold. Short inputs of fewer than 3 tokens are always 'unfinished', so the complete security answer '4821' and 'Yes.' are mislabelled as fragments. input_sha256 is an unsalted SHA-256 of raw text. For a 4-digit PIN or DOB utterance, the preimage space is about 10^4 to 10^6, which is trivially invertible. Security span offsets are also emitted. Design L127 says to minimise raw security data.",
+      "counterexample": {
+        "utterance": "4821",
+        "input_overrides": {
+          "phase": "security_question (not consumed by predict)"
+        },
+        "setup": "Proposed CPU probe. Then brute-force the 10^4 digit strings against the emitted input_sha256.",
+        "expected_safe_contract": "A complete security_answer component in context. No recoverable secret is emitted in the proposal.",
+        "source_predicted_observation": "Guard returns unfinished/utterance_tail (L70). The amount component matches the digits (L83) and the status is 'unfinished'. abstain=true. input_sha256 inverts to '4821' in fewer than 10^4 hashes.",
+        "producer_or_caller_assumptions": "The proposal is logged or stored in vars. This is a fault-injection-free normal output."
+      },
+      "recommendation": "Bind a keyed or omitted text hash: HMAC with a per-call key held by the kernel, or rely on the kernel's own turn binding. Add versioned context features and paired-context data. Add a feature-mass and nearest-train-similarity OOD detector that is thresholded on held-out OOD families.",
+      "validation": "A paired-context probe (C5) and an in-vocabulary off-topic set. Check the OOD false-accept rate. Confirm that no unsalted text digest appears in output."
+    },
+    {
+      "id": "L55-05",
+      "priority": "P1",
+      "title": "No head-consistency checks; secondary may duplicate primary or be 'unknown'; no component, quantity, span or target heads exist",
+      "assessment": "design_gap",
+      "source_refs": [
+        "integrations/learned-dialogue/inference.py:L13-L15",
+        "integrations/learned-dialogue/inference.py:L123",
+        "integrations/learned-dialogue/inference.py:L145-L147",
+        "integrations/learned-dialogue/validation.py:L22-L28",
+        "analysis/learned-layer-design.json:L253-L257"
+      ],
+      "mathematical_or_contract_argument": "Code-observed: acceptance requires completion=complete, component=none and primary≠unknown (L123). Nothing rejects secondary==primary, secondary='unknown', or completion and component disagreement in the non-guard path, such as completion=complete with component=intent, which hits L123 only via component. The design reason 'inconsistent_heads' is never emitted. The exclusive secondary head cannot represent 3 or more acts. The clause is always the whole text with target None. No learned quantity or target head exists, so any accepted frame carries no scoped value semantics. Saved: holdout-014 and holdout-016 compound rows were predicted with wrong primary and secondary=none. They abstained only below threshold.",
+      "counterexample": {
+        "utterance": "Please call me back and also arrange a callback discussion.",
+        "input_overrides": {},
+        "setup": "Proposed CPU probe on the frozen bundle.",
+        "expected_safe_contract": "secondary≠primary. Any frame with duplicate or unknown secondary abstains with inconsistent_heads.",
+        "source_predicted_observation": "Weight-dependent. If the secondary head emits 'callback' with score ≥0.8, the proposal is accepted with primary=callback and secondary=callback, and validate_proposal passes it.",
+        "producer_or_caller_assumptions": "A consumer counts two acts."
+      },
+      "recommendation": "Add a deterministic consistency veto: secondary ∉ {primary, unknown} unless 'none'; check completion and component pairing; collapse the redundant component head. Make the secondary head multilabel. Keep component and target fields explicitly 'untrained_head' masked.",
+      "validation": "An exhaustive property test over the label cross-product through the decision function, plus a compound-act group suite with per-head coverage."
+    },
+    {
+      "id": "L55-06",
+      "priority": "P0",
+      "title": "Self-declared provenance and binding; caller validation is not authenticity; abstain/reasons coherence unchecked; runtime footprint unqualified",
+      "assessment": "conditional_risk",
+      "source_refs": [
+        "integrations/learned-dialogue/inference.py:L99-L119",
+        "integrations/learned-dialogue/inference.py:L138-L148",
+        "integrations/learned-dialogue/validation.py:L12-L44",
+        "analysis/learned-layer-design.json:L140",
+        "analysis/learned-layer-evaluation-plan.json:L80-L85",
+        "competition-v3/build-the-builder/docs/tools-and-code.md:L506",
+        "competition-v3/build-the-builder/README.md:L85-L86"
+      ],
+      "mathematical_or_contract_argument": "Code-observed: raw_text_provenance is a caller string. Supplying 'verified_local_synthetic_fixture' silently drops the untrusted reason (L117). state_revision and policy_hash are copied rather than verified, and api_hash and model_id are absent. validate_proposal checks equality with a caller-supplied current_snapshot, which proves freshness only relative to whatever the caller passes, not authenticity. It does not check abstain==bool(reasons), the score-threshold relation, or model identity. Runtime: the bundle is 1.38 MB against a 500 KB gate. Imports of hashlib, math and collections are not verified in the sandbox, which verifies only json, re and datetime. Latency is warm in-process only; cold JSON parse and CPython heap are unmeasured. No graph adapter or reducer exists. Fixed AGENT_LLM is respected and no external inference occurs. This is compatible in principle but unqualified.",
+      "counterexample": {
+        "utterance": "Remove me from fictional email contact reminders.",
+        "input_overrides": {
+          "raw_text_provenance": "verified_local_synthetic_fixture",
+          "state_revision": 7
+        },
+        "setup": "Explicit fault-injection assumption. A buggy adapter passes a stale snapshot (revision 7, while the kernel is at 9) both to predict and as current_snapshot. Separately, mutate the proposal so abstain=false while keeping reasons=['below_calibration_threshold'].",
+        "expected_safe_contract": "The kernel-owned binding is compared to the authoritative state. Incoherent abstain/reasons are rejected atomically.",
+        "source_predicted_observation": "Both pass validate_proposal (L17-L28 equal caller values; no reasons check). The accepted stop_contact is bound to stale revision 7.",
+        "producer_or_caller_assumptions": "The adapter sources current_snapshot from the same stale object. No kernel-side revision check exists, because the reducer is unimplemented."
+      },
+      "recommendation": "The wrapper must take binding from the kernel and add api_hash and the bundle hash as model_id. Provenance should be an enum set only by the kernel. Validation should enforce abstain⇔reasons≠∅ and recompute decision from scores and frozen thresholds. Export a pruned bundle under 500 KB using json/re/datetime only and recalibrate on the final representation.",
+      "validation": "Fault-injection suite C12 (stale, mutated, duplicate keys, NaN). Local cold-load and heap measurements for the exported snippet. Platform qualification remains a separate owner-gated step."
+    }
+  ],
+  "prioritized_next_experiments": [
+    "Proposed CPU probe: guard minimal pairs (discourse 'actually', idiomatic 'no', scoped negation plus asserted sibling) on frozen v1. Report coverage loss and false-correction rate.",
+    "Proposed CPU probe: split-calibration (fit vs risk) re-selection across 3 seeds. Compare threshold, coverage, and min-marginal versus empirical joint accuracy.",
+    "Proposed CPU probe: head-consistency property test over the label cross-product, plus duplicate-secondary text probes.",
+    "Proposed CPU probe: fault-injection validation suite (stale binding, abstain/reasons mismatch, provenance spoof, NaN/duplicate keys).",
+    "Proposed CPU probe: short-input set ('Yes.', '4821', 'Friday') and input_sha256 preimage-space audit.",
+    "Fresh v2 independently authored, double-annotated pack with lineage groups and frozen confirmation/OOD roles. v1 holdout stays diagnostic only.",
+    "Export pruning to under 500 KB stdlib (json/re/datetime) with cold and warm local timing. Hosted qualification is left to the platform owner and is not recommended here as an action."
+  ],
+  "proposed_interface_contract": {
+    "input": "Kernel-built snapshot: turn_id, state_revision, policy_hash, api_hash, phase, question, provenance enum set by the kernel only. Utterance at most 4096 chars, with a truncation flag.",
+    "output": "semantic_proposal.v1 per design L674+. model_id = bundle sha256. Per-head label, score, calibration_id and decision. untrained_head abstention for component, target, offer and consent. Scoped qualifier spans instead of a label overwrite. No unsalted text digest; use an HMAC with a kernel key or omit it.",
+    "decision_rule": "accept only if: all qualified heads ≥ frozen per-head threshold; consistency veto passes; OOD veto passes; no guard qualifier inside the accepted clause scope. abstain ⇔ abstentions nonempty.",
+    "validator": "Rejects binding mismatch against the authoritative kernel state (not a caller copy), abstain/reason incoherence, recomputed decision mismatch, unknown or forbidden keys, invalid spans and nonfinite values.",
+    "never_learned": "Authorization, verification, consent receipts, calendar/money facts and bank policy constants."
+  },
+  "coverage_matrix": {
+    "labels_split_contamination": "L55-01",
+    "temperature_threshold_reuse_wilson_minprob": "L55-02",
+    "lexical_guard_scoped_negation_corrections": "L55-03",
+    "unknown_ood_phase_context_short_security": "L55-04",
+    "head_label_confidence_component_target_consistency": "L55-05",
+    "binding_provenance_validation_reducer_runtime_footprint_fixed_llm": "L55-06"
+  }
+}
+
+Evidence, scope and limitations:
+{
+  "status": "completed_actual_opus_learned_v1_source_review",
+  "started_at_utc": "2026-10-11T01:38:21.049218+00:00",
+  "requested_model": "claude-opus-5-5",
+  "provider": "official_native_claude_cli_oauth",
+  "source_manifest": {
+    "analysis/learned-layer-design.json": {
+      "sha256": "d1ef94957eef160ff074134f50138b7123b96dade25a815692e453f9a55e5d24",
+      "bytes": 67231
+    },
+    "analysis/learned-layer-evaluation-plan.json": {
+      "sha256": "9e97526e150fc1504522771398ff73bff87251d2cbbada9e65914a0556e9fcf9",
+      "bytes": 18037
+    },
+    "analysis/night-learned-dialogue.eval.json": {
+      "sha256": "baaabf7ffe169e3958b70cf098650e99d88066a5329cf69c40481a9388364f83",
+      "bytes": 50562
+    },
+    "analysis/night-learned-dialogue.export.json": {
+      "sha256": "6b098d3f93be1e1c2a8194998a684e977c791dd4f76fb6ff510ccad3862b0986",
+      "bytes": 1095
+    },
+    "analysis/night-learned-dialogue.smoke.json": {
+      "sha256": "6f0a5030b9562818fb1303df45cf377f57450b0e1f5914e6380ddcf841fe9733",
+      "bytes": 31787
+    },
+    "analysis/night-learned-dialogue.train.json": {
+      "sha256": "91569c18edfde04619693c3e80d90c7b5cd0cf852c025006c97fe8b6fe3f2b44",
+      "bytes": 57322
+    },
+    "analysis/night-opus-a5-review.json": {
+      "sha256": "b412e8fc1f1df880eb1c268535bf92460bee4102f4efb17eeda57bec5fcb8b93",
+      "bytes": 28535
+    },
+    "analysis/night-opus-a5-review.txt": {
+      "sha256": "b2f1c4748b3f61ae8be258d233c8019c54d1fbf27f33a57c83223e4c4eae3944",
+      "bytes": 28051
+    },
+    "analysis/night-opus-a5-witnesses.json": {
+      "sha256": "e7e2812bd3f04c97e0ba66f55a1bea108dce7d56466e39009041d5a0bff119d6",
+      "bytes": 63403
+    },
+    "analysis/night-opus-a5-witnesses.txt": {
+      "sha256": "4d215168f1ba9a76346b8acffb9a2a2a8329b38005db768f84d5f00d64d027c6",
+      "bytes": 61150
+    },
+    "analysis/night-opus-b9-review.json": {
+      "sha256": "11509ac94fcdf84649ea26e70991aaa6527bd0e25734ce8458e8418b377077fb",
+      "bytes": 28489
+    },
+    "analysis/night-opus-b9-review.txt": {
+      "sha256": "14fa1352398d5ca5acd97b42f3b680d402c868566f319a3d2ec1c3cef5fb4217",
+      "bytes": 27790
+    },
+    "analysis/night-opus-b9-witnesses.json": {
+      "sha256": "3dc7eb86ccf32ca2146b9861ec9b2741e78f3122e7be23c5589eec7dee56bc30",
+      "bytes": 73422
+    },
+    "analysis/night-opus-b9-witnesses.txt": {
+      "sha256": "025caa2e4a9f5676b972ff034d46d8275070c0d83baa02e5d2787fa740f7850f",
+      "bytes": 70223
+    },
+    "competition-v3/build-the-builder/docs/tools-and-code.md": {
+      "sha256": "56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711",
+      "bytes": 31394
+    },
+    "competition-v3/build-the-builder/README.md": {
+      "sha256": "45034ae6079693b8c5eb6e6cc3857d47fdf3629b8b1d2a84fd73fb2f51415d58",
+      "bytes": 9576
+    },
+    "integrations/learned-dialogue/authoring.py": {
+      "sha256": "744b48b4f075b860f0a776b05f805a839e925fd0cce35a244fa4547f6763fa42",
+      "bytes": 12935
+    },
+    "integrations/learned-dialogue/build_data.py": {
+      "sha256": "1e2a5153674d3d8bd81626d750b09d6ac3670c91315faba1948591da3b6734cc",
+      "bytes": 5378
+    },
+    "integrations/learned-dialogue/cli.py": {
+      "sha256": "629141cacd7f1b85f72195d50eeea45245b35181d2e88edb5dd4c70b7c9ccb1d",
+      "bytes": 575
+    },
+    "integrations/learned-dialogue/diagnostics.py": {
+      "sha256": "e7b1d58810e47bd4321b472c3f68b46514eb38716107cbd63f8629ba3698bcfd",
+      "bytes": 5832
+    },
+    "integrations/learned-dialogue/export_runtime.py": {
+      "sha256": "c12be32470b17e1719eb01b58ecb47be54c471bc9957ab60a3c07b3d7e92a37b",
+      "bytes": 6906
+    },
+    "integrations/learned-dialogue/inference.py": {
+      "sha256": "94ec7486ef114b93de64a6847a469c387b5559022ce459cc41b54389e6640c09",
+      "bytes": 8819
+    },
+    "integrations/learned-dialogue/model.json": {
+      "sha256": "719228b3b1751f05e6df4f9faff5cb12d7ba03454c4a8516e75aeb60b3ca7516",
+      "bytes": 1377743
+    },
+    "integrations/learned-dialogue/README.md": {
+      "sha256": "286bfc27eced1490b3892f632a3c86b1732ef7483ea4a9f5019ad00982376b37",
+      "bytes": 5329
+    },
+    "integrations/learned-dialogue/runtime_embedded.py": {
+      "sha256": "f5481a4e4153acd5a70c1f1a03296dfc114314b1b5a1c527ca01e7c3d50a048f",
+      "bytes": 357535
+    },
+    "integrations/learned-dialogue/schema.py": {
+      "sha256": "bb13e6bba7c03811d208be356abab111106e0e9b1bec537902b6094d38f1280b",
+      "bytes": 3026
+    },
+    "integrations/learned-dialogue/test_export.py": {
+      "sha256": "e61095f368108eabce0e6fb4e71b390681e73362c00c76f28a3a5ee9f63e9e36",
+      "bytes": 3121
+    },
+    "integrations/learned-dialogue/test_smoke.py": {
+      "sha256": "c34a28eca6779f22b2c667e231f01e0352061ed0818bb22b709732d905e2f578",
+      "bytes": 7152
+    },
+    "integrations/learned-dialogue/train_eval.py": {
+      "sha256": "3a933d57511b72c8d678722b6996fc9d460173ca4d169d96834472208e310a3a",
+      "bytes": 16000
+    },
+    "integrations/learned-dialogue/validation.py": {
+      "sha256": "a891066c8f2fe5edc07ce25a45c3ec54cc53e5ed33e84f562fe5a02aa97eac8e",
+      "bytes": 2474
+    },
+    "integrations/opus-redteam/empty-mcp.json": {
+      "sha256": "372a7f8c1e988f58480012e741582e13bb1c9c2b2611432f365ae132f519cfe5",
+      "bytes": 19
+    },
+    "integrations/opus-redteam/run.py": {
+      "sha256": "c87a710d118046d546b5ff87c1640d115ebf251153da9fccc23abd4613e7cc09",
+      "bytes": 45690
+    },
+    "integrations/opus-redteam/settings.json": {
+      "sha256": "f3b3e66109f36cf5775b744fc92fee8fe46a5ae35eb27ff887b83e0e539616de",
+      "bytes": 94
+    },
+    "local-runs/autonomous-rd/night-opus-review.py": {
+      "sha256": "84f5d1f370002ebd497a4aed5c4ff1b992ea2b9f66661ce2f7cbace6254b1072",
+      "bytes": 54064
+    },
+    "research/customer-benchmark/learned-dialogue-data.jsonl": {
+      "sha256": "2de350384c6cfa6b949467ba81444dd9b10eec95d62b4b21edca582118e3725a",
+      "bytes": 47148
+    },
+    "research/customer-benchmark/learned-dialogue-data.manifest.json": {
+      "sha256": "5a848c05b671493316cd8f12e7ec5db90fc17db9ffd97c4693635dfddcb3ca64",
+      "bytes": 576
+    },
+    "research/customer-benchmark/learned-dialogue-data.oracle.json": {
+      "sha256": "1cacade225a940963fb43b4b15ebfdf972b284c555f6a18eafec14651d84b494",
+      "bytes": 27006
+    },
+    "research/customer-benchmark/learned-dialogue-data.schema.json": {
+      "sha256": "6368de7a5404775f30b7af66cfe21839e9440a48b449a54e14f68ab47eed52a0",
+      "bytes": 7236
+    },
+    "research/customer-benchmark/learned-dialogue-data.sources.json": {
+      "sha256": "f4ade51f9751130163c4bf4826d69acce346a84178cf04aedff7632c2cabc88e",
+      "bytes": 1176
+    },
+    "research/customer-benchmark/learned-layer-label-spec.json": {
+      "sha256": "81144b26ac074de9783aff34cef36758e788765a2c27388b7b4063c18bfcce71",
+      "bytes": 13488
+    }
+  },
+  "prompt_bytes": 317662,
+  "prompt_sha256": "be0077982f1713aaa880e743521aafde0305020e061019ea498eafb9204f56a9",
+  "model_visible_full_sources": [
+    "integrations/learned-dialogue/inference.py",
+    "integrations/learned-dialogue/train_eval.py",
+    "integrations/learned-dialogue/authoring.py",
+    "integrations/learned-dialogue/build_data.py",
+    "integrations/learned-dialogue/validation.py",
+    "integrations/learned-dialogue/diagnostics.py",
+    "analysis/learned-layer-design.json",
+    "analysis/learned-layer-evaluation-plan.json",
+    "research/customer-benchmark/learned-layer-label-spec.json",
+    "competition-v3/build-the-builder/README.md",
+    "competition-v3/build-the-builder/docs/tools-and-code.md"
+  ],
+  "model_visible_projections": [
+    "model interface without weights",
+    "train/calibration/holdout metrics",
+    "frozen semantic records and oracle"
+  ],
+  "credential_literal_redactions": {
+    "integrations/learned-dialogue/inference.py": 0,
+    "integrations/learned-dialogue/train_eval.py": 0,
+    "integrations/learned-dialogue/authoring.py": 0,
+    "integrations/learned-dialogue/build_data.py": 0,
+    "integrations/learned-dialogue/validation.py": 0,
+    "integrations/learned-dialogue/diagnostics.py": 0,
+    "analysis/learned-layer-design.json": 0,
+    "analysis/learned-layer-evaluation-plan.json": 0,
+    "research/customer-benchmark/learned-layer-label-spec.json": 0,
+    "competition-v3/build-the-builder/README.md": 0,
+    "competition-v3/build-the-builder/docs/tools-and-code.md": 0
+  },
+  "omitted_full_weights": true,
+  "scope": "Actual v1 code/data/calibration/metrics plus concrete design artifacts present at freeze; no platform tests or numerical weight audit",
+  "runner_sha256": "bd694bc439188b6ba5c1c498a37b559675ba682acd751a346b40758596b6e21d",
+  "cli_path": "C:\\Users\\9bakl\\.local\\bin\\claude.exe",
+  "timeout_seconds": 180,
+  "actual_opus_inference_verified": true,
+  "raw_stream_saved_or_displayed": false,
+  "thinking_saved_or_displayed": false,
+  "credential_files_read_by_launcher": false,
+  "new_training_runs": 0,
+  "new_bank_calls": 0,
+  "new_platform_tests": 0,
+  "auth_status": {
+    "loggedIn": true,
+    "authMethod": "claude.ai",
+    "apiProvider": "firstParty",
+    "subscriptionType": "pro"
+  },
+  "cli_sha256": "76de74f7694a5bdc03378a5f837c9e132827bf004c98c276bc4e9094ff06769a",
+  "cli_version": "2.1.296 (Claude Code)",
+  "arguments": [
+    "C:\\Users\\9bakl\\.local\\bin\\claude.exe",
+    "--print",
+    "--safe-mode",
+    "--restricted",
+    "--no-session-persistence",
+    "--tools",
+    "",
+    "--disallowedTools",
+    "*",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\opus-redteam\\empty-mcp.json",
+    "--setting-sources",
+    "",
+    "--settings",
+    "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\opus-redteam\\settings.json",
+    "--disable-slash-commands",
+    "--no-chrome",
+    "--permission-mode",
+    "dontAsk",
+    "--permission-prompts",
+    "none",
+    "--model",
+    "claude-opus-5-5",
+    "--effort",
+    "low",
+    "--max-turns",
+    "1",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--system-prompt",
+    "You are an independent learned semantic-proposal architecture and mathematical red-team reviewer. No tools. Return the requested JSON only."
+  ],
+  "elapsed_seconds": 96.25,
+  "exit_code": 0,
+  "inference_evidence": {
+    "assistant_response_models": [
+      "claude-opus-5-5",
+      "claude-opus-5-5"
+    ],
+    "result_model_usage_keys": [
+      "claude-opus-5-5"
+    ],
+    "tool_calls": 0,
+    "model_usage": {
+      "claude-opus-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 9644,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 123908,
+        "webSearchRequests": 0,
+        "costUSD": 1.184152,
+        "canonicalModel": "claude-opus-5-5",
+        "provider": "firstParty"
+      }
+    }
+  },
+  "final_text_sha256": "2ba88df72f491cc253887b6e710b411649fd7792abe5d486de9d87a0e6efc33f",
+  "finished_at_utc": "2026-10-11T01:39:58.541194+00:00",
+  "protected_hashes_unchanged": {
+    "analysis/learned-layer-design.json": false,
+    "analysis/learned-layer-evaluation-plan.json": true,
+    "analysis/night-learned-dialogue.eval.json": true,
+    "analysis/night-learned-dialogue.export.json": true,
+    "analysis/night-learned-dialogue.smoke.json": true,
+    "analysis/night-learned-dialogue.train.json": true,
+    "analysis/night-opus-a5-review.json": true,
+    "analysis/night-opus-a5-review.txt": true,
+    "analysis/night-opus-a5-witnesses.json": true,
+    "analysis/night-opus-a5-witnesses.txt": true,
+    "analysis/night-opus-b9-review.json": true,
+    "analysis/night-opus-b9-review.txt": true,
+    "analysis/night-opus-b9-witnesses.json": true,
+    "analysis/night-opus-b9-witnesses.txt": true,
+    "competition-v3/build-the-builder/docs/tools-and-code.md": true,
+    "competition-v3/build-the-builder/README.md": true,
+    "integrations/learned-dialogue/authoring.py": true,
+    "integrations/learned-dialogue/build_data.py": true,
+    "integrations/learned-dialogue/cli.py": true,
+    "integrations/learned-dialogue/diagnostics.py": false,
+    "integrations/learned-dialogue/export_runtime.py": true,
+    "integrations/learned-dialogue/inference.py": true,
+    "integrations/learned-dialogue/model.json": true,
+    "integrations/learned-dialogue/README.md": true,
+    "integrations/learned-dialogue/runtime_embedded.py": true,
+    "integrations/learned-dialogue/schema.py": true,
+    "integrations/learned-dialogue/test_export.py": true,
+    "integrations/learned-dialogue/test_smoke.py": true,
+    "integrations/learned-dialogue/train_eval.py": false,
+    "integrations/learned-dialogue/validation.py": true,
+    "integrations/opus-redteam/empty-mcp.json": true,
+    "integrations/opus-redteam/run.py": true,
+    "integrations/opus-redteam/settings.json": true,
+    "local-runs/autonomous-rd/night-opus-review.py": true,
+    "research/customer-benchmark/learned-dialogue-data.jsonl": true,
+    "research/customer-benchmark/learned-dialogue-data.manifest.json": true,
+    "research/customer-benchmark/learned-dialogue-data.oracle.json": true,
+    "research/customer-benchmark/learned-dialogue-data.schema.json": true,
+    "research/customer-benchmark/learned-dialogue-data.sources.json": true,
+    "research/customer-benchmark/learned-layer-label-spec.json": true
+  },
+  "independent_handoff": {
+    "status": "complete_for_frozen_learned_v1_no_additional_review_started",
+    "native_findings": 6,
+    "cpu_witness_count": 29,
+    "witness_paths": [
+      "analysis/night-opus-learned-v1-witnesses.json",
+      "analysis/night-opus-learned-v1-witnesses.txt"
+    ],
+    "qualification_reference": "witnesses.independent_qualifications_of_opus",
+    "prototype_ready": false,
+    "frozen_holdout": {
+      "rows": 22,
+      "raw_joint_correct": 10,
+      "raw_joint_accuracy": 0.45454545454545453,
+      "accepted": 4,
+      "coverage": 0.18181818181818182,
+      "accepted_errors": 0,
+      "wilson_two_sided95_upper_error": 0.48990002040399916,
+      "one_sided_exact95_upper_error": 0.5271291954984121,
+      "now_diagnostic_only": true
+    },
+    "priority_recommendations": [
+      "Split by real author/source lineage and semantic templates before augmentation; independently adjudicate noisy act/polarity/completion labels. Preserve v1 as a diagnostic baseline and acquire fresh confirmation data.",
+      "Separate temperature fitting, threshold/risk selection and untouched confirmation; predeclare risk target, selection correction and independent evaluation unit. Treat min-head score as a decision score, not joint correctness probability.",
+      "Keep raw learned proposals; scope guard cues to clauses/components, provide trusted prompt/phase context, and retain abstention for untrained quantities, spans, targets and unresolved corrections.",
+      "Make the deterministic caller own fresh revision/policy/API/model bindings and provenance. Enforce nested schemas, score ranges, head consistency and abstention coherence before any graph/reducer use.",
+      "Qualify payload, imports, cold memory and code-node latency separately on the actual platform. This round audited full v1 weights on CPU; the newer compressed export/context v2 was outside native review."
+    ],
+    "concrete_cpu_evidence": [
+      "Scoped negation removes a raw account_question proposal; a negative stop-contact imperative is represented as unknown/negated and abstains.",
+      "Completion and unresolvedcomponent weight dictionaries, bias vectors and temperatures are exactly identical under paired class labels.",
+      "Explicitly mutated proposals with score 2.0, contradictory abstention, conflicting heads or unlabelled nested quantity/target are accepted by the unchanged validator.",
+      "An honestly newer authoritative revision is rejected correctly; a caller-supplied matching stale snapshot or untrusted provenance needs an independent authenticity contract.",
+      "Cosmetic group identifiers let the split checker accept same-author near-paraphrases; this proves checker insufficiency, not actual hidden-test leakage."
+    ],
+    "evidence_limit": "Native findings are source-only model claims; witnesses are local CPU/synthetic/fault-injection observations with explicit assumptions. No new hosted evidence, training, GPU, runtime embedding, banking calls or platform tests.",
+    "coordination_scope": "Later A5 original-30/PUB07 evidence, untested B10 publication, parent-reported compressed export parity, context v2 and Modal budget/auth status are outside this frozen v1 audit."
+  },
+  "immutable_baseline_unchanged_at_handoff": true,
+  "protected_hashes_unchanged_at_handoff": {
+    "analysis/learned-layer-design.json": false,
+    "analysis/learned-layer-evaluation-plan.json": false,
+    "analysis/night-learned-dialogue.eval.json": true,
+    "analysis/night-learned-dialogue.export.json": true,
+    "analysis/night-learned-dialogue.smoke.json": true,
+    "analysis/night-learned-dialogue.train.json": true,
+    "analysis/night-opus-a5-review.json": true,
+    "analysis/night-opus-a5-review.txt": true,
+    "analysis/night-opus-a5-witnesses.json": true,
+    "analysis/night-opus-a5-witnesses.txt": true,
+    "analysis/night-opus-b9-review.json": true,
+    "analysis/night-opus-b9-review.txt": true,
+    "analysis/night-opus-b9-witnesses.json": true,
+    "analysis/night-opus-b9-witnesses.txt": true,
+    "competition-v3/build-the-builder/docs/tools-and-code.md": true,
+    "competition-v3/build-the-builder/README.md": true,
+    "integrations/learned-dialogue/authoring.py": true,
+    "integrations/learned-dialogue/build_data.py": true,
+    "integrations/learned-dialogue/cli.py": true,
+    "integrations/learned-dialogue/diagnostics.py": false,
+    "integrations/learned-dialogue/export_runtime.py": true,
+    "integrations/learned-dialogue/inference.py": true,
+    "integrations/learned-dialogue/model.json": true,
+    "integrations/learned-dialogue/README.md": true,
+    "integrations/learned-dialogue/runtime_embedded.py": true,
+    "integrations/learned-dialogue/schema.py": true,
+    "integrations/learned-dialogue/test_export.py": true,
+    "integrations/learned-dialogue/test_smoke.py": true,
+    "integrations/learned-dialogue/train_eval.py": false,
+    "integrations/learned-dialogue/validation.py": true,
+    "integrations/opus-redteam/empty-mcp.json": true,
+    "integrations/opus-redteam/run.py": true,
+    "integrations/opus-redteam/settings.json": true,
+    "local-runs/autonomous-rd/night-opus-review.py": true,
+    "research/customer-benchmark/learned-dialogue-data.jsonl": true,
+    "research/customer-benchmark/learned-dialogue-data.manifest.json": true,
+    "research/customer-benchmark/learned-dialogue-data.oracle.json": true,
+    "research/customer-benchmark/learned-dialogue-data.schema.json": true,
+    "research/customer-benchmark/learned-dialogue-data.sources.json": true,
+    "research/customer-benchmark/learned-layer-label-spec.json": true
+  },
+  "mutable_reviewed_sources_changed_at_handoff": [
+    "analysis/learned-layer-design.json",
+    "analysis/learned-layer-evaluation-plan.json",
+    "integrations/learned-dialogue/diagnostics.py",
+    "integrations/learned-dialogue/train_eval.py"
+  ],
+  "final_runner_sha256": "75692cfe007e94f8453ff0bf840a4f2314e622fa6388dfe69cb9f857ab021743",
+  "runner_hash_qualification": "runner_sha256 is the native-invocation version; final_runner_sha256 also includes subsequent independent witness implementation. The native inference was not rerun."
+}

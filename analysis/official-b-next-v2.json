@@ -1,0 +1,304 @@
+{
+  "generated_at_utc": "2026-10-11T02:33:46.343176+00:00",
+  "scope": "Original supplied public B runner, actors and scoring; three independent repetitions",
+  "passed_calls": 8,
+  "total_calls": 9,
+  "passed_all3_scenarios": 2,
+  "total_scenarios": 3,
+  "final": [
+    {
+      "id": "PUB-11",
+      "family": "Multi-product",
+      "passes": 3,
+      "runs": 3,
+      "pass": true
+    },
+    {
+      "id": "PUB-12",
+      "family": "Multi-product",
+      "passes": 2,
+      "runs": 3,
+      "pass": false
+    },
+    {
+      "id": "PUB-13",
+      "family": "Multi-product",
+      "passes": 3,
+      "runs": 3,
+      "pass": true
+    }
+  ],
+  "agent_id": "fcb7d8ec-e69b-46a9-8b19-166091663cc5",
+  "actual_version": 2,
+  "all_call_versions_verified": true,
+  "source": "local-runs/autonomous-rd/official-b-next-v2-1791685517",
+  "source_hashes": {
+    "local-runs/autonomous-rd/official-b-next-v2-1791685517/manifest.json": "bde03c0fa01546995e13ec7725f0f7a94bdac8eb67479bc6b042e0b04c931938",
+    "local-runs/autonomous-rd/official-b-next-v2-1791685517/results.json": "815f5723d6c4ddf1a17f1933ecef8d2a928e0ccd079440595bb402b3835a4d20",
+    "competition-v3/build-the-builder/tools/score.py": "daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7",
+    "competition/runs/20261011-051215-fe853d/codex-stress-b-next.workflow.json": "13b1f991cfc6ad71f881fad0d901c275bd3fa5bebce2c3bf32a01f1c25d76cef"
+  },
+  "failures": [
+    {
+      "row": {
+        "rep": 1,
+        "id": "PUB-12",
+        "level": "hard",
+        "family": "Multi-product",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "promises [], expected [('p1', 510.0, '2026-10-15')]",
+          "notes [], expected [('p2', 'refused'), ('p3', 'refused')]",
+          "the call was not closed with close_call",
+          "conversation: The call failed to meet several success criteria because it was terminated prematurely by the assistant following a system error after identity verification. 1. While the identity verification criteria were met (DOB asked once in [Message 2], phone question asked again once in [Message 6]), none of the debt collection criteria were satisfied. 2. No promise was made on the credit card. 3. No 'refus"
+        ],
+        "call_id": "4065d94a-2b15-4c57-a18b-abc2e38bc002",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "verify_identity",
+          "get_account"
+        ],
+        "customer_id": "c_6150c170-4f1",
+        "slowest_turn_s": 9.6,
+        "ended": "assistant-ended-call"
+      },
+      "source": "local-runs/autonomous-rd/official-b-next-v2-1791685517/4065d94a-2b15-4c57-a18b-abc2e38bc002.json",
+      "sha256": "973be7e29e531060d7d1ed72ee688d7d5a2ba05543dd50691c69847c67960ce2",
+      "spoken": [
+        {
+          "index": 5,
+          "role": "assistant",
+          "text": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Mr Bell?"
+        },
+        {
+          "index": 6,
+          "role": "user",
+          "text": "Yes, this is Marcus Bell."
+        },
+        {
+          "index": 16,
+          "role": "assistant",
+          "text": "What is your date of birth? Please say the month as a word."
+        },
+        {
+          "index": 17,
+          "role": "user",
+          "text": "nineteen October nineteen eighty three."
+        },
+        {
+          "index": 35,
+          "role": "assistant",
+          "text": "What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 36,
+          "role": "user",
+          "text": "four four zero one."
+        },
+        {
+          "index": 54,
+          "role": "assistant",
+          "text": "That answer did not match. What are the last four digits of the phone number on file?"
+        },
+        {
+          "index": 55,
+          "role": "user",
+          "text": "four four one zero."
+        },
+        {
+          "index": 81,
+          "role": "assistant",
+          "text": "I cannot safely continue the bank service. Any promise already confirmed as recorded remains in place. Please contact customer service. Thank you for your time. Goodbye."
+        }
+      ],
+      "selected_events": [
+        {
+          "index": 7,
+          "event": "variable_extracted",
+          "name": "event",
+          "value": "k=answer|c=1\nEND"
+        },
+        {
+          "index": 8,
+          "event": "variable_extracted",
+          "name": "raw_speech",
+          "value": "Yes, this is Marcus Bell."
+        },
+        {
+          "index": 9,
+          "event": "variable_extracted",
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 18,
+          "event": "variable_extracted",
+          "name": "event",
+          "value": "k=answer|c=1|v=1983-10-19\nEND"
+        },
+        {
+          "index": 19,
+          "event": "variable_extracted",
+          "name": "raw_speech",
+          "value": "nineteen October nineteen eighty three."
+        },
+        {
+          "index": 20,
+          "event": "variable_extracted",
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 27,
+          "event": "function_call_start",
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1983-10-19",
+            "customer_id": "c_6150c170-4f1"
+          }
+        },
+        {
+          "index": 37,
+          "event": "variable_extracted",
+          "name": "event",
+          "value": "k=answer|c=1|v=4401\nEND"
+        },
+        {
+          "index": 38,
+          "event": "variable_extracted",
+          "name": "raw_speech",
+          "value": "four four zero one."
+        },
+        {
+          "index": 39,
+          "event": "variable_extracted",
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 46,
+          "event": "function_call_start",
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "4401",
+            "customer_id": "c_6150c170-4f1"
+          }
+        },
+        {
+          "index": 56,
+          "event": "variable_extracted",
+          "name": "event",
+          "value": "k=answer|c=1|v=4410\nEND"
+        },
+        {
+          "index": 57,
+          "event": "variable_extracted",
+          "name": "raw_speech",
+          "value": "four four one zero."
+        },
+        {
+          "index": 58,
+          "event": "variable_extracted",
+          "name": "admin",
+          "value": "none"
+        },
+        {
+          "index": 65,
+          "event": "function_call_start",
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity",
+          "body": {
+            "field": "phone_last4",
+            "answer": "4410",
+            "customer_id": "c_6150c170-4f1"
+          }
+        },
+        {
+          "index": 73,
+          "event": "function_call_start",
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account",
+          "body": {
+            "customer_id": "c_6150c170-4f1"
+          }
+        },
+        {
+          "index": 78,
+          "event": "function_call_error",
+          "safe_structure_keys": [
+            "error",
+            "event",
+            "function"
+          ]
+        },
+        {
+          "index": 84,
+          "event": "function_call_start",
+          "url": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call",
+          "body": {
+            "customer_id": "c_6150c170-4f1"
+          }
+        },
+        {
+          "index": 85,
+          "event": "function_call_error",
+          "safe_structure_keys": [
+            "error",
+            "event",
+            "function"
+          ]
+        },
+        {
+          "index": 90,
+          "event": "call_ended",
+          "safe_structure_keys": [
+            "event",
+            "reason"
+          ]
+        }
+      ],
+      "sandbox_result_diagnostics": [
+        {
+          "index": 78,
+          "function": "code_exec",
+          "error_prefix": "Sandbox did not return a parseable result (returncode=0).",
+          "error_sha256": "6755104c5fa81c410e02906226211dd7f491bd77bf1dbb62621544143293a254",
+          "error_characters": 566,
+          "payload_logged": false,
+          "embedded_JSON_prefix_decodes": false,
+          "decode_error_position": 466,
+          "decode_error_description": "Unterminated string starting at"
+        },
+        {
+          "index": 85,
+          "function": "api_call",
+          "error_prefix": "Sandbox did not return a parseable result (returncode=0).",
+          "error_sha256": "29f95044b5dc6169eadc9d3346e6987f7ce4d6a44a49f0f12112aa3dc05e5ba0",
+          "error_characters": 566,
+          "payload_logged": false,
+          "embedded_JSON_prefix_decodes": false,
+          "decode_error_position": 476,
+          "decode_error_description": "Unterminated string starting at"
+        }
+      ],
+      "bank_tools": [
+        "verify_identity",
+        "verify_identity",
+        "verify_identity",
+        "get_account"
+      ],
+      "classification": "sandbox_result_parsing_failure_in_engine_and_close_hook",
+      "call_terminal_reason": "assistant-ended-call",
+      "claim_limit": "Actual platform reports sandbox parsing failures despite returncode0 in engine and close prehook; precise receiver/truncation cause is unresolved. Failed combined score and absent bank close remain."
+    }
+  ],
+  "limits": [
+    "Original failures/actors/expectations unchanged.",
+    "PUB12 rep1 ended without the source-required bank close after a reported system error. Remaining repetitions passed; the failure remains a combined nonpass, not promoted.",
+    "Conditional native Opus source findings do not establish cause of this call.",
+    "Hosted authored18 is a separate queued run.",
+    "Text tests do not qualify ASR/audio/hidden-case coverage."
+  ]
+}

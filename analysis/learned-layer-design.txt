@@ -1,0 +1,655 @@
+LEARNED SEMANTIC PROPOSAL LAYER — FIRST IMPLEMENTABLE DESIGN
+2026-10-11; ongoing review window ends 06:23:01 UTC / 09:23 Istanbul.
+Owner: architecture/math only. Sol Hooke owns integrations/learned-dialogue/*.
+Companion specifications: learned-layer-design.json, learned-layer-evaluation-plan.json,
+and ../research/customer-benchmark/learned-layer-label-spec.json.
+
+DECISION
+Build a real trainable, context-conditioned semantic proposal model. Its outputs
+describe the customer's acts, target references, component completeness, scoped
+polarity, corrections and offer/readback references. The deterministic kernel
+continues to derive permission from the supplied policy/API, authoritative bank
+state and actual confirmation/receipts. Model confidence never grants permission.
+Start with CPU sparse linear heads and explicit abstention. Keep deployment off.
+
+CONCRETE CURRENT PROTOTYPE REVIEW
+Read authoring.py, build_data.py, inference.py, train_eval.py and model.json plus
+the actual train/eval outputs. V1 really fits four multiclass cross-entropy heads;
+it is not merely a renamed regex. It has immutable source/data hashes, declared
+group checks, deterministic persistence parity and a pure no-tool inference API.
+Component hints are explicitly lexical and ambiguous; consent is unassessed.
+
+Pinned model: 719228b3b1751f05e6df4f9faff5cb12d7ba03454c4a8516e75aeb60b3ca7516.
+Data: 52 train / 22 calibration / 22 holdout. Holdout four-head exact accuracy
+45.45%; accepted 4/22 (18.18%) with 0 errors. Reported two-sided Wilson upper error
+limit is 48.99%. Calibration accepts 7/22, reported upper limit about 35.43%.
+Uncertainty abstention recall is 1.0 on this small authored pack. These results
+do not qualify quality, safety, generalization or bank-score improvement.
+The bundle is 1,377,743 bytes; no Freya code-node performance was established.
+
+The next changes should be structural:
+1. predict currently scores only utterance text. Binding fields prevent some
+   stale-output mistakes but do not supply context features. Add phase, current
+   question role, target candidates, unresolved components, actual spoken-offer
+   IDs and active-readback revisions. The identical word "yes" has different
+   meaning after recipient, offer, readback and support questions.
+2. Separate completion, polarity and correction. A correction can be complete;
+   "Do not contact me again" is a complete stop request. Current mutually
+   exclusive complete/unfinished/correction/negated labels cannot represent this.
+3. Replace secondaryintent's one class with multilabel acts/admin questions.
+   Add target/component heads with honest untrained masks; utterance_tail and
+   correction_target are not amount/date/both or actual target resolution.
+4. Keep guards-only, raw-learned and final accepted metrics separate. V1's broad
+   lexical veto can explain high uncertainty rejection without showing learning.
+   Add shuffled-train-label, random/majority and no-context ablations.
+5. V1's same calibration set fits temperature and selects threshold. Its same
+   author/shared carriers and renamed families are not independently reviewed
+   OOD. Existing holdout is now diagnostic after adaptive review. Preserve v1;
+   create a new versioned, independently reviewed qualification pack.
+6. Offline math/hashlib/collections imports are fine locally but not supported
+   by the current guide's json/re/datetime restriction. Export a separate bounded
+   adapter using builtins and verified modules. Target <=500 KB exported bundle,
+   <=100k nonzero weights; prune/index/quantize on development and recalibrate
+   the final export. Keep deployment off if useful coverage does not fit.
+
+INTERFACE FOR SOL NOW
+predict(input_snapshot, model_bundle) -> semantic_proposal.v1, pure and deterministic.
+Input binds turn_id, state_revision, policy_hash and api_hash to exact current
+customer text and its provenance, phase/current question, bank-returned target
+candidates, pending component revisions, spoken offers and active readback.
+The JSON design contains the complete field contract and strict schema.
+
+Output carries primary and secondary acts, target-scoped clauses, per-component
+absent/complete/unfinished/ambiguous status, asserted/negated/conditional/questioned
+polarity, source spans, corrections, offer references and descriptive consent.
+It emits no tool call, queue/outcome, permission, verified/recorded flag or final
+normalized policy amount/date. Unknown/untrained/uncalibrated heads abstain.
+The trusted wrapper stamps model and state bindings; model text cannot forge them.
+
+Provide separate entry points for train, calibrate, evaluate and export_stdlib.
+The consumer returns an explicit pending-state patch and diagnostics; the existing
+kernel independently chooses policy actions. Parent/traditional owner integrates
+only through normal builder generation, never hand-edited candidate JSON.
+
+STATE AND GRAPH DESIGN
+Represent immutable evidence spans, target records, component revisions, correction
+episodes, source rules, spoken offers/readbacks, confirmation evidence, operations
+and receipts. Edges express support, scope, negation, supersession, offer reference
+and dependencies. Learned edges are candidates; authority edges come from actual
+kernel/bank events. Persist a compact working projection, not the full transcript.
+
+Per target/component keep value, status, revision, evidence and correction epoch.
+If U is the unresolved set, C_new is a newly scoped correction and E_new is this
+turn's explicitly completed, validated evidence for that episode:
+    U_next = (U union C_new) minus E_new.
+Old cached terms never count as new completion. Repeated fragments in one episode
+do not reset independently completed siblings. Later genuine corrections create
+new revisions. Unknown scope remains explicit uncertainty, not inferred from which
+scalar happens to be absent. Resolve structure/target, then completion, then parse
+only complete components. A complete amount must survive an unfinished date.
+
+Every actual spoken offer gets an immutable ID, target set and exact terms/revisions.
+Acceptance refers to that still-active offer, not a recomputed deadline/default.
+Administrative detours retain those references and accepted facts. Corrections
+invalidate confirmation and supersede only the relevant components. Readback is a
+separate immutable snapshot, followed by a later clear affirmation of exactly it.
+No learned affirmation alone grants consent. A missing/stale/ambiguous event cannot
+reuse old consent. A false semantic prediction can still cause harm despite a
+permission boundary: empirical semantic and bank-score gates remain necessary.
+
+Collective scope must survive row splitting. Keep shared-date group and amount
+scope (aggregate_total versus each/per_target). Resolve every explicit target
+before mutation. Source rules determine per-product adjustments and precedence.
+Deferred refusal/negotiation state must carry the target revision that created it;
+a new valid proposal supersedes that old refusal and cannot later be overwritten
+by its stale persuasion offer. Recorded promises remain immutable.
+
+EVIDENCE THAT MOTIVATES THESE CHOICES
+Original A4 stays 11/30 calls, 2/10 all-three scenarios. Original public B9 stays
+9/9 calls, 3/3 all-three; its distinct authored group is 2/3 calls. The B9 amount
+loss beside an unfinished date is a consumer ordering defect, so evaluate consumer
+fix alone before attributing any gain to learning. A5's 9/11 literal local matches
+are neither extractor nor hosted qualification; strict repeated-invalid-date
+expectations remain qualified by source-policy ambiguity.
+
+Recovered first A5 iteration separately reports PUB09 1/1 pass, PUB07 ledger failure
+after an accepted adjusted offer was replaced, and PUB02 correct callback ledger
+with inconclusive judge (combined fail/unqualified). Preserve the expired manifest
+and these separate recovered observations. No fixed witness date belongs in the
+generic model. The full current A5 run/publication lock belongs to the parent.
+
+Exact Opus A5/B9 source reviews now have 22 conditional local snippet observations
+(9 A5, 13 B9). These use hand-authored extraction and synthetic receipts, not real
+extraction or hosted calls. Two original model claims were corrected: A5's admin
+aside falsely demands both components again but retains their cache; B9's safe exit
+acknowledges existing promises but omits required SMS wording. B9 also witnesses
+stale refusal_pending overriding a new loan date. Preserve the difference between
+source hypotheses, conditional witnesses and actual delivered producer evidence.
+
+DATA, LOSSES AND CALIBRATION
+Label actual delivered text with legitimate prior context, not actor intention,
+judge pass/fail or expected ledger. Keep source hashes/pointers/version, author,
+source/template/augmentation lineage and licence. Actor drift, judge disagreement,
+infrastructure gaps and policy ambiguity are separate metadata. Unknown labels are
+masked. Critical target/polarity/correction/affirmation examples need independent
+blind review and adjudication before calibration or qualification.
+
+Fit sparse word/character features plus context; share target/offer ranking weights
+across dynamic candidates. Use normalized per-head masked losses: multiclass CE,
+multilabel BCE, span/token CE and candidate ranking with regularization. Do not
+teach amounts/calendars/queues from practice constants. A frozen local encoder is
+an offline comparator; Explicit H200 selection/other providers still require separate approval; automatic same-cost H200 substitution for a Modal H100 request is covered by the authorized plan. Latest user authorizes
+bounded Modal H100 training only; see the budgeted addendum below. No external
+runtime inference API is permitted.
+
+Split whole lineage components into train/development/calibration-fit/calibration-risk/
+confirmation/OOD qualification. Do not rename a template by split to claim independence.
+Fit vocabulary only on train; tune model on development; calibrate and select thresholds
+in separate sets; freeze before fresh independently authored qualification. Repeated
+turns, paraphrases and three runs of one case are correlated, not extra sample size.
+
+Measure accepted-frame risk and coverage together, plus per-head precision/recall,
+scoped blocker recall, OOD false acceptance, NLL/Brier and exact offer/target accuracy.
+Abstention is not success. Min(head confidence) is not joint correctness probability.
+For zero unsafe accepted groups out of n independent groups, one-sided 95% binomial
+upper error bound is 1 - 0.05^(1/n). A <=1% target needs at least 299 such groups even
+with zero observed errors, before threshold-search corrections. Current data is far
+too small. Bounds require independence/exchangeability, not arbitrary OOD assurance.
+
+END-TO-END QUALIFICATION
+Compare same kernel/AGENT_LLM/policy/API under pinned baseline and treatment. Use
+unchanged official scorer and judge, distinct fresh bank sessions, three repetitions
+per case and all-three success. Preserve original failed/inconclusive judgments;
+separate authored stress, literal replay, actual extractor, bank, voice and ASR claims.
+Reject new critical violations even if aggregate score rises. Compare useful coverage,
+clarification loops, full-turn latency and bank score, with group uncertainty.
+
+Code steps expose vars, not a documented trusted raw-current-turn key. A model-copied
+raw field is not trusted speech. Missing adapter provenance keeps inference offline or
+in explicitly restricted shadow mode. Docs verify json/re/datetime only and leave
+memory/output/network limits undocumented. Local <=50 ms p95 / <=100 ms p99 and the
+500 KB bundle are engineering goals, not observed Freya performance or limits.
+
+NEXT HANDOFF
+Sol can implement context-aware v2 scaffolding, separated masked heads, guard/model
+ablations and compact export now. Independent labels/qualification are a separate
+gate, not a reason to fabricate confidence. Parent supplies pinned implementation,
+metrics, actual Opus learned-layer review and bank traces for iterative design updates
+through the requested window. No sibling files, original kit/scorer, keys or platform
+state were changed by this design work.
+
+PRIMARY METHOD REFERENCES (not results for this project)
+Guo et al., calibration/temperature scaling: https://proceedings.mlr.press/v70/guo17a.html
+Gangrade et al., selective classification: https://proceedings.mlr.press/v130/gangrade21a.html
+Angelopoulos et al., conformal risk control: https://proceedings.iclr.cc/paper_files/paper/2024/hash/f3549ef9b5ff520a7e41ff3cc306ab2b-Abstract-Conference.html
+Casanueva et al., efficient intent detection: https://aclanthology.org/2020.nlp4convai-1.5/
+Hu et al., LoRA: https://arxiv.org/abs/2106.09685
+Local source snapshots/hashes and precise finding pointers are in the JSON design.
+
+LATEST USER UPDATE — BOUNDED MODAL H100 EXPERIMENT
+Prior no-rentals condition is superseded only for Modal H100: target $30 credits,
+hard $35 total for ALL task work. Parent verifies account auth, effective rates
+and global incurred/committed costs; Sol executes; designer makes no cloud calls.
+No training on the 52/22/22 toy pack alone. First obtain stronger independently
+reviewed scoped/context labels and demonstrate a CPU representation limitation.
+
+Candidate: publisher MIT-licensed intfloat/multilingual-e5-small as an OFFLINE
+encoder/teacher comparator. Pin model/tokenizer/licence revision. Start frozen
+encoder plus context/token/reference heads; optionally tune last two blocks under
+a fixed development-only plan. Max sequence256, batch16/accum2, <=3epochs or1000
+steps; target peak VRAM<=24GiB, measure rather than assume. Unsupported heads stay
+masked. This is not a replacement for fixed AGENT_LLM or a hosted phone endpoint.
+
+At most three SERIAL single-H100 invocations: <=120s smoke, <=1800s primary, and
+<=1800s optional one retry/comparator. No automatic retries, minimum containers,
+web endpoints, cron or unattended service. Reserve <=300s load/shutdown per call;
+parent must enforce wall-clock as well as function timeout and verify shutdown.
+Stop GPU work by06:13:01Z, leaving10min before06:23:01Z.
+
+Public Modal posted H100/2physicalCPU/16GiB rates imply about$5.35 compute for the
+4620s envelope; not an invoice or credit verification. Proposed total experiment
+reservation$10 includes builds/idle/storage/egress/uncertainty, subject to parent's
+GLOBAL <=$30 target and <=$35 hard cap. Verify effective rates/resource ceilings
+before EACH job; no premium configuration or plan upgrade. Spend zero if data
+gate fails. Rates: https://modal.com/pricing
+Model/licence: https://huggingface.co/intfloat/multilingual-e5-small/raw/main/README.md
+
+Distill only TRAIN-group teacher targets into the <=500KB sparse stdlib student
+with masked gold+KL loss; alpha=0 is the gold-only control. Recalibrate exported
+student, evaluate new independent qualification and bank gates. If teacher gains
+do not survive distillation, keep it offline; do not add an inference API.
+
+
+CHECKPOINT 02 — CONTEXT, GROUP RISK, SOURCE BINDING (2026-10-11 UTC)
+This additive checkpoint supersedes earlier current-status assessments where noted.
+The learned semantic proposal remains research-only and unqualified for deployment.
+No new training, bank calls, cloud jobs or platform probes were performed here.
+Sources and reviewed revisions are pinned in design.json checkpoints[0].
+
+EVIDENCE UPDATE
+Saved v1 export report:357,336bytes,31,131coefficients,1,153shared features,
+96-row decision parity; max confidence difference2.22e-16; local cold compile/decode
+84.28ms. Worker reports20smoke checks and local warm p95 .535ms/p99 .618ms.
+Later runtime source is357,535bytes with a different hash: exact parity/timing
+claims belong to the report's own revision. The original model JSON remains
+1,377,743bytes. Size is no longer the primary local blocker; no hosted result exists.
+Native learned-v1 Opus review is source-only;29 local witness rows mix inference,
+mutated validators, mathematics, full-weight equality and timing. They are not29
+customers. V1 already disclaimed a probability/safety guarantee. Its reused22-row
+calibration and four accepted diagnostic holdout rows cannot qualify the layer.
+The completion/unresolved heads have identical weights under one-to-one labels;
+they supply redundant predictions, not independent evidence.
+
+Original full A5 is29/30calls,9/10all-three. PUB07rep2 preserves the wrong-date
+mechanism: accepted holiday-adjusted offer -> agent replaces it with a later
+allowed deadline -> user later confirms replacement -> ledger records replacement.
+This supports offer-identity loss, not an allegation of an unconfirmed write.
+These are baseline results, not learned-layer gains. B10published version10 remains
+separate traditional-builder work; no new B10 test outcome is inferred here.
+
+RAW-SOURCE FEASIBILITY CORRECTION
+Original workflow-format.md:224 documents system.conversation/last-N templates,
+call.call_id and node turn counters. Therefore 'no transcript source documented'
+is too broad. A rendered transcript template exists, but docs do not establish its
+mapping to code vars, role escaping, exact latest-user timing or immutable binding.
+extractor.speech is extraction-prompt input, not direct code ingress. Model-copied
+text and model-filled code arguments remain extracted_copy. tools-and-code.md:522
+says each_turn never fires. Do not invent a capture hook or splice templated speech
+into executable source. API get-call structured messages support saved offline
+replay; phone runtime cannot call that platform API outside bank-tool allowance.
+
+A trusted adapter must supply structured current user event identity and exact text
+from an authoritative source, plus current kernel revision/policy/API/model hashes.
+Compare against kernel state, not two copies of caller-provided stale data. A local
+code counter is not a user-turn ID. Repeated identical yes has the same text hash;
+a hash is neither freshness nor authenticity. Omit unsalted raw hashes of short
+security strings. Missing trusted binding produces InputRejected; valid binding plus
+bad payload produces current bound neutral abstention. Raw availability remains an
+evidence gap, not proven impossible. Offline trace replay and clearly labelled
+extracted_copy shadow can proceed without asserting trusted runtime availability.
+
+ORTHOGONAL HEADS AND SCOPED UNCERTAINTY
+Keep three axes separate: semantic annotation, model capability, consumer decision.
+Capability states: not_implemented, implemented_untrained, weakly_trained,
+trained_unvalidated, calibrated_unqualified, qualified_in_scope, disabled.
+Record per-head training groups, reviewed labels, contexts/languages, calibration,
+qualification and dependency requirements. A caller's qualified=true proves nothing.
+Semantic labels independently describe intent, targets, completeness, polarity,
+correction, references and descriptive affirmation. Null/unannotated differs from
+reviewed absence; no regex candidate differs from no semantic component.
+
+Complete 'Do not call me again' is a known stop with negated contact proposition.
+'No worries, call me Friday' is not negated callback. 'Not Friday; Monday for the
+card' has a rejected date and an asserted replacement. 'Actually' alone need not
+correct any stored fact. Complete amount plus 'Fri...' retains amount and blocks
+date-dependent readback. A complete stop plus unrelated unfinished admin clause
+retains stop; a possible retraction of the stop changes the ambiguity scope.
+Do not derive primary act, polarity or global must_abstain mechanically from
+completion. Per-head/scoped abstentions can coexist with useful partial hypotheses;
+only fully supported dependencies may enter their corresponding consumer.
+
+Deterministic normalization occurs after semantics: whole surface, component role,
+provided now/calendar, target and unique offer reference. Leading-zero security
+answers remain strings. Complete 'next week' is a vague interval, not a single day;
+an unsupported but complete expression is exact_unparsed, not absent. Negative or
+conditional dates cannot become asserted facts. An ordinal can reference a unique
+spoken offer; two plausible months/targets stay ambiguous. A calendar change creates
+a NEW spoken offer requiring its own acceptance/readback; never silently rewrite O.
+Label-spec contains nine illustrative contrast families, already exposed to design;
+these are training/development specification material, never blind qualification.
+
+IMPLEMENT NOW — HOOKE INTERFACES
+1. Catch malformed input/model at the outer trusted wrapper. neutral_v2 currently
+   assumes binding keys/model_id exist. Avoid fabricating bindings for invalid input.
+2. Detect candidate/qualifier overflow before caps. Preserve competing component
+   candidates and explicit unresolved states; silent truncation/removal is unsafe.
+3. Separate spoken-offer IDs from active readback IDs. Add target-specific pending
+   features; a pooled union of target statuses cannot identify the unfinished target.
+4. Keep independent complete heads despite unrelated incomplete spans; expose scoped
+   qualifier diagnostics. Never make no/not/actually/if a global semantic override.
+5. Keep semantic_proposal.v1 wire schema stable; store capability manifests separately.
+   Bound clause IDs to128chars and evidence to actual supporting spans. A whole-turn
+   span cannot establish a particular negation/correction scope.
+6. Name ablations honestly: text-only removes all context paths, including heuristics;
+   removing learned crosses alone is only a learned-context-feature ablation.
+7. Freeze final export and report source hashes; changed weights/threshold behavior
+   require recalibration. Lossless encoding parity alone does not prove model quality.
+
+FINITE-SAMPLE CLAIMS AT THE RIGHT UNIT
+Each independent sampled lineage/scenario group contains all its planned turns,
+repetitions and contrast descendants. Let A=any accepted relevant proposal and
+E=any wrong accepted proposal. Observed group selective risk is sum(E)/sum(A).
+For m accepted IID groups and k errors, the one-sided exact upper bound U solves
+sum_{j=0}^k binom(m,j) U^j (1-U)^(m-j)=alpha. For zero errors,
+U=1-alpha^(1/m); m=0 is unqualified, U=1. At alpha=.05, zero errors among4 groups
+still gives52.71% upper risk;7 gives34.82%;299 are needed for<=1%,598 for<=.5%.
+These are conditional mathematical examples, not current independence claims.
+
+Distinct lineage IDs, separate authors and more rows do not establish IID sampling.
+Curated cases give finite-suite evidence unless a defensible sampling model exists.
+Do not estimate effective sample size and insert it into exact binomial formulas.
+Keep group exposure fixed; any-error probability changes with number of turns.
+Group coverage can hide one easy accepted turn: also show row/complete-frame coverage
+and safe recall (correct accepted / all eligible), counting abstention misses.
+
+Fit calibration parameters on calibration_fit, choose thresholds on calibration_risk.
+A finite K-rule sweep certified on the same risk set needs simultaneous alpha/K
+(or a predeclared allocation). With K=11, zero errors needs537 accepted IID groups
+for a1% upper target at overall alpha=.05. Alternatively select exploratorily,
+freeze ONE candidate, test once on new independent blind qualification. Joint risk
+and coverage statements at alpha=.025 each need368 zero-error accepted groups for
+the1% risk target. Head/slice/repeated-look claims also consume the alpha budget.
+No repeatedly inspected fixed-sample interval with favorable stopping. New adaptive
+revision means new blind qualification; current v1 holdout remains diagnostic.
+
+For bank score use actual all-three outcomes per scenario, not single-call rate
+cubed. Report paired baseline/treatment outcomes with independent-scenario uncertainty
+only when sampling supports it. Original tiny official suite is its exact finite
+score; no population generalization inference follows. Require no observed new
+critical violation, no protected-case regression and a useful margin frozen before
+new qualification. Separate consumer-only repairs from learned-model contribution.
+
+DATA AND OPTIONAL GPU STATUS
+Parent reports Herschel independently authoring TRAIN/dev toward100/20 actual
+conservative lineage groups. Delivery/counts/adjudication are pending. Different
+author is not automatic gold; critical labels need blind annotation/adjudication.
+Group actual template/source/contrast descendants; changing IDs or numbers is not
+independence. Qualification remains parent-only after the full artifact freeze.
+Modal auth is parent-verified, global profile unchanged; parent budget ledger has
+no reservations/jobs/spend at this snapshot and credit balance is not verified.
+Only parent may reserve against target$30/hard$35 aggregate. Existing bounded H100
+plan is conditional on stronger data and a demonstrated CPU representation limit;
+spend zero on the toy pack alone. Designer makes no cloud calls.
+
+
+CHECKPOINT 02a — MODAL BILLING/TIMEOUT DOCUMENTATION CORRECTION
+Official GPU docs confirm automatic H200 substitution for an H100 request retains
+H100 GPU cost. An earlier max(H100,H200) reservation is extra conservative, not a
+billing rule. Explicit H200 selection remains outside this plan.
+Source: https://modal.com/docs/guide/gpu#automatic-upgrades-to-h200s
+
+Function timeout excludes scheduling/other non-execution periods and resets on
+retry. startup_timeout is available from SDK1.1.4; unset uses timeout for startup.
+Source: https://modal.com/docs/guide/timeouts
+Verify the installed SDK and actual parameter/stop support before use. Zero automatic
+retries/resubmissions. Parent bounds TOTAL wall time before submission and verifies
+remote stop; client timeout alone is insufficient. Preserve300seconds total overhead
+per invocation, planned240startup/scheduling +60shutdown: total420/2100/2100seconds,
+all within06:13:01Z. Shorten/skip work if scheduling consumes the available budget.
+Parent-only conservative reservation and all data-readiness gates remain. User reports
+no GPU job started; designer launched none and did not verify/install the SDK.
+
+
+CHECKPOINT 03 — B10 MERGE SEMANTICS AND A FEASIBLE NARROW LEARNING PILOT
+All four owned design files updated. Wire semantic_proposal.v1 remains byte-content
+consistent with Hooke's frozen schema. No worker data/model/candidate/guide edits,
+training, platform execution or GPU work by designer. New sources/hashes are in
+checkpoint03, with original findings tied to their reviewed revisions.
+
+B10 EVIDENCE TO GENERAL CONSTRAINTS
+32conditional CPU observations reproduce four mechanisms in unchanged B10 code:
+(a) same-turn date/amount row order loses date, although separate-turn controls
+converge; (b) stale deferred refusal reopens newly agreed terms after another target
+finishes; (c) global no/not veto rejects idiomatic affirmation and collective
+fallthrough reopens paid siblings; (d) earlier ellipsis marks a later complete sibling
+partial. These are hand-authored extraction/synthetic-receipt/local persistence
+witnesses, not hosted producer frequencies or32independent customers. No
+unconfirmed write was established by the refusal-reopening witness.
+
+The current generic guide contains atomic per-target merge/refusal supersession and
+scoped guards. A6's140second automatic build/publishedv6 and active independent audit
+are parent-reported; hosted behavior not yet established. Saved official B10 is
+6/9combined,1/3all-three. Parent reports9/9bank separately;3missing conversation
+verdicts stay failures. Never train semantic truth from those outcome categories.
+
+MODEL/CONSUMER CONTRACT
+Build one evidence bag per target/component/current terms epoch before a transition.
+For nonconflicting facts, merge must be invariant to extractor row permutation and
+partition/coalescing. Deduplicate identical source events. Empty/absent means no new
+fact. Conflicting asserted values without supported supersession need clarification.
+Explicit correction order follows actual speech spans and reference edges, not JSON
+array order. Once reconciled, apply one target patch, preserve independent siblings,
+and only then choose clarification/readback. Learned output remains proposals;
+revision changes, refusal invalidation and bank permission belong to the kernel.
+
+Deferred refusal binds target disposition epoch, terms revision and spoken offer.
+Fresh voluntary terms supersede obsolete refusal. An unfinished replacement starts
+its own clarification episode; completing another target cannot revive the prior
+refusal or spend an extra persuasion attempt. A blocked confirmation cannot become
+collective refusal. Historical recorded receipts remain immutable; changing a paid
+claim requires actual fresh scoped evidence and policy, never a global keyword.
+
+Completeness/negation attach to their own spans. Earlier or quoted ellipsis cannot
+erase a complete later clause. Preserve changed-term/withdrawal/stale-consent guards;
+do not simply remove the raw veto or accept every extracted confirm.
+
+ACTUAL CPU/DATA ASSESSMENT
+Saved v2 model8d608a... trained on152rows/105declaredgroups, with22dev/20groups.
+It reports47smoke checks,298,012byte exported source and174schema/parity rows;
+all174outputs abstain, calibrationfalse, acceptedgroups0. These are pinned worker
+observations, not a designer rerun or hosted qualification.
+The completed data pack is now158TRAIN/101groups and22dev/20 with different hashes.
+Preserve old metrics; freeze a new run before refit. Reused/renumbered example IDs
+must not join old predictions to new labels.
+
+Component scoring uses supplied oracle spans: no span-detector or complete-frame
+accuracy follows. In saved dev results, secondary21/22 is exactly the empty-set
+baseline; polarity13/15 is all asserted with both quoted examples missed;
+completion5/15 is all complete with9ambiguous+1unfinished missed. The shuffled and
+no-context controls have the same latter scores. Primary10/22 vs5/22text-only and
+6/22shuffled is diagnostic context evidence only. Correction21/22 beats always-none
+20/22by one row. No GPU/CPU-ceiling conclusion is justified from these results.
+
+Current masked TRAIN counts by actual declared lineage groups:
+  primary payment_proposal42rows/21groups; all other annotated primary110/82.
+  amount complete33/15; unfinished2/2; ambiguous5/5.
+  date complete49/22; unfinished1/1; ambiguous12/12.
+  stop5groups; readback affirmation5; offer acceptance7; restructuring1.
+All29clause intent names appearing does not cover29primary classes; primary purpose
+question has no TRAIN positive. There is zero independently adjudicated gold.
+
+NARROW FEASIBLE NEXT EXPERIMENT
+Train a binary primary_is_payment_proposal diagnostic head. Positive means precisely
+that primary act; negative means another PRIMARY, never no secondary payment,
+refusal, invalidity or permission. It can prioritize offline semantic review while
+all payment values, target identity, references, secondary acts and bank authority
+remain outside its capability. Do not suppress stop/admin/hardship/security paths.
+
+Independent annotation gate: select at least20positive TRAIN groups and20negative
+TRAIN groups under a predeclared sampling plan, covering every used member of those
+groups and difficult correction/refusal/paid/question/stop/conditional/quoted cases.
+Reviewers see legitimate context, not author labels or predictions. Critical disputed
+labels require blind double annotation/adjudication; another worker's existence is
+not gold. Freeze a reviewed new version, preserve original pack. If only one new
+reviewer exists, report that limitation and keep the stricter gate unsatisfied.
+
+This floor concerns THIS binary task; unrelated rare heads need not be learned or
+GPU-trained first. No claim that20groups makes deployment statistically safe.
+For fitting, average masked losses within lineage group and then across groups so
+many derivatives cannot dominate. Optional TRAIN-group class weights inverse-sqrt,
+normalized and capped5, need an unweighted control and are not label reliability.
+Small CPU sparse model and context/text-only/shuffled controls come before GPU.
+
+Freeze order: TRAIN/dev annotation and model selection -> model/features/export ->
+independent calibration_fit -> temperature -> independent calibration_risk/selection
+-> thresholds/OOD/consumer -> new blind qualification. Existing exact grouped bounds,
+multiplicity and fixed-look rules remain. Zero accepted groups means undefined risk
+with vacuous upper1, not perfect precision. Shadow learning trials may precede risk
+qualification with explicit research status. GPU remains closed on current gold and
+CPU-ceiling evidence; parent-only budget and timeout/billing rules remain unchanged.
+
+LABEL/SCHEMA REVIEW ITEMS
+CSv2-E-0025 'next week' currently uses completion=ambiguous. Resolve the intended axis:
+linguistically complete but not a unique normalized day differs from unfinished or
+unclear language. Owner should adjudicate/version or mask disputed labels, not
+silently overwrite a frozen pack. A stop act may be asserted while its contact
+predicate is negated; those semantic levels are compatible, not a label conflict.
+Current wire has component polarity plus qualifiers but no scored clause-polarity
+field/arbitrary same-turn replacement graph. Keep annotation metadata separate;
+version producer/consumer/schema together before admitting distinctions that cannot
+be represented. Current unqualified output must not become permission by adding keys.
+
+B10-derived examples are exposed diagnostics with source ancestry. New numeric or
+product substitutions cannot turn them into blind gold. Added sequence contracts
+C14-C17 cover row-order invariance, explicit correction conflicts, ellipsis locality
+and confirmation target/disposition preservation, at one lineage group per family.
+
+Designer independently checked all180current authored frames against frozen JSON
+schema, source-turn/offset bounds, component uniqueness and target membership:0
+mechanical errors. This is not label adjudication or source/runtime authentication.
+Class-specific group sets can overlap; the annotation pilot should select20positive
+and20additional distinct negative groups, then recount eligible groups AFTER blind
+review/adjudication. Binary negatives stay offline diagnostics, not new wire intents.
+
+
+CHECKPOINT 04 — ACT COMPLETION, RECIPIENT CONTEXT, DATE NEGATIVE EXPERIMENT
+A6's64conditionalCPU witnesses support the local ordinal-offer repair but expose
+unfinished primary kinds entering policy branches: deceased/hardship, and stop/
+restructure controls, act before the consumer checks c=0. These are authored source
+contracts with synthetic receipts, not hosted semantic labels. NaN witness correction:
+malformed partial amount produces NaN readback repetition; no asserted write/service
+failure was observed. Uniform finite-number validation belongs in every deterministic
+ingestion/state/readback path, not in a learned permission head.
+
+Add ACT completion as a distinct proposed annotation axis: complete/unfinished/
+ambiguous, with separate observed masks, act commitment and essential-person/target
+reference. An identifiable intent may still be unfinished. Completed hardship plus
+unfinished payment date retains hardship; clipped hardship/deceased cannot close,
+transfer, count a refusal or enter support just because a kind label is present.
+A complete act can still have unresolved reference (he died: who?), which separately
+blocks admission. Completed stop plus independent admin fragment differs from stop
+with an open unless qualification. Payment-component completeness does not decide
+primary-act completion, and neither implies policy permission.
+
+Current frozen semantic_proposal.v1 has no explicit act_completion/person-role field.
+Wire unchanged. New label/diagnostic fields require owner-versioned annotation packs;
+a future runtime contract needs coordinated producer/consumer/schema migration.
+Until then act-completion capability is missing, not inferred from existing primary
+labels. Narrow binary primary-payment research remains possible without routing power.
+
+Recipient self-identification, bank identity verification and financial readback
+consent remain separate. Parent reports B10authored first10fails largely from actual
+name-only speech emitted k=confirm while recipient consumer expects recipient kind.
+A clear whole self-name reply bound to the actual recipient question can propose
+recipient_self, advancing only required security. Generic confirm is phase-dependent;
+no name substring, fixture-name lookup or magic yes requirement. Third-party, quoted,
+hypothetical, negative and wrong-person controls must be retained. Current feature
+set has question role but no qualified name-match relation; any new trusted-name
+input requires an explicit adapter contract. No bank authority is learned.
+
+FINAL CPU V2 EVIDENCE
+Final model4b96a26d0b99ed2ff2d774d7678131c4cb14960b462ba48bcc3790972d31b427
+uses frozen158TRAIN/101groups and22dev/20, fit14.97s, runtime298186bytes,180parity/
+schema rows. Primary12/22vs6/22withoutcontext is measurable exploratory context
+signal. Component completion remains5/15. All runtime abstains; uncalibrated and
+unqualified. These replace the earlier current-status model assessment, while its
+historical152row run remains intact. Parent reports Zeno40TRAINreview active and
+fresh native v2audit queued; no independent gold or review outcome is inferred.
+
+DATE COMPLETION PILOT — NO ALL-RARE-HEAD PREREQUISITE
+Current date-complete49rows/22groups but unfinished1row/1group cannot establish
+minority competence. Seek a new versioned collection target24TRAINroots+8devroots,
+2-3variants/root, conservatively merging reused carriers. Target counts are not
+results. Aim for20independently reviewed class groups each for a narrow complete vs
+unfinished task; retain genuine ambiguity masked/adjudicated. No automatic label
+from truncating a scripted sentence or seeing ellipsis.
+
+Keep three axes distinct: act completed/committed, date expression completed, and
+unique policy-valid normalization. Useful contrasts:
+- third of May vs third of... (open date complement).
+- Friday vs Friday at... (date complete, time unfinished).
+- next week vs the week after... (complete vague vs open comparison).
+- the twenty-third with one/no/two offer referents (resolution changes, not automatic
+  expression incompleteness).
+- not Friday; Monday / if Friday works / they said Friday (polarity/commitment).
+- earlier or quoted ellipsis followed by complete sibling; bare Friday... remains
+  potentially ambiguous and needs actual annotation.
+- complete impossible/conflicting date (normalization failure, not unfinished).
+- on the... actually Monday vs Monday, no, on the... (repair direction).
+
+Measure candidate-span recall separately from oracle-span classification. The
+candidate must include relevant open complements/right context without swallowing a
+later clause. Try a small CPU model with span tokens, bounded left+right context,
+clause boundaries and current question/reference features; no fixed test values.
+Average masked loss within lineage group then across groups and heads. Compare
+unweighted against a predeclared capped TRAIN-group class weighting. Optional small
+pairwise margin loss applies only to adjudicated comparable complete/unfinished
+pairs; not to complete-vague vs complete-exact or date-complete/time-unfinished.
+
+Report per-class recall, false-complete errors, detector misses, ambiguity and whole
+frame errors, not only majority accuracy. Freeze detector/model/export before new
+calibration and later blind qualification. Reviewed dev and A6/B10diagnostics remain
+exposed sources with ancestry. Existing risk/multiplicity rules remain unchanged.
+
+Zero qualified runtime coverage does not itself prohibit a bounded OFFLINE GPU
+comparator. A reviewed narrow subset may justify one if real quality/representation
+benefit is plausible and parent proves the training SDK/adapter/wall-stop/budget
+gates. Allrareheads need not be learned. This does not qualify phone raw ingress,
+consent or deployment. Current review/quality gates are not claimed passed; designer
+made no training/platform/cloud calls. Three JSON documents/schema validate and the
+worker's frozen wire remains identical.
+
+
+CHECKPOINT05 - reviewed lineage, v3 reference freshness and actual detector coupling
+
+Frozen semantic_proposal.v1/schema and original v2 data/model/scores remain unchanged. New axes and diagnostics live outside wire. Implementation pointers: v3_semantic_axes_and_adjudication, v3_lineage_review_contract, v3_source_reference_contract, v3_detector_head_contract, v3_narrow_encoder_distillation_experiment.
+
+Conservative TRAIN union overlay:101->98groups, payment-primary positives21->19. Reviewer disputed-primary mask proposal would leave18, not yet adjudicated. Current81-row packet closes to82rows/38canonical groups:18weak-positive plus20additionalnegative roots; missing CSv2-E-0073. Prior second review is partly exposed, zero independently adjudicated gold.17canonical groups fully second-reviewed, only one contains a weak-positive member. Actual20/20 gate NO-GO.
+
+Keep81-row packet immutable. Supplement closure row0073, omitted existing root1dc5c5cd2584d9fb, and new genuine roots. Union-only global support needs>=1new positive root; disputed-mask proposal needs>=2. Collect4as bounded buffer, union repeated carriers, fully review/adjudicate and recount. assess_reviews must validate canonical closure before counting; fit_grouped and vocabulary frequencies use same unions. Zeno TRAIN reviews never become calibration gold.
+
+Next week/another date/that date are COMPLETE language with independent vague/reference flags; no exact dates invented.0047 primary information_question; negated mentioned stop never active stop. Separate act completion, component completion, predicate polarity, value resolution, target/reference and descriptive consent. Corrections/retractions carry explicit target/component/act scope; no invented term changes.
+
+Actual Opus111.781s source review plus244 saved CPU observations,180export parity and24192coefficient equality: all shadow-abstain, expected observations include failures. Earlier readback revision3/current4 rejected; stale component can retain reference when global revision matches. Missing offer revision/empty speech IDs produce references. Card-last4 actually yields complete/asserted amount; security spans admin clause. Turn-ID125valid;128invalid; suffix arithmetic fails126..128. No observed authority leak.
+
+V3 wrapper independently binds current source event/call/state; historical reference requires completed earlier speech, explicit created revision<=current, matching target-specific opaque component tokens, policy/API and nonsupersession. Offer base dependencies differ from offered terms. Registry cannot be fabricated retrospectively from current snapshot. Deferred refusal bound to target disposition epoch; sibling completion cannot revive. ORIGINAL runtime raw binding still unqualified; no invented API or platform calls.
+
+Detector exact TRAIN75/129, dev2/15; only6/15dev overlap. False-positive denominators still need reviewed absent-region audit. Train/evaluate heads on frozen actual detector candidates, explicit validity/masks, and separate oracle-span metrics. No candidate is not semantic absence. No whole-turn security capture; remove secret-derived word features. Local clause IDs and stdlib structural/schema controls required.
+
+GPU remains gated <=USD10 parent reservation, within total target30/hard35. First actual20positive/20additionalnegative canonical adjudication, reference/detector controls and same-data CPU/phase controls. Frozen encoder binary teacher followed by TRAIN-only distillation is narrow hypothesis; no all-rare-head requirement. Primary12/22 vs phase-only9/22 vs majority6/22 is descriptive only. No successful quality/generalization/safety gate or GPU launch.
+
+Parent corrected A6 official result22/30combined,6/10all3,all30v6; earlier24/30partial note superseded. Failures PUB04two/PUB05two/PUB06one/PUB10three. This is parent-reported diagnostic context, not independent designer replay.
+
+
+CHECKPOINT06 - one real CPU DATE head, shared features, offline student and scoped decoder
+
+No date training has run. Implement cpu_date_completion_pilot_v3: one sparse binary complete-versus-unfinished DATE expression head on actual detector candidates. Complete-vague/invalid/reference expressions stay COMPLETE; unrelated unfinished time/amount/admin does not negate date completeness. No new learned target/consent/negation heads or wire fields.
+
+Data target24new conservative TRAIN roots with2-4members,8separate dev roots,8no-date detector-regression roots. Gate remains20fully reviewed/adjudicated groups per completion class; paired roots can support both classes but count once statistically. Source-first independent annotation then actual-detector alignment review; no backfilled gold or promoted qualifications. True pipeline includes misses and reviewed false candidates.
+
+Fit bounded CPU logistic CE,512features,80epochs,seed1729,L2.0002; average within root, example and candidate. Controls: always complete/unfinished, TRAIN phase prior, deterministic fragment baseline, candidate-only, local text-only, full local context, predeclared per-group label-flip null. Report per-class recall, grouped CE, detector exact recall/false candidates, unsafe complete proposals and abstention coverage. Shadow remains all-abstain.
+
+Latest81-row primary TRAIN review:40positive/34negative/7ambiguous; after canonical unions16positive and19additionalnegative groups, only15positive groups fully covered because0073closure missing. Zero adjudication. This supersedes authored support as actual reviewer evidence; still NO-GO.
+
+Actual offline adapter fixture reproduces KeyError target_index: source targets use index; pending components/status/revision are nested. Shared make_admissible_view_v3 must match actual schema, preserve typed target relations and exclude DOB/security tokens even from mixed turns and spoken questions. No numeric regex over serialized target indices. Current security-role rejection works but is not sufficient mixed-content protection.
+
+Minimal teacher->student contract: shared permitted view, frozen encoder and binary head, frozen-head DEV scoring with no fit, TRAIN-only logits for T2/alpha.25 distillation versus alpha0 CPU student. Pin feature/detector/decoder/model/label/lineage hashes. Export only sparse stdlib weights, no encoder/API in runtime; measure approximation/export parity. H100 availability does not justify GPU or establish teacher benefit.
+
+Deterministic decoder: current ingress independently bound; historical reference validity uses earlier completed speech and matching per-target opaque component tokens. Linguistic completeness distinct from deterministic exact-date normalization. Unknown scope, invalid value, failed detector or stale dependency forces affected abstention. Same-turn new term plus Yes invalidates old readback; fresh spoken readback and later response needed. Withdrawal affects consent, not payment refusal. Shadow code does not mutate bank state.
+
+Actual A6authored13/18combined,16/18bank,3/6all3: group regressions cover security+purpose/hypothetical questions, unfinished Are you a without transfer, consent withdrawal without refusal, puzzle numbers/amount continuation and premature readback. Original18calls are diagnostic descendants of authored PUB01 variants, not18new independent roots or gold. No literal DOB/security values copied into design training examples.
+
+Implementation order: fix actual-source feature/reference contracts; obtain new reviewed date roots and align frozen detector outputs; fit one CPU head/controls only after admission; assess utility before optional teacher/GPU. No platform/GPU calls or original v2/data/model/score edits.
+
+CHECKPOINT06 B-next2 amendment (same checkpoint): read independent_claim_dispositions and supported_next_remedies from65literalCPU observations. Complete-primary blanket-if fault, partial+complete row-order merge loss, and benign I-do-not-mind confirmation overblocking are supported; existing recipient/complete-complete/separate-turn/refusal/paid-sibling/retry controls retained.
+Atomic requirement: parse immutable evidence first; complete rows add NO unfinished needs; partial rows preserve separately complete components; reconcile explicit c0needs with independent completion before one target diagnostic/patch. Resolve conflicts through source-scoped correction relations, not serialized order. Global if/no/not cannot blank independent completed acts. Date classifier only judges linguistic date completion, never consent/bank authority. See v3_atomic_component_truth.
+Parent B-next2original8/9combined,2/3all3,v2; PUB12rep1systemerrorafterget_account remains pending classification. A-next236seconds/publishedv1/queue48 is parent report. No source-error/transport extrapolation or authority-learning claim.
+
+CHECKPOINT06 concurrent-owner source refresh: Hooke adapter changed during this checkpoint. The earlier target_index KeyError binds original source hash; revised source_view now reads index/nested components, preserves relative target descriptors, separates lexical delexicalization, and requires value-free privacy review/source map. Student now has range-reduced Taylor sigmoid/export and teacher memory cap. Source-level fixes observed; no revised fit/actual data admission/numerical qualification claimed. Frozen teacher DEV scorer still required. Earlier failure is not asserted against latest source. New hashes pinned in checkpoint source_refreshes.
+
+CHECKPOINT06a - collection and review-count clarification
+Weak author sampling after unions:18positive/20additionalnegative canonical groups. Actual Zeno81member review:16positive/19additionalnegative,7maskedprimary ambiguities, one partly exposed annotation/member and0adjudicated gold.38selected canonical groups require82members;0073missing means only37fully one-reviewed groups and15fully one-reviewed positive groups. Training gate closed; parent has closed Zeno.
+Parent-dispatched fresh author is collecting12new primary roots x2variants, DATE24TRAIN+8DEVroot contrasts, closure0073and omitted0109, with full versioned label-free TRAIN packet and separate weak authored labels under research/customer-benchmark/semantic-v3-collection. Directory not yet present at local check; this is pending work, not achieved support.
+Two fresh independent reviewers must each annotate full same-version packet before parent adjudication/closure. Keep prior row-specific answers, author labels and model outputs hidden; no fabricated blind registry. Primary gate uses20positive plus20ADDITIONALnegative roots; date gate allows the SAME20paired roots to support both classes without doubling independent sample size. All data/GPU/runtime qualification gates unchanged.
+
+CHECKPOINT07 - 50source-bound engineering vectors ready
+Artifacts: analysis/learned-layer-design.checkpoint07-vectors.json/.txt.9detector,8scopedsemantic,9atomicmerge,18reference,6ingress. Full exact semantic_input snapshots, independent synthetic observers, source hashes/IDs, Unicode spans, expected axes/masks, typed-candidate assertions and no-authority contracts.
+Own-spec algebra33cases met expectations;50schema template checks including128char turnID with bounded c0;28component/fact span checks;50source IDs verified. ZERO actual v3 candidate executions/passes claimed.
+Targets: detector_v3(D),context_v3(S),reference_v3(R),guard_v3(G/all),owner atomic merge adapter(M). New in-progress code was not read/edited/imported/frozen. Missing capability or neutral fallback is not_exercised for semantic coverage. Shadow remains abstaining even with valid fixture reference; no bank calls/state writes.
+Minimal merge law and six falsification families included: no global if/no veto, no digit-is-money, no absent-from-no-candidate inference, no globalrevision-equality freshness, no same-value stale-token bypass, no serialized-row correction shortcut. R13 isolates same-turn completed new amount plus Yes; old readback ineligible.
+Vectors are engineering derivatives, not independent TRAIN/calibration/qualification gold.16/19primary review counts/data gates unchanged. Hand off for real implementation metrics.
+
+
+CHECKPOINT08 2026-10-11T03:01:36.466207+00:00
+Full detector contract and15-instance table: analysis/learned-layer-design.checkpoint08-detector.json and matching.txt.
+FrozenR3 reproduced2/15exact;3partialoverlaps;10no same-kind. Oraclehead alwayscomplete15/15. DATE8contains0unfinishedoldDEV labels. NewTRAIN72/22canonical produces candidates in only7groups: <=7perclass upperbound,20/20fitgateclosed. Add generic maximal DATE/opencomplement proposer, sharedlocalfeature extraction and exact independentannotation masks before CPUfit. No newhead/wire, GPU, platformcalls, authorlabel updates or qualification.

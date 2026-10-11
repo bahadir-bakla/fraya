@@ -1,0 +1,94 @@
+CHECKPOINT09 — BOUNDED RUNTIME INTERFACE
+
+Decision: retain the policy graph and bank guards. Repair two interfaces: the bank-operation result adapter, and the turn evidence adapter. Preserve all useful observations before choosing one primary action. Do not replace the graph or introduce external learned inference based on aggregate failure counts.
+
+Parent reports A-next1 original27/30,9/10 cases passing all3; authored0/18,0/6 all3. The compact local parent triage now establishes one shared opening failure: all18 correct recipient events were rejected by the exact raw-sentence allowlist, closing before security. All18 later authored targets were unexercised. These are not18 downstream semantic failures or evidence that a broader ML model is required.
+
+What the current source establishes
+
+1. The actual saved HTTP500 failure is operation-result normalization. Dispatch ran. Empty bank_status/bank_result prevented its retry predicate even though operation-specific platform metadata contained500. This is not the earlier graph failure-counter bypass. Keep the original failure and the closed local diagnosis; no new host fetch was performed.
+2. event uses a finite tagged grammar and raw is a separate model-extracted string. The instruction “Exact latest user speech” does not authenticate that string. A syntactically valid event can still mislabel unfinished speech.
+3. Multiple question/purpose rows are dropped. Only all-complete proposal/change rows merge; other combinations select one human/hardship/plan row or fail. Choosing a primary too early loses independent questions and component facts.
+4. Whole-turn if/no/not/ellipsis checks mix scope. Unchanged helper execution shows “Yes, no problem” is allowed, “Yes, I do not mind” blocked, and a separate if-clause also blocks affirmation. The human fallback recognizes a direct request but returns no result when an independent if-clause is appended. These are helper observations, not hosted failures: an extracted human event can still work.
+5. There is no consent-pause kind. Unknown/refuse can clear terms and spend persuasion attempts. Known-account questions use an unavailable-information response although product/offer values exist. These residuals have conditional source witnesses; they were not exercised in the18 authored runs because those calls stopped at recipient identification.
+
+Architecture comparison
+
+A broad policy graph can represent identity, transfers, promises and receipts, but adding branches cannot recover a question discarded at ingress. A finite parser can enforce syntax, values and state transitions, but cannot guarantee correct interpretation of unfamiliar language. Keep the fixed platform model as the semantic proposal producer, with a short orthogonal contract. Let deterministic code handle policy, typed state, normalization, reference freshness and bank authority. The learned DATE student remains a separate shadow hypothesis, not a substitute for these repairs.
+
+Bounded internal interface: compiler_turn.v1
+
+This namespace is independent of semantic_proposal.v1 and checkpoint08/R4.
+
+- source: copied text plus source level and transport status. Present runtime level is extracted_copy; independent completeness is unknown. A local processed-turn counter is not a platform turn attestation.
+- acts: up to12 candidate acts, each with local ID, completion, modality and optional target selector. A completed hypothetical or quoted act is not an actionable assertion.
+- components: up to16 proposed amount/date/time/security fields with owner act, target, verbatim expression, linguistic completion and explicit correction relation. The model cannot supply canonical policy values or backend status.
+- questions: up to4 independently scoped questions, including account_due, current_offer and other. Preserve “other” rather than inventing an exhaustive phrase taxonomy.
+- consent: descriptive signal none/affirm/deny/pause/withdraw/unknown and scope recipient/support/offer/readback/unknown. It cannot set permission directly.
+- diagnostics: missing, malformed, overflow and unavailable channels. Missing does not mean absent, false or refusal.
+
+Raw text cap4096 codepoints, expression cap512, serialized candidates cap8192 characters. These are engineering bounds, not brief-specific financial constants. Overflow requests clarification without a financial mutation.
+
+Smallest compiler-generated next iteration
+
+Retain event/raw/admin transport. Normalize all event rows before primary selection, preserve question rows, and map unknown to clarification. Add consent_pause/consent_withdraw and optional q=account_due|current_offer|other only with a paired versioned decoder: the current decoder rejects those fields/kinds. This is a small producer/consumer change, not a manual candidate patch.
+
+For the fuller adapter, a single JSON-string extraction variable can carry the bounded arrays; nested native extraction types are not documented. Parse as data using json, validate duplicate keys, types, bounds and finite numbers. Never execute generated text. A legacy adapter must mark unavailable semantic channels unknown. Keep the same fixed platform model and no extra inference API. A custom extraction prompt must retain the original four required input placeholders.
+
+Persistent typed facts
+
+Keep separate stores:
+
+- Backend facts and receipts: only operation-correlated bank responses establish verified, account data or recorded status.
+- Proposal facts: indexed by returned product and component, with expression, deterministic normalization/policy status, source level, local sequence and opaque component revision. A valid proposed amount/date is not a recorded promise.
+- Readback: exact terms, target set and component revisions; permission is separate from terms. Issued TTS is not independently proven completed speech under the documentation reviewed here.
+- Pending operation: operation kind, attempt, exact request body and result provenance. Consume only the current sequential attempt; clear stale fields explicitly. Unknown outcome is not a retryable known failure.
+- Questions and counters: a bounded answer queue; parser repair counters separate from persuasion/refusal counters. Do not retain secret transcript text.
+
+Atomic merge and deterministic top priority
+
+Partition the immutable turn into acts, facts, questions and consent. Normalize a proposed delta on a copy, resolve conflicts, then commit once. Updates to distinct components commute. Same-component conflicting values require clarification unless an explicit directed source correction resolves them. Array order is not speech order. A partial amount must not erase an independently completed date. Cached offer values cannot complete a new correction obligation.
+
+Process priorities in this order:
+
+1. Reconcile the awaited bank operation and required outcome speech.
+2. Validate/partition turn input; missing or invalid evidence suspends new write permission and requests focused clarification.
+3. Apply scoped permission pause/withdrawal. Retain unchanged proposed terms; do not spend a persuasion attempt. Uncertain changed terms remain unresolved history.
+4. Select complete, asserted, context-eligible acts. Use the precedence partial order compiled from the actual brief. Do not hardcode universal human-over-hardship-over-plan priority. Incompatible unordered acts require clarification.
+5. Merge nonconflicting components and retain independent questions even if another act determines the route. Terminal actions explicitly defer other proposals.
+6. Answer permitted known questions from typed account/current-offer data, then give the next policy prompt. A question about an amount is not an unfinished amount proposal.
+7. Only then consider a write: original bank/policy guards, exact current readback dependencies, no unresolved or changed terms, required warning and later correctly scoped assent. New terms plus yes in one turn require a new readback and later consent.
+
+Generate now, in order
+
+1. Operation-scoped result normalization covering posthook and documented no-posthook error metadata; preserve exact-body retry and cap. Parent owns the existing HTTP500 repair and hosted validation.
+2. Paired question/consent channels and unknown-to-clarification behavior.
+3. Atomic component reducer before primary action selection.
+4. Scoped qualifiers with explicit unsupported/ambiguous handling; do not simply remove negative guards.
+5. Generic normalization/fragment tests derived from input grammar, not memorized test phrases or final-brief values.
+
+Platform boundary
+
+Original rules fix AGENT_LLM and permit only bank API calls during a phone call. Original docs verify vars and json/re/datetime in code nodes; network/filesystem support is not established. system.conversation is a documented template view and extractor.speech an extraction-prompt input, neither a demonstrated authenticated current-user code variable. each_turn never fires. Do not fetch get_call during the phone call, substitute an external model, or template raw speech into executable code. Source-copy agreement does not qualify learned ingress.
+
+Offline builders may use other models. A future stdlib student could propose supported semantics only after source, data and risk gates; GPU availability does not solve the current codec/reducer/operation defects. Checkpoint08 and HookeR4 remain unchanged.
+
+Validation and next evidence
+
+Eight unchanged helper observations were executed; seven artifact/source consistency checks passed. No full dispatcher, graph, extractor, bank call or candidate fix was run here. Prior54 conditional observations are not54 benchmark passes, and a posthook-populated500 test did not cover the actual no-posthook failure.
+
+Use frozen normalized observations to isolate old/new reducer behavior, then parent-owned actual calls to measure producer error, state reduction, route, operation delivery and final bank/policy/honesty outcome separately. Preserve per-case all3 scoring and original failures. Development paraphrases do not become fresh qualification. No latency or generalization gain is claimed.
+
+Full machine-readable fields, source findings, probe inputs and SHA256 manifest are in the matching JSON file.
+
+
+AMENDMENT09a — CONFIRMED RECIPIENT ENTRY GATE
+2026-10-11T03:17:39.837795+00:00
+
+All18 authored openings emitted the correct recipient event from speaking+supplied-name or yes+name. recipient_reply required an exact surface sentence and rejected them. The immediate action is producer/consumer guard agreement in the compiler-generated agent; preserve bank identity verification afterward. Parent has already amended the generic guide and owns the automatic A-next2 rebuild. No implementation edit is made here.
+
+The recipient act may advance to an identity question; it cannot set verified or financial consent. Cover variable-name/punctuation variants and contrasting third-party, quoted, hypothetical, negated and incomplete identification. Do not replace exact-sentence gating with an unrestricted name/yes substring check. Test the actual recipient consumer, not only tagged-row syntax. After repair, measure which later targets are reached before interpreting downstream results.
+
+Parent reports adjudicated TRAIN support: primary27 positive/21 additional-negative canonical groups; DATE whole-turn22/19 fails the unfinished floor. Scoped DATE22/20 still requires justified source scope, closure, exact actual-candidate alignment and eligibility recount by the isolated admission worker. These counts are not qualification evidence, accepted predictions or a completed fit. Do not select scope merely to clear a threshold.
+
+Only the compact local triage JSON/TXT was read. No hosted data fetch, keys, queue changes, model/data changes or GPU calls. Checkpoint08/R4 and the four prior design files remain unchanged.

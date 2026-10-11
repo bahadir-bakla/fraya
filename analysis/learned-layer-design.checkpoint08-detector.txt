@@ -1,0 +1,96 @@
+LEARNED LAYER CHECKPOINT08 — FROZEN R3 DETECTOR DIAGNOSIS
+2026-10-11T02:59:00.975573+00:00
+
+Outcome: detector2/15 is reproduced. 2 exact +3 overlap-only +10 no same-kind candidate. Both exact hits occur in one turn/group. All15 oracle completion predictions are complete; historical oracle5/15 and actual exact+completion2/15 are not qualified output scores. All source artifacts remain frozen.
+
+The narrow DATE subset has8 oldDEV instances:2exact,1overlap,5missed;3old complete,5old ambiguous, ZERO unfinishedDATE examples. This diagnostic set cannot test unfinishedDATE recall.
+
+Per-instance evidence (offsets are half-open Python Unicode codepoints; labels are original single-author diagnostic labels):
+CSv2-E-0156 date [21:37] 'the day is wrong' | old=ambiguous/asserted | actual=NONE | no_same_kind_candidate | reference_or_rejection_mention_unsupported
+CSv2-E-0158 amount [24:34] 'one hun...' | old=unfinished/quoted | actual=NONE | no_same_kind_candidate | quoted_truncated_number_and_missing_money_cue
+CSv2-E-0159 recipient [44:55] 'Morgan Vale' | old=complete/asserted | actual=NONE | no_same_kind_candidate | recipient_proposer_not_implemented
+CSv2-E-0159 recipient [23:33] 'the sister' | old=complete/quoted | actual=NONE | no_same_kind_candidate | recipient_proposer_not_implemented
+CSv2-E-0160 amount [6:21] 'the card amount' | old=ambiguous/asserted | actual=NONE | no_same_kind_candidate | amount_reference_not_literal
+CSv2-E-0160 date [48:60] 'its own date' | old=ambiguous/asserted | actual=NONE | no_same_kind_candidate | date_reference_not_literal
+CSv2-E-0161 date [0:60] 'The eighteenth where I am, but the seventeenth where you are' | old=ambiguous/asserted | actual=NONE | no_same_kind_candidate | ordinal_words_and_cross_clause_composite
+CSv2-E-0162 date [4:41] 'the final banking day of this quarter' | old=ambiguous/asserted | actual=NONE | no_same_kind_candidate | business_calendar_phrase_not_implemented
+CSv2-E-0167 date [22:34] 'after I land' | old=ambiguous/asserted | actual=NONE | no_same_kind_candidate | event_relative_date_not_implemented
+CSv2-E-0167 time [8:21] '14:00 my time' | old=ambiguous/asserted | actual='14:00'[8:13] | overlap_only | timezone_modifier_outside_candidate
+CSv2-E-0168 amount [19:28] '245 euros' | old=ambiguous/asserted | actual='245'[19:22] | overlap_only | currency_unit_outside_candidate
+CSv2-E-0175 amount [0:29] 'A quarter of the card balance' | old=ambiguous/asserted | actual=NONE | no_same_kind_candidate | fraction_of_balance_not_literal
+CSv2-E-0176 date [16:22] 'Friday' | old=complete/asserted | actual='Friday'[16:22]; 'Monday'[40:46] | exact | exact_surface_target_reference_still_unresolved
+CSv2-E-0176 date [40:46] 'Monday' | old=complete/asserted | actual='Friday'[16:22]; 'Monday'[40:46] | exact | exact_surface_target_reference_still_unresolved
+CSv2-E-0177 date [0:38] 'Two days after the day before tomorrow' | old=complete/asserted | actual='tomorrow'[30:38] | overlap_only | nested_relative_expression_reduced_to_inner_anchor
+
+Three unmatched candidates are inner tomorrow, bare245 and14:00; each overlaps a same-kind annotated phrase. They are not established false positives; no independent absent-region audit exists. Exact2/5 is not candidate-validity precision. All runtime candidate validity masks remain false; ambiguous wire values are abstention placeholders.
+
+TRAIN-only input audit: newlabel-freeDATE72 rows/24declared roots/22canonical roots. FrozenR3 emits13DATE candidates in12rows/7canonical roots. Therefore each exact-aligned trained class has at most7groups before review: current20/20 floor is mathematically impossible without detector changes. No newDEV contents, author labels, or reviewer annotations were read.119/49 primary packet counts are parent-reported; actual review/adjudication gate unknown.
+
+Implement next version in this order:
+0. Freeze annotation and boundary conventions before aligning detector. Keep full source spans and independent reviewers answers. Parent adjudicates presence, linguistic finishedness, reference unresolved and scope separately. Annotation disagreement about maximal phrase vs anchor is explicitly unresolved until adjudication; never nearest-span labels or prediction-conditioned clipping.
+1. Add bounded DATE expression proposer on TRAIN inputs. One token scanner plus finite expression recognizers; preserve offsets in original Python Unicode codepoints. Recognize day-number+month(+year), month+day-number/ordinal(+year), ordinal word(s)+of+month, lone ordinal/month only with a local date predicate or admissible question-role support; relative periods, business-day phrases, before/after expressions, ranges/alternatives, and open complements. No hardcoded case IDs, brief dates, test answers or fixed branch values.
+2. Join dependent tokens to expression span before completion features. Keep qualifiers that change temporal reference inside the expression: nested before/after anchors, of-complements, date range endpoints, calendar modifiers. Retain open of/before/after/to/or tails and local truncated tokens even without ellipsis. Do not return inner tomorrow as full expression, or first date of an unfinished range as completed whole range. Atom spans may be sidecar children; one maximal expression is the classification unit.
+3. Use same feature extractor for actual-candidate fit, eval, scorer and export. Freeze feature_version and window rules in bundle. Shared function consumes actual proposed expression span, clipped local clause context, clipping flags and admitted phase/question metadata. Reject wrong feature_version. Add numerical parity over both scores and eligibility; frozenv2 head is not silently reinterpreted with new features.
+4. Align to adjudicated TRAIN, then gate narrow CPU fit. Run exact kind/start/end matching after source adjudication. Report misses and unmatched candidates. Recount fully reviewed canonical class groups on actual matched eligible spans, not authored counts or oracle spans. Fit only after20complete and20unfinished groups; same paired groups may support both classes. No encoder or GPU remedies regex/annotation/mask failures.
+
+BOUNDED SCANNER CONTRACT
+Tokenize original text with offsets; retain words, numbers, hyphens, slash, colon, apostrophes and ellipsis tokens. Mark identifier/clock/security spans first as competing types. Do not normalize text before recording offsets.
+Within each local clause, seed DATE on MONTH, WEEKDAY, ORDINAL, numeric date separator pattern, temporal-noun phrase or DATE-question-supported open operator. MONTH/WEEKDAY alone are hypotheses, not verified dates; case and phase alone cannot prove validity.
+Enumerate bounded token productions: [ORDINAL|DAYNUMBER] [of] MONTH [YEAR]; MONTH [ORDINAL|DAYNUMBER] [YEAR]; [WEEKDAY,] calendar-expression; determiner+ordinal+[business|working]+day+[of PERIOD]; relative-period; [number duration] [before|after] temporal-anchor; [from A to B|either A or B]. Permit missing final operand as an OPEN production; do not consume following unrelated predicate as that operand.
+Extend to maximal temporal phrase only while a recognized production consumes tokens. Internal before/after/of/to/or creates a dependency; if it is syntactically unresolved or exceeds bounds retain OPEN/unsupported diagnostics. One optional nested relation level initially; deeper dependencies abstain rather than flatten to inner anchor.
+Candidate span is the maximal expression. Child atom offsets retained only in sidecar for explanation. A parent candidate and its child are not two independent training examples. Tie/overlap with incompatible types or incompatible maximal parses => competing/boundary mask.
+Emit raw spans, kind hypothesis, clause ID, proposer version and capability diagnostics. No exact date/money normalization or learned permission. Freeze scanner version before evaluating a model; changing candidate boundaries invalidates prior calibration even when head bytes stay equal.
+
+FEATURE/PILOT CONTRACT
+pilot_choice: Retain R3 proposed48-codepoint each-side window for first bounded CPU experiment; no window sweep on exposedDEV. Candidate<=512; left/right end at local clause boundary. Version this explicit48 choice (earlier design allowed at most96).
+feature_content: Use candidate surface, local word1/2 and bounded char3/4 features, open-operator/word-boundary/punctuation position, bounded left/right contextual tokens. Optional admitted phase/question role and exact prior-continuation flag only. No raw product/call/turn IDs, canonical values, gold boundary, source annotation, future text or whole-turn any-no/not bit.
+clipping: Return left_clipped/right_clipped and dependency_incomplete. If deciding scope requires omitted predicate or multi-clause relation, mask/abstain instead of presuming completion. No implicit tail=true from window truncation; tail fields refer separately to expression, clause and delivered turn.
+admissible_continuation: A fragment may use preceding expression only with independent original source event and matching opaque unresolved component token. Do not concatenate question text as spoken user evidence or invent a prior reference because the phase is date.
+shared_entrypoint: date_features_v3_next(snapshot, actual_candidate, source_admission)->{features,eligible,reason,feature_version,window_bounds}; use identical implementation in table builder, CPU score, evaluation and json/re export. Do not change R3 functions in place; next version only.
+training: One binary complete/unfinished head; 80epochs, L2=.0002, group->example->candidate averaging, fixed feature cap<=512 (384 acceptable predeclared). No ambiguous/unsupported/absent assigned a binary target. New head remains uncalibrated shadow; frozenv2 metrics unchanged.
+
+ANNOTATION AND MASKS
+review_flow: Let the two fresh TRAIN source-only reviews finish without feeding them these predictions. Parent checks packet hashes, complete membership, independently annotates/adjudicates disagreements. Freeze overlay and canonical unions. Then separate absent-region/unmatched-candidate audit; no pretend blind registry after exposure.
+exact_positive: Review says valid date expression at exact span, present mask true; linguistic complete/unfinished agreed; source/private isolation and feature window eligible => completion mask true. Includes complete vague, negated, quoted, conditional, invalid calendar and unresolved anaphor when linguistic finishedness is independently clear.
+detector_miss: Count as pipeline false negative against reviewed true span. No example for conditional head loss, no fabricated candidate from label spans at runtime, no false label absent.
+unmatched: Mask validity/completion/polarity until separate review. Three oldDEV overlaps are boundary mismatches, not automatic negative validity. No positive label from nearest overlap; no negative from missing gold alone.
+reviewed_negative: Only independently reviewed no-date/competing-kind region supports validity negative; source annotation must cover candidate region and kind. Such negatives test proposer/abstention and are not unfinished DATE training labels.
+capability: not_implemented, no_candidate, boundary_ambiguous, reference_unresolved, untrained_head, source_unqualified and normalization_invalid are distinct diagnostic reasons. Existing wire placeholders do not mean semantic ambiguous ground truth.
+old_DEV_overlay: Potential complete-expression/reference distinctions for0156/0160/0161/0162/0167/0168/0175 require separate review. Do not recode their old ambiguous labels or claim improvement without new adjudication; quoted0158 and quoted recipient0159 show scope failures independent of finishedness.
+qualification: OldDEV and theseTRAIN diagnostics exposed. Freeze detector/features/head/decoder/schema before fresh calibration-fit then independent risk/qualification groups. No newDEV labels read here; once used for development it is not qualification.
+
+TRAIN FAMILIES (source meaning still awaits independent review)
+ordinal_month_and_open_of: Typed temporal expression boundary; retain open complement without punctuation. These are source excerpts, not newly adjudicated labels. Roots SV3-G-3f5e6514faae75c2f032, SV3-G-078774b125b6a87ff1cd
+range_alternative: Full expression vs atom; do not classify first endpoint as the whole unfinished range. Roots SV3-G-343a220a8979297fa3a0, SV3-G-f1322829d6a8af0a0e68
+relative_and_business_day: Linguistic complement completion separate from unknown reference/calendar normalization. Roots SV3-G-85db18335fa221fa0f60, SV3-G-243fe2966079f911bc77, SV3-G-66976e4570a88af3238b
+sibling_time_admin_and_hesitation: Scope completed weekday vs unfinished time/sibling/admin; nonterminalellipsis never blanks completed date. No unordered merging of genuine replacements. Roots SV3-G-5788dc9debc768037ce9, SV3-G-0e7c8b8c9b38eb4f356c, SV3-G-b09a61ed146d6a3b6c3b, SV3-G-49148a60cc9b1dae3238
+quoted_negated_conditional: Complete expression may be nonasserted; completion head never grants permission. Quoted carrier already unioned, count canonical root once. Roots SV3-G-3f5e6514faae75c2f032, SV3-G-76ca5d6d0edd39999409, SV3-G-d8d16bec57bccb0006d1
+normalization_not_finishedness: Impossible dates, weekday disagreement, numeric locale ambiguity, ordinal/month with different source context; keep normalize/reference masks separate. Roots SV3-G-41dda7ae101c09270aa6, SV3-G-6112a35367efbd44c6f0, SV3-G-b0f7f5d469943b650fe3, SV3-G-31febfd83492b4c92614
+competing_kind_and_privacy: Still requires separately reviewed TRAIN no-date/identifier/clock/quantity/security controls.72DATE rows do not establish absent-region coverage or independent negatives. Existing07engineering fixtures can test mechanics, never inflate reviewed groups. Roots 
+
+CHECKS AND LIMITS
+Read-only existing detector/old-head execution reproduced15completion and15polarity diagnostics,5actualcandidates;11frozenR3 source hashes match handoff. No fit, GPU, platform or candidate writes.50designer semantic expectations still not exercised.58v3checks/180parity are prior reportedR3 results, not new08tests.
+Existing one-sided grouped-risk/multiplicity contract unchanged. ExposedoldDEV cannot become freshqualification. CPUcontrols must use identical actual detector and admitted spans; noGPU is justified by these regex/window/role/mask gaps.
+
+SOURCE SHA256
+integrations/learned-dialogue/candidate_v3.py b99cce083661924e97f1f1f0197619dae0d4844b931788681579b5829bb99aaa
+integrations/learned-dialogue/checkpoint_v3.py 4edcab34e9878ee27cc01078710bf7877257c5cf0586fa32dc173f34aa82b821
+integrations/learned-dialogue/context_v3.py dc58cbefcacac5293b839464db8dddd0f5bffb97ead4e5015fcf32cfca73ee88
+integrations/learned-dialogue/detector_v3.py 38a9f446c117f33eb17b7fbefc841f11c5b7d4a8a0b8a790a64fd7129ba4f093
+integrations/learned-dialogue/export_v3.py 535972ce42281ef9daeb490e337ad4add71e43a1da01d1cdae783d59f7fe6c5e
+integrations/learned-dialogue/guard_v3.py d1f0f5aa878da30a141037a2db079ad8108a86ba14567584364c0c719705e650
+integrations/learned-dialogue/merge_v3.py 6b108ffbe6a9d130f7701a21551b2c51111cba9ffcebf466279b84485e2ddb0a
+integrations/learned-dialogue/reference_v3.py 0ae2feee6e69f74e9c2513997832b82ab3d099116d7f996ff1485c78d99450ac
+integrations/learned-dialogue/runtime_context_v3_r3.py e38cf60a2e5b9b948418162cb5784462034a11022e610f86822b739901066cce
+integrations/learned-dialogue/test_v3.py c5cfff62e841c576c95ae46818fbdca94bf0d32206d9143f964cab0c0ef23948
+integrations/learned-dialogue/vector_checks_v3.py 5692629d86a170199ca93b5c575461364f2de2994bae2cdc4b2d137c97d65316
+analysis/night-learned-dialogue.v3.source-r3.json 003b2e9720d8f3d0e2e433d0e65de8d04ec8e46c831f19bd2af6b9fe37a37771
+analysis/night-learned-dialogue.v3.source-r3.txt 813c3a12cbf79b124d24d05295643a253a381179668e47305c286b8cec001b7f
+integrations/learned-dialogue/model_v2_final.json 4b96a26d0b99ed2ff2d774d7678131c4cb14960b462ba48bcc3790972d31b427
+integrations/learned-dialogue/context_v2.py 03fecd8dc0f6f5d2187cdae0ce3188ce88e4f9a413f22341f72fe3bd10784698
+integrations/learned-dialogue/train_v2.py 124695621f91dc8d2c48634c28fd6589ac10e75865e33faa3e127c7aa7551e48
+integrations/learned-dialogue/contract_v2.json 643f9516673583c64dd3da70e04d6e7f9fea129e184a6428371a8cda0d769fbb
+research/customer-benchmark/context-semantic-v2-dev.json 4f5328032010f2ff002c5f53e1ff8dd4bf88af3fdbf1279edecfa1a5d6830793
+research/customer-benchmark/semantic-v3-collection/manifest.json b5057c794bf01443c9049ebdb6774329899bd6ded067859e871efbf447c6689f
+research/customer-benchmark/semantic-v3-collection/label-free-date-review-packet.json 7397467d49bbd557f8cfe3c5b23520049d081addb594e1a6696d749cdaa07808
+analysis/learned-layer-design.checkpoint07-vectors.json fc0e10b9c56d23a9b8b99c1ae190af396842fc05178568b1e85a8813ac92581e

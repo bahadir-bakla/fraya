@@ -1,0 +1,306 @@
+{
+  "$comment": "V1 completion conflates correction/negation; retained for honest original metrics. V2 uses designer-owned independent dimensions. Oracle labels are synthetic pre-fit declarations, not human gold or policy truth.",
+  "$defs": {
+    "input_snapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "policy_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "raw_text_provenance": {
+          "type": "string"
+        },
+        "state_revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "turn_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "utterance": {
+          "maxLength": 4096,
+          "type": "string"
+        }
+      },
+      "required": [
+        "utterance",
+        "turn_id",
+        "state_revision",
+        "policy_hash",
+        "raw_text_provenance"
+      ],
+      "type": "object"
+    },
+    "oracle_label": {
+      "additionalProperties": false,
+      "properties": {
+        "completion": {
+          "enum": [
+            "complete",
+            "unfinished",
+            "correction",
+            "negated",
+            "unknown"
+          ]
+        },
+        "must_abstain": {
+          "type": "boolean"
+        },
+        "primaryintent": {
+          "enum": [
+            "account_question",
+            "callback",
+            "card_issue",
+            "dispute",
+            "human_support",
+            "payment_discussion",
+            "stop_contact",
+            "unknown"
+          ]
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "secondaryintent": {
+          "enum": [
+            "none",
+            "account_question",
+            "callback",
+            "card_issue",
+            "dispute",
+            "human_support",
+            "payment_discussion",
+            "stop_contact",
+            "unknown"
+          ]
+        },
+        "unresolvedcomponent": {
+          "enum": [
+            "none",
+            "utterance_tail",
+            "correction_target",
+            "negated_scope",
+            "intent"
+          ]
+        }
+      },
+      "required": [
+        "primaryintent",
+        "secondaryintent",
+        "completion",
+        "unresolvedcomponent",
+        "must_abstain",
+        "rationale"
+      ],
+      "type": "object"
+    },
+    "record": {
+      "additionalProperties": false,
+      "properties": {
+        "augmentation_parent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "provenance": {
+          "additionalProperties": false,
+          "properties": {
+            "author": {
+              "type": "string"
+            },
+            "fictional": {
+              "const": true
+            },
+            "origin": {
+              "type": "string"
+            },
+            "policy_oracle": {
+              "const": false
+            },
+            "raw_public_text_copied": {
+              "const": false
+            },
+            "source_locator": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "fictional",
+            "author",
+            "origin",
+            "raw_public_text_copied",
+            "policy_oracle",
+            "source_locator"
+          ],
+          "type": "object"
+        },
+        "scenario_family": {
+          "type": "string"
+        },
+        "semantic_template_group": {
+          "type": "string"
+        },
+        "source_group": {
+          "type": "string"
+        },
+        "split": {
+          "enum": [
+            "train",
+            "calibration",
+            "holdout"
+          ]
+        },
+        "utterance": {
+          "maxLength": 4096,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "utterance",
+        "split",
+        "semantic_template_group",
+        "scenario_family",
+        "source_group",
+        "augmentation_parent",
+        "provenance"
+      ],
+      "type": "object"
+    },
+    "semantic_proposal": {
+      "additionalProperties": false,
+      "properties": {
+        "abstain": {
+          "type": "boolean"
+        },
+        "authority": {
+          "const": "semantic_proposal_only"
+        },
+        "candidate": {
+          "additionalProperties": false,
+          "properties": {
+            "completion": {
+              "enum": [
+                "complete",
+                "unfinished",
+                "correction",
+                "negated",
+                "unknown"
+              ]
+            },
+            "primaryintent": {
+              "enum": [
+                "account_question",
+                "callback",
+                "card_issue",
+                "dispute",
+                "human_support",
+                "payment_discussion",
+                "stop_contact",
+                "unknown"
+              ]
+            },
+            "secondaryintent": {
+              "enum": [
+                "none",
+                "account_question",
+                "callback",
+                "card_issue",
+                "dispute",
+                "human_support",
+                "payment_discussion",
+                "stop_contact",
+                "unknown"
+              ]
+            },
+            "unresolvedcomponent": {
+              "enum": [
+                "none",
+                "utterance_tail",
+                "correction_target",
+                "negated_scope",
+                "intent"
+              ]
+            }
+          },
+          "required": [
+            "primaryintent",
+            "secondaryintent",
+            "completion",
+            "unresolvedcomponent"
+          ],
+          "type": "object"
+        },
+        "clauses": {
+          "maxItems": 1,
+          "type": "array"
+        },
+        "confidence": {
+          "type": "object"
+        },
+        "consent_signal": {
+          "const": "unassessed"
+        },
+        "corrections": {
+          "maxItems": 1,
+          "type": "array"
+        },
+        "input_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "policy_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "research_only": {
+          "const": true
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "state_revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "turn_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "authority",
+        "research_only",
+        "turn_id",
+        "state_revision",
+        "policy_hash",
+        "input_sha256",
+        "candidate",
+        "confidence",
+        "abstain",
+        "reasons",
+        "clauses",
+        "corrections",
+        "consent_signal"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Learned dialogue v1 research contracts"
+}

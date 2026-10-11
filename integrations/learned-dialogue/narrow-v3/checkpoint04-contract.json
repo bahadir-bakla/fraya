@@ -1,0 +1,132 @@
+{
+  "act_completion_contract_vnext": {
+    "annotation_fields_proposed": {
+      "act_commitment": "asserted | negated | conditional | questioned | quoted | unknown, with scope evidence; distinguish speech-act commitment from embedded predicate polarity.",
+      "act_completion": "complete | unfinished | ambiguous; missing annotation masked separately, not labelled unknown.",
+      "clause_id": "Existing source-span clause identity.",
+      "completion_evidence": "Exact spans and any open qualification/correction scope; no imagined completion from intended script.",
+      "essential_argument_resolution": "resolved | unresolved | not_applicable plus role/reference evidence; e.g. whose death, who self-identifies, or which question is answered.",
+      "mask": "Independent Boolean observation mask for each proposed field."
+    },
+    "definition": "Complete means the relevant act/proposition has been sufficiently expressed, without an unresolved continuation that could alter it. Essential person/target/reference resolution is a separate axis and separate admission dependency: a complete he died can still have an unresolved referent. Act completion implies neither full payment terms, policy eligibility, verified identity, consent permission nor transport integrity.",
+    "examples": [
+      {
+        "meaning": "Completed hardship act; separately unfinished payment date. Payment incompleteness must not erase hardship.",
+        "text": "I lost my job. I can pay on the..."
+      },
+      {
+        "meaning": "Possible hardship label with unfinished/ambiguous act; do not complete the word or infer a support transition.",
+        "text": "I lost my j..."
+      },
+      {
+        "meaning": "Truncated act and potentially unresolved subject; no deceased-customer close. Father/customer reference must come from actual context.",
+        "text": "My father just di..."
+      },
+      {
+        "meaning": "Completed stop plus independent unfinished admin clause.",
+        "text": "Do not contact me again. Also, your office hours..."
+      },
+      {
+        "meaning": "Open qualification may alter stop; known act candidate but incomplete/ambiguous commitment, requiring scoped clarification.",
+        "text": "I do not want to talk, unless..."
+      },
+      {
+        "meaning": "Payment act may be known and complete as a proposal, while date is unfinished. Do not equate act completeness with a write-ready promise.",
+        "text": "I can pay one hundred on the..."
+      }
+    ],
+    "kernel_precedence": "Construct the eligible semantic-act set only after source binding, act completeness, commitment/reference and relevant dependency checks. Apply policy precedence to that set. Keep known-but-unfinished acts as scoped clarification candidates; they cannot increment refusal/stop counters, close deceased, transfer or enter support solely from an intent label. Complete independent acts are retained despite unrelated partial clauses.",
+    "narrow_trial_impact": "Binary primary-payment research remains possible without training all rare act heads, since it has no routing/permission authority. Any later consumer using completed-primary precedence needs actual labelled/qualified act-completion evidence for its claimed scope.",
+    "problem": "An intent may be identifiable before its speech act is complete. Conversely, a completed hardship/stop/security/recipient act may coexist with an unfinished payment component or unrelated admin clause. Neither whole-turn nor component completion substitutes for per-act completion.",
+    "schema_and_mask": "Current frozen semantic_proposal.v1 has no explicit act_completion or essential-person-role field. Keep wire unchanged. Proposed annotation/diagnostic extension needs a new label-pack schema/version owned by the data worker; future runtime adoption needs coordinated producer+consumer+schema versioning. Until then these heads are not_implemented/unannotated; primary score alone cannot satisfy act-completion dependencies."
+  },
+  "adoption": "Annotation-only contracts; no frozen wire/producer/consumer or label-pack mutation",
+  "date_completion_subset_experiment": {
+    "candidate_detection": "Measure exact-span/covered-span recall before classifier accuracy. Extend candidate evidence to include relevant open complements/punctuation and right context without absorbing a later sibling. Report missed gold spans, false candidate spans and ambiguity. Do not rely on oracle-span scores as end-to-end competence.",
+    "collection_target": "A versioned exploratory extension aiming24conservatively grouped TRAIN roots and8separate development roots,2-3context/wording variants per root. This is a collection target, not an achieved count: merge reused templates/carriers and report fewer groups if appropriate. Seek at least20independently reviewed complete and20unfinished class groups before claiming the engineering data screen for this binary subset; ambiguous cases are separately masked/adjudicated.",
+    "construction_axes": [
+      {
+        "axis": "dangling date complement",
+        "complete": "on the third of May",
+        "scope": "Only independently judged open date complement is unfinished; do not label arbitrary truncations from script intent.",
+        "unfinished": "on the third of..."
+      },
+      {
+        "axis": "date versus time tail",
+        "complete": "Friday",
+        "contrast": "Friday at...",
+        "scope": "Date may remain complete while time is unfinished; whole-turn partial is not date-negative."
+      },
+      {
+        "axis": "vague complete reference",
+        "complete": "next week",
+        "contrast": "the week after...",
+        "scope": "Complete vague period stays linguistically complete with unresolved exact day; truly open comparison is unfinished/ambiguous after review."
+      },
+      {
+        "axis": "ordinal context",
+        "contexts": [
+          "unique active spoken date offer",
+          "no month/offer",
+          "two plausible months/targets"
+        ],
+        "scope": "Expression can be complete in all; resolution differs. Do not generate completeness labels by context availability alone.",
+        "surface": "the twenty-third"
+      },
+      {
+        "axis": "negated/conditional/quoted date",
+        "scope": "Complete date spans with different polarity/commitment; not automatic unfinished negatives.",
+        "surfaces": [
+          "not Friday; Monday",
+          "if Friday works",
+          "they said Friday"
+        ]
+      },
+      {
+        "axis": "ellipsis locality",
+        "scope": "First two require per-clause/component scope. Bare trailing ellipsis may be hesitation or continuation: adjudicate/mask ambiguity, do not force unfinished from punctuation.",
+        "surfaces": [
+          "loan date on... card Friday",
+          "the message said on the...; I choose Monday",
+          "Friday..."
+        ]
+      },
+      {
+        "axis": "complete invalid/conflicting date",
+        "scope": "Complete expression; deterministic invalid/conflicting normalization, not unfinished or vague fallback.",
+        "surfaces": [
+          "full impossible calendar date",
+          "full weekday/date disagreement"
+        ]
+      },
+      {
+        "axis": "self-repair and relation",
+        "scope": "Explicit repair direction changes effective current date; every component span and correction relation labelled, no last serialized row shortcut.",
+        "surfaces": [
+          "on the... actually Monday",
+          "Monday, no, on the..."
+        ]
+      }
+    ],
+    "current_gap": "Final TRAIN complete date49rows/22groups, unfinished1row/1group, ambiguous12/12. Reviewed gold still0 at final-fit snapshot. Reweighting or GPU cannot manufacture missing negative constructions or repair label-axis disagreement.",
+    "experiment_ladder": [
+      "Adjudicate label-axis semantics and obtain real reviewed negatives; preserve old data/model.",
+      "Measure always-complete, lexical-fragment baseline, existing CPU and clause-local CPU at the same new development groups; include per-class recall and failure roots.",
+      "Freeze candidate detector+classifier+export before separate calibration/risk; final qualification remains new and blind.",
+      "If reviewed data and CPU comparison show a plausible representation bottleneck, consider one bounded teacher/comparator on the SAME narrow labels; no need to train all rare heads."
+    ],
+    "features_now": "Small CPU candidate classifier with span tokens, bounded left AND right local context, clause-boundary indicators, current question role and explicit source-grounded reference relations. Candidate generation is an independent versioned component; no hardcoded day/date/amount fixtures. Whole-turn bag words may remain a comparator, not the only scope signal.",
+    "gpu_interpretation": "Zero currently accepted runtime frames does not by itself prohibit offline GPU research. Launch still needs actual reviewed-label quality, justified expected representation benefit, verified bounded training adapter/SDK/wall-stop and parent reservation. Phone raw ingress/consent/deployment qualification remains a separate gate; GPU improvement does not close it.",
+    "loss": "Masked binary CE for adjudicated complete vs unfinished; genuinely ambiguous or axis-disputed items are not forced negatives. Compute average loss within lineage group then average groups, separately per head. Start equal head weights; optionally predeclared inverse-sqrt TRAIN-group class weights capped5 versus unweighted baseline. Never multiply rare variants into independent weight.",
+    "masks": "Train only the narrow supported completion subset; act completion, target identity, offer/consent and unreviewed rare intent heads stay masked. Date-complete logits cannot authorize normalization or clear a kernel pending obligation by themselves.",
+    "optional_pair_loss": "Only on adjudicated complete/unfinished pairs for the SAME semantic component and genuinely comparable context, add lambda*max(0,margin-z_complete+z_unfinished), e.g. predeclared lambda=.1,margin=1. No such constraint on complete-vague vs complete-exact, negated vsasserted, or date-complete/time-unfinished. Group the pair and retain a no-pair-loss control.",
+    "target": "Scoped date-expression completion conditioned on actual candidate span and clause context. Separate it from act completion and deterministic unique-date normalization.",
+    "three_axes": {
+      "act": "Did the customer complete/assert the relevant act?",
+      "expression": "Is the date expression linguistically complete, unfinished, or genuinely ambiguous?",
+      "normalization": "Does the complete expression yield one consistent policy-valid date, a vague range, unresolved reference, invalid/conflicting expression or exact_unparsed form?"
+    }
+  },
+  "designer_source_sha256": "2d139bf1528dd675d7221fb48bf653c686770663a02b6de5eaa83448553fd9d9",
+  "document_version": "1.5.0"
+}

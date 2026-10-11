@@ -1,0 +1,593 @@
+{
+  "checkpoint_id": "checkpoint-09-runtime-interface",
+  "utc": "2026-10-11T03:13:42.097419+00:00",
+  "status": "IMPLEMENTABLE_COMPILER_DESIGN_WITH_SOURCE_LIMITS; NOT_A_HOSTED_FIX",
+  "decision": "Retain policy graph and bank guards. The confirmed immediate blocker is recipient consumer exact-sentence gating despite correct recipient events in all18 authored openings. Repair generated producer/consumer guard agreement first, then exercise downstream targets. Keep bounded orthogonal evidence/fact interface and the independent HTTP500 result adapter; no new ML model or broad graph rewrite is justified by these18 failures.",
+  "source_manifest": [
+    {
+      "path": "competition/runs/20261011-052252-c506e6/work/dispatch.py",
+      "sha256": "3152c7e1658d4f1de179d93d4a57445800e338d3315507ff407cf8868062841e",
+      "bytes": 43800
+    },
+    {
+      "path": "competition/runs/20261011-052252-c506e6/work/workflow.json",
+      "sha256": "68befa657059585adf47f10d1f79b2d9915b1612a7860f71eb0ec0ea9853040c",
+      "bytes": 81915
+    },
+    {
+      "path": "competition/runs/20261011-052252-c506e6/work/policy.json",
+      "sha256": "fa6039d4689febc4bb6ff6c4a425313d2eed82acd0ec83a74c1633550316cc15",
+      "bytes": 24491
+    },
+    {
+      "path": "competition-v3/build-the-builder/README.md",
+      "sha256": "45034ae6079693b8c5eb6e6cc3857d47fdf3629b8b1d2a84fd73fb2f51415d58",
+      "bytes": 9576
+    },
+    {
+      "path": "competition-v3/build-the-builder/docs/workflow-format.md",
+      "sha256": "4ff70b5a37b647122e6a6f3ca1a523b207dbcdf6afb32058de8451a8c7d1dcfc",
+      "bytes": 42104
+    },
+    {
+      "path": "competition-v3/build-the-builder/docs/tools-and-code.md",
+      "sha256": "56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711",
+      "bytes": 31394
+    },
+    {
+      "path": "competition-v3/build-the-builder/tools/openapi.json",
+      "sha256": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+      "bytes": 10557
+    },
+    {
+      "path": "analysis/night-opus-a-next1-review.json",
+      "sha256": "2218268bb2229ecdb2239e5687ee2e6fd7804972e4018afd2623c0abd36a96f0",
+      "bytes": 36734
+    },
+    {
+      "path": "analysis/night-opus-a-next1-witnesses.json",
+      "sha256": "609534d2c0dc0a5fb77ad5b769d22619eb39c3a340315839607fd539a8b15fd1",
+      "bytes": 2228509
+    },
+    {
+      "path": "analysis/night-opus-a-next1-http500.json",
+      "sha256": "97002afa27a514d83069c515ee65385ca9c9a711d0802a3c60bf20c3d6353197",
+      "bytes": 94311
+    },
+    {
+      "path": "analysis/learned-layer-design.checkpoint08-detector.json",
+      "sha256": "f7725257d6ce516904170162982975de5fe9b118700e32736d950e0fc15d0d67",
+      "bytes": 68387
+    },
+    {
+      "path": "analysis/night-a-next1-authored-stress.json",
+      "sha256": "465f720455d995f968ced0b1a2db3828fc17228b17e986d9c3e15fc10ae58aef",
+      "bytes": 51145
+    },
+    {
+      "path": "analysis/night-a-next1-authored-stress.txt",
+      "sha256": "d2d3f1befe24077e10972504063c7fbad3318882c8640dfd41574e6745df3e79",
+      "bytes": 356
+    }
+  ],
+  "protected_design_hashes": {
+    "analysis/learned-layer-design.json": "681c77f56734f75c6ed6666ed4da7dfafc235183ec51de50420ca484f76a1321",
+    "analysis/learned-layer-design.txt": "263d3b7016f1b18cff94e60c7bfb300257144b5ab234f111c9b27af67a97da2a",
+    "research/customer-benchmark/learned-layer-label-spec.json": "4f6f0ddd0d2253ca41d4f00484ad36d180d27ac96b18b5846e0ed9e4840eefeb",
+    "analysis/learned-layer-evaluation-plan.json": "291bb3f7389ce03add0ea450d131ac7b374c3669ca65359f8e5bd0ce5e6376f3",
+    "analysis/learned-layer-design.checkpoint08-detector.json": "f7725257d6ce516904170162982975de5fe9b118700e32736d950e0fc15d0d67",
+    "analysis/learned-layer-design.checkpoint08-detector.txt": "6e9d0571d993ae49a496056a86abfa9f64c1daac0015f7f51721e5a4278b3f84"
+  },
+  "scope": {
+    "new_files_only": [
+      "analysis/learned-layer-design.checkpoint09-runtime-interface.json",
+      "analysis/learned-layer-design.checkpoint09-runtime-interface.txt"
+    ],
+    "checkpoint08_unchanged": true,
+    "R4_work_untouched": true,
+    "existing_four_design_files_unchanged": true,
+    "platform_calls": 0,
+    "hosted_call_fetches": 0,
+    "GPU_calls": 0,
+    "model_or_data_changes": 0,
+    "candidate_or_guide_changes": 0,
+    "new_fit": 0
+  },
+  "evidence": {
+    "aggregate_parent_report": {
+      "A_next1_original_combined_calls": "27/30",
+      "A_next1_original_cases_all3": "9/10",
+      "original_failure": "all3HTTP500/no-posthook path, parent report",
+      "authored_combined_calls": "0/18",
+      "authored_variants_all3": "0/6",
+      "scope": "Current compact parent triage verified locally; all18correct recipient events rejected before security. Original scores retained; this checkpoint did not fetch hosted calls.",
+      "authored_root": "18/18 recipient_exact_raw_allowlist_mismatch",
+      "authored_downstream_targets_unexercised": 18
+    },
+    "saved_HTTP500_root": {
+      "category": "operation_error_metadata_not_normalized_into_consumer_bank_variables",
+      "exact_path": "Pre-hook sets mode=promise and empty bank variables. api_call errors. Saved table86 still has bank_status empty and bank_result empty, while dotted response.status/status_code/error and flat create_promise_status_code show500. Always dispatch transition executes correct pinned code. mode matches awaiting=promise; ok from empty bank_result is false; write_tries=1 but neither bank_status500 nor bank_result.okfalse is true, so retry predicate false and finish no_promise/service_error.",
+      "source_references": [
+        "competition/runs/20261011-052252-c506e6/work/dispatch.py:295",
+        "competition/runs/20261011-052252-c506e6/work/dispatch.py:298",
+        "competition/runs/20261011-052252-c506e6/work/dispatch.py:301",
+        "competition/runs/20261011-052252-c506e6/work/dispatch.py:324",
+        "competition/runs/20261011-052252-c506e6/work/dispatch.py:327",
+        "competition/runs/20261011-052252-c506e6/work/dispatch.py:328"
+      ],
+      "failure_counter_is_not_cause": "create_promise_failure_count=1 is present but create_promise transition always dispatch, and dispatcher actually runs. This is a data-normalization failure, unlike an A6 graph failure-counter bypass.",
+      "posthook_evidence_limit": "Saved error path has no function completion event between api_call error and transition, and posthook-only bank_status500/bank_result never materialize. A successful posthook invocation is unsupported; skipping it exactly reproduces table and closure. Internal platform hook scheduling is not separately instrumented.",
+      "actual_API_contract_500": {
+        "description": "The service failed. Nothing was recorded. The call may be repeated."
+      },
+      "nothing_recorded_contract_preserved": true,
+      "actual_request_retry_count": 0,
+      "actual_create_promise_calls": 1,
+      "no_API500_after_record_story": true
+    },
+    "HTTP500_scope": "Read existing closed local diagnosis only. No duplicate hostfetch/replay; preserve originalfailure. Actual error variables and retry predicate establish operation-result adapter issue, not scorer issue or proof every graph branch is broken.",
+    "prior_conditional_CPU": {
+      "count": 54,
+      "meaning": "Expected observations include residuals and fault injections; not54benchmarkpasses. Prior posthook-populated500 control does not cover actual no-posthook error path."
+    },
+    "independent_source_dispositions": [
+      {
+        "id": "ANEXT1-01",
+        "assessment": "conditional_consent_scope_policy_gap_supported_with_model_correction",
+        "witness_ids": [
+          "ANEXT1-01/qualified-consent-keeps-cached-values",
+          "ANEXT1-01/withdrawal-prior-observed-kind",
+          "consent/withdraw-unknown-mapping"
+        ],
+        "observed": "Unknown unfinished consent preserves cached420/today but requires fresh amount AND date, rather than only fresh permission. Next completed refuse/unknown clears terms and spends persuasion attempt. Exact withdrawal raw/refuse row was actually observed in A6; new candidate extractor is unobserved. No write occurs.",
+        "model_correction": "Opus incorrectly says u=unknown pops amount/date. Literal invalidate_component removes amount only for amount/both, date only for date/both. Cached values remain until subsequent refuse/unknown clears pending. A consent_pause/withdraw distinction must be paired in producer and consumer; never treat unknown terms as validated authority."
+      },
+      {
+        "id": "ANEXT1-02",
+        "assessment": "grammar_conforming_source_residual_independently_witnessed",
+        "witness_ids": [
+          "ANEXT1-02/known-amount-question",
+          "floor/known-amount-question"
+        ],
+        "observed": "After account or floor offer, How much do I have to pay? / k=question;c=1;END yields I do not have that information followed by Please finish the amount you want to pay. Product figures are available; contradicts amount-proposal rule24 and question rule44. No write or privacy bypass."
+      },
+      {
+        "id": "ANEXT1-03",
+        "assessment": "producer_information_loss_source_residual_with_positive_identity_control",
+        "witness_ids": [
+          "ANEXT1-03/current-customer-hypothetical-relative"
+        ],
+        "observed": "Complete own420/today proposal survives independent hypothetical relative question without changing party/verification, but no answer/unknown-information sentence addresses the question. Producer permits one primary row plus only ai/scam/purpose, so the independent question has no representation. No actual A-next1 extraction or judge loss claimed."
+      }
+    ],
+    "new_helper_probes": [
+      {
+        "function": "blocked_acceptance",
+        "raw": "Yes, no problem.",
+        "actual": false,
+        "scope": "helper result only; no hosted extraction/route assumed"
+      },
+      {
+        "function": "blocked_acceptance",
+        "raw": "Yes, I do not mind.",
+        "actual": true,
+        "scope": "helper result only; no hosted extraction/route assumed"
+      },
+      {
+        "function": "blocked_acceptance",
+        "raw": "Yes. If the branch is shut, how can I reach support?",
+        "actual": true,
+        "scope": "helper result only; no hosted extraction/route assumed"
+      },
+      {
+        "function": "primary_raw",
+        "raw": "I want to speak to a person.",
+        "phase": "offer",
+        "actual": {
+          "k": "human",
+          "c": "1"
+        },
+        "scope": "fallback only; valid extracted human row could still work"
+      },
+      {
+        "function": "primary_raw",
+        "raw": "I want to speak to a person. If the office is closed, what happens?",
+        "phase": "offer",
+        "actual": null,
+        "scope": "fallback only; valid extracted human row could still work"
+      },
+      {
+        "function": "decode",
+        "event": "k=proposal;c=0;u=date;a=150;END",
+        "actual": [
+          {
+            "k": "proposal",
+            "c": "0",
+            "u": "date",
+            "a": "150"
+          }
+        ],
+        "scope": "syntax only; no semantic qualification"
+      },
+      {
+        "function": "decode",
+        "event": "k=proposal;c=1;d=Friday;END\nk=question;c=1;END",
+        "actual": [
+          {
+            "k": "proposal",
+            "c": "1",
+            "d": "Friday"
+          },
+          {
+            "k": "question",
+            "c": "1"
+          }
+        ],
+        "scope": "syntax only; no semantic qualification"
+      },
+      {
+        "function": "decode",
+        "event": "k=consent_pause;c=1;END",
+        "actual": {
+          "rejected": "ValueError",
+          "reason": "required"
+        },
+        "scope": "syntax only; no semantic qualification"
+      }
+    ],
+    "new_helper_probe_count": 8,
+    "helper_probe_limit": "Functions lifted unchanged by AST; no run(vars), model extraction, graph transitions, bank request or state mutation executed.",
+    "confirmed_authored_entry_triage": {
+      "all_actual_versions_verified": true,
+      "passed_calls": 0,
+      "bank_trace_passed_calls": 0,
+      "total_calls": 18,
+      "all3_passed_cases": 0,
+      "total_cases": 6,
+      "classifications": {
+        "recipient_exact_raw_allowlist_mismatch": 18
+      },
+      "later_target_behavior_unexercised": 18,
+      "original_scores_unchanged": true
+    }
+  },
+  "source_findings": [
+    {
+      "id": "S1",
+      "lines": [
+        4,
+        23,
+        334,
+        343
+      ],
+      "fact": "event is finite tagged grammar; raw is a separate extraction_schema string. Syntax rejects unsupported keys/kinds but cannot establish semantic truth. raw-derived primary may replace decoded rows entirely.",
+      "implication": "Ordinary paraphrase is delegated to fixed-platform extraction plus narrow fallback regexes. A syntax-valid complete event may still contradict actual partial speech; deterministic parser cannot repair every semantic error."
+    },
+    {
+      "id": "S2",
+      "lines": [
+        351,
+        372
+      ],
+      "fact": "Multiple question/purpose rows dropped; only all-complete proposal/change rows merge; otherwise one human/hardship/plan wins or multiple-decision error.",
+      "implication": "Information loss at reduction, not lack of enough graph nodes. Collect independent facts/questions before deciding primary; preserve unfinished component obligations separately."
+    },
+    {
+      "id": "S3",
+      "lines": [
+        120,
+        123,
+        198,
+        209,
+        390,
+        398
+      ],
+      "fact": "Global raw negation/if/ellipsis/correction vetoes; only no problem explicitly exempted. c=0 or broad unfinished guard precedes every phase action.",
+      "implication": "Complete benign affirmation or independent hypothetical clause can be vetoed; source-supported generic risk, not attribution of current authored18. Global unfinished bit conflates primary-act completion and component completion."
+    },
+    {
+      "id": "S4",
+      "lines": [
+        155,
+        169,
+        259,
+        281,
+        525,
+        541
+      ],
+      "fact": "unknown/refuse/decline share pending-clear/persuasion behavior; no consent_pause kind. Known amount question uses generic unavailable answer; admin supports only ai/scam/purpose.",
+      "implication": "Add orthogonal consent and question channels; unknown is not refusal. Preserve known facts while clarifying unknown intent, and answer current account/offer questions from permitted typed facts."
+    },
+    {
+      "id": "S5",
+      "lines": [
+        171,
+        180,
+        324,
+        328,
+        485,
+        520
+      ],
+      "fact": "Offer revision exists and typed pending/readback/receipt state exists; incomplete correction obligations persist. Actual HTTP500 path did not populate expected bank fields.",
+      "implication": "Evolve existing typed state rather than broad graph replacement. Add explicit per-component revisions and operation attempt normalization; do not replace authoritative receipts with semantic predictions."
+    },
+    {
+      "id": "S6",
+      "lines": [
+        113,
+        118,
+        340,
+        409,
+        413
+      ],
+      "fact": "Parent actual18triage confirms correctrecipientevent plus speaking/name copy rejected by exactrecipient_reply allowlist, then closurebeforesecurity.",
+      "implication": "Promote this from possible finiteguardlimitation to confirmed sharedentrycause. Downstream design defects remain conditional sourcefindings, not observed18failurecauses."
+    }
+  ],
+  "diagnostic_decision_table": [
+    {
+      "failure_class": "graph_or_transport",
+      "local_evidence": "ActualHTTP500 consumer sees emptybank_result; dispatch reallyexecutes.",
+      "next_measurement_owner": "parent existing actualcalltriage",
+      "minimal_remedy": "Normalize documented operation-specific result/error variables into one attempt-bound result, including no-posthook path; preserve exact body and retrycap.",
+      "ML_value": "none"
+    },
+    {
+      "failure_class": "producer_semantic_extraction",
+      "local_evidence": "Forced-complete A6fragment replay; no newA-next1extractor observation in54CPU. raw is extractor-copy.",
+      "next_measurement_owner": "parent compare actuallatestutterance with emittedfields",
+      "minimal_remedy": "Short consistent extraction contract; preserve orthogonal scoped observations and unsupported/missing states; ask focused clarification on ambiguity.",
+      "ML_value": "future hypothesis only; R4/date currentlyshadow"
+    },
+    {
+      "failure_class": "consumer_information_loss",
+      "local_evidence": "Droppedindependentquestions, singleeventreduction, missingconsentpause, unknownasrefusal.",
+      "next_measurement_owner": "compiler CPU source-meaning fixtures then parent hostedvalidation",
+      "minimal_remedy": "Bounded candidate arrays + atomicfacts + questionqueue + consentchannel, producer/consumerpairedversion.",
+      "ML_value": "not needed to fix reducer"
+    },
+    {
+      "failure_class": "finite_normalizer_coverage",
+      "local_evidence": "parse_date/raw_date enumerate finite patterns; R3DATE2/15 fromdifferentpipeline onlyanalogy, notA-next1scoreexplanation.",
+      "next_measurement_owner": "TRAIN-first sourcegeneric normalization/fragment fixtures",
+      "minimal_remedy": "Recognize supportedphrase families and retain complete-but-unresolved value/reference. Never invent canonicaldate from vagueexpression.",
+      "ML_value": "DATEcompletion mayhelp later; cannotfix normalization/API delivery"
+    },
+    {
+      "failure_class": "confirmed_recipient_consumer_guard_mismatch",
+      "local_evidence": "Parent local actual triage:18correct recipient events rejected by exact raw allowlist; downstream18unexercised.",
+      "next_measurement_owner": "parent automatic A-next2 rebuild and queue",
+      "minimal_remedy": "Semantic recipient guard coverage at producer/consumer boundary, still requiring bank identity verification afterward.",
+      "ML_value": "No evidence of producer semantic failure in these18openings; model replacement cannot repair unchanged rejectiongate."
+    }
+  ],
+  "platform_feasibility": {
+    "fixed_model": "README Rules fixes AGENT_LLM for phoneagent; builder may use any model offline. No change to runtime model or undocumented extraction-model override.",
+    "allowed_runtime": "Originaldocs verify code_exec vars and json/re/datetime, persistent vars and string routes. Emit compiled policy/data and arithmetic into code node; no runtime filesystem/network capability assumed.",
+    "raw_now": "workflow talk.raw is a model-extracted string at min_confidence0.1. Its exact-latest instruction is a request, not authenticated identity/completeness. Two model-produced fields agreeing with each other is no independent source witness.",
+    "docs_boundary": "system.conversation and last-N are documented template transcript views; extractor.speech exists within extraction_prompt. Neither establishes a lossless current-user message/event accessible as an authenticated code variable. each_turn lifecycle hook neverfires. Do not insert untrusted speech into executable code templates.",
+    "availability_contract": "Use source_level=extracted_copy for present legacy adapter. Local turn sequence orders processedinputs only; it is not a platform-user-turn attestation. Missing/extraction-confidence-discarded variables become missing, never emptyconsent or absentfacts.",
+    "learned_boundary": "R4 stays source-compatible shadow until original-runtime ingress qualification and revieweddata/calibration. No external encoder/H100/teacher/API invocation during call; exported stdlibstudent alone is potentiallyallowed but notcurrentlyqualified. GPU availability does not change this.",
+    "bank_only": "Runtime may call only supplied bank API tools. Do not use get_call or otherplatform endpoints to fetch raw speech duringcall. Saved transcripts can support parent offlineaudits. No newcloud/platformcalls here.",
+    "generated_code": "Use explicit vars assignments to clear ephemeral fields, no {{ }} in code source, initialized stringroutingflags, try/except and bounded fallback; no silent persistentstale extractedvalue reuse."
+  },
+  "bounded_internal_interface": {
+    "namespace": "compiler_turn.v1 / compiler_state.v1; separate from semantic_proposal.v1 and all R4 training/export contracts. This is an internal generated-controller adapter, not a new bank API.",
+    "TurnInput": {
+      "consumer_sequence": "Nonnegative local processed-turn integer assigned only by code. Never let extractor choose sequence, state revisions or verification status.",
+      "source": "{level: extracted_copy|independent_offline_fixture|qualified_platform_source, text?: string, transport_complete: true|false|unknown}. Currentworkflow uses extracted_copy and unknown independenttransportstatus. Privileged source levels assigned only by verified host adapter, never by LLM.",
+      "acts": "<=12 {local_id, kind, act_completion:complete|unfinished|unknown, modality:asserted|negated|hypothetical|quoted|questioned|unknown, target_candidate?:returned product selector, source_quote?:bounded copy}. Source_quote remains model-copy, not authenticated evidence.",
+      "components": "<=16 {local_id, owner_act_id, target_candidate?, kind:amount|date|time|security_answer, expression, linguistic_completion:complete|unfinished|unknown, modality, relation:assert|replace|retract|refine|unknown, predecessor_candidate_id?}. No canonicalvalues or completedreceipt fromproducer. A partiallycompleted act may carry a complete siblingcomponent.",
+      "questions": "<=4 {owner_act_id?, kind:identity_ai|legitimacy|purpose|account_due|current_offer|other|unknown, target_candidate?, completion:complete|unfinished|unknown}. Nonexhaustive other preserves independent question without an intenttaxonomy expansion.",
+      "consent": "{signal:none|affirm|deny|pause|withdraw|unknown, scope:recipient|support_transfer|spoken_offer|promise_readback|unknown, owner_act_id?}. Descriptive only. It cannot set authorization, verified or recorded.",
+      "diagnostics": "{parse_status:ok|missing|malformed|overflow, producer_version, unavailable_channels[]}. Absent field means unavailable, not false/none. No score interpreted as calibratedprobability.",
+      "bounds": "Total copiedspeech<=4096codepoints, each expression<=512, serializedcandidates<=8192characters initially; bounded local IDs<=16chars independent of128charsourceID. Capsoverflow =>clarifywithoutfinancialmutation. Limits are engineering choices, not brief financialconstants."
+    },
+    "persistent_state": {
+      "backend_facts": "verified identity/account data/product list and receipts populated only from operation-correlated authoritative bank responses; before verification, enforce sourcecompiled disclosure policy.",
+      "proposal_facts": "map[(returned_product_id,component)] -> {expression, canonical_value_if_deterministically_valid, linguistic_status, normalization_status, policy_status, source_level, consumer_sequence, component_revision, superseded_by?, unresolved_reason?}. These remain proposals, never bank ledgerfacts.",
+      "revisions": "Code mints nonempty opaque component tokens on actual accepted replacement/retraction; numerical ordering of these tokens forbidden. Globalstate revision separate. Samevalue reassertion/replacement may need new token when reference/consent lineage changes.",
+      "readback": "{local_id,target_set,component_revisions,exact_terms,policy_version,emission_sequence,delivery_status:unknown|independently_confirmed,permission:none|suspended|awaiting|granted}. A TTSroute or text generation proves issuedspeech only; spokencompletion not independentlyproved by these docs. Preserve current operational guard but do not call it qualifiedlearnedsourcebinding.",
+      "questions_queue": "<=4 scoped questions, codeassigned IDs and answered/notanswered state; flush each answeredquestion once, retain across operationhop only when safe. Unfinished independentquestion requestsclarification without clearing paymentfacts.",
+      "operation": "{operation_kind,local_attempt,exact_request_body,dispatch_sequence,expected_response_source,status:pending|succeeded|known_failed|unknown}. Only sequential awaited operation mayconsume its current response; stale persistent flags cleared/consumed explicitly beforeattempt. If provenance uncertain, unknown rather than retry.",
+      "bounded_history": "Current proposal percomponent plus previous superseded proposal and bounded provenance identifiers; do notstore fullsecrettranscript. Policycounters remain separate from parser/clarification counters. Persisted state has explicitversion and serializedsizeguard."
+    },
+    "producer_transport_decision": {
+      "immediate_patch_scope": "For the smallest generated next iteration retain event/raw/admin transport, but normalize all rows into separate arrays before priority selection. Preserve question rows; map unknown to clarification. Pair consent_pause/consent_withdraw kinds and an optional question-kind field q=account_due|current_offer|other with a versioned consumer. Existing decoder rejects these additions, so producer and consumer must be generated together. This improves bounded behavior without replacing the graph; full clause modality remains the next adapter.",
+      "next_adapter": "Once smallcontract tests pass, compiler can emit one bounded JSON-string extraction variable for acts/components/questions/consent (native nested extractiontype is not documented). json.loads consumes it asdata with duplicatekey/type/count/finiteness checks; strictgrammaradapter canonicalizes to TurnInput. Use samefixedplatformmodel, not an externalAPI. Versionboth producer and decoder; legacyadapter cannotfabricate absentchannelvalues.",
+      "raw_independent": "Keep raw_copy separately for discrepancy detection/diagnostics; never claim it authenticates model-produced JSON. A raw/event mismatch blocks affected semantic commitment; agreement doesnotprove correctness.",
+      "context": "Pass concise currentquestionrole, public permitted activeoffer, pendingmissingcomponents and returnedproductselectors as context. Never ask producer tofill in cached facts as freshlyspoken. Keep allpolicydecisions, calendar and bankparameters code-owned.",
+      "prompt_conformance": "If custom extraction_prompt used, preserve all four originaldocumented extractor placeholders. Dates remain verbatimexpression strings with explicit no-inventeddate instruction; deterministic normalizeruses callnow/policycalendar. Builtin date autofilling vague dates is unsuitable for this evidence channel."
+    }
+  },
+  "atomic_reducer_and_top_priority": {
+    "formal_partition": "O=(A,F,Q,C) from one immutable turn; S contains bankfacts B, proposedfacts P, unresolveddependencies U, readback R and pendingoperation W. Normalize once; derive delta on copy; validate whole delta; commit once. Primaryroute selection may not erase nonconflicting F or Q.",
+    "merge_law": "For distinct components (target,kind), admissible updates commute. Samecomponent identical normalized expression may coalesce while retaining both evidenceIDs. Distinct competing values without a directed source correction edge cause unresolved conflict; rowarray order cannot select a winner. An explicit later replace/retract edge is directional and not permutationinvariance of spokenmeaning.",
+    "partial_law": "For targeted component k, unfinished(k) adds unresolved obligation; independent completed j survives. A same-turn completedk resolves only an explicit same-source continuation/refinement dependency; later independentexplicit completek mayresolve atits newevent. Cached/offer values never discharge newcorrectionobligations. A completedprimary plus unfinished unrelatedquestion remains a completedprimary.",
+    "priority_algorithm": [
+      "First reconcile any awaited bankoperation against its attempt; success/failure/unknown outcomes and mandatory speech follow compiledAPI/policy guards. Do not process a stale userconsent twice while result is pending.",
+      "Decode and validate currentturn; preserve allobservations. Missing/invalidinput produces focusedrepair, leaves bankfacts untouched and suspends newwriteauthorization. Do not equate parseunknown with financialrefusal.",
+      "Apply scoped authorization effects: explicit pause/withdraw revokes/suspends permission on matching current readback. Known unchanged terms remain proposedfacts; no persuasionattempt. Uncertainchangedterms remain unresolved cachedhistory, not validatedauthority.",
+      "Select eligible actionable acts: complete + asserted + context/targetallowed. Quoted/hypothetical/negated mentions cannot become primaryaction. Unfinished primary gets scopedclarification unless independent completed act outranks it under compiledpolicy; componentcompletion alone never upgrades actcompletion.",
+      "Apply sourcecompiled policy precedence partialorder among eligibleacts (stop/privacy/identity/transfer/hardship/payment priorities must come frombrief). If two incompatibleacts are not ordered bypolicy, clarify. Do not hardwire universal human>hardship>plan as a generic rule.",
+      "Atomically merge admissible componentfacts and retain completedindependentquestions even when another act determines route. A terminal policyaction can defer/discard otherproposals with explicitreason, not silently perform them.",
+      "Compose at most one concise policypermitted answer to relevant knownquestion plus nextprimaryprompt. account_due/current_offer read verified product/currentoffervalues; genericquestion gets briefcompliant unknownanswer. Never ask tofinish an amount solely because someone asked what itis.",
+      "Paymentwrite is last eligible action: original bank/policy guards, no unresolved/competing/changed terms, exactcurrentreadbackrevision, requiredwarning, later distinct assent with properphase/scope, knownoperationstate and attemptbudget. Newterms+yes in same turn alwaysrequires newreadback and laterconsent. Learned/descriptiveproposal alone can never triggerwrite."
+    ],
+    "pseudocode": [
+      "operation_outcome = correlate_result(state.awaited_operation, observed_bank_fields)",
+      "turn = decode_and_partition(extracted_fields, missing_field_sentinels)",
+      "delta = normalize_proposals_on_copy(turn, state, compiled_policy)",
+      "delta = resolve_scoped_conflicts_and_corrections(delta)",
+      "eligible_acts = complete_asserted_context_eligible(turn.acts)",
+      "primary = choose_by_compiled_partial_order(eligible_acts, state)",
+      "next_state = commit_nonconflicting_proposed_facts_and_permission_effects(delta)",
+      "route, speech = guarded_policy_action_and_question_answer(primary, turn.questions, next_state)",
+      "explicitly_assign_next_state_and_clear_consumed_ephemeral_fields()"
+    ],
+    "guard_limit": "This improves controllerconsistency, not fixedLLM semanticrecall or authenticatedingress. With extracted_copy, semantic/source uncertainty remains explicit. Do not promote learnedR4 output into authorization or relabel conventionaloperation as provenriskbounded."
+  },
+  "compiler_changes_now": [
+    {
+      "order": 1,
+      "change": "Operation-scoped result adapter",
+      "generate": "Use posthookbankfields OR documented toolresponse/error fields with explicit currentoperation/attempt guards. API-described nothing-recorded500 allows existing one retry only; unknown result doesnot. Retain originalfailure inreport.",
+      "evidence": "Closed actualHTTP500 diagnosis. Parent owns repair/hostedvalidation."
+    },
+    {
+      "order": 2,
+      "change": "Question and consent channels in pairedproducer/consumer",
+      "generate": "Preserve independent generic/accountquestion, map permissionpause separatelyfromrefusal, unknown toclarification. Answer availableaccountfigure/currentoffer only under verificationpolicy.",
+      "evidence": "ANEXT1-01/02/03 closed conditional sourcewitnesses; not assertedcauseall18."
+    },
+    {
+      "order": 3,
+      "change": "Atomic fact reducer before primarychoice",
+      "generate": "Retain allrows longenough tocollect completedcomponents and incompleteobligations. Scopeperclause/perproduct; detectconflicts, do not apply row-lastwins. Test primarycomplete/unrelatedunfinished and bothcorrectionorders.",
+      "evidence": "Current351-372 reduction restrictions andpriorcomponentconditionalcontrols."
+    },
+    {
+      "order": 4,
+      "change": "Scoped qualifiers and explicit limitations",
+      "generate": "No globalif/no/not/ellipsis bit as semantictruth; use typedmodality on owningclause and narrow syntaxchecks toflag unsupportedcases. Keep ambiguousconsent abstained and askclearconfirmation. Do not simply removeall negativeguards.",
+      "evidence": "Checkpoint09 eight literalhelperprobes; blockedacceptance andprimaryfallback demonstrate scope sensitivity. No hosted extraction or route evidence."
+    },
+    {
+      "order": 5,
+      "change": "Generic finite normalization tests",
+      "generate": "Compile policyvalues frombrief/API, use structured normalization statuses exact/vague/unresolved/invalid/unsupported. Cover inputgrammarfamilies, not lists of testphrases. Keep dateexpressionfinishedness separatefrom normalization.",
+      "evidence": "parse_date/raw_date source scope; R4 detects/learns separate DATE task andremainsunchanged."
+    }
+  ],
+  "bounded_acceptance_experiments": {
+    "source_first": "Compiler-generated candidate only. Pin brief/API/compiler/exporthashes; no manualcandidateJSON/dispatchpatches, no testexpectation/scorer changes. PreserveA-next1metrics andHTTP500failure.",
+    "controls": [
+      "Same frozen normalizedobservations through old vsnewreducer to isolate consumerlogic, without asserting those observations match livefixedLLM",
+      "Samecontroller with paired source paraphrases to inspect actualfixedLLM extractedfields when parentauthorized hostedqueue runs",
+      "Known question+payment vsquestiononly; affirmative+unrelatedhypothetical vsconditionalpayment; partialamount+completeddate bothserializationorders; explicitdirectedcorrection changesmeaning",
+      "consentpause vs refusal vs amountreplacement; allretain/revoke only intendedstate and requirefreshlaterpermission",
+      "posthook500 vsno-posthook documented500 vsstale500 vsunknownwriteoutcome; exactbody andsinglepermittedretry maintained"
+    ],
+    "failure_attribution_fields": [
+      "originaldeliveredutterancefromsavedcall",
+      "extractedrawcopy",
+      "event/observations and presence flags",
+      "priorstate",
+      "normalizedcomponents and rejectionreasons",
+      "primaryselection",
+      "nextstate/route",
+      "actualtooloperation/attempt/resultmetadata",
+      "actualspokenresponse",
+      "combinedbank+policy+honestyverdict"
+    ],
+    "metrics": "Report eachstage error/unknown rather than only finalaccuracy; preserve percaseall3andcombinedscore. Source-only checks cannot establish extractionrobustness, latency, hostedrecovery or riskcoverage. Use diagnosticparaphrases fordevelopment; subsequentqualificationmustbe independent.",
+    "latency": "No extra runtime externalcall or additionalLLM round is required for the internalreducer design. Code only bounded arrays/localnormalization; instrument walltime on deployedplatform beforeclaiming latencyimprovement. Larger extraction payload canincrease latency/error; keep fields short anddo not extendprompt with evergrowing examplecatalog.",
+    "future_learned": "Keep08/R4 contract/data/reviews unchanged. DATEstudent maylater add completionhypothesis on supportedactualcandidates aftergates; it doesnot replace question/consent/source/reference/operationguards. Encoder/GPU not justified by failures currentlyattributed to codec/reducer/transport."
+  },
+  "implementation_examples_not_gold": [
+    {
+      "utterance": "I can pay on Friday. If my neighbour calls, can they ask a question?",
+      "desired_partition": "Completed own-dateproposal; independent hypotheticalquestion. No third_partyidentitychange andno globalif veto. Target/date normalizationmaystillrequirecontext.",
+      "bank_effect": "No write; next permittedreadback/clarification plus scopedanswer."
+    },
+    {
+      "utterance": "The amount stays the same. Please hold off recording it.",
+      "desired_partition": "Permissionpause/withdrawcandidate; no newamountvalue, no financialrefusal inferred. Preserve terms as proposal, invalidatepermission.",
+      "bank_effect": "No write/no persuasionattempt; ask whether toresumeorprovidepolicypermittedalternative."
+    },
+    {
+      "utterance": "How much was the amount you just offered?",
+      "desired_partition": "Current_offer question with no newfinancialterms.",
+      "bank_effect": "Afterverification read currentofferamount; no arbitraryamountrequest/refusalcounter."
+    },
+    {
+      "utterance": "On Friday; the amount is one hundred and...",
+      "desired_partition": "Complete date, unfinished amount; preserve date, amountunresolved.",
+      "bank_effect": "Clarifyamount; no readback/consent fromcachedsupersededamount."
+    },
+    {
+      "utterance": "Change the amount to one hundred fifty. Yes.",
+      "desired_partition": "Newamountproposal and affirmation in same deliveredturn; oldreadbackdependency invalid.",
+      "bank_effect": "Freshreadback and later consent required."
+    }
+  ],
+  "validation": {
+    "utc": "2026-10-11T03:15:50.850493+00:00",
+    "checks": {
+      "pinned_dispatch_sha_matches": true,
+      "eight_helper_observations": true,
+      "benign_affirmation_scope_difference": true,
+      "conditional_fallback_difference": true,
+      "new_consent_kind_requires_codec_change": true,
+      "all_sources_unchanged": true,
+      "checkpoint08_and_existing4_unchanged": true
+    },
+    "meaning": "Artifact/source and unchanged-helper consistency only; no candidate patch, graph run, extraction sampling or hosted acceptance."
+  },
+  "amendments": [
+    {
+      "id": "checkpoint09a-confirmed-recipient-entry-gate",
+      "utc": "2026-10-11T03:17:39.837795+00:00",
+      "previous_checkpoint09_hashes": {
+        "json_sha256": "e9ba655c50a9d697917849410fd25fcece63dbc14c5fea99f6dc0e20f1b8f3f6",
+        "txt_sha256": "324429c4a22a3a28de8f6da344ef84eb28827f81660938c1bfd66037c8fd8f82"
+      },
+      "source_refs": [
+        "analysis/night-a-next1-authored-stress.json",
+        "analysis/night-a-next1-authored-stress.txt"
+      ],
+      "actual_findings": {
+        "all_actual_versions_verified": true,
+        "passed_calls": 0,
+        "bank_trace_passed_calls": 0,
+        "total_calls": 18,
+        "all3_passed_cases": 0,
+        "total_cases": 6,
+        "classifications": {
+          "recipient_exact_raw_allowlist_mismatch": 18
+        },
+        "later_target_behavior_unexercised": 18,
+        "original_scores_unchanged": true
+      },
+      "root": "All18 clear speaking+supplied-name or yes+name openings emitted k=recipient;c=1;END. recipient_reply exact whole-sentence allowlist rejected them; dispatcher closed before security. This is a demonstrated producer/consumer semantic-contract mismatch at entry, not18 downstream semantic failures.",
+      "evidence_boundary": "Read only compact local parent triage and summary; no hosted call details, credentials, host fetch, platform queue or candidate mutation. No rerun of the18cases.",
+      "architecture_implication": "Prioritize recipient consumer guard coverage before drawing conclusions about graph capacity, downstream corrections or learned semantic coverage. Syntax and intended recipient act succeeded at ingress in these18; the exact raw-copy gate rejected them. A broader semantic model cannot fix this gate while its acceptance predicate remains unchanged.",
+      "statistical_implication": "The18 runs share one opening failure mechanism; they supply no downstream exercise denominator and are not18 independent semantic weaknesses. Parent must report which later states are reached after an automatic rebuild before interpreting their outcomes.",
+      "review_counts_parent_report": {
+        "primary_train_positive_canonical_groups": 27,
+        "primary_train_additional_negative_canonical_groups": 21,
+        "DATE_whole_turn_complete_groups": 22,
+        "DATE_whole_turn_unfinished_groups": 19,
+        "DATE_whole_turn_floor": "fails20unfinished engineeringfloor",
+        "DATE_scoped_complete_groups": 22,
+        "DATE_scoped_unfinished_groups": 20,
+        "DATE_scoped_floor": "source-level candidate possibility only; requires independently justified scope, canonicalclosure, exactactualcandidate alignment and eligibility recount",
+        "provenance": "Latest parent message; adjudication/worker files not inspected here. TRAIN labels only, not calibration/qualification. No model fit/admission claimed.",
+        "anti_inflation": "Do not choose a narrower scope merely to clear a gate. Record agreed component semantics, excluded groups and reasons, then count eligible actual pipeline candidates. New isolated admission worker owns that computation."
+      },
+      "coordination": "A-next2 automatic rebuild and parent queues remain parent-owned. Checkpoint08 and R4 contract unchanged; all learned outputs remain shadow/abstain.",
+      "consistency_checks": {
+        "confirmed18entryclass": true,
+        "downstream18unexercised": true,
+        "original4_and_checkpoint08_unchanged": true,
+        "all_pinned_sources_unchanged": true
+      }
+    }
+  ],
+  "updated_at_utc": "2026-10-11T03:17:39.837795+00:00",
+  "latest_amendment_id": "checkpoint09a-confirmed-recipient-entry-gate",
+  "recipient_guard_correction_contract": {
+    "producer_consumer_agreement": "A complete current-speaker self-identification candidate in recipient phase may advance only to the existing identity-check question. Do not demand one exact surface sentence from raw_copy after the producer already represented the correct semantic act. Neither name match nor recipient event sets verified, grants disclosure or permits bank writes.",
+    "scope": "Accept phase-appropriate speaking+suppliedname, affirmative+name, name-first/name-last and ordinary punctuation variants as the same self-identification intent when no conflicting party/scope claim is present. Match any needed name against supplied call data; do not bake customer names or benchmark phrases into generic guide/code.",
+    "conflict": "Third-party, quoted name, hypothetical speaker, explicit not-me/wrong-number and unfinished identity statement remain distinct or unresolved; ask recipient clarification when candidate meaning conflicts. Broad substring name/yes/speaking detection is not a substitute for scoped classification.",
+    "raw_source_limit": "raw_copy remains model-extracted. A rigid raw-copy veto did not improve semantic fidelity in the observed18. Optional checks can catch structural contradictions, but cannot authenticate the speaker or override bank verification.",
+    "compiler_tests": [
+      "Given correct recipient candidate and independently authored speaking+variable-name variants, enter identity phase and keep verified false.",
+      "Given third-party/quoted/hypothetical/negated variants with same variable name, preserve distinct party/unknown behavior; do not enter verified/account state.",
+      "Recipient confirm in recipient phase must not become financial confirm; no readback or create_promise route.",
+      "Use source-meaning fixtures plus actual generated export consumer; a codec-only pass does not exercise recipient_reply.",
+      "After parent automatic rebuild, record security-phase reached and later target actually exercised per call. Do not count an opening pass as a downstream pass."
+    ],
+    "implementation_ownership": "Parent already amended generic guide and runs automatic rebuild. This is design clarification only: no candidate patch, guide edit or queued run change."
+  }
+}

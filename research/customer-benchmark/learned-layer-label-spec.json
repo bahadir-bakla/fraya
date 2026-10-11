@@ -1,0 +1,1047 @@
+{
+  "schema_version": "learned_layer_labels.v1",
+  "status": "annotation_and_split_specification_not_a_labelled_dataset",
+  "purpose": "Train and independently assess descriptive dialogue semantics without teaching policy permission or copying expected bank outcomes.",
+  "related_contract": "analysis/learned-layer-design.json#/output_contract",
+  "unit": "One actually delivered customer turn plus the legitimately available pre-turn context; spans use original-text Unicode code-point half-open offsets.",
+  "record_fields": {
+    "example_id": "stable opaque ID; excluded from model features",
+    "lineage_group_id": "connected component of source/case/template/augmentation leakage relationships",
+    "split": "train | development | calibration_fit | calibration_risk | confirmation | ood_qualification | diagnostic_only",
+    "input": "semantic_input.v1; state must be reconstructed from prior actual events, never expected ledger or future transcript",
+    "source": "source metadata described below",
+    "labels": "per-head values, spans and masks described below",
+    "annotation": "independent reviewers, evidence/rationale and adjudication status",
+    "evaluation_metadata": "outcome/actor/judge flags stored separately from features and semantic labels"
+  },
+  "source_fields": [
+    "kind",
+    "relative_path_or_public_url",
+    "sha256",
+    "json_pointer_or_line_range",
+    "call_id",
+    "agent_id",
+    "published_version",
+    "run_id",
+    "scenario_root",
+    "repetition_id",
+    "source_document_or_conversation_id",
+    "template_root",
+    "augmentation_parent_ids",
+    "author_or_actor_id",
+    "generator_model_version",
+    "generation_prompt_hash",
+    "delivered_turn_index",
+    "license",
+    "attribution",
+    "fictional"
+  ],
+  "source_policy": {
+    "allowed": [
+      "pinned actual synthetic customer turn with prior transcript context",
+      "independently authored fictional turn with declared context",
+      "properly licensed public text used within its actual evidence scope"
+    ],
+    "disallowed": [
+      "real bank/customer records",
+      "hidden competition tests",
+      "credentials",
+      "future final brief values baked into shared training",
+      "expected ledger/scorer assertions as semantic truth",
+      "passing/failed case as automatic turn label"
+    ],
+    "trace_extraction": "Store exact observed utterance and source offsets; clipped or contradictory actor speech is labelled as delivered with ambiguity when appropriate. Never silently repair it to the intended script. Preserve separate intended-script divergence metadata.",
+    "public_corpora": "Banking77 labels can support their original intent categories or reviewed linguistic inspiration, not collections-policy/consent/completion truth. Taskmaster-3 gives conversational examples, not this bank's tool permissions. Inherited inspiration must retain pinned source locator/hash/license and all derivative lineage. Dataset splits retain their original names in provenance even when used for another local task; never claim an official dataset test score after training on its test text.",
+    "teacher": "Teacher/generated labels are weak proposals. Record exact model/prompt/source and adjudicate separately. Never call an LLM evaluator independent merely because it is another invocation of the same authoring process.",
+    "gold": "Gold means independently reviewed semantic evidence, not automatic correctness. At least two blind annotations and adjudication for safety-critical target, correction, polarity and affirmation cases; unresolved disagreement remains unknown/masked.",
+    "train_weight_default": {
+      "adjudicated": 1.0,
+      "single_reviewed": 0.5,
+      "weak_teacher_or_authored_unreviewed": 0.2,
+      "disputed": 0.0
+    },
+    "weight_limit": "Weights are declared heuristics for training only, not calibrated label reliability. Calibration and qualification require adjudicated labels; if unavailable mark those stages unqualified."
+  },
+  "label_heads": {
+    "primary_intent": "Intent enum in semantic_proposal.v1; descriptive main act, using current question role. Record ambiguity set when two acts are inseparable. Do not copy policy precedence into language truth.",
+    "secondary_intents": "Multi-label set; every annotated act carries evidence. Empty set means reviewed absence; null means unannotated and must be masked. Administrative questions are not discarded.",
+    "clause_segmentation": "Contiguous or explicitly linked spans; retain heterogeneous targets and clauses, including shared collective group.",
+    "target_scope": "single | explicit_set | all_returned | current_question | unresolved; candidate refs point into legitimate input targets. Annotate collective reference, deictic reference and ambiguity.",
+    "amount_scope": "per_target | each | aggregate_total | absent | unresolved; a total is not each amount.",
+    "components": "For each target-scoped amount/date/time/security_answer/recipient/allocation: complete | unfinished | absent | ambiguous. Completeness means linguistic completeness, not policy validity. Independently record actual value span, reference and polarity.",
+    "polarity": "asserted | negated | conditional | questioned | quoted | unknown at component/clause scope. Lexical no/not is evidence to interpret, not an automatic uncertain label.",
+    "correction": "none | replacement | retraction | refinement | unresolved; annotate target/component scope and superseded reference when context establishes it. Complete corrections remain complete.",
+    "offer_reference": "Which actually spoken active offer the acceptance refers to, or unresolved; context specifies exact offer ID and revisions. This is distinct from newly stated values.",
+    "consent_signal": "none | affirmative | negative | qualified | ambiguous with evidence and candidate readback reference. This describes language only; permission is never a train label.",
+    "administrative_question": "ai | purpose | legitimacy | discount | other as multi-label spans; separate from request for human or support acceptance.",
+    "abstention_annotation": "Record ambiguity cause and scope, not one blanket must_abstain derived from the presence of a negation/correction. Partial facts may be known while the joint frame is unresolved.",
+    "mask": "Explicit Boolean observed/annotated mask per head/component; missing is not negative. Illegal combinations are adjudication errors, not silently repaired labels."
+  },
+  "context_examples": [
+    {
+      "utterance": "Yes.",
+      "contexts": [
+        "after recipient question: recipient_self",
+        "after amount/date offer: offer_acceptance referencing that offer",
+        "after completed readback: descriptive affirmation, subject to independent kernel gate",
+        "after support offer: support_acceptance",
+        "without an identifiable question: ambiguous"
+      ],
+      "purpose": "Same surface text must not have one unconditional label."
+    },
+    {
+      "utterance": "Do not contact me again.",
+      "label": "Complete stop_request with negated contact proposition; not unknown and not unfinished.",
+      "purpose": "Separate semantic act, polarity and completeness."
+    },
+    {
+      "utterance": "I did not pay it before, but I can pay the card this Friday.",
+      "label": "Negated historical-payment claim plus asserted card payment date; do not flatten polarity over the full utterance.",
+      "purpose": "Negation scope and multiple acts."
+    },
+    {
+      "utterance": "Actually make the amount one hundred and the date Fri...",
+      "label": "Correction with complete amount plus unfinished date on resolved target; no validated date or consent.",
+      "purpose": "Sibling preservation and independent completion."
+    },
+    {
+      "utterance": "Yes, but are you a robot?",
+      "label": "Affirmative plus AI question when no terms are changed; annotate semantic interpretation from context. Whether the kernel can establish sufficient current consent remains a separate gate.",
+      "purpose": "Avoid every-but-is-a-correction shortcut."
+    },
+    {
+      "utterance": "Yes, but make it next week.",
+      "label": "New date/vague-date proposal or correction with qualified affirmation; cannot confirm the old readback.",
+      "purpose": "Disambiguate administrative aside from changed terms."
+    },
+    {
+      "utterance": "The date you just offered is fine.",
+      "label": "Acceptance of identified spoken offer date, not permission to recalculate a default/deadline.",
+      "purpose": "Recovered A5 offer-identity regression."
+    }
+  ],
+  "grouping_algorithm": {
+    "step_1": "Build a graph of record lineage before fitting. Connect all turns and repetitions of one scenario/bank fixture, the same source conversation/document, the same actor script/template, corrections/paraphrases/translations/number substitutions, teacher examples derived from the same seed, and augmentation descendants.",
+    "step_2": "Detect exact normalized duplicates and near-duplicate text or known template skeletons. Manually review candidate clusters; changing product name, number or topic noun does not create an independent template. Generic shared language alone is not sufficient to merge unrelated records.",
+    "step_3": "Assign whole connected components to splits using deterministic seeded group allocation, balancing only training/development labels. Freeze IDs/hash/seed and overlap checks before fitting or threshold selection.",
+    "step_4": "Reserve OOD axes deliberately: unseen conversation/actor-author source, lexical/paraphrase family, clause composition, target interleaving, correction order, ambiguity/negation scope, language/noise, and unseen policy/API schema supplied as input. Do not count a random split as OOD.",
+    "step_5": "Publish group count and authors/generators per split. If lineage joins everything, collect new independently authored groups rather than weaken grouping or rename sources by split.",
+    "fractions": "Illustrative allocation only when enough independent groups: train 50%, development 10%, calibration_fit 10%, calibration_risk 10%, confirmation 10%, OOD qualification 10%. Statistical qualification depends on absolute effective group counts; tiny data cannot satisfy these roles by slicing a few examples.",
+    "current_v1": "52 train, 22 calibration, 22 holdout authored examples. Declared family counts 20/11/11, source counts 2/1/1; same author and shared carriers. Existing integrity checks are useful but do not establish independent semantic templates or OOD. Holdout has now been reviewed adaptively and becomes diagnostic_only for future versions; retain its original frozen results.",
+    "new_v2": "Create a new versioned pack and split manifest. Do not edit/relabel/reshuffle v1 to improve scores. Independent reviewer/author supplies new confirmation and OOD groups without exposing their text/labels to the model-development worker until weights, features, thresholds and guards are frozen."
+  },
+  "review_workflow": [
+    "Annotator A sees delivered turn and legitimate prior context, not model prediction, expected ledger, case pass or actor future script.",
+    "Annotator B independently sees the same permitted input; compare span, scope and per-head agreement.",
+    "Adjudicator resolves against the delivered evidence, recording both original labels and rationale. Unresolvable context remains unknown; do not force one label.",
+    "Keep actor_adherence, judge_disagreement, source_policy_ambiguity and infrastructure_incomplete separate; none automatically changes semantic truth.",
+    "Use masked labels for partial annotation. Qualify gold head counts, not just total row count.",
+    "Freeze record and label hashes before evaluation. After any adaptive inspection retire that qualification set to diagnostic status for subsequent versions."
+  ],
+  "trace_specific_handling": [
+    "A4/B9/A5 passed cases may contain semantic mistakes masked by later recovery; annotate turns, not case verdict.",
+    "A4 PUB10 failed judge allegations do not label the mandatory opening as a premature promise acknowledgement; preserve original verdict in separate evaluation metadata.",
+    "A5 recovered PUB02 inconclusive judge remains combined-fail/unqualified even if callback ledger is correct.",
+    "B9 authored actor ending after a readback supplies no affirmative consent. Do not manufacture a yes from the intended script.",
+    "Opus source-only proposed attacks are authored hypotheses; only a pinned observed producer/consumer witness upgrades execution evidence.",
+    "No bank policy floor/date/outcome/queue is learned from public fixture constants. Such terms are source-derived at builder/runtime and evaluated separately."
+  ],
+  "minimum_next_deliverable": {
+    "priority_1": "Paired identical utterances under different recipient/security/offer/readback/support contexts, including yes/no/date/digits.",
+    "priority_2": "Target-scoped amount/date completion in both orders with interleaved products; partial correction preserves complete sibling.",
+    "priority_3": "Negation and qualification scope, complete stop/refusal, security+purpose, third-party+callback, hardship+voluntary proposal and restructuring+admin question.",
+    "priority_4": "Offer acceptance after calendar adjustment and after administrative detour; exact offer identity and subsequent readback reference.",
+    "count": "Aim first for annotation coverage of every contract head and critical interaction, not an arbitrary row total. Publish actual independent group counts and missing labels; no fabricated qualification."
+  },
+  "source_refs": [
+    "analysis/learned-layer-design.json#/source_manifest",
+    "integrations/learned-dialogue/authoring.py",
+    "integrations/learned-dialogue/build_data.py",
+    "integrations/customer-datasets/sources.json",
+    "research/customer-benchmark/README.txt",
+    "analysis/night-opus-learned-v1-review.json",
+    "analysis/night-opus-learned-v1-witnesses.json",
+    "analysis/learned-layer-design.json#/runtime_source_binding_review",
+    "analysis/learned-layer-evaluation-plan.json#/finite_sample_group_contract"
+  ],
+  "effective_checkpoint_id": "checkpoint-08-frozen-r3-detector-diagnosis",
+  "updated_at_utc": "2026-10-11T03:01:36.466207+00:00",
+  "checkpoints": [
+    {
+      "id": "checkpoint-02-context-risk-source-binding",
+      "utc": "2026-10-11T01:49:38.226266+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/0/source_manifest",
+      "scope": "Additive design clarification; no v1 data/model/metrics edits or new experiment claims."
+    },
+    {
+      "id": "checkpoint-03-b10-scoped-merge-and-narrow-head",
+      "utc": "2026-10-11T02:05:42.353027+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/2/source_manifest"
+    },
+    {
+      "id": "checkpoint-04-act-completion-and-date-negative-pilot",
+      "utc": "2026-10-11T02:12:19.841036+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/3/source_manifest"
+    },
+    {
+      "id": "checkpoint-05-reviewed-lineage-freshness-detector-contract",
+      "utc": "2026-10-11T02:22:55.476948+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/4/source_manifest"
+    },
+    {
+      "id": "checkpoint-06-cpu-date-pilot-and-student-decoder",
+      "utc": "2026-10-11T02:29:48.362926+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/5/source_manifest"
+    },
+    {
+      "id": "checkpoint-07-source-bound-regression-vectors",
+      "utc": "2026-10-11T02:44:12.984306+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/6/source_manifest"
+    },
+    {
+      "id": "checkpoint-08-frozen-r3-detector-diagnosis",
+      "utc": "2026-10-11T03:01:36.466207+00:00",
+      "source_manifest_ref": "analysis/learned-layer-design.json#/checkpoints/7/source_manifest"
+    }
+  ],
+  "orthogonal_supervision_contract": {
+    "axes": {
+      "semantic_truth": "What the delivered turn means in legitimate prior context, per head/component with spans and ambiguity.",
+      "model_capability": "What the current trained/exported model can support; stored in capability manifest, never used to change semantic gold.",
+      "consumer_decision": "Which supported dependencies permit a proposal to enter a specific deterministic consumer; not a train label for bank permission."
+    },
+    "mask_rules": [
+      "An unfinished date can coexist with a known payment intent, complete amount and resolved target. Label each independently.",
+      "A complete negative imperative can be stop_request. Negation is scoped to contact, not a reason to label primary unknown or completion unfinished.",
+      "A complete correction is completion=complete plus correction=replacement/retraction/refinement; correction and negation are not completion classes.",
+      "No secondary acts means reviewed empty set. Missing annotation is null/unannotated with loss maskfalse. Candidate detector no-match and not_implemented are not annotated_absent.",
+      "For partial multi-label annotation, use per-label observed masks. Do not treat every unmentioned intent as negative unless the entire intent inventory was reviewed.",
+      "Preserve alternative interpretations and disputed spans; do not invent a single label merely to fit a softmax. Mask ambiguous scalar training loss or use a declared set-valued objective; evaluate ambiguity handling separately.",
+      "Known stop plus unrelated unfinished admin tail retains stop semantics. Unknown relation/retraction scope may block a dependent decision; do not universally erase known heads.",
+      "Train no must_abstain label mechanically from completion. Derive scoped semantic ambiguity flags from annotation; runtime abstention also depends on source trust, capability, OOD, calibration and consumer dependencies."
+    ],
+    "loss_interface": "Each labelled item carries head_id, scope_id, value_or_alternatives, evidence_spans, observed_mask, annotator_ids, review_status and training_weight. Targets/component refs point to legitimate input identities, not fixture names used as learned class IDs.",
+    "wire_compatibility": "This is annotation metadata, not a silent change to semantic_proposal.v1. Follow current output schema and explicit versioning."
+  },
+  "checkpoint_02_contrast_families": [
+    {
+      "family": "context-answer-role",
+      "variants": [
+        {
+          "text": "Yes.",
+          "context": "recipient question",
+          "semantic": "recipient_self"
+        },
+        {
+          "text": "Yes.",
+          "context": "one active spoken amount/date offer O",
+          "semantic": "offer_acceptance, reference O; not readback consent"
+        },
+        {
+          "text": "Yes.",
+          "context": "complete active readback R",
+          "semantic": "affirmative signal, reference R; kernel still checks fresh consent"
+        },
+        {
+          "text": "Yes.",
+          "context": "support offer",
+          "semantic": "support_acceptance"
+        },
+        {
+          "text": "Yes.",
+          "context": "no identifiable current question",
+          "semantic": "unresolved act/reference"
+        }
+      ],
+      "normalizer": "No yes-to-payment default. Distinct offer and readback references."
+    },
+    {
+      "family": "short-value-role",
+      "variants": [
+        {
+          "text": "0421",
+          "context": "current security field asks last four digits",
+          "semantic": "complete security_answer string, keep leading zero"
+        },
+        {
+          "text": "0421",
+          "context": "current payment amount question with currency supplied",
+          "semantic": "candidate complete amount; numeric conversion only by amount grammar"
+        },
+        {
+          "text": "0421",
+          "context": "no current field",
+          "semantic": "ambiguous value role"
+        },
+        {
+          "text": "3/4/85",
+          "context": "DOB question but input date order unspecified",
+          "semantic": "complete surface, ambiguous date normalization"
+        }
+      ],
+      "normalizer": "Whole field, no first-number regex extraction and no raw-secret digest. Values here are fictional illustrations, never model-specific constants."
+    },
+    {
+      "family": "component-completion",
+      "variants": [
+        {
+          "text": "Make the card amount one hundred and the date Fri...",
+          "semantic": "replacement amount complete; date unfinished; retain amount, unresolved date"
+        },
+        {
+          "text": "Make the card amount one hundred and the date Friday.",
+          "semantic": "both complete; weekday resolved only using provided now/calendar policy"
+        },
+        {
+          "text": "Make the card amount one hundred and the date next week.",
+          "semantic": "amount complete; date surface linguistically complete but vague range, unresolved exact day"
+        }
+      ],
+      "normalizer": "Linguistic completeness differs from unique canonical value; no cache/default fills an unfinished replacement."
+    },
+    {
+      "family": "scoped-date-negation",
+      "variants": [
+        {
+          "text": "Not Friday; Monday for the card.",
+          "semantic": "Friday date negated, Monday asserted replacement for card"
+        },
+        {
+          "text": "Monday, not Friday, for the card.",
+          "semantic": "same replacement meaning with reversed order"
+        },
+        {
+          "text": "I cannot pay Monday.",
+          "semantic": "negated payment/date proposition, no positive promise"
+        },
+        {
+          "text": "If Monday works, I could pay.",
+          "semantic": "conditional proposal, not unqualified acceptance"
+        }
+      ],
+      "normalizer": "Only asserted/resolved accepted candidate reaches fact reducer; negative value is not last-date-wins evidence."
+    },
+    {
+      "family": "discourse-and-stop",
+      "variants": [
+        {
+          "text": "No worries, please call me Friday.",
+          "semantic": "callback intent; no is scoped to worries, complete weekday candidate"
+        },
+        {
+          "text": "Do not call me again.",
+          "semantic": "complete stop_request; negated contact proposition"
+        },
+        {
+          "text": "Actually, I want to dispute that charge.",
+          "semantic": "complete dispute; actually alone does not establish a terms correction"
+        },
+        {
+          "text": "Do not call me again. Also, what is your...",
+          "semantic": "complete stop_request plus unfinished administrative clause; preserve independently known stop"
+        },
+        {
+          "text": "Do not call me again. Actually, no, I mean...",
+          "semantic": "possible retraction of stop; ambiguity scope affects stop"
+        }
+      ],
+      "normalizer": "Distinguish independent incomplete clause from a potential retraction; no lexical global no/not/actually veto."
+    },
+    {
+      "family": "historical-negative-plus-proposal",
+      "variants": [
+        {
+          "text": "I did not pay it before, but I can pay the card this Friday.",
+          "semantic": "negative historical payment statement plus positive prospective card date"
+        },
+        {
+          "text": "I already paid the card on Friday.",
+          "semantic": "claimed historical payment, no new promise"
+        },
+        {
+          "text": "I did not say I already paid.",
+          "semantic": "negated quoted/reported paid claim, not already_paid assertion"
+        }
+      ],
+      "normalizer": "Tense, proposition and reference scope; no keyword paid as completed bank receipt."
+    },
+    {
+      "family": "affirmation-aside-versus-new-terms",
+      "variants": [
+        {
+          "text": "Yes, but are you a robot?",
+          "context": "active readback R",
+          "semantic": "affirmative signal plus AI question; do not mechanically invent changed terms"
+        },
+        {
+          "text": "Yes, but make it next week.",
+          "context": "active readback R",
+          "semantic": "changed date, qualified affirmation; old R cannot authorize"
+        },
+        {
+          "text": "Yes. Also, I was wondering about...",
+          "context": "active readback R",
+          "semantic": "affirmative followed by unfinished possibly independent aside; annotate actual scope uncertainty instead of globally negative"
+        }
+      ],
+      "normalizer": "Kernel may require fresh complete confirmation after interruption per actual policy; semantic affirmative label alone never overrides it."
+    },
+    {
+      "family": "spoken-offer-identity",
+      "variants": [
+        {
+          "text": "The twenty-third works.",
+          "context": "single active offer O on day23 with one month/year and unchanged revision",
+          "semantic": "candidate acceptance/reference O"
+        },
+        {
+          "text": "The twenty-third works.",
+          "context": "two live referenced offers day23 in different months/targets",
+          "semantic": "ambiguous reference"
+        },
+        {
+          "text": "The date you offered is fine.",
+          "context": "O exists but a later tool result changes policy feasibility",
+          "semantic": "acceptance of spoken O; no silent replacement with newly feasible O2"
+        }
+      ],
+      "normalizer": "Unique context may resolve an ordinal; policy conflict requires new spoken offer/readback. Parameterize days, months, amounts and products; none are fixed test constants."
+    },
+    {
+      "family": "collective-and-target-invariance",
+      "variants": [
+        {
+          "text": "For both accounts, Friday, one hundred each.",
+          "semantic": "collective date, per-target amount(each)"
+        },
+        {
+          "text": "Friday for both; one hundred in total.",
+          "semantic": "collective date, aggregate_total; do not duplicate total per target"
+        },
+        {
+          "text": "The card Friday; the loan date Fri...",
+          "semantic": "card complete date, loan unfinished date"
+        },
+        {
+          "text": "The loan date Fri...; the card Friday.",
+          "semantic": "same per-target statuses under order reversal"
+        }
+      ],
+      "normalizer": "Preserve collective group and actual target identifiers, retain which target is unresolved; unordered pooled pending features are insufficient."
+    }
+  ],
+  "contrast_provenance_policy": {
+    "status": "These are specification examples for authoring/development, not delivered dataset labels or passed tests. Once reviewed here, they are not blind qualification examples.",
+    "grouping": "All examples derived from the same carrier, structural template, source trace or contrast seed belong to one connected lineage group across train/dev/calibration/qualification. Numeric, product, phase and word-order substitutions do not create fresh independent groups.",
+    "annotation": "Authors independently realize new scenarios, then reviewers independently annotate the delivered forms. A new worker or author is not automatic gold; record double-annotation/adjudication for critical labels.",
+    "current_worker": "Parent reports Herschel01a128a1-79cc-75e3-9074-b9059f3ad285 authoring new TRAIN/dev pack aiming100TRAIN and20dev conservative lineage groups. Counts and review quality are pending actual delivery; no calibration or qualification data are inferred.",
+    "parent_qualification": "Parent reserves entirely new qualification after model/features/guards/normalizer/calibration/threshold/export freeze. Do not expose that pack to designer or implementer for adaptation and still call it blind. V1 reviewed holdout stays diagnostic.",
+    "count_audit": "Publish actual connected-component membership, template skeletons, duplicate review decisions, authors/sources and labelled head counts. If only a few templates generate100rows, report the few groups.",
+    "duplicate_scope": "Audit normalized full input/context and known template construction, not utterance tokens alone. Ubiquitous yes/no sharing is an overlap warning, not proof every independently sourced dialogue has one root. Deliberately authored paired-context variants and common question/carrier templates do share lineage; retain review decisions and suspected source dependence."
+  },
+  "checkpoint_03_label_clarifications": {
+    "dataset_status": "158TRAINrows/101declaredgroups,22development/20, single author and zero independently adjudicated gold. All29clause-intent names appearing is inventory coverage only; primary purpose_question has no observed TRAIN positive. Report actual head/group/mask counts from design checkpoint.",
+    "label_semantics_review_requests": [
+      {
+        "record": "CSv2-E-0025",
+        "issue": "next week is labelled component completion=ambiguous, while current contract defines linguistic completeness independently of unique normalization.",
+        "resolution": "Review and version: linguistically complete + normalization unresolved/vague when those are the intended axes. If authors intended referential completeness, name it separately instead of silently training two meanings under completion. Do not change frozen rows automatically; disputed labels can be masked in a new run."
+      },
+      {
+        "record": "CSv2-E-0046",
+        "issue": "stop_request with clause polarity asserted and contact predicate negated are compatible at different semantic levels.",
+        "resolution": "Define clause_polarity as commitment to the labelled speech act; component/predicate polarity describes embedded proposition. Do not relabel a known negative imperative to unknown or insist its stop act itself is negated."
+      }
+    ],
+    "wire_limits": "Current semantic_proposal.v1 has component polarity and qualifier spans, but not an explicit scored clause-polarity field or arbitrary same-turn replacement-edge object. Keep scope metadata in annotation and diagnostics. Before authority-relevant use that requires an unrepresentable distinction, version producer/consumer/schema together or abstain; never silently add fields to frozen wire.",
+    "b10_derived_families": [
+      {
+        "name": "atomic-component-row-permutation",
+        "annotation": "Same source turn and semantic frame; alternate serialized extraction rows are transport variants, not new training labels or independent groups. Preserve explicit speech-order correction relations."
+      },
+      {
+        "name": "refusal-new-episode-sibling",
+        "annotation": "Target-specific old refusal followed by fresh voluntary terms and sibling completion; semantic new proposal and its target/revision labelled independently from whether kernel actually supersedes refusal."
+      },
+      {
+        "name": "idiom-confirmation-target-set",
+        "annotation": "Yes no problem vsno I do not confirm vsyes but change terms; annotate act/polarity/reference/new terms separately, keep all derivatives one group."
+      },
+      {
+        "name": "ellipsis-locality",
+        "annotation": "Earlier unfinished targetA date followed by complete paid/proposal targetB vs terminal targetBfragment vs quotedfragment. Label each span/clause independently; paid claim never a bank receipt."
+      }
+    ],
+    "provenance": "B10review/witnesses, this design, all exposed diagnostics and their derived variants are TRAIN/development/diagnostic sources with ancestry. None becomes blind qualification by changing numbers/products/authors.",
+    "annotation_subset_gate": "See design narrow_head_experiment: independently annotate a feasible binary primary-payment subset rather than requiring allrareheads. Preserve full orthogonal labels and scope ambiguity; binary negative does not erase secondary acts."
+  },
+  "checkpoint_04_label_plan": {
+    "act_completion_ref": "analysis/learned-layer-design.json#/act_completion_contract_vnext",
+    "date_experiment_ref": "analysis/learned-layer-design.json#/date_completion_subset_experiment",
+    "status": "Proposed additional annotations/versioned packs only; no edits to existing158/22records. Existing labels lack an explicit observed act-completion axis; do not manufacture it from known primary labels or payment completeness.",
+    "annotation_independence": "Zeno40TRAINreview is parent-reported active. Await actual blinded labels, group coverage, disagreement/adjudication records. It does not become calibration/qualification by reviewer independence; its declared role remains TRAIN.",
+    "source_ancestry": "A6/B10witnesses, exposed finalv2dev errors and designed contrast families remain diagnostic/TRAIN/dev ancestry. New numbers, recipient names or paraphrases do not create blind qualification.",
+    "completion_masks": "Preserve known primary intent even when act is unfinished; mask missing act-completion truth independently. Component complete/vague/invalid may be linguistically complete; unresolved normalization is a separate label/result.",
+    "person_reference": "Completed deceased or recipient speech must resolve who it refers to using legitimate call/question context; bank product target indices do not substitute for person-role annotation."
+  },
+  "checkpoint_05_semantic_axes_and_masks": {
+    "wire": "semantic_proposal.v1 and semantic_input.v1 shapes unchanged. New labels/registry are versioned offline sidecars or wrapper arguments; no added wire fields/enums.",
+    "axes": [
+      {
+        "name": "act_identity",
+        "definition": "Primary communicative act and secondary mentioned acts per clause; known identity may coexist with unfinished act. Completed asserted scoped act precedence is an independent consumer requirement."
+      },
+      {
+        "name": "act_linguistic_completion",
+        "values": [
+          "complete",
+          "unfinished",
+          "ambiguous"
+        ],
+        "definition": "Speech act finishedness, independent of payment components, normalization and reference resolution; missing annotation is masked."
+      },
+      {
+        "name": "act_polarity_and_commitment_scope",
+        "definition": "Asserted/negated/conditional/questioned/quoted/unknown attach to predicates and actors per clause. Asserted inability statement can contain negated payment predicate."
+      },
+      {
+        "name": "component_presence_and_completion",
+        "definition": "Presence separate from complete/unfinished/ambiguous linguistic expression. Absence needs reviewed evidence/qualified detector; no-match alone is not absence."
+      },
+      {
+        "name": "value_resolution",
+        "values": [
+          "exact_expression_unparsed",
+          "resolved_by_deterministic_normalizer",
+          "vague_period",
+          "unresolved_reference",
+          "multiple_alternatives",
+          "invalid_value",
+          "not_applicable",
+          "unreviewed"
+        ],
+        "definition": "Annotation only; learned layer does not output canonical dates/amounts."
+      },
+      {
+        "name": "target_reference_allocation",
+        "definition": "Separate target identity, single/subset/all scope, total/each allocation, historical reference and eligible current reference."
+      },
+      {
+        "name": "descriptive_consent",
+        "definition": "What was said about the current question; no identity verification, financial permission or bank operation."
+      }
+    ],
+    "provisional_adjudications": [
+      {
+        "id": "CSv2-E-0025",
+        "correction": "Next week COMPLETE; vague_period, no exact date. Historical readback can be referred to but correction prevents current confirmation."
+      },
+      {
+        "id": "CSv2-E-0052",
+        "correction": "Another date COMPLETE; unspecified replacement/unresolved reference. Keep correction-vs-payment_proposal primary masked pending inventory adjudication; date completion remains supervised."
+      },
+      {
+        "id": "CSv2-E-0138",
+        "correction": "That date COMPLETE; unresolved_reference. Known offer-acceptance act may have null eligible offer ID."
+      },
+      {
+        "id": "CSv2-E-0047",
+        "correction": "Primary information_question; secondary stop is a NEGATED MENTION, not active stop. Preserve clause sidecar. Frozen wire lacks act-polarity: never flatten into accepted secondary stop. Omit from active-intent projection while preserving sidecar, or retain only abstaining diagnostic with scoped unparsed_qualifier."
+      }
+    ],
+    "projection_masks": [
+      "Primary mask only when final identity adjudicated; binary positive iff primary payment_proposal. Negative means another primary, not no secondary payment or refusal. Known unfinished payment act may be positive.",
+      "Secondary mask per label/scope; unreviewed tail is not all-negative. Negated mentioned stop is not positive active-stop target.",
+      "Completion mask requires reviewed span/presence. Vague/impossible/alternative/reference expressions are not automatically unfinished.",
+      "Normalization/reference masks may be false with completion true. Label uncertainty, applicability, model capability and acceptance are separate masks.",
+      "Initially train only binary primary diagnostic. Detection/completion/targets/corrections/consent/reference need separate capability gates."
+    ],
+    "correction_graph": "Sidecar edge: source_clause, target_clause_or_prior_event, target_id, component_or_act_scope, relation replacement/refinement/retraction, evidence, resolution_mask. Consent retraction is not amount/date replacement. Old repaired span retained as superseded evidence, not second active value.",
+    "contrasts": [
+      [
+        "I can pay next week.",
+        "I can pay next...",
+        "Complete vague date versus unfinished; both may identify payment proposal."
+      ],
+      [
+        "Friday, but the time is...",
+        "Friday... actually Monday.",
+        "Complete date plus unfinished time versus explicit repaired date."
+      ],
+      [
+        "I am not asking you to stop calling; I need the card balance.",
+        "Stop calling; I need the card balance.",
+        "Negated versus asserted stop; independent information question preserved."
+      ],
+      [
+        "I am in hardship; I can pay on...",
+        "I am in hard...",
+        "Completed hardship plus unfinished payment versus unfinished hardship act."
+      ],
+      [
+        "Yes after recipient question",
+        "Yes after current completed readback",
+        "Recipient self-identification is not financial consent."
+      ]
+    ],
+    "status": "Parent provisional semantics for new overlays only; original v2 labels unchanged. These four corrections are not independently adjudicated gold."
+  },
+  "checkpoint_05_lineage_and_review": {
+    "proposed_unions": [
+      {
+        "a": "CSv2-E-0064",
+        "b": "CSv2-E-0065",
+        "a_group": "CSv2-G-9e830cb171b5a70b",
+        "b_group": "CSv2-G-cddee14996c67817",
+        "reason": "Collective total-versus-each amount/date contrast; same three-products/day construction."
+      },
+      {
+        "a": "CSv2-E-0077",
+        "b": "CSv2-E-0078",
+        "a_group": "CSv2-G-22a10aaf7d8c4ce7",
+        "b_group": "CSv2-G-b12d83358faf1f71",
+        "reason": "Identical I-will-pay-on date carrier; numeric-format versus impossible spelled date."
+      },
+      {
+        "a": "CSv2-E-0050",
+        "b": "CSv2-E-0073",
+        "a_group": "CSv2-G-74bae451056bdbc2",
+        "b_group": "CSv2-G-a9fd2592e363255a",
+        "reason": "Repeated amount/product/day prospective payment carrier under a negated/refused sibling; existing giant group already joins equivalent paid/stop/hardship-preface extensions."
+      }
+    ],
+    "canonical_id_rule": "Lexically minimal original group ID per transitive union; keep original IDs/reasons. Names do not prove IID independence.",
+    "canonical_map": {
+      "CSv2-G-905e2b983c6a2ca0": "CSv2-G-905e2b983c6a2ca0",
+      "CSv2-G-a56265607eb03b50": "CSv2-G-a56265607eb03b50",
+      "CSv2-G-5a36e2bb1e298bae": "CSv2-G-5a36e2bb1e298bae",
+      "CSv2-G-74bae451056bdbc2": "CSv2-G-74bae451056bdbc2",
+      "CSv2-G-595411a6e5109031": "CSv2-G-595411a6e5109031",
+      "CSv2-G-6f60d58fb09d8525": "CSv2-G-6f60d58fb09d8525",
+      "CSv2-G-61a3f4c34d1971ee": "CSv2-G-61a3f4c34d1971ee",
+      "CSv2-G-fe850a09b2daacaa": "CSv2-G-fe850a09b2daacaa",
+      "CSv2-G-e01ff169a6180f5a": "CSv2-G-e01ff169a6180f5a",
+      "CSv2-G-cddad11bd45487e9": "CSv2-G-cddad11bd45487e9",
+      "CSv2-G-b0906aaf2b245f51": "CSv2-G-b0906aaf2b245f51",
+      "CSv2-G-857b05223add2ad9": "CSv2-G-857b05223add2ad9",
+      "CSv2-G-5c4665cc57f18ea2": "CSv2-G-5c4665cc57f18ea2",
+      "CSv2-G-d9727ff993bdb2f6": "CSv2-G-d9727ff993bdb2f6",
+      "CSv2-G-4c4c9ce7973668fb": "CSv2-G-4c4c9ce7973668fb",
+      "CSv2-G-f6067d5cb14b69b4": "CSv2-G-f6067d5cb14b69b4",
+      "CSv2-G-c6c5034976cc2b88": "CSv2-G-c6c5034976cc2b88",
+      "CSv2-G-4631182941d0f91a": "CSv2-G-4631182941d0f91a",
+      "CSv2-G-d7f0f701bc8b80b2": "CSv2-G-d7f0f701bc8b80b2",
+      "CSv2-G-94ef829fc89e25a1": "CSv2-G-94ef829fc89e25a1",
+      "CSv2-G-facbd036e775ebce": "CSv2-G-facbd036e775ebce",
+      "CSv2-G-a9370ffe6a26ac19": "CSv2-G-a9370ffe6a26ac19",
+      "CSv2-G-e5a5fc27a05a194b": "CSv2-G-e5a5fc27a05a194b",
+      "CSv2-G-59d99dadf4ea6069": "CSv2-G-59d99dadf4ea6069",
+      "CSv2-G-706d82db84ce12cb": "CSv2-G-706d82db84ce12cb",
+      "CSv2-G-2c840a5ee894ec0d": "CSv2-G-2c840a5ee894ec0d",
+      "CSv2-G-08cdd5f06da955cf": "CSv2-G-08cdd5f06da955cf",
+      "CSv2-G-01d9c5f8f91fa265": "CSv2-G-01d9c5f8f91fa265",
+      "CSv2-G-36886b2886e77237": "CSv2-G-36886b2886e77237",
+      "CSv2-G-43bbda4e31e5759b": "CSv2-G-43bbda4e31e5759b",
+      "CSv2-G-02223436ced92a77": "CSv2-G-02223436ced92a77",
+      "CSv2-G-d075f6256ed093b7": "CSv2-G-d075f6256ed093b7",
+      "CSv2-G-2284c0c675b74cc4": "CSv2-G-2284c0c675b74cc4",
+      "CSv2-G-9e830cb171b5a70b": "CSv2-G-9e830cb171b5a70b",
+      "CSv2-G-cddee14996c67817": "CSv2-G-9e830cb171b5a70b",
+      "CSv2-G-c13d9e50ab79daae": "CSv2-G-c13d9e50ab79daae",
+      "CSv2-G-a9fd2592e363255a": "CSv2-G-74bae451056bdbc2",
+      "CSv2-G-c3e0eb2faaa8081d": "CSv2-G-c3e0eb2faaa8081d",
+      "CSv2-G-0fe62b2c7dd9f55e": "CSv2-G-0fe62b2c7dd9f55e",
+      "CSv2-G-60b5a5f8367252c0": "CSv2-G-60b5a5f8367252c0",
+      "CSv2-G-22a10aaf7d8c4ce7": "CSv2-G-22a10aaf7d8c4ce7",
+      "CSv2-G-b12d83358faf1f71": "CSv2-G-22a10aaf7d8c4ce7",
+      "CSv2-G-a735684277fb4a53": "CSv2-G-a735684277fb4a53",
+      "CSv2-G-d7dd273c7fe625b8": "CSv2-G-d7dd273c7fe625b8",
+      "CSv2-G-70d1178949a0df3f": "CSv2-G-70d1178949a0df3f",
+      "CSv2-G-3ea54f493ef48dcd": "CSv2-G-3ea54f493ef48dcd",
+      "CSv2-G-f1527f0c1bd45dff": "CSv2-G-f1527f0c1bd45dff",
+      "CSv2-G-feacf76a344c7099": "CSv2-G-feacf76a344c7099",
+      "CSv2-G-30f79eedcffad361": "CSv2-G-30f79eedcffad361",
+      "CSv2-G-615db1ebf44200be": "CSv2-G-615db1ebf44200be",
+      "CSv2-G-c8d3b774caa6dfe3": "CSv2-G-c8d3b774caa6dfe3",
+      "CSv2-G-3d9dd9d62d017959": "CSv2-G-3d9dd9d62d017959",
+      "CSv2-G-fb1d27c28b63c2d4": "CSv2-G-fb1d27c28b63c2d4",
+      "CSv2-G-5a17d315ab2010a6": "CSv2-G-5a17d315ab2010a6",
+      "CSv2-G-42c069b8d42c699c": "CSv2-G-42c069b8d42c699c",
+      "CSv2-G-f61c002ebf37e075": "CSv2-G-f61c002ebf37e075",
+      "CSv2-G-48d76a0644d78c7b": "CSv2-G-48d76a0644d78c7b",
+      "CSv2-G-a554be2a6aebb8a4": "CSv2-G-a554be2a6aebb8a4",
+      "CSv2-G-6a7322a71eb4473b": "CSv2-G-6a7322a71eb4473b",
+      "CSv2-G-c2f1208203433602": "CSv2-G-c2f1208203433602",
+      "CSv2-G-fe5909d22eb8c92c": "CSv2-G-fe5909d22eb8c92c",
+      "CSv2-G-947dc9002a57f279": "CSv2-G-947dc9002a57f279",
+      "CSv2-G-ada997b0305e7d5a": "CSv2-G-ada997b0305e7d5a",
+      "CSv2-G-1dc5c5cd2584d9fb": "CSv2-G-1dc5c5cd2584d9fb",
+      "CSv2-G-9fe96096bdf7fee7": "CSv2-G-9fe96096bdf7fee7",
+      "CSv2-G-d58970ac6b50c8a8": "CSv2-G-d58970ac6b50c8a8",
+      "CSv2-G-c1aafafddcf3fcc3": "CSv2-G-c1aafafddcf3fcc3",
+      "CSv2-G-846ad4991e67b92a": "CSv2-G-846ad4991e67b92a",
+      "CSv2-G-7a7612e2da4a7e50": "CSv2-G-7a7612e2da4a7e50",
+      "CSv2-G-bbd991eab9893eb3": "CSv2-G-bbd991eab9893eb3",
+      "CSv2-G-71fd3707e321b7de": "CSv2-G-71fd3707e321b7de",
+      "CSv2-G-915fa4ec4fe94557": "CSv2-G-915fa4ec4fe94557",
+      "CSv2-G-5e99c0a41f6ee7e5": "CSv2-G-5e99c0a41f6ee7e5",
+      "CSv2-G-f3e2c8a3c3be1480": "CSv2-G-f3e2c8a3c3be1480",
+      "CSv2-G-d7fa5d0db46cc0a3": "CSv2-G-d7fa5d0db46cc0a3",
+      "CSv2-G-1716897b04434040": "CSv2-G-1716897b04434040",
+      "CSv2-G-b9ca4fd51e2cba50": "CSv2-G-b9ca4fd51e2cba50",
+      "CSv2-G-4c5bb1476e8272ca": "CSv2-G-4c5bb1476e8272ca",
+      "CSv2-G-19f5d9aa523612ab": "CSv2-G-19f5d9aa523612ab",
+      "CSv2-G-561596e16037ef49": "CSv2-G-561596e16037ef49",
+      "CSv2-G-6ab2edcb578e8ec7": "CSv2-G-6ab2edcb578e8ec7",
+      "CSv2-G-eed7c70a556785c4": "CSv2-G-eed7c70a556785c4",
+      "CSv2-G-345334017e2de875": "CSv2-G-345334017e2de875",
+      "CSv2-G-6e1a8d34578e3dcf": "CSv2-G-6e1a8d34578e3dcf",
+      "CSv2-G-1bd527b092ada4e3": "CSv2-G-1bd527b092ada4e3",
+      "CSv2-G-d57ba60693f785e3": "CSv2-G-d57ba60693f785e3",
+      "CSv2-G-785da711daf6acdf": "CSv2-G-785da711daf6acdf",
+      "CSv2-G-e8e6550242e8c9a3": "CSv2-G-e8e6550242e8c9a3",
+      "CSv2-G-20c950b949486ff6": "CSv2-G-20c950b949486ff6",
+      "CSv2-G-e7e8f6d936a4ca36": "CSv2-G-e7e8f6d936a4ca36",
+      "CSv2-G-413bbef8e52a8281": "CSv2-G-413bbef8e52a8281",
+      "CSv2-G-6523f347abdf60e2": "CSv2-G-6523f347abdf60e2",
+      "CSv2-G-6fabcfb3d1811d02": "CSv2-G-6fabcfb3d1811d02",
+      "CSv2-G-f5e0c60e9a335662": "CSv2-G-f5e0c60e9a335662",
+      "CSv2-G-2e62b659a8d5428d": "CSv2-G-2e62b659a8d5428d",
+      "CSv2-G-25e22220145195be": "CSv2-G-25e22220145195be",
+      "CSv2-G-dfe15aeb4b64f075": "CSv2-G-dfe15aeb4b64f075",
+      "CSv2-G-99a69de553c66b44": "CSv2-G-99a69de553c66b44",
+      "CSv2-G-407fded569a23acf": "CSv2-G-407fded569a23acf",
+      "CSv2-G-f94ef6307a963b7d": "CSv2-G-f94ef6307a963b7d",
+      "CSv2-G-e28912e1a2a7b5da": "CSv2-G-e28912e1a2a7b5da"
+    },
+    "counts": {
+      "authored_train_rows": 158,
+      "authored_train_groups": 101,
+      "conservative_canonical_train_groups": 98,
+      "authored_positive_groups": 21,
+      "union_only_positive_groups": 19,
+      "union_plus_review_primary_masks_positive_groups": 18,
+      "mask_overlay_status": "Audit proposal, not adjudicated/applied labels",
+      "packet_declared_groups": 40,
+      "packet_rows": 81,
+      "packet_canonical_groups": 38,
+      "packet_weak_positive_canonical_groups": 18,
+      "packet_additional_negative_canonical_groups": 20,
+      "packet_closure_rows": 82,
+      "packet_missing_closure_example_ids": [
+        "CSv2-E-0073"
+      ],
+      "independent_second_review_rows": 40,
+      "fully_second_reviewed_canonical_groups": 17,
+      "fully_second_reviewed_weak_positive_canonical_groups": [
+        "CSv2-G-407fded569a23acf"
+      ],
+      "independently_adjudicated_gold_rows": 0,
+      "readiness": "NO-GO"
+    },
+    "source_binding": [
+      "Pin exact source/packet/review/overlay hashes. Validate member input against source; no missing/duplicate/unknown IDs.",
+      "Union conversation/template/carrier/augmentation/contrast ancestry before sampling, splits, losses and counts. Cross-split union requires quarantine or regenerated split.",
+      "Full review means canonical-group closure in frozen source, not only selected packet rows. Every member has reviewed/masked status."
+    ],
+    "scaffold_findings": [
+      "Weak author-stratified packet is label-free and not selected by model error; neither proves reviewer blinding.",
+      "assess_reviews counts original lineage_group_id and packet-only completeness: must use parent-pinned union and closure overlay before gate.",
+      "Current scaffold requires two verified blind non-author annotations per row plus independent conflict adjudication. Partly exposed prior audit cannot be promoted to a blind annotation.",
+      "fit_grouped averages rows then groups correctly only if supplied canonical groups; use same unions for feature frequencies.",
+      "Row-shuffled labels destroy family structure: name this weaker null and add group-compatible label-vector/permutation control where feasible."
+    ],
+    "feasible_supplement": [
+      "Keep81-row packet immutable during review. Supplement missing closure CSv2-E-0073, joining giant root, plus any later union descendants.",
+      "Union-only selected18 positives can gain omitted existing root CSv2-G-1dc5c5cd2584d9fb (row0109) and at least one genuinely new positive root; possible20, not achieved20.",
+      "With disputed-primary masks existing whole pool18 positives requires at least2 genuinely new positive roots; arrange4 new independently conceived roots as bounded buffer, then merge skeleton collisions and count actual labels.",
+      "Vary discourse construction: self-initiated plan narration, open capacity-question answer, own intention versus third-party quote, and repaired proposal with reviewed primary still proposal. Numeric substitutions/new author alone cannot create independent roots.",
+      "Every member reviewed; complete/unfinished/quoted/negated variants stay same root. Existing20 additional negatives also require review; masks or mixed labels can reduce them, requiring actual new negatives.",
+      "Gate requires >=20fully reviewed/adjudicated canonical positives and >=20additional negatives outside positive set; mixed groups count once overall. Engineering screen, not statistical certification.",
+      "Zeno annotations remain TRAIN. Parent verifies reviewer identity/exposure/evidence; self-declared registry flag insufficient. No promotion to calibration/risk/qualification."
+    ],
+    "interface": {
+      "signature": "assess_reviews_v3(packet,reviews,parent_authorization,frozen_source_manifest,lineage_overlay)->readiness",
+      "authorization_binds": [
+        "packet_sha256",
+        "reviews_sha256",
+        "source_manifest_sha256",
+        "lineage_overlay_sha256",
+        "semantic_axes_version",
+        "reviewer_registry_evidence"
+      ],
+      "result": [
+        "canonical_positive_groups",
+        "canonical_negative_groups",
+        "additional_negative_groups",
+        "mixed_groups",
+        "complete_review_groups",
+        "missing_closure_ids",
+        "masked_rows_by_reason",
+        "eligible_rows_with_canonical_group",
+        "admitted",
+        "reasons"
+      ],
+      "fail_closed": "Missing closure, disputed unadjudicated member, mismatch, reviewer-evidence failure or deficient floor: admitted=false and no training rows."
+    }
+  },
+  "checkpoint_05_candidate_alignment": {
+    "design_ref": "analysis/learned-layer-design.json#/v3_detector_head_contract",
+    "rules": [
+      "Freeze detector version before candidate-head table. Generate actual candidates for every TRAIN row, including reviewed absent-amount/date rows. Align one-to-one by kind and exact original Unicode spans to reviewed gold; no nearest-span relabeling.",
+      "Unmatched candidates become validity/noncomponent negatives only when reviewed whole-turn annotations establish falsity. Mask unreviewed regions. Card suffix/clock/date digits are potential non-amount candidates; do not treat them as unfinished money or train a completion head to infer presence.",
+      "Train completion/polarity only on exact matched candidates under per-axis masks. Missed gold spans count as detector false negatives, not excluded pipeline successes. Oracle-span analysis and actual-detector evaluation stay separate.",
+      "Start with audited deterministic proposer and candidate-kind/validity discrimination; learned detector optional. Typed identifier/time/date/security spans require context, not numeric form alone.",
+      "Security question must not switch detector to whole-turn capture. Use field-aligned spans only with trusted security-field descriptor; otherwise unsupported_context. Keep unrelated admin intent separate. Security values, including spelled numbers, cannot enter lexical/suffix feature vocabulary.",
+      "If security isolation unavailable, mask all turn surface features for security-role pilot and report lost admin capability; digit substitution alone is not privacy protection."
+    ],
+    "original_data_unchanged": true
+  },
+  "checkpoint_06_date_annotation_protocol": {
+    "pilot": {
+      "positive": "Linguistically complete date expression, even if vague, invalid, conditional, quoted or unresolved anaphor. Those other axes remain separate.",
+      "negative": "Genuinely unfinished date expression judged from delivered current source plus admissible prior context; not punctuation alone or the authors intended future script.",
+      "masked": "Linguistic finishedness disputed/ambiguous, unknown source framing, unreviewed span, unisolated secret, unsupported detector role, or normalization-only dispute mistakenly offered as negative.",
+      "absent": "Reviewed absence used in detector regression denominators, not forced complete/unfinished target.",
+      "continuation": "A fragment completing prior text requires an exact prior unresolved source-event link and component token. Without it, mark unsupported_context; no synthetic concatenation from future turns."
+    },
+    "collection": {
+      "target": "24 genuinely new conservatively grouped TRAIN roots, each aiming2-4 reviewed members;8 separately conceived dev roots;8 no-date/competing-kind detector-regression roots. Targets only, never claim achieved counts.",
+      "floor": "At least20 fully independently reviewed/adjudicated canonical TRAIN groups with complete examples AND20 with unfinished examples. SAME paired roots may contribute to both class-support counts; total independent denominator counts each once. This differs from primary20 additional-negative-root gate. No IID claim follows.",
+      "lineage": "Complete/unfinished/context/punctuation variants share root. Union reused carriers, source episodes and descendants across old/new packs before split. Never turn24 recipe variations from one carrier into24 groups. If unions leave fewer than20, gather new roots or keep readiness closed.",
+      "authoring": "New origins and constructions must be independently conceived before seeing candidate predictions. Store author/model/prompt/source hashes and actual delivered turns; source-author independence is not proven by a reviewer.",
+      "independent_annotation": "Two non-author reviewers annotate full source clause/date spans and completion before model/detector output exposure; preserve uncertainties and adjudication. Existing exposed reviews inform guidelines, not counterfeit fresh blind annotations.",
+      "actual_detector_annotation": "After source annotations frozen, attach frozen detector outputs and exact-span alignments. Review unmatched candidates and absent regions as a separate task; preserve original meanings. No detector-conditioned relabeling of missed gold to make predictions correct.",
+      "dev": "Separate reviewed dev roots with same axes and actual detector outputs. Used only for model diagnosis/selection; no calibration/risk/qualification claims. Freeze future qualification only after selected pipeline; never backfill it from these reviews."
+    },
+    "constructions": [
+      "Open date complement versus a completed complement, without forcing same punctuation pattern across classes.",
+      "Complete vague period/reference versus true unfinished comparator; next week/another date/that date stay complete.",
+      "Date complete plus unfinished TIME or administrative question; date class must remain complete.",
+      "Negated/quoted/conditional complete date; polarity must not be mistaken for completion.",
+      "Nonterminal hesitation followed by complete same/sibling date; ordered correction tracked independently.",
+      "One target unfinished while another has complete date; annotate both and preserve target uncertainty.",
+      "Complete impossible or weekday-conflicting calendar expression; normalization failure separate.",
+      "Actual linked turn continuation versus unanchored fragment; same utterance in different preceding contexts shares root.",
+      "Date-like security answer, clock digits, card/account suffix, puzzle numbers: reviewed detector negatives/unsupported contexts, not date unfinished labels."
+    ],
+    "candidate_span_policy": "Review whole delivered clause first. Complete date span includes all value words/modifiers needed for its meaning; unfinished open date complement includes available words such as the third of... without inventing missing suffix. Identify prefix/context separately. Proposer must offer both complete and open-complement candidates; source question may support a date role, not force completion label. Exact match uses frozen span convention; alternative/discontinuous spans explicitly masked until supported.",
+    "source_review_before_detector": "Annotators freeze source meaning/spans without seeing predictions. Only then review actual detector misses/false candidates; cannot backfill gold to detector output.",
+    "mask_record_fields": [
+      "source_id",
+      "canonical_group",
+      "source_input_hash",
+      "reviewer/exposure/adjudication",
+      "candidate_detector_hash",
+      "gold_span",
+      "actual_candidate_id_or_null",
+      "exact_alignment",
+      "completion_label_or_null",
+      "completion_mask",
+      "presence_mask",
+      "normalization_status",
+      "polarity_scope",
+      "source/reference_resolution",
+      "exclusion_reason"
+    ],
+    "shared_features": {
+      "version": "admissible_semantic_features.v3 sidecar; frozen wire unchanged",
+      "shared_function": "make_admissible_view_v3(snapshot,actual_candidate_or_none,trusted_fixture_context,feature_contract)->{text,structured_features,source_map,eligibility,reasons}; teacher and student consume this SAME versioned view.",
+      "exact_source_paths": [
+        {
+          "path": "utterance.text/source_turn_id/complete_transport/offset_unit",
+          "use": "Exact current delivered user text and offsets, after explicit exclusion/redaction policy. No extractor rewrite promoted to trusted raw source."
+        },
+        {
+          "path": "question.role/text/question_id/spoken_turn_id/target_indices",
+          "use": "Role and actual last spoken question text; IDs bind provenance only. Question text must also pass secret-value exclusion; no future assistant text."
+        },
+        {
+          "path": "phase",
+          "use": "Frozen enum; unknown/out-of-scope explicit abstention. Phase-only comparator required."
+        },
+        {
+          "path": "targets[].index and pending[].target_index",
+          "use": "Validate unique actual indices and membership. Map symbolic relationships without exposing bank IDs/names/suffixes. Never assume targets[].target_index exists."
+        },
+        {
+          "path": "pending[].components[name].status/revision and unresolved_components",
+          "use": "Read actual nested shape; typed status and component names may be features. Opaque revision tokens go to deterministic freshness decoder, never lexical model features."
+        },
+        {
+          "path": "spoken_offers and active_readback",
+          "use": "Only independently checked presence, kind, completed speech, current-versus-superseded relation and question-linked scope are categorical features. Exact IDs, amounts/dates and registry revisions are decoder/provenance data, not labels."
+        },
+        {
+          "path": "actual_detector_candidate.start/end/name and local source context",
+          "use": "Date experiment markers from frozen proposer, never manually supplied gold spans in deployment. Exact source-map alignment; clipping/overflow explicit."
+        }
+      ],
+      "forbidden": [
+        "labels/masks as predictive features",
+        "judge pass/fail/expected ledger/expected final brief",
+        "future turns, actor intended completion and unseen response scripts",
+        "gold oracle spans in true-pipeline metrics",
+        "absolute example/group/source IDs, UUIDs, bank account/card identifiers, filename/split labels",
+        "DOB/security-answer values including number words in user, assistant question, offer text or cached embeddings",
+        "opaque revision strings or hashes as predictive tokens",
+        "a flat union of target statuses losing which dependency belongs to which target"
+      ],
+      "privacy": "For this minimal experiment include only source-proven fictional NON-security rows containing no DOB/answer content, even in mixed payment/admin turns. Metadata source eligibility is a dataset admission filter, not a learned feature. No raw security training/cache/logging or teacher calls. Question.role!=security alone is insufficient. If value-free projection cannot be established, exclude/mask the row and report lost coverage; do not claim a deployed perfect redactor. General raw-voice privacy/ingress remain unqualified.",
+      "delexicalization": "Apply lexical value abstraction before typed context serialization. Never regex-replace numbers across serialized target maps. Use relative relations current_question_target/sibling/unresolved and typed component statuses; if local aliases needed use consistent opaque aliases with target-permutation controls. Exact money/calendar values remain deterministic normalization input, not a hidden training label.",
+      "source_map": "Each lexical segment maps to original turn or actual spoken-question event and offsets. Synthetic role/candidate markers identified as markers with no source span. IDs/digests in manifest only, not model text. No raw-text hashes of short security values. Model/data artifact SHA256 remains valid provenance.",
+      "parity_controls": [
+        "Actual frozen input with targets[].index and nested pending components must serialize successfully without flattening statuses.",
+        "Renaming source IDs and permuting target enumeration with relationships preserved must preserve semantic model input/prediction up to alias canonicalization.",
+        "Same turn different valid question role should differ only in admissible role/question features; same phase with changed reference validity tests phase confounding.",
+        "No forbidden secret-word/number token in admitted input, feature vocabulary or embedding cache; unknown secret isolation excludes row.",
+        "Teacher input/CPU features derive from identical source view; teacher must not receive hidden canonical terms, full future context or gold spans."
+      ]
+    },
+    "latest_primary_review": {
+      "rows": 81,
+      "one_reviewer_labels": {
+        "positive": 40,
+        "negative": 34,
+        "ambiguous": 7
+      },
+      "canonical_positive_groups": 16,
+      "canonical_negative_groups": 22,
+      "additional_negative_groups": 19,
+      "fully_one_review_canonical_groups": 37,
+      "fully_one_review_positive_groups": 15,
+      "fully_one_review_additional_negative_groups": 19,
+      "missing_closure": [
+        "CSv2-E-0073"
+      ],
+      "adjudicated_rows": 0,
+      "exposure": "Reviewer reused from prior40-row audit, explicitly not newly blind. One real annotation/member; no second annotation or adjudication fabricated.",
+      "readiness": "NO-GO; these latest observed counts supersede weak author support as evidence of what reviewer actually labelled. They are not admitted training labels."
+    }
+  },
+  "checkpoint_06_atomic_component_truth": {
+    "version": "atomic_component_truth.v3 minimal deterministic sidecar/consumer contract",
+    "input": "Immutable evidence rows with actual source spans, known target, per-component linguistic status/value candidate, explicit unresolved components and correction edges. Whole-row c alone never establishes component truth or permission.",
+    "algorithm": [
+      "Parse every row to immutable evidence; never mutate pending state or shared needs while iterating serialized rows.",
+      "For row r, U_r is ONLY explicit unfinished components from a supported partial/c0 observation. A complete/c1 row contributes U_r=empty; absent amount/date keys in a complete row do not create needs.",
+      "A partial row may contain a separately complete amount while its date is unfinished. Preserve that amount evidence when its own scoped span is complete, not listed unfinished, and deterministic parse succeeds.",
+      "Union explicit U_r per target; independently collect complete values/references per component. Resolve explicit supersession/conflicts from speech spans and correction edges, never list order.",
+      "For each target/component with one consistent independently complete resolved survivor, retain its value and remove that component from the combined unresolved set. Do not cancel genuinely later retraction/unfinished replacement, conflicting values or unknown correction scope.",
+      "After all rows, produce one candidate target patch/diagnostic. Kernel remains sole state owner and independently validates policy; current learned shadow emits no patch or bank action."
+    ],
+    "equations": "E_tc=union_r scoped_evidence(r,t,c); U_t=union_r explicit_c0_u(r,t). Resolve(E_tc,source_order,explicit_correction_edges) determines complete_current(t,c). U_final[t]=(U_old[t] union U_t union invalidations[t]) minus {c:complete_current(t,c) and dependencies_valid(t,c)}. Complete(c1) rows add no U. If resolve is conflict/unknown, keep unresolved; qualified=false keeps all learned claims abstaining.",
+    "tests": [
+      "Same speech: partial row has complete amount and unfinished date; sibling row supplies complete date. Both serialization orders retain amount/date and empty date need when explicit completion link is consistent.",
+      "Same speech: complete date plus partial amount row retains date while amount remains unresolved. Missing field in complete date row does not erase a known amount.",
+      "Two all-complete nonconflicting rows in both orders match existing passing control; separate-turn completion retains earlier sibling.",
+      "Explicit later speech correction/retraction overrides earlier evidence only through scoped relation. Changing speech correction order is NOT an invariance requirement.",
+      "Complete primary with unrelated conditional clause is retained; condition on primary itself remains conditional/blocked. c1 alone never authorizes deceased/stop/transfer.",
+      "Complete date in a conditional/quoted sentence is still linguistically complete; decoder separately blocks commitment when unsupported. No global if/no/not veto.",
+      "Benign negative idiom attached to mind/problem does not mechanically negate confirmation; withdrawal or new terms still block exact-readback consent. Keep semantic uncertainty abstaining, not a canned acceptance allowlist.",
+      "Actual transport receipt must bind original dispatched operation ID if adapter supports it. Ambient current request ID cannot authenticate old receipt. This is deterministic transport work; no model learns HTTP retry policy."
+    ],
+    "date_training_effect": "Add complete-date versus truly unfinished-date pairs under independent if/admin clauses. Do not label conditional complete dates unfinished. Partial-amount/date-complete pairs are complete-date positives. Detector alignment must preserve independent clause boundaries and old/new correction spans."
+  },
+  "checkpoint_06_collection_admission": {
+    "id": "checkpoint-06a-primary-review-versus-weak-support",
+    "utc": "2026-10-11T02:35:45.560264+00:00",
+    "previous_owned_file_hashes": {
+      "analysis/learned-layer-design.json": "30388467f79ebcfe63e2e28fdf4427422598bf534ed0836c1e932ee35e16eaf8",
+      "analysis/learned-layer-design.txt": "76da93c53b1695e74b1ea2f27e4e640791f36f07378f543d3a82fbbc1d8e58cc",
+      "research/customer-benchmark/learned-layer-label-spec.json": "fa31a0c2a0cf8b22bae1b92fdf30f8f6c8456dcf87cea9652a67d238335d4f5c",
+      "analysis/learned-layer-evaluation-plan.json": "80cbf306b791b3f1731d1497220b353f03ec0bda56f77b497552f47ee5a19d79"
+    },
+    "review_source": {
+      "path": "research/customer-benchmark/context-narrow-v3-reviewed.json",
+      "sha256": "f019586f49f1203bdef93b9e950b2fa66531f262840ce89addaca0a8169542ac"
+    },
+    "counts_separated": {
+      "weak_authored_packet": {
+        "canonical_positive_groups": 18,
+        "additional_negative_groups": 20,
+        "meaning": "Original author-label sampling support after conservative unions; not independent review."
+      },
+      "actual_Zeno_packet_review": {
+        "canonical_positive_groups": 16,
+        "additional_negative_groups": 19,
+        "primary_ambiguous_masked_rows": 7,
+        "annotation_count_per_member": 1,
+        "reviewed_members": 81,
+        "selected_canonical_groups": 38,
+        "required_closure_members": 82,
+        "missing_closure_members": [
+          "CSv2-E-0073"
+        ],
+        "fully_one_review_canonical_groups": 37,
+        "fully_one_review_positive_groups": 15,
+        "reviewer_exposure": "Partly exposed; not fresh blind gold. Parent reports reviewer task closed.",
+        "independently_adjudicated_gold_rows": 0,
+        "training_gate": "NO-GO"
+      }
+    },
+    "new_collection_parent_report": {
+      "location": "research/customer-benchmark/semantic-v3-collection",
+      "author": "Parent-dispatched fresh author without history fork; identity/exposure evidence to be recorded by owner, not inferred from directory name.",
+      "primary_supplement_target": {
+        "new_origin_roots": 12,
+        "variants_per_root": 2
+      },
+      "date_target": {
+        "TRAIN_roots": 24,
+        "DEV_roots": 8,
+        "variants": "Within-root contrasts"
+      },
+      "old_packet_closure_supplement": [
+        "CSv2-E-0073",
+        "CSv2-E-0109"
+      ],
+      "deliverables": "Full versioned label-free TRAIN review packet and separate weak authored labels/provenance; original packet and previous review immutable.",
+      "actual_local_check": "Collection directory not yet present at amendment check. Targets are parent-reported work in progress, not delivered/adjudicated group counts.",
+      "independence": "New author/source roots still undergo carrier/conversation/augmentation unions. Twelve authored root names or fresh history do not automatically establish12 independent groups."
+    },
+    "review_protocol": [
+      "Freeze exact full packet, all source inputs, semantic guidelines, lineage union/closure manifest and hashes before reviewer dispatch. Preserve source-only input fields; keep weak labels, prior reviews, predictions and sampling strata inaccessible.",
+      "Two fresh non-author reviewers each annotate every member of the SAME versioned packet independently. Neither sees the other answers before their annotations freeze. Store actual identity, exposure and completed-member evidence; no fabricated blind registry.",
+      "Guidelines may define axes using separate illustrative examples, but must exclude prior row-specific adjudications/answers for this packet. Source-specific decisions in designer documents are adjudicator material, not fresh-blind reviewer input.",
+      "Parent adjudicates disagreements after both reviews freeze; ambiguous primary labels remain masked rather than forced to reach a quota. Canonical unions and full closure apply before final support counts.",
+      "Any supplemental member or lineage union discovered later requires packet revision and review coverage for affected full groups; keep previous annotation snapshots. All annotation work remains TRAIN development, not calibration or qualification."
+    ],
+    "different_group_floors": {
+      "primary": "At least20fully reviewed/adjudicated positive canonical groups AND20additional negative groups outside positive group set. Mixed groups count once overall; preserve any stricter explicit GPU-adapter floor pending parent reconciliation.",
+      "date": "At least20fully reviewed/adjudicated groups containing complete dates AND20containing genuinely unfinished dates. The same paired canonical roots may support both classes. They count once in loss/independent-unit denominators; do not require20additional negative date roots.",
+      "runtime": "Neither floor qualifies live ingress, risk/coverage, bank permission or generalization. GPU remains closed until actual data/CPU/control and parent-budget gates pass."
+    }
+  },
+  "latest_amendment_id": "checkpoint-07-source-bound-regression-vectors",
+  "checkpoint_07_vector_boundary": {
+    "artifact": "analysis/learned-layer-design.checkpoint07-vectors.json",
+    "namespace": "designer-engineering-regression",
+    "allowed_use": "Source-meaning engineering regression/control, not new TRAIN/calibration/qualification labels.",
+    "axis_masks": "Specified in each semantic_expected. Known act or linguistic completion does not imply target/ref normalization/authority. Conflicting primary identity may remain masked, including R13 new amount plus affirmation.",
+    "independence": "All descendants of original frozen witness/source families; cannot count50vectors as50independent groups.",
+    "admission_unchanged": "Existing81review16positive/19additionalnegative,7ambiguous,closure missing0073,zero adjudicated gold. Fresh DATE/primary collection reviewed separately."
+  },
+  "checkpoint_08_candidate_review_masks": {
+    "artifact": "analysis/learned-layer-design.checkpoint08-detector.json",
+    "mask_contract": {
+      "review_flow": "Let the two fresh TRAIN source-only reviews finish without feeding them these predictions. Parent checks packet hashes, complete membership, independently annotates/adjudicates disagreements. Freeze overlay and canonical unions. Then separate absent-region/unmatched-candidate audit; no pretend blind registry after exposure.",
+      "exact_positive": "Review says valid date expression at exact span, present mask true; linguistic complete/unfinished agreed; source/private isolation and feature window eligible => completion mask true. Includes complete vague, negated, quoted, conditional, invalid calendar and unresolved anaphor when linguistic finishedness is independently clear.",
+      "detector_miss": "Count as pipeline false negative against reviewed true span. No example for conditional head loss, no fabricated candidate from label spans at runtime, no false label absent.",
+      "unmatched": "Mask validity/completion/polarity until separate review. Three oldDEV overlaps are boundary mismatches, not automatic negative validity. No positive label from nearest overlap; no negative from missing gold alone.",
+      "reviewed_negative": "Only independently reviewed no-date/competing-kind region supports validity negative; source annotation must cover candidate region and kind. Such negatives test proposer/abstention and are not unfinished DATE training labels.",
+      "capability": "not_implemented, no_candidate, boundary_ambiguous, reference_unresolved, untrained_head, source_unqualified and normalization_invalid are distinct diagnostic reasons. Existing wire placeholders do not mean semantic ambiguous ground truth.",
+      "old_DEV_overlay": "Potential complete-expression/reference distinctions for0156/0160/0161/0162/0167/0168/0175 require separate review. Do not recode their old ambiguous labels or claim improvement without new adjudication; quoted0158 and quoted recipient0159 show scope failures independent of finishedness.",
+      "qualification": "OldDEV and theseTRAIN diagnostics exposed. Freeze detector/features/head/decoder/schema before fresh calibration-fit then independent risk/qualification groups. No newDEV labels read here; once used for development it is not qualification."
+    },
+    "span_contract": {
+      "unit": "Maximal contiguous local temporal expression with determiners/internal complements, optional year and open operators; keep terminal truncation punctuation only when it belongs to that expression. Exclude unrelated final sentence punctuation, introducing payment verb and unrelated following clause. Leading on is outside a full expression but retained as the sole evidence of an open date complement when no content follows. This convention is a proposed annotation contract, not a retroactive redefinition of old scores.",
+      "coordination": "A range/alternative remains one candidate when syntactically linked (from A to B / either A or B). Separate same/sibling-target clauses remain separate; source correction edges retain direction. Ambiguous ownership produces boundary/scope mask, not whole-turn union.",
+      "cross_clause": "Do not broaden over hard semicolon/new sentence/sibling clause. If relation genuinely spans clauses, keep atom spans plus unsupported composite relation sidecar and mask the narrow binary classifier; old0161 cannot be recovered by swallowing its whole turn merely to match authored span.",
+      "ambiguity": "No currency/date canonical value inferred by this proposer. Date-like word May in a modal clause, standalone number, surname or identifier stays unsupported/competing unless local syntax supports a date. Question role is support, never permission to label every answer a date.",
+      "limits": "Input<=4096codepoints, <=16candidates and<=12localclauses; candidate<=512codepoints. Overflow abstains without truncating candidate list. Keep local clause IDs independent of128character source turnID.",
+      "security": "Preserve R3 security-field isolation and whole-turn lexical masking when trustworthy field separation unavailable. No source secret, DOB/token or sibling secret text in DATE features, including question text. Never treat security_date as payment_date."
+    },
+    "readiness": "CurrentR3 candidates cover<=7canonicalDATEgroups total. Actual20/20aligned reviewed class floor closed even before review. No original label changes or invented independent gold."
+  }
+}

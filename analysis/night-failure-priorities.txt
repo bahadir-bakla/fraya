@@ -1,0 +1,176 @@
+NIGHT FAILURE PRIORITIES — FIRST ROUND
+First-round offline failure-analysis sidecar for source-generic fresh A6/B10; no new scenarios or Opus review
+Generated: 2026-10-11T01:28:35.362843+00:00
+A4 original: 11/30 calls; 2/10 scenarios pass all three. B9 pinned authored group: 2/3 calls; 0/1 all-three variants. Original failures and expectations unchanged.
+A5 local: 9/11 literal-event observations, two qualified invalid-date expectation mismatches. A5 original hosted subset: incomplete, zero scored observations; not 0/9.
+
+1. component_retention [routing, persistedvars] — B10; retain equivalent A6 guards
+Evidence: B9 structurally readable c=0/u=date rows contain a complete valid amount and d=16 fragment. Complete-date validation runs before completion handling, discarding 213 and retaining cached 640. The next partial update unions need into amount,date. This is a consumer ordering/state merge defect; the extractor correctly identified the unfinished date.
+Mechanism/fix: Validate row structure and resolve target first; classify c/u next. For each complete component, validate and stage its new value even when a sibling component is unfinished. Never run complete-date parsing on a declared unfinished d. Set need from the actual correction scope minus explicit newly completed components, rather than unioning obsolete need. Invalidate active readback/consent; retain unrelated targets and independently valid components. Only a complete date plus amount passes policy checks and generates a new joint readback; a later clear confirmation authorizes writes.
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/85/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/86/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/93/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/95/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/96/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/97/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/104/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/106/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/108/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/115/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/119/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/126/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/150/message
+  Control: Replay saved raw86 then raw97 through the new B10 producer/consumer grammar: pending amount=213, need=date only; no d=16 eligibility, no extra amount question and no write.
+  Control: Replay later raw119 and raw141; all complete sibling terms persist and produce the corrected full readback. A missing or qualified yes cannot write.
+  Control: Reuse existing A5 unfinished-amount/date-only, both-completion orders and above-full rejection controls without changing their expectations.
+
+2. producer_contract_and_phase_priority [extractor, routing, malformedJSON] — A6 and B10 generation boundary
+Evidence: A4 compound third-party/purpose, complete security/question and support-decline/question events hit rejection or payment recovery. Lower-instalments requests become unfinished amounts or general-human routing. These account for ten failed A4 observations, including two PUB03 observations with actor/context uncertainty. A5 local literal-event checks repair these paths but do not execute the producer. Its producer description simultaneously excludes comma characters and permits ordinary punctuation; some explanatory examples have parenthetic admin annotations outside the row grammar.
+Mechanism/fix: Generate one explicit event contract manifest (kind set, keys, completion states, delimiters, value grammar and literal examples) with consistent producer and decoder. Process the current phase's complete nonpayment intent according to input rule precedence before payment-fragment handling. Preserve independent administrative questions until spoken. Valid security plus a question submits only the current complete answer; an AI question is not a human request. Avoid overwriting a restructuring/support queue with a later generic acceptance. Explanations belong outside literal examples. Whole structure remains atomic for authorization; staging uncommitted independently valid fields does not grant consent.
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json#/call/messages/7/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json#/call/messages/28/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/4dff7243-e7cc-4160-89a4-2dda36a22914.json#/call/messages/54/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/7ef78672-39b9-4ec5-b19f-1fbfae0a7023.json#/call/messages/71/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/14117e48-7d50-43a1-8f4a-7fa64c16c973.json#/call/messages/62/message
+  Pointer: analysis/candidate-a5-contract.json#/source/producer_literal_description
+  Pointer: competition/runs/20261010-234004-77e29f/codex-stress-a.workflow.json#/workflow/nodes/talk/extraction_schema/0/description
+  Control: Use the delivered A4 ordinary utterances and literal actual minimal extraction outputs, not manually enriched rows. Check primary event, administrative response, immediate next question, tool route and request body.
+  Control: For each advertised kind and active phase, copy the literal producer example into the actual decoder. Positive natural punctuation must agree with the documented delimiter grammar; malformed, duplicate-key and unknown-target negatives remain rejected.
+  Control: When parent runs the extractor, separately test actual outer JSON and inner event parsing. A hand-authored consumer pass does not qualify extractor success.
+
+3. whole_date_and_calendar_classes [extractor, calendar, routing] — A6; regression gate for B10
+Evidence: A4 PUB04 and PUB07 reject complete yearless/spoken ordinal dates; PUB06 loses a newly stated Friday and confirms cached today. Seven A4 failures are associated with these mechanisms. PUB07 proves normalization/clarification failure, not broken holiday arithmetic. A5 supports normal forms locally but repeated impossible/conflicting dates fall through the vague-date deadline counteroffer (two immutable local expectation mismatches). The brief does not explicitly require the strict remain-unresolved behavior of those controls.
+Mechanism/fix: Normalize one unambiguous whole complete expression using runtime now, the input's relative-date definition and policy calendar. Preserve a newly asserted date on acceptance before readback; an omitted amount may refer only to that target's actually spoken valid offer when no amount correction is unresolved. Classify exact_valid, vague_period, unfinished_component and invalid_or_conflicting separately. Apply one-exact-day fallback only to the source-defined vague class. For other repeated invalid forms retain a bounded safe clarification or separately labelled valid counteroffer with fresh consent only when justified by the input; disclose policy uncertainty rather than inventing a mandatory close outcome.
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/9f450d7b-afff-469e-b0ab-c8ea391d1bb8.json#/call/messages/62/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json#/call/messages/61/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json#/call/messages/81/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json#/call/messages/72/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json#/call/messages/73/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json#/call/messages/81/message
+  Pointer: analysis/candidate-a5-contract.json#/date_helpers
+  Pointer: analysis/candidate-a5-contract.json#/faults
+  Pointer: analysis/candidate-a5-contract.json#/parent_policy_qualification
+  Control: Use existing source helpers and PUB04/PUB07 date spellings, with this/next weekday, punctuation, holiday roll, date after deadline and per-product clipping computed from supplied policy; never hardcode witness dates into the guide.
+  Control: Existing PUB06 acceptance must read back the newly expressed date, then wait for subsequent confirmation.
+  Control: Preserve both A5 strict invalid-date expectations as mismatches unless a fresh candidate meets them; separately report whether the source actually mandates them. No malformed-date acceptance or consent-bypass claim is supported by A5.
+
+4. persistent_receipt_and_write_gate [persistedvars, routing, infra] — A6/B10 validation gate; already in guide
+Evidence: No stale-receipt loop is established in pinned A4/B9. B9 rep3 receipts have empty awaiting and consumed receipt 3 before correction recovery. A5 checks use a merged persistent store but shared execution namespaces; they do not certify the hosted sandbox. Preserve this preventive control rather than diagnosing a new receipt failure.
+Mechanism/fix: Carry forward explicit neutral patches for consumed completion, response, event and consent variables. Bind each receipt to one outstanding operation; repeats cannot advance retry/verification or record counts. Preserve counters and authoritative bank success state. Helpers return speech/route or set vars explicitly. Apply exact pending/readback/consent guards before every bank write and source-derived closure.
+  Pointer: analysis/candidate-a5-contract.json#/method
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/93/message
+  Pointer: competition/skills/build-phone-agent.md#
+  Pointer: competition-v3/build-the-builder/docs/tools-and-code.md#
+  Control: Reuse persistent merged-store sequences for wrong/corrected security, swapped-day hint, repeated stale completions, missing/failed receipts and multiple promise writes. Assert next spoken line and actual graph route after each hop.
+  Control: Confirm distinct outer transport failure and valid bank ok:false paths; retries remain source-limited, acknowledgement follows that write's ok:true, successful earlier product records survive later failure.
+  Control: Test graph hooks under separate globals/locals where applicable; local shared-namespace success is insufficient for a hosted-sandbox claim.
+
+5. immutable_evidence_and_attribution [actor, judge, infra, extractor, malformedJSON] — Parent-owned validation and promotion gate
+Evidence: A4 PUB10's two original failed judges cite the mandatory call-recording opening, while the saved promise acknowledgement follows a failed write and one successful retry. B9 rep3 ends immediately after the correct final readback without confirmation; its actual state-retention defect adds turns but does not establish why the actor ended. A5's original nine-call subset has zero scored observations and is incomplete, not 0/9. B9 official original public run summaries are distinct from this authored 2/3 run.
+Mechanism/fix: Retain original score, judge, actor script and expected records. Report controller/extractor, actor adherence, judge disagreement and infrastructure coverage separately, alongside actual agent/version and source hashes. Do not delete recorded-call disclosure, manufacture missing consent, recast missing repetitions as agent failures, or infer unseen/voice behavior. Parent can validate fresh A6/B10 against unchanged original public and authored tests; no sidecar rerun or platform action occurs.
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json#/call/messages/5/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json#/call/messages/97/message
+  Pointer: local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json#/ledger/calls
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/judge
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/endedReason
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json#/call/messages/150/message
+  Pointer: local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/personas/a5eed020-a30a-40f7-b35a-eb2d601e81a0.json#
+  Pointer: analysis/rd-a5-hosted-incomplete.json#
+  Control: Require exact source/version bindings, completed score and ledger+ordered transcript for each claimed observation. Keep original A4 11/30 and authored B9 2/3 immutable.
+  Control: Compare each delivered actor turn with its authored script; do not use the judge's 'otherwise correctly' wording to erase a independently supported controller defect.
+  Control: Distinguish outer extraction_error, parse failure of an extracted inner JSON string, readable tagged-row format rejection and downstream policy result. A format failure does not test below-floor behavior.
+  Control: Future unseen-brief checks vary only supplied policy inputs and reuse invariant controls; this sidecar generates no new scenarios or Opus review.
+
+CONCISE SHARED-GUIDE PATCH (parent-owned; not applied)
+Target: competition/skills/build-phone-agent.md
+Expected SHA256: 8d4cc3dba0c805594f5579299ecf1370812beeba8c5bd42de794e6a41cb7039c
+append_after_exact_paragraph at current line 19: Avoid wide positional rows filled with consecutive empty delimiters: the real extractor can insert an extra empty field even when the semantic answer is correct
+Generate a compact explicit producer/consumer contract manifest with the exact kind set, keys, delimiters, value grammar, completion states and literal examples. Check that every advertised example decodes unchanged and every consumed field is advertised; keep annotations outside literal examples. Distinguish local decoder tests from actual extractor observations. Any ordinary punctuation allowed in natural dates must also be allowed by the event value grammar without stripping malformed syntax or inventing missing values. Resolve the current phase's complete primary intent with the input's precedence, retain independent administrative questions until spoken, and apply payment completion guards only to actual payment corrections.
+
+replace_exact_paragraph at current line 47: For a structurally readable incomplete event, process the declared unfinished component before applying complete-date validation
+Validate event structure and target scope before handling its completion state. For a readable incomplete event, classify the declared unfinished component before applying complete-value validation. Retain each independently complete valid component for that same target even when another component is unfinished; a declared unfinished date fragment is neither a usable date nor a reason to discard a complete amount. Update the correction's required set by subtracting explicit newly completed components, rather than unioning obsolete missing flags or reviving superseded offers. Preserve unaffected target facts, invalidate active readback and consent, and clarify only remaining components. Malformed structure or ambiguous scope authorizes no write. Once all required components are complete and policy-valid, speak a fresh full readback and require later clear confirmation. Validate this with the actual delivered event grammar, persistent merged state and next spoken question, including complete amount plus unfinished date and both completion orders.
+
+append_after_exact_paragraph at current line 59: Normalize complete ordinary date expressions at the producer/consumer boundary using the call's supplied date context: month names and spoken ordinals, omitted years, weekday plus day ordinal, and the policy's this/next weekday definition
+Keep date normalization outcomes explicit: valid exact expression, source-defined vague period, unfinished component, and invalid or conflicting complete expression. Do not silently count impossible dates or contradictory weekday/date pairs as repeated vague periods. Apply fallback and clarification limits only to the classes covered by the supplied source. If the source leaves repeated invalid-input behavior unspecified, record the interpretation; any distinct valid counteroffer still needs its own complete readback and later consent. Audit expectations remain separate from source obligations. Test the boundary independently from business-day, holiday and deadline arithmetic.
+
+append_after_exact_paragraph at current line 103: When a later repair phase provides official case failures/transcripts, diagnose the actual root cause: mapping, routing, code exception, missing policy, honesty, or latency
+Before claiming a repair, keep separate evidence for actual extractor output, decoded controller behavior under persistent variables, bank receipts/ledger, actor adherence, judge agreement and infrastructure completeness. Preserve original scores, scripts, expected records and failed judges with exact source/version pointers. Local literal-event checks do not qualify the producer or hosted sandbox, and missing repetitions are unobserved. Retain mandatory opening disclosures when a judge confuses them with write acknowledgements. Reuse invariant controls against the current run's source-derived policy; do not embed witness customer values or practice calendar constants into this shared guide.
+
+CLASSIFICATION / VALIDATION CONTROLS
+extractor: A4 emitted semantically wrong/missing fields or mismatched compound shapes. B9 c/u correctly identifies incomplete date. Producer is outside A5 local literal-event audit.
+malformedJSON: {"pinned_extraction_error_count": 0, "refs": [], "qualification": "Readable tagged-row date fragments and yearless dates are not malformed JSON. Outer and inner parse boundaries remain separate; broader archive evidence is only supplementary."}
+persistedvars: B9 pending-component merge defect is observed; stale receipt replay is preventive/unproven in pinned data.
+routing: Source-priority loss and wrong branch/context are observed in A4; partial-date ordering is observed in B9.
+calendar: A4 normalization failure is observed. Canonical holiday math failure is not established. A5 invalid/vague fallback is a local design mismatch with a qualified source gap.
+actor: B9 rep3 actor ends after matching readback instead of required confirmation; cause unknown. A4 PUB03 includes incomplete delivered speech and subsequent question ambiguity. No ASR inference.
+judge: A4 PUB10 opening/promise-recording confusion is supported; original failed verdicts remain. B9 judge agrees with terminal failure but its otherwise-correct claim overlooks the separately evidenced recovery defect.
+infra: A5 original subset is incomplete with zero scored observations. Do not assign 0/9 or agent-fault causality to RunnerError. This sidecar does not check current platform state.
+
+PARENT FIRST-ROUND ORDER
+1. Apply the four focused guide operations, retaining existing source-policy/receipt guards. Generate fresh A6 and B10 from their original inputs; provenance and coverage must name source rules and actual code paths.
+2. Run literal actual producer examples and saved delivered-event sequences through the new controller, including component retention, phase priority, new-date acceptance and persistent receipt/graph checks. Report actual extractor observations separately.
+3. Parent runs unchanged original three-repetition A public protocol and separately unchanged B grouped authored protocol; retain every failure and validate call/version binding plus ledger/ordered transcript. The sidecar runs no platform test.
+4. For an unseen brief, derive calendar, limits, priority, fields, outcomes and queues only from that brief/API. Reuse the boundary and state invariants, with unresolved source semantics disclosed. No claim of unseen success follows from A/B witnesses.
+
+Collector: {"run_count": 24, "collection_complete": false, "bytes_read": 66978817, "failure_group_counts": {"policy_receipt_ledger_failure": 1, "infrastructure_incomplete": 46}}
+Collector is supplementary archive triage; its format-error evidence does not test downstream policy. Original collector reports retained.
+
+SOURCE HASHES (all unchanged after analysis)
+competition/skills/build-phone-agent.md sha256=8d4cc3dba0c805594f5579299ecf1370812beeba8c5bd42de794e6a41cb7039c
+competition-v3/build-the-builder/briefs/brief-a.md sha256=d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7
+competition-v3/build-the-builder/briefs/brief-b.md sha256=c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550
+competition-v3/build-the-builder/tools/openapi.json sha256=9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8
+competition-v3/build-the-builder/docs/tools-and-code.md sha256=56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711
+competition/builder.py sha256=460945fe07527a6c1f8022596a01e3822d94fd93bca413a822da96e9dea95fea
+local-runs/autonomous-rd/official-a-v4-1791663733/results.json sha256=5e91ca47980580de008bc9df4bdd9eeab83d8f0b89ebba6fcb90f69c9be0d025
+local-runs/autonomous-rd/official-a-v4-1791663733/manifest.json sha256=b87762dddc2a1cc9a061c7f8a3506dc4f726b7ea4d96bc064af4e9885a490ec4
+analysis/official-a-v4.json sha256=b8b4fd5092942d3a099b55ed10e5ef424f82b432a6ecfe1bfa94d8bdf90f4303
+analysis/candidate-a5-contract.json sha256=7ca0b28379f6b39bde77dc03345b05d2dc3ffce598c3f0d248697ece716d54c9
+analysis/rd-a5-generation.json sha256=bc64a0889399a26d52996fd0bdf0ff1304da6555d45d834cc38763bf78a9cbea
+analysis/rd-a5-hosted-incomplete.json sha256=5190c4241c42cb9175fcfc3e31e940a9fe7a624b4b6b7d67a474d51931a02f6c
+competition/runs/20261010-234004-77e29f/codex-stress-a.workflow.json sha256=24397f08e2cb464b9445b2797867e4e2a637e4e95a7e38eec65a4d2bb47cf8c3
+competition/runs/20261010-234004-77e29f/status.json sha256=2214e365133dc32ada328a38ce515a27f94e81c774674544d9a1f32342bf1d4d
+local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/results.json sha256=482a360766784212147c4c88d02a00ef7e1de1a2c1d5308678edc54b492350ca
+local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/manifest.json sha256=68f53f687a57dba30f75189c2b704457fcd548134f5dcfd1b5e7454204a5ce6b
+analysis/rd-b9-hosted.json sha256=2131c127b14c30fc2ae0bee66a2963b44aeac69df95da9802101c296148860e1
+competition/runs/20261010-232341-090e9c/codex-stress-b.workflow.json sha256=1b7a8e05d0808b41846719cbfeabff95b0414d501eda70f9d445257f26b729a7
+analysis/failure-triage.json sha256=580fb6b926eef48511145377cdf7b618a2e37078a662b1054b98750fd8b97b0a
+analysis/failure-triage.txt sha256=397521b2c719fbbeec60aedaaebfc0b854e1851d00afe3e3cb2d870478a5c611
+local-runs/autonomous-rd/official-a-v4-1791663733/79bfff6a-def8-4c31-a936-2748e97e7142.json sha256=e72530d8aefef7f6a7fb057d966c5bdc2361a0f16f343f0675c2b276015ccc39
+local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json sha256=4e22b0cbeca1bc0472101a3b6f2106bcb2ca174824049b5c87340b9c8055ca79
+local-runs/autonomous-rd/official-a-v4-1791663733/283f29fd-ea03-4bd3-9cac-241c1647430c.json sha256=908671994b16526caa0829fee0375f4812201dc8a4959a3f2eda01e5ae46b96b
+local-runs/autonomous-rd/official-a-v4-1791663733/9f450d7b-afff-469e-b0ab-c8ea391d1bb8.json sha256=a11b17a59ca7271909b2b4806de0c4ef25b8cb9652dc0b0b1ad308ce91efd40d
+local-runs/autonomous-rd/official-a-v4-1791663733/7ef78672-39b9-4ec5-b19f-1fbfae0a7023.json sha256=8040a7fd4fa31d113c8e352862fe968af0c4091cb1a69c0ec27faba47c07215f
+local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json sha256=a5d4be4728d28e7db1858917923131502c4357259a4d629c9a3b26927cf3e726
+local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json sha256=76bfd25c9367b417da3d95a10ccaab14e0072aa2a8eb776d3a818cc5a58a58ad
+local-runs/autonomous-rd/official-a-v4-1791663733/9591f538-0fcb-49ca-91b3-a5a4f79b343c.json sha256=42f79b603ee22679c12b45a1dcd3adb3a20b21ac91e8cbd189da7be19dbae4ce
+local-runs/autonomous-rd/official-a-v4-1791663733/14117e48-7d50-43a1-8f4a-7fa64c16c973.json sha256=8081926d95e0388d3fd8a6a32970ef94ca7d9959136e5740cc53a2e3ce240ef0
+local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json sha256=ff2adc051b8613a4d499176ae3fd7effde2d5a9e2978c0703f79faf3682bd8df
+local-runs/autonomous-rd/official-a-v4-1791663733/78da1f6e-d83a-4220-87a8-878c2f32a5e6.json sha256=e7796d03cc7c9a601432eee2e08407f7e7ccafab4ee0a7a039faaa1f18e8c369
+local-runs/autonomous-rd/official-a-v4-1791663733/c77b2cdc-ea6b-4a9a-a8ac-caf6a0dc1c00.json sha256=43e90d2fb0bc4a1f25740360a1461c6cb284f7ec71ae3e0e30e12e346d12863e
+local-runs/autonomous-rd/official-a-v4-1791663733/d9cafea4-02b7-4f61-826b-301e1ba3f259.json sha256=9914d347f5216a857a45170e1a82c4e1eb2112fd7992026a3e67eafa5f3d9388
+local-runs/autonomous-rd/official-a-v4-1791663733/c6b8a030-c041-4986-a330-a266c5710bc7.json sha256=d4b7fc6c2934aa6e3d903718e4380241b212b45c46b7ebaf53e6354380681aa8
+local-runs/autonomous-rd/official-a-v4-1791663733/311ae7c3-acdf-4847-acee-7854e63c1b0c.json sha256=2d3762038d7bd043f4463ba6a18eabaf33e34a051c3f413885b0867f5838e536
+local-runs/autonomous-rd/official-a-v4-1791663733/329c23cd-b6c6-43b7-91fe-8d00f208ea19.json sha256=1828ad2119ace78b6bbe1e15161302947f3b15ac13da9423f74774d34ec55271
+local-runs/autonomous-rd/official-a-v4-1791663733/ee16aa8f-96a9-4bca-a94a-b2d4ad1dc279.json sha256=3f626282887dd176666d8cdb096cbba4efbc5e54de5b200f0e83f0393c5393ed
+local-runs/autonomous-rd/official-a-v4-1791663733/a15402e2-0328-4028-b324-8a3e619b1d94.json sha256=10bf530762ad8419982497a1385a3e510e60c7432688b407ccdd63f03acef519
+local-runs/autonomous-rd/official-a-v4-1791663733/e36da9a6-c163-4933-9c4a-e5d20af9b748.json sha256=23022d8be5f901eb78978c386aa0d0ae8b1bfae90a682ad94b4bbe3f37a18265
+local-runs/autonomous-rd/official-a-v4-1791663733/fd0c0046-6dcd-482d-82f3-fa4175b027b0.json sha256=8f305ae925adcda60f04844ec3170b7b5204f2b70671054371433f05737469fa
+local-runs/autonomous-rd/official-a-v4-1791663733/03dc69dc-1d4b-44c9-99a7-b59e3e412949.json sha256=fb96215562378f9c90ca45729f806b3c9cf19cfc9619e52875ef82ef0f5d013c
+local-runs/autonomous-rd/official-a-v4-1791663733/ed720ae5-957c-44ac-82f6-e4722172ea7a.json sha256=54021c805056bf29069d8b6cf3c94871bb636b441356622731da307d0075002a
+local-runs/autonomous-rd/official-a-v4-1791663733/4dff7243-e7cc-4160-89a4-2dda36a22914.json sha256=15b89324fd7bf52a4f36d5b19905c4ea77b35677550fa9273b3b28c2cc8cc9be
+local-runs/autonomous-rd/official-a-v4-1791663733/4d1b8d82-e68c-433c-a4f5-da9abb6d84a3.json sha256=1f00db0fbe00ae9583d978efca2d90c71f3e1cb15eaa3dd513aff5d50af50176
+local-runs/autonomous-rd/official-a-v4-1791663733/c5f058b4-bdfe-46cb-a302-26b4d13107a9.json sha256=1514f1d678ee268c88b563f13ef3311f1811892545aa368322ec2e9926470836
+local-runs/autonomous-rd/official-a-v4-1791663733/3274b005-4aad-4aa2-9969-8bf5fd41821f.json sha256=88123460957c4a179348782a7749fef0aa4e825690b00f6dc1ac839501728e49
+local-runs/autonomous-rd/official-a-v4-1791663733/1d24b0f4-3e12-42d9-b5ac-f2345d3fb82f.json sha256=15e850fa27d4aff54a09d89bc88acb079a620f3f250d3d37d6570d8eff952d8d
+local-runs/autonomous-rd/official-a-v4-1791663733/f1157490-c580-44d0-86b8-fb27d20163b0.json sha256=4532fce0d01ad1b28f442f18948a1046aaeb1353f33afe021497724946967caf
+local-runs/autonomous-rd/official-a-v4-1791663733/ab74e576-ccd1-41b5-b7bb-54b24447fd56.json sha256=faf317b9306bf08752bb97ab5f80ccc64c508e070518e1ce3ccc8dcbc7473aa8
+local-runs/autonomous-rd/official-a-v4-1791663733/ac3cc4d6-68f3-4acf-b4a7-fef70b0abe59.json sha256=56b4ea49f0e1118da9eedb4eb7c7831b9f0e6961ad7457d01c82ccec45326b39
+local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0001.json sha256=8805ef06bdf996866931f4cb331445fba7ff66b0a8fb5de56d216b9610969a1c
+local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0002.json sha256=2bc04c74f750c391a24f5025a7102bdf3459b43591c560c9b59faca5599314ff
+local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json sha256=b4146e255ced4f4833e5e238eccb872de63195041d6130f145cb60c72609de7d
+local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/personas/a5eed020-a30a-40f7-b35a-eb2d601e81a0.json sha256=7369a2e69267dee6672e29ddc8911ad73e2e619ecd7e50f035cf124d657844f4
+integrations/customer-datasets/failure_triage.py sha256=4a8803cd9bbfbb375984bf58e674234ee500a73f66d342f95b94d5cde9f68710
+
+Writes: analysis/night-failure-priorities.json, analysis/night-failure-priorities.txt; optional owned script only.
+No platform/network/hidden/realdata/scorer/candidate/guide/git actions. No duplicate Opus review or scenario generation.

@@ -1,0 +1,128 @@
+TRAIN-FIRST FROZEN R4 HANDOFF
+
+Report analysis/night-learned-dialogue.v3.source-r4.json
+SHA256 d1b1057b7e9bfce44e119df1aee2a1c01555913ea837b1e018f8afbbe0743de4
+Runtime integrations/learned-dialogue/runtime_frozen_r4.py
+SHA256 def3b2bf1934f269424a069c66db6424bfb5a2a2e455e9e63a8001062854e246
+Source is frozen for independent audit. New DEV remains unread/unexecuted.
+
+Versions and interfaces
+detector date_expression_scanner.r4.2
+features date_local_window.r4.2.cp48.feature384
+Left/right48original Unicode codepoints, within actual local clause.
+Actual candidate<=512codepoints; grammar<=80tokens per expression; <=16candidates,
+12clauses,4096turn codepoints. Overflow retains full diagnostic list/count.
+
+detect_candidates_r4(raw_text,question_role,targets=None,security_fields=None,
+                     locale="en") -> typed candidate diagnostics
+date_features_r4(snapshot,actual_candidate,source_admission)
+    -> features/eligibility/reason/version/source-window bounds
+align_date_r4(snapshot,detector,independent_source_annotations,source_admission,
+              independently_reviewed_negative_regions)
+    -> exact-span alignment table, masks and missed source annotations
+score_date_r4(snapshot,actual_candidate,source_admission,date_bundle)
+    -> raw score/completion candidate/eligibility, always decision=abstain
+predict_r4(snapshot,TrustedCallV3,independent_registry,independent_state,
+            frozen_wire_schema,source_admission=None,date_bundle=None)
+    -> (semantic_proposal.v1,diagnostics)
+Exported predict_context_r4_embedded(snapshot,authoritative_binding,
+            independent_source,registry,authoritative_state,
+            source_admission=None,date_bundle=None) -> same tuple
+
+Actual implementation
+Bounded source-offset token scanner and generic finite DATE productions for
+day+month, month+ordinal, spoken year, ordinal of month, weekday+calendar,
+relative periods, business-day/date references, before/after, ranges and
+alternatives, and genuinely open of/before/after/to/or/determiner complements.
+Dependent expression is maximal classification unit; child atoms remain sidecar,
+not independent training examples. One optional relation nesting initially;
+deeper phrases preserve a maximal unsupported diagnostic, not inner-only dates.
+Terminal hesitation may stay ambiguous, without mechanically labelling unfinished.
+Unrelated for/in/admin/time predicates are not swallowed as temporal operands.
+Identifier/clock/money conflicts retain competing type and boundary masks.
+No exact calendar date, money normalization, canonical policy value or permission.
+
+Shared extractor is used unchanged by candidate-table builder, score and export.
+Features: scoped candidate/left/right word1/2 and bounded character3/4, open syntax,
+clause/expression/turn boundaries, clipping and optionally admitted phase/question.
+No product/call/turn IDs, hashes, revisions, pending canonical values, gold labels,
+future source, question concatenation or global any-no/not bit enters features.
+Source/privacy/framing checks required. Original event+matching opaque component
+token+independently verified relation required for continuation flag. This only
+marks a relation; it does not concatenate prior text or normalize missing dates.
+Feature version mismatch rejects; frozen v2 heads are not reused on new features.
+
+Actual TRAIN-only audit
+Read only label-free-date-review-packet.json,72rows/22canonical groups.
+Packet SHA2567397467d49bbd557f8cfe3c5b23520049d081addb594e1a6696d749cdaa07808
+R3 produces DATE candidates in12/72rows and7canonical groups.
+R4 produces DATE hypotheses in72/72rows and22canonical groups,78candidates:
+26open/51closed/1ambiguous syntax hints. Engineering source/window fixtures yield
+77eligible candidates and22groups. These are raw unreviewed hypotheses, NOT
+annotated span recall, independent class support, validity or semantic accuracy.
+Actual source annotations read0. Actual reviewed binary/validity masks0.
+Reviewed precision, exact recall and class-group floors UNKNOWN, not achieved.
+No source-authored labels or actual reviewer annotation outputs were loaded.
+
+Exact alignment preserves original reviewed kind/start/end, with no nearest
+overlap label or detector-conditioned boundary clipping. Ambiguous/disputed/
+unqualified annotation remains masked. Missed true spans stay pipeline misses.
+Only separately independently reviewed no-date regions supply validity negatives;
+those negatives never become unfinished DATE examples. Normalization/reference
+need separately verified masks. Unit fixture review flags are engineering tests,
+not real annotation/admission evidence.
+
+Meaningful checks and errors
+59unit/smoke controls passed.50designer vectors native/export outputs identical
+with actual schema/no-authority checks. Export368962UTF8bytes,json/re imports only.
+One literal non-fitted test head verifies numerical score AND eligibility parity.
+File/network/process access blocked during inference checks. No research head fit.
+Verification CPU0.395s; this is not training/encoder performance.
+
+Among8explicit DATE source-span/completion expectations from designer07:
+7actual exact-span grammar-hint matches;1boundary miss:
+LLD07/D04-calendar-numerals-not-amount expects [0:25], while the maximal expression
+omits terminal sentence punctuation. That mismatch is recorded honestly and not
+relabelled. It requires independently agreed boundary convention/adjudication.
+Other primary/act/target/polarity/reference/normalization semantic axes remain
+unqualified/not exercised. Structural parity is not credited as those semantics.
+Designer vectors and independently authored unit expectations are engineering
+contracts, never TRAIN/calibration/qualification gold or hidden-generalization proof.
+
+Fresh native Opus R3 findings incorporated only in R4
+Current readback reference eligibility requires independent source-scoped terms
+assessment, qualified=true AND has_new_terms explicitlyFalse, bound with exact
+types/current turn/call/state/policy/API. Unknown or stale assessment blocks.
+No-candidate detector result never proves unchanged terms. Historical reference
+identity is separate from eligible-current candidate. All wire readback candidate
+IDs remain null because semantic/consent producer is still unqualified.
+Security phase OR security role OR declared question.security_field masks surface
+heads/extractors. Unmarked mixed secrets still require independent privacy evidence;
+no automatic-redactor/deployment claim. Clause-crossing and clipped scope are masked.
+Clipping cannot fabricate expression unfinishedness or delivered-turn tail.
+
+Preservation and isolation
+All26frozenv1 files,26finalv2 files and11R3 source manifest files verified identical.
+R3 JSON/TXT report hashes also verified against designer08source pins.
+R4 initial/guard checkpoints are preserved as separate source ZIPs and exact report
+copies in integrations/learned-dialogue; final source report pins current8files.
+No old model/data/schema changes, guide/platform/original workflow edits, new
+qualification labels, model replacement, secret reads, commits or GPU/cloud calls.
+No Modal files changed/exercised. Parent owns dedicated Modal blockers/fixes,
+review/adjudication/authorization and launch; this handoff grants no remote action.
+
+Sources/license
+New implementation uses source-proven fictional local label-free TRAIN inputs,
+designer08contract and designer07engineering vectors. No public/customer downloads
+or new external model/data source in this R4 task. Data/distribution licence unchanged.
+All existing frozen dataset/model/provenance artifacts preserved.
+
+Next gates
+Two source-only independent TRAIN reviews and parent canonical closure/adjudication;
+freeze true spans/finishedness/reference/normalization separately. Then exact
+alignment and absent-region/unmatched-candidate review, recount >=20fully reviewed
+canonical groups per complete/unfinished class on actual eligible detector spans.
+Only then authorized bounded CPU fit/controls. DEV may be a separately declared
+diagnostic after this source freeze; it remains unread now and is not qualification.
+Raw72/72coverage cannot satisfy the review floor or prove policy correctness.
+All proposals abstain, all acceptance/training/GPU gates closed.

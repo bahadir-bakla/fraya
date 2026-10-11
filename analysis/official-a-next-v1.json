@@ -1,0 +1,56 @@
+{
+  "scope": "unchanged_original_public_A_three_repetitions",
+  "manifest": "local-runs/autonomous-rd/official-a-next-v1-1791687167/manifest.json",
+  "manifest_sha256": "b1cf694c97538fef52b08182d6c067973ab868944b587e74d44df06a665ca64d",
+  "results_sha256": "e8665890c10fb95d58933656555cbf5c39aa7b010dd6e9a15d07c95d2dd86bf2",
+  "export_sha256": "e27c23d35efbed473fef0a31f6567ca99ef1eb181bdc53bf42325706a281c71a",
+  "agent_id": "aa3d05ae-e605-4973-9c9f-dfabc3b995f6",
+  "version": 1,
+  "all_actual_versions_verified": true,
+  "passed_calls": 27,
+  "total_calls": 30,
+  "all3_passed_cases": 9,
+  "total_cases": 10,
+  "failures": [
+    {
+      "rep": 1,
+      "case_id": "PUB-10",
+      "call_id": "8e39de7b-fc40-475f-912b-682d47c001ff",
+      "failed": [
+        "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+        "promises [], expected [('p1', 365.0, '2026-10-16')]",
+        "conversation: The call failed to meet the success criteria for the following reasons: - The 'create_promise' API call failed with a 'service unavailable' error, and the agent did not attempt a retry. As a result, there are zero promises in the ledger instead of exactly one. - The agent said the word 'recorded' in Message 0 ('this call is recorded') as part of a standard disclosure. While the call was not ultima"
+      ],
+      "classification": "documented_HTTP500_no_posthook_retry_missing",
+      "evidence": "local-runs/autonomous-rd/official-a-next-v1-1791687167/8e39de7b-fc40-475f-912b-682d47c001ff.json",
+      "evidence_sha256": "c3e408622a0b23599b6da0774c42b758e2fbea4acd58552a724541a8060839d7"
+    },
+    {
+      "rep": 2,
+      "case_id": "PUB-10",
+      "call_id": "114f3c52-6ea5-431e-83c3-b8bb0df63132",
+      "failed": [
+        "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+        "promises [], expected [('p1', 365.0, '2026-10-16')]",
+        "conversation: The agent failed to meet the success criteria because it did not retry the promise creation after the initial API failure. The system events show that the `create_promise` call failed with a 'service unavailable' error, but instead of retrying to ensure 'exactly one promise in the ledger', the agent immediately proceeded to close the call and told the customer in Message 10 that the promise could "
+      ],
+      "classification": "documented_HTTP500_no_posthook_retry_missing",
+      "evidence": "local-runs/autonomous-rd/official-a-next-v1-1791687167/114f3c52-6ea5-431e-83c3-b8bb0df63132.json",
+      "evidence_sha256": "b2fa5b6e7fed0562c3c113a62e4048fa36fd0b9d9d1746ae7a9414f918a3aba3"
+    },
+    {
+      "rep": 3,
+      "case_id": "PUB-10",
+      "call_id": "08c2ece9-afc4-4b95-9e4b-d896d7466b45",
+      "failed": [
+        "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+        "promises [], expected [('p1', 365.0, '2026-10-16')]",
+        "conversation: The call failed to meet the success criteria for two reasons: 1. The promise creation failed with a 'service unavailable' error and no retry was attempted, resulting in zero promises in the ledger instead of the required 'exactly one promise'. 2. The agent used the word 'recorded' in the opening disclosure ('this call is recorded'), but the call did not end successfully, violating the constraint t"
+      ],
+      "classification": "documented_HTTP500_no_posthook_retry_missing",
+      "evidence": "local-runs/autonomous-rd/official-a-next-v1-1791687167/08c2ece9-afc4-4b95-9e4b-d896d7466b45.json",
+      "evidence_sha256": "578e4e1517d89eae6e8488c9021c356fa6b8cc70f011914d152e4be682f32761"
+    }
+  ],
+  "original_scores_unchanged": true
+}

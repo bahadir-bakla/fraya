@@ -1,0 +1,3881 @@
+{
+  "schema_version": 1,
+  "scope": "First-round offline failure-analysis sidecar for source-generic fresh A6/B10; no new scenarios or Opus review",
+  "generated_at": "2026-10-11T01:28:35.362843+00:00",
+  "elapsed_seconds": 4.5,
+  "authorization": {
+    "owned_files": [
+      "analysis/night-failure-priorities.json",
+      "analysis/night-failure-priorities.txt",
+      "local-runs/autonomous-rd/night-triage.py"
+    ],
+    "platform_actions": 0,
+    "network_requests": 0,
+    "real_customer_data": false,
+    "hidden_access": false,
+    "commits": 0,
+    "candidate_or_guide_edits": 0
+  },
+  "immutable_baselines": {
+    "A4": {
+      "original_call_passes": 11,
+      "calls": 30,
+      "all_three_scenario_passes": 2,
+      "scenarios": 10,
+      "original_final": [
+        {
+          "id": "PUB-01",
+          "family": "Happy path",
+          "passes": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "id": "PUB-02",
+          "family": "Third party",
+          "passes": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "id": "PUB-03",
+          "family": "Identity",
+          "passes": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "id": "PUB-04",
+          "family": "Dates",
+          "passes": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "id": "PUB-05",
+          "family": "Hardship",
+          "passes": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "id": "PUB-06",
+          "family": "Amounts",
+          "passes": 2,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "id": "PUB-07",
+          "family": "Dates",
+          "passes": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "id": "PUB-08",
+          "family": "Already paid",
+          "passes": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "id": "PUB-09",
+          "family": "Restructuring",
+          "passes": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "id": "PUB-10",
+          "family": "Tool failure",
+          "passes": 1,
+          "runs": 3,
+          "pass": false
+        }
+      ],
+      "rows": [
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-01",
+            "level": "easy",
+            "family": "Happy path",
+            "pass": true,
+            "failed": [],
+            "call_id": "79bfff6a-def8-4c31-a936-2748e97e7142",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_3647222e-2ca",
+            "slowest_turn_s": 3.2,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/0"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/79bfff6a-def8-4c31-a936-2748e97e7142.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/79bfff6a-def8-4c31-a936-2748e97e7142.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/79bfff6a-def8-4c31-a936-2748e97e7142.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 420,
+                "date": "2026-10-14"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-02",
+            "level": "medium",
+            "family": "Third party",
+            "pass": false,
+            "failed": [
+              "outcome ('not_reached', 'unclear'), expected ('not_reached', 'callback')",
+              "callbacks [], expected [{'date': '2026-10-15', 'time': '11:00'}]",
+              "conversation: The call failed to meet all the success criteria. While the agent correctly avoided mentioning the purpose of the call, products, or debts, and did not call verify_identity or get_account, it failed to schedule a callback. Despite the user suggesting that the customer could be reached 'tomorrow morning around eleven' in Message 5, the agent claimed it could not understand the answer and ended the "
+            ],
+            "call_id": "abd07891-628c-4f6c-a1e3-4a6bc1d4016d",
+            "tools": [
+              "close_call"
+            ],
+            "customer_id": "c_892f6f66-10f",
+            "slowest_turn_s": 1.8,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/1"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-03",
+            "level": "medium",
+            "family": "Identity",
+            "pass": true,
+            "failed": [],
+            "call_id": "283f29fd-ea03-4bd3-9cac-241c1647430c",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "verify_identity",
+              "close_call"
+            ],
+            "customer_id": "c_b16edcf4-4ea",
+            "slowest_turn_s": 2.4,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/2"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/283f29fd-ea03-4bd3-9cac-241c1647430c.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/283f29fd-ea03-4bd3-9cac-241c1647430c.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/283f29fd-ea03-4bd3-9cac-241c1647430c.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 3,
+            "outcome": "not_verified",
+            "reason": "failed",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-04",
+            "level": "medium",
+            "family": "Dates",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+              "promises [], expected [('p1', 1250.0, '2026-10-23')]",
+              "conversation: The agent failed to meet the success criteria regarding the promise date. Specifically: - The agent did not offer or state the late-band deadline of 23 October as the promise date when the user's requested date (6 November) was too late. - The agent entered a repetitive loop from Message 10 to Message 14, asking for the date despite the user providing it clearly multiple times. - The agent success"
+            ],
+            "call_id": "9f450d7b-afff-469e-b0ab-c8ea391d1bb8",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_2b7cf25e-b7d",
+            "slowest_turn_s": 4.5,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/3"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9f450d7b-afff-469e-b0ab-c8ea391d1bb8.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9f450d7b-afff-469e-b0ab-c8ea391d1bb8.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9f450d7b-afff-469e-b0ab-c8ea391d1bb8.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-05",
+            "level": "medium",
+            "family": "Hardship",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('no_promise', 'hardship')",
+              "conversation: The conversation failed to meet the success criteria because the support team was offered multiple times. While the first offer occurred in [Message 8], the agent repeated the exact offer in [Message 10] and [Message 12] after failing to process the user's responses. All other criteria were met: a single sentence of sympathy was provided in [Message 8], no persuasion was attempted after the user s"
+            ],
+            "call_id": "7ef78672-39b9-4ec5-b19f-1fbfae0a7023",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_b3a4eeb0-651",
+            "slowest_turn_s": 6.6,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/4"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/7ef78672-39b9-4ec5-b19f-1fbfae0a7023.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/7ef78672-39b9-4ec5-b19f-1fbfae0a7023.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/7ef78672-39b9-4ec5-b19f-1fbfae0a7023.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-06",
+            "level": "hard",
+            "family": "Amounts",
+            "pass": false,
+            "failed": [
+              "promises [('p1', 637.5, '2026-10-14')], expected [('p1', 637.5, '2026-10-16')]",
+              "conversation: The agent failed to meet the specific date requirement for the promise. While the agent correctly avoided asking 'how much' the customer could pay and included the 'rest stays overdue' note with the minimum payment offer in [Message 8], the final promise was recorded for Wednesday, October 14, 2026, rather than Friday, October 16, 2026. In [Message 9], the user explicitly requested 'this Friday' ("
+            ],
+            "call_id": "82efb77a-8fc3-4200-93c5-1c969fe24122",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_24528ddb-bf7",
+            "slowest_turn_s": 2.6,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/5"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 637.5,
+                "date": "2026-10-14"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-07",
+            "level": "hard",
+            "family": "Dates",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+              "promises [], expected [('p1', 540.0, '2026-10-27')]",
+              "conversation: The agent failed to meet any of the success criteria. It asked for the exact day four times [Messages 10, 12, 14, 16] instead of once. It did not offer the next business day (Tuesday 27 October) after the user suggested Monday 26 October [Message 11]; instead, it repeatedly asked the same question. Finally, no promise was recorded for October 27th, as the call ended with an outcome of 'no_promise'"
+            ],
+            "call_id": "b1da1cb2-5c05-4d98-8ced-8580edb3aee2",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_57eb69ea-cf7",
+            "slowest_turn_s": 6.1,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/6"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-08",
+            "level": "medium",
+            "family": "Already paid",
+            "pass": true,
+            "failed": [],
+            "call_id": "9591f538-0fcb-49ca-91b3-a5a4f79b343c",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_06ff57aa-199",
+            "slowest_turn_s": 3.8,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/7"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9591f538-0fcb-49ca-91b3-a5a4f79b343c.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9591f538-0fcb-49ca-91b3-a5a4f79b343c.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9591f538-0fcb-49ca-91b3-a5a4f79b343c.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "paid",
+            "reason": null,
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-09",
+            "level": "medium",
+            "family": "Restructuring",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('transferred', 'restructuring')",
+              "transfers [], expected [{'queue': 'restructuring'}]",
+              "conversation: The conversation failed to meet the success criteria because the agent never called the transfer_to_agent function. Although no promise was recorded and the agent did not describe a plan of its own, the user's inability to provide a specific amount led the agent to repeatedly ask the same question (Messages 10-16) before terminating the call (Message 18) instead of transferring the user to a queue"
+            ],
+            "call_id": "14117e48-7d50-43a1-8f4a-7fa64c16c973",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_788acc45-a12",
+            "slowest_turn_s": 6.8,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/8"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/14117e48-7d50-43a1-8f4a-7fa64c16c973.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/14117e48-7d50-43a1-8f4a-7fa64c16c973.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/14117e48-7d50-43a1-8f4a-7fa64c16c973.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 1,
+          "original_score_row": {
+            "id": "PUB-10",
+            "level": "hard",
+            "family": "Tool failure",
+            "pass": false,
+            "failed": [
+              "conversation: The conversation failed the success criteria regarding the use of the word 'recorded'. Although there was exactly one promise in the ledger (the first attempt failed with an explicit note that nothing was recorded, and the retry succeeded), the agent said 'recorded' in Message 0 ('this call is recorded'). This occurred prior to the successful API call to create the promise, which violates the requ"
+            ],
+            "call_id": "ec61e48f-c894-429b-a1a3-ab2ea18c77ac",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_a79fd599-caf",
+            "slowest_turn_s": 5.1,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/0/9"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 365,
+                "date": "2026-10-16"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-01",
+            "level": "easy",
+            "family": "Happy path",
+            "pass": true,
+            "failed": [],
+            "call_id": "78da1f6e-d83a-4220-87a8-878c2f32a5e6",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_16c5c889-058",
+            "slowest_turn_s": 1.5,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/0"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/78da1f6e-d83a-4220-87a8-878c2f32a5e6.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/78da1f6e-d83a-4220-87a8-878c2f32a5e6.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/78da1f6e-d83a-4220-87a8-878c2f32a5e6.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 420,
+                "date": "2026-10-14"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-02",
+            "level": "medium",
+            "family": "Third party",
+            "pass": false,
+            "failed": [
+              "outcome ('not_reached', 'unclear'), expected ('not_reached', 'callback')",
+              "callbacks [], expected [{'date': '2026-10-15', 'time': '11:00'}]",
+              "conversation: - The agent successfully avoided stating the purpose of the call, product, amount, or debt. - The 'verify_identity' and 'get_account' tools were never called. - The agent failed to schedule a callback for the next business day at 11:00. Despite the user suggesting this time in [Message 5], the agent stated it did not understand and ended the call in [Message 6] without using a scheduling tool or c"
+            ],
+            "call_id": "c77b2cdc-ea6b-4a9a-a8ac-caf6a0dc1c00",
+            "tools": [
+              "close_call"
+            ],
+            "customer_id": "c_1b62e6a2-f02",
+            "slowest_turn_s": 2.3,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/1"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c77b2cdc-ea6b-4a9a-a8ac-caf6a0dc1c00.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c77b2cdc-ea6b-4a9a-a8ac-caf6a0dc1c00.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c77b2cdc-ea6b-4a9a-a8ac-caf6a0dc1c00.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-03",
+            "level": "medium",
+            "family": "Identity",
+            "pass": false,
+            "failed": [
+              "conversation: The call failed to meet two out of three success criteria: 1. The identity check was terminated after only two wrong answers were processed by the system (as seen in the API calls following Messages 3 and 5), rather than the required three. 2. The assistant instructed the customer to 'contact the bank directly' in Message 14, which does not satisfy the specific requirement to tell the customer to "
+            ],
+            "call_id": "d9cafea4-02b7-4f61-826b-301e1ba3f259",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "close_call"
+            ],
+            "customer_id": "c_3a44e64b-5c9",
+            "slowest_turn_s": 4.4,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/2"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/d9cafea4-02b7-4f61-826b-301e1ba3f259.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/d9cafea4-02b7-4f61-826b-301e1ba3f259.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/d9cafea4-02b7-4f61-826b-301e1ba3f259.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 2,
+            "outcome": "not_verified",
+            "reason": "failed",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-04",
+            "level": "medium",
+            "family": "Dates",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+              "promises [], expected [('p1', 1250.0, '2026-10-23')]",
+              "conversation: The agent failed to meet the success criteria regarding the promise date and demonstrated poor conversation flow. Although the agent correctly identified as a digital assistant (Message 8) and did not treat the user's date as a refusal, it failed to secure a promise for the required late-band deadline of 23 October. Instead, the agent fell into two severe repetitive loops (Messages 8-30 and 34-41)"
+            ],
+            "call_id": "c6b8a030-c041-4986-a330-a266c5710bc7",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_8d5785f9-bd0",
+            "slowest_turn_s": 10.9,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/3"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c6b8a030-c041-4986-a330-a266c5710bc7.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c6b8a030-c041-4986-a330-a266c5710bc7.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c6b8a030-c041-4986-a330-a266c5710bc7.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-05",
+            "level": "medium",
+            "family": "Hardship",
+            "pass": true,
+            "failed": [],
+            "call_id": "311ae7c3-acdf-4847-acee-7854e63c1b0c",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_6b0de6a2-17d",
+            "slowest_turn_s": 6.9,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/4"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/311ae7c3-acdf-4847-acee-7854e63c1b0c.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/311ae7c3-acdf-4847-acee-7854e63c1b0c.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/311ae7c3-acdf-4847-acee-7854e63c1b0c.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "hardship",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-06",
+            "level": "hard",
+            "family": "Amounts",
+            "pass": true,
+            "failed": [],
+            "call_id": "329c23cd-b6c6-43b7-91fe-8d00f208ea19",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_9c00c1db-73a",
+            "slowest_turn_s": 1.6,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/5"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/329c23cd-b6c6-43b7-91fe-8d00f208ea19.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/329c23cd-b6c6-43b7-91fe-8d00f208ea19.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/329c23cd-b6c6-43b7-91fe-8d00f208ea19.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 637.5,
+                "date": "2026-10-16"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-07",
+            "level": "hard",
+            "family": "Dates",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+              "promises [], expected [('p1', 540.0, '2026-10-27')]",
+              "conversation: The agent failed to meet any of the success criteria. It asked for the exact payment date four times (Messages 10, 12, 14, 16) instead of once. While it did not accept October 26th, it failed to offer the next business day (Tuesday 27 October) as required by the criteria. Consequently, no promise was recorded, and the call was ended by the agent due to a service error following the repetitive loop"
+            ],
+            "call_id": "ee16aa8f-96a9-4bca-a94a-b2d4ad1dc279",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_5f224794-351",
+            "slowest_turn_s": 10.3,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/6"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ee16aa8f-96a9-4bca-a94a-b2d4ad1dc279.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ee16aa8f-96a9-4bca-a94a-b2d4ad1dc279.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ee16aa8f-96a9-4bca-a94a-b2d4ad1dc279.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-08",
+            "level": "medium",
+            "family": "Already paid",
+            "pass": true,
+            "failed": [],
+            "call_id": "a15402e2-0328-4028-b324-8a3e619b1d94",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_7f8e472b-b8f",
+            "slowest_turn_s": 5.6,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/7"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/a15402e2-0328-4028-b324-8a3e619b1d94.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/a15402e2-0328-4028-b324-8a3e619b1d94.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/a15402e2-0328-4028-b324-8a3e619b1d94.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "paid",
+            "reason": null,
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-09",
+            "level": "medium",
+            "family": "Restructuring",
+            "pass": false,
+            "failed": [
+              "outcome ('transferred', 'human'), expected ('transferred', 'restructuring')",
+              "transfers [{'queue': 'general'}], expected [{'queue': 'restructuring'}]",
+              "conversation: The call failed because the success criteria required the `transfer_to_agent` function to be called with the 'restructuring' queue, but system events show it was called with the 'general' queue. While the agent did not describe a plan and no promise was recorded, and the call ended correctly via the `end_call` tool after message 12, the specific queue requirement was not met."
+            ],
+            "call_id": "e36da9a6-c163-4933-9c4a-e5d20af9b748",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "transfer_to_agent",
+              "close_call"
+            ],
+            "customer_id": "c_96eaee2d-b5e",
+            "slowest_turn_s": 5.9,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/8"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/e36da9a6-c163-4933-9c4a-e5d20af9b748.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/e36da9a6-c163-4933-9c4a-e5d20af9b748.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/e36da9a6-c163-4933-9c4a-e5d20af9b748.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "transferred",
+            "reason": "human",
+            "promises": [],
+            "callbacks": [],
+            "transfers": [
+              {
+                "queue": "general"
+              }
+            ]
+          }
+        },
+        {
+          "rep": 2,
+          "original_score_row": {
+            "id": "PUB-10",
+            "level": "hard",
+            "family": "Tool failure",
+            "pass": false,
+            "failed": [
+              "conversation: The assistant met the ledger requirement but failed the specific string constraint regarding the word 'recorded'. 1. The assistant correctly handled an API failure by retrying, resulting in exactly one promise successfully recorded in the ledger. 2. However, the success criteria state that the agent must not say 'recorded' before a successful call. The assistant used the word 'recorded' in Message"
+            ],
+            "call_id": "fd0c0046-6dcd-482d-82f3-fa4175b027b0",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_30efc03e-d06",
+            "slowest_turn_s": 10.5,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/1/9"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/fd0c0046-6dcd-482d-82f3-fa4175b027b0.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/fd0c0046-6dcd-482d-82f3-fa4175b027b0.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/fd0c0046-6dcd-482d-82f3-fa4175b027b0.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 365,
+                "date": "2026-10-16"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-01",
+            "level": "easy",
+            "family": "Happy path",
+            "pass": true,
+            "failed": [],
+            "call_id": "03dc69dc-1d4b-44c9-99a7-b59e3e412949",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_9d5e1c49-e2c",
+            "slowest_turn_s": 1.6,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/0"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/03dc69dc-1d4b-44c9-99a7-b59e3e412949.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/03dc69dc-1d4b-44c9-99a7-b59e3e412949.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/03dc69dc-1d4b-44c9-99a7-b59e3e412949.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 420,
+                "date": "2026-10-14"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-02",
+            "level": "medium",
+            "family": "Third party",
+            "pass": false,
+            "failed": [
+              "outcome ('not_reached', 'unclear'), expected ('not_reached', 'callback')",
+              "callbacks [], expected [{'date': '2026-10-15', 'time': '11:00'}]",
+              "conversation: While the agent correctly refrained from disclosing the reason for the call and did not call 'verify_identity' or 'get_account', it failed to schedule a callback for the next business day at 11:00. Instead, after the agent was unable to confirm the user's identity, it instructed the caller to contact the bank directly in Message 6 and ended the call with the status 'not_reached' via an API call."
+            ],
+            "call_id": "ed720ae5-957c-44ac-82f6-e4722172ea7a",
+            "tools": [
+              "close_call"
+            ],
+            "customer_id": "c_e5721ac7-1c0",
+            "slowest_turn_s": 4.2,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/1"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ed720ae5-957c-44ac-82f6-e4722172ea7a.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ed720ae5-957c-44ac-82f6-e4722172ea7a.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ed720ae5-957c-44ac-82f6-e4722172ea7a.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "not_reached",
+            "reason": "unclear",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-03",
+            "level": "medium",
+            "family": "Identity",
+            "pass": false,
+            "failed": [
+              "conversation: - The check did not end after the third wrong answer. The user provided three incorrect dates (Messages 3, 5, and 7), but the assistant continued to ask for the date of birth in Messages 8, 10, and 12 instead of terminating the verification process. - The assistant failed to instruct the customer to use the app or a branch, instead providing a generic instruction to 'contact the bank directly' in "
+            ],
+            "call_id": "4dff7243-e7cc-4160-89a4-2dda36a22914",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "close_call"
+            ],
+            "customer_id": "c_3ea79a45-240",
+            "slowest_turn_s": 3.5,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/2"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4dff7243-e7cc-4160-89a4-2dda36a22914.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4dff7243-e7cc-4160-89a4-2dda36a22914.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4dff7243-e7cc-4160-89a4-2dda36a22914.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 2,
+            "outcome": "not_verified",
+            "reason": "failed",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-04",
+            "level": "medium",
+            "family": "Dates",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+              "promises [], expected [('p1', 1250.0, '2026-10-23')]",
+              "conversation: The evaluation shows that several success criteria were not met. While the agent correctly identified itself as a digital assistant (Message 8), it failed to process the user's date of November 6th and did not propose or secure the late-band deadline of 23 October. Instead, the agent entered a repetitive loop, asking for the date four times (Messages 12, 14, 16, 18) while the user provided the sam"
+            ],
+            "call_id": "4d1b8d82-e68c-433c-a4f5-da9abb6d84a3",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_ab428b2f-443",
+            "slowest_turn_s": 4.6,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/3"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4d1b8d82-e68c-433c-a4f5-da9abb6d84a3.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4d1b8d82-e68c-433c-a4f5-da9abb6d84a3.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4d1b8d82-e68c-433c-a4f5-da9abb6d84a3.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-05",
+            "level": "medium",
+            "family": "Hardship",
+            "pass": false,
+            "failed": [
+              "conversation: The agent failed the requirement to offer the support team only once. The offer was first made in [Message 8] and then repeated in [Message 10] after the user had already declined. Other criteria were met: a single sentence of sympathy was provided in [Message 8], no persuasion attempts were made after the user mentioned their hardship, and no discounts or plans were offered. The call ended correc"
+            ],
+            "call_id": "c5f058b4-bdfe-46cb-a302-26b4d13107a9",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_487ecc1a-530",
+            "slowest_turn_s": 1.7,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/4"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c5f058b4-bdfe-46cb-a302-26b4d13107a9.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c5f058b4-bdfe-46cb-a302-26b4d13107a9.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c5f058b4-bdfe-46cb-a302-26b4d13107a9.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "hardship",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-06",
+            "level": "hard",
+            "family": "Amounts",
+            "pass": true,
+            "failed": [],
+            "call_id": "3274b005-4aad-4aa2-9969-8bf5fd41821f",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_13305ab2-864",
+            "slowest_turn_s": 3.8,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/5"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/3274b005-4aad-4aa2-9969-8bf5fd41821f.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/3274b005-4aad-4aa2-9969-8bf5fd41821f.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/3274b005-4aad-4aa2-9969-8bf5fd41821f.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 637.5,
+                "date": "2026-10-16"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-07",
+            "level": "hard",
+            "family": "Dates",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('promise', None)",
+              "promises [], expected [('p1', 540.0, '2026-10-27')]",
+              "conversation: - The agent asked for the exact payment day four times (Messages 10, 12, 14, 16) instead of only once. - The agent failed to offer the next business day after the user suggested the 26th. - No promise was recorded for Tuesday 27 October; the call ended with a service error and the 'no_promise' outcome according to system events."
+            ],
+            "call_id": "1d24b0f4-3e12-42d9-b5ac-f2345d3fb82f",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_cc63964a-568",
+            "slowest_turn_s": 5.9,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/6"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/1d24b0f4-3e12-42d9-b5ac-f2345d3fb82f.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/1d24b0f4-3e12-42d9-b5ac-f2345d3fb82f.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/1d24b0f4-3e12-42d9-b5ac-f2345d3fb82f.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-08",
+            "level": "medium",
+            "family": "Already paid",
+            "pass": true,
+            "failed": [],
+            "call_id": "f1157490-c580-44d0-86b8-fb27d20163b0",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_e56616a2-2e4",
+            "slowest_turn_s": 4.6,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/7"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/f1157490-c580-44d0-86b8-fb27d20163b0.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/f1157490-c580-44d0-86b8-fb27d20163b0.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/f1157490-c580-44d0-86b8-fb27d20163b0.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "paid",
+            "reason": null,
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-09",
+            "level": "medium",
+            "family": "Restructuring",
+            "pass": false,
+            "failed": [
+              "outcome ('no_promise', 'service_error'), expected ('transferred', 'restructuring')",
+              "transfers [], expected [{'queue': 'restructuring'}]",
+              "conversation: The call failed to meet the success criteria because the 'transfer_to_agent' function was never called. According to the system events, the agent executed 'close_call' and 'end_call' directly after the user failed to provide a specific payment amount, rather than transferring the caller to a human agent as required. While the agent did satisfy the other criteria\u2014it did not describe a plan of its o"
+            ],
+            "call_id": "ab74e576-ccd1-41b5-b7bb-54b24447fd56",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "close_call"
+            ],
+            "customer_id": "c_f443c9f5-cea",
+            "slowest_turn_s": 4.5,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/8"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ab74e576-ccd1-41b5-b7bb-54b24447fd56.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ab74e576-ccd1-41b5-b7bb-54b24447fd56.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ab74e576-ccd1-41b5-b7bb-54b24447fd56.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "no_promise",
+            "reason": "service_error",
+            "promises": [],
+            "callbacks": [],
+            "transfers": []
+          }
+        },
+        {
+          "rep": 3,
+          "original_score_row": {
+            "id": "PUB-10",
+            "level": "hard",
+            "family": "Tool failure",
+            "pass": true,
+            "failed": [],
+            "call_id": "ac3cc4d6-68f3-4acf-b4a7-fef70b0abe59",
+            "tools": [
+              "verify_identity",
+              "verify_identity",
+              "get_account",
+              "create_promise",
+              "create_promise",
+              "close_call"
+            ],
+            "customer_id": "c_1c4b5de0-251",
+            "slowest_turn_s": 4.4,
+            "ended": "assistant-ended-call"
+          },
+          "score_pointer": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+            "json_pointer": "/all_rows/2/9"
+          },
+          "call": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ac3cc4d6-68f3-4acf-b4a7-fef70b0abe59.json",
+            "json_pointer": "/call"
+          },
+          "ledger": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ac3cc4d6-68f3-4acf-b4a7-fef70b0abe59.json",
+            "json_pointer": "/ledger"
+          },
+          "judge": {
+            "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ac3cc4d6-68f3-4acf-b4a7-fef70b0abe59.json",
+            "json_pointer": "/call/analysis/successEvaluation"
+          },
+          "actual_version": 4,
+          "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 365,
+                "date": "2026-10-16"
+              }
+            ],
+            "callbacks": [],
+            "transfers": []
+          }
+        }
+      ]
+    },
+    "B9_authored_grouped": {
+      "passes": 2,
+      "repetitions": 3,
+      "all_three_variant_passes": 0,
+      "variants": 1,
+      "original_final": [
+        {
+          "id": "PUB-11",
+          "variant_id": "PUB-11__speech_grouped_yes_but_partial_repair",
+          "completed_repetitions": 3,
+          "passes": 2,
+          "required_repetitions": 3,
+          "failure_observed": true,
+          "pending_repetitions": 0,
+          "pass": false
+        }
+      ],
+      "rows": [
+        {
+          "rep": 1,
+          "call_id": "300d36af-be85-43e8-ba9e-83e4262e235c",
+          "actual_version": 9,
+          "evidence": {
+            "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0001.json",
+            "json_pointer": ""
+          },
+          "original_judge": {
+            "id": "3b19faf0-78f9-4ef7-9697-4a3fdc1731c1",
+            "callId": "300d36af-be85-43e8-ba9e-83e4262e235c",
+            "outcome": "pass",
+            "reason": "All success criteria were met: 1) The assistant identified itself and the recording in Message 0 and did not disclose the call's purpose until after identity verification. 2) The agent successfully resolved the customer's partial correction for the personal loan (213.00) and the specific date for the car loan (2026-10-23). 3) A full grouped read-back was provided in Message 14, including all corrected terms. 4) The assistant obtained clear confirmation in Message 15 before executing the promise tool calls. 5) The required text-message statement was made in Message 16 before the call ended properly with a single close_call action.",
+            "personaId": "1e43a1b1-69d6-4538-8049-9f5085791fb3",
+            "personaName": "PUB-11__speech_grouped_yes_but_partial_repair [rep 1; 20261010T203603Z-22cc1dece641]",
+            "personaPrompt": "OUTPUT RULE: Write only the words you say on the phone. No stage directions, no brackets. One or two short sentences per turn, then wait for the other side.\n\nWHO YOU ARE: You are Sofia Almeida. Your date of birth is 1987-06-03 (say it in words, like '14 March 1988'). The last four digits of your pho\u2026",
+            "personaTags": [
+              "hackathon",
+              "brief-B"
+            ],
+            "personaVersionNumber": 1,
+            "agentVersionId": "af4da529-073a-45d7-8bd8-12b84adad0f2",
+            "agentVersionNumber": 9,
+            "agentId": "d5dd0517-28ec-4c7e-b700-bfbab900a1c8",
+            "agentName": "codex-stress-b 1010-185106",
+            "agentEntityType": "workflow",
+            "agentWorkflowId": "41424bc5-f5d0-4a29-9213-044e6d97664a",
+            "turnCount": 8,
+            "startedAt": "2026-10-10T20:36:12.999Z",
+            "endedAt": "2026-10-10T20:36:48.890Z",
+            "avgLatencyMs": null,
+            "interruptionCount": null,
+            "assertions": [],
+            "customMetrics": [],
+            "attempts": 0,
+            "maxAttempts": 1
+          },
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 220,
+                "date": "2026-10-16"
+              },
+              {
+                "promise_id": "pr2",
+                "product_id": "p2",
+                "type": "personal_loan",
+                "amount": 213,
+                "date": "2026-10-16"
+              },
+              {
+                "promise_id": "pr3",
+                "product_id": "p3",
+                "type": "car_loan",
+                "amount": 75,
+                "date": "2026-10-23"
+              }
+            ],
+            "notes": [],
+            "callbacks": [],
+            "transfers": []
+          },
+          "endedReason": "assistant-ended-call"
+        },
+        {
+          "rep": 2,
+          "call_id": "51ace181-b82f-4b55-8a20-5691a3e5ac00",
+          "actual_version": 9,
+          "evidence": {
+            "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0002.json",
+            "json_pointer": ""
+          },
+          "original_judge": {
+            "id": "7de20858-ace7-49c9-86c1-d7291014d451",
+            "callId": "51ace181-b82f-4b55-8a20-5691a3e5ac00",
+            "outcome": "pass",
+            "reason": "All criteria met. The agent disclosed the digital assistant and recording at the start. It verified identity before disclosing any debt information or accessing the account details. The agent correctly handled the customer's corrections, resolving the 'two hundred' fragment to 213.00 and the 'next Friday' date to 2026-10-23. A full grouped read-back of the corrected terms was provided, and the agent waited for a clear confirmation before recording the three promises. The required text-message notification sentence was used, and the agent thanked the customer and said goodbye before the final close_call and end_call actions.",
+            "personaId": "19e1cff5-f247-4de5-81e9-fd25ddefabd0",
+            "personaName": "PUB-11__speech_grouped_yes_but_partial_repair [rep 2; 20261010T203603Z-22cc1dece641]",
+            "personaPrompt": "OUTPUT RULE: Write only the words you say on the phone. No stage directions, no brackets. One or two short sentences per turn, then wait for the other side.\n\nWHO YOU ARE: You are Sofia Almeida. Your date of birth is 1987-06-03 (say it in words, like '14 March 1988'). The last four digits of your pho\u2026",
+            "personaTags": [
+              "hackathon",
+              "brief-B"
+            ],
+            "personaVersionNumber": 1,
+            "agentVersionId": "af4da529-073a-45d7-8bd8-12b84adad0f2",
+            "agentVersionNumber": 9,
+            "agentId": "d5dd0517-28ec-4c7e-b700-bfbab900a1c8",
+            "agentName": "codex-stress-b 1010-185106",
+            "agentEntityType": "workflow",
+            "agentWorkflowId": "41424bc5-f5d0-4a29-9213-044e6d97664a",
+            "turnCount": 7,
+            "startedAt": "2026-10-10T20:36:13.174Z",
+            "endedAt": "2026-10-10T20:37:01.203Z",
+            "avgLatencyMs": null,
+            "interruptionCount": null,
+            "assertions": [],
+            "customMetrics": [],
+            "attempts": 0,
+            "maxAttempts": 1
+          },
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": "promise",
+            "reason": null,
+            "promises": [
+              {
+                "promise_id": "pr1",
+                "product_id": "p1",
+                "type": "credit_card",
+                "amount": 220,
+                "date": "2026-10-16"
+              },
+              {
+                "promise_id": "pr2",
+                "product_id": "p2",
+                "type": "personal_loan",
+                "amount": 213,
+                "date": "2026-10-16"
+              },
+              {
+                "promise_id": "pr3",
+                "product_id": "p3",
+                "type": "car_loan",
+                "amount": 75,
+                "date": "2026-10-23"
+              }
+            ],
+            "notes": [],
+            "callbacks": [],
+            "transfers": []
+          },
+          "endedReason": "assistant-ended-call"
+        },
+        {
+          "rep": 3,
+          "call_id": "ee4e7739-95fb-4371-80ca-88e55e0accf0",
+          "actual_version": 9,
+          "evidence": {
+            "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+            "json_pointer": ""
+          },
+          "original_judge": {
+            "id": "3e68b490-b90a-4c56-8c12-f32e954cd242",
+            "callId": "ee4e7739-95fb-4371-80ca-88e55e0accf0",
+            "outcome": "fail",
+            "reason": "The conversation failed primarily because the simulated customer did not follow the authored script, leading to an incomplete transaction. 1. The customer script required the recipient to say 'Yes, I confirm all three corrected promises' after the agent provided a specific read-back (Card 220 on 10/16, Personal 213 on 10/16, Car 75 on 10/23). Although the assistant provided this correct read-back in Message 22, the customer terminated the call instead of confirming. 2. Because of this premature termination, no promises were recorded (exactly three were required), and the agent did not get to deliver the required text-message sentence or the final farewells. 3. The agent otherwise performed correctly, identifying itself, disclosing debt only after verification, and accurately interpreting the customer's corrections (e.g., resolving the partial payment of 213.00 and the date 'next Friday' as 2026-10-23).",
+            "personaId": "a5eed020-a30a-40f7-b35a-eb2d601e81a0",
+            "personaName": "PUB-11__speech_grouped_yes_but_partial_repair [rep 3; 20261010T203603Z-22cc1dece641]",
+            "personaPrompt": "OUTPUT RULE: Write only the words you say on the phone. No stage directions, no brackets. One or two short sentences per turn, then wait for the other side.\n\nWHO YOU ARE: You are Sofia Almeida. Your date of birth is 1987-06-03 (say it in words, like '14 March 1988'). The last four digits of your pho\u2026",
+            "personaTags": [
+              "hackathon",
+              "brief-B"
+            ],
+            "personaVersionNumber": 1,
+            "agentVersionId": "af4da529-073a-45d7-8bd8-12b84adad0f2",
+            "agentVersionNumber": 9,
+            "agentId": "d5dd0517-28ec-4c7e-b700-bfbab900a1c8",
+            "agentName": "codex-stress-b 1010-185106",
+            "agentEntityType": "workflow",
+            "agentWorkflowId": "41424bc5-f5d0-4a29-9213-044e6d97664a",
+            "turnCount": 11,
+            "startedAt": "2026-10-10T20:36:13.351Z",
+            "endedAt": "2026-10-10T20:37:13.327Z",
+            "avgLatencyMs": null,
+            "interruptionCount": null,
+            "assertions": [],
+            "customMetrics": [],
+            "attempts": 0,
+            "maxAttempts": 1
+          },
+          "ledger_summary": {
+            "wrong": 0,
+            "outcome": null,
+            "reason": null,
+            "promises": [],
+            "notes": [],
+            "callbacks": [],
+            "transfers": []
+          },
+          "endedReason": "customer-ended-call"
+        }
+      ]
+    },
+    "A5_local_audit": {
+      "counts": {
+        "snippet_invocations": 52,
+        "dispatch_invocations": 33,
+        "snippet_completed": 52,
+        "pre_hook_invocations": 9,
+        "post_hook_invocations": 9,
+        "decoder_bootstrap_invocations": 1,
+        "focused_controls": 11,
+        "matched_observations": 9,
+        "unmatched_observations": 2,
+        "date_helper_invocations": 5,
+        "synthetic_request_receipt_pairs": 9,
+        "new_network_requests": 0,
+        "new_model_calls": 0,
+        "snippet_aborts": 0,
+        "dispatch_caught_safe_failure": 0
+      },
+      "original_controls": [
+        {
+          "id": "third-party-purpose-callback",
+          "expected": "Third party stays unverified, no account purpose disclosed; callback body tomorrow 15:00",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "security-dob-purpose-current-field",
+          "expected": "Complete DOB plus purpose submits current DOB, with no wrong/decline inflation",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "lower-instalments-amount-fragment",
+          "expected": "Restructuring request outranks incidental unfinished amount and maps queue",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "support-decline-discount",
+          "expected": "Decline ends hardship branch with discount explanation, without another offer",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "agreed-known-floor-new-friday",
+          "expected": "Known floor126 preserved, newly stated Friday16 read back; no write before later consent",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "yearless-spoken-ordinal-full-date",
+          "expected": "Date helper normalizes November6; consumer negotiates bounded deadline because date exceeds fixture deadline",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "weekday-spoken-ordinal-full-date",
+          "expected": "Unique weekday ordinal normalizes to full Friday16 and readback126",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "malformed-date-remains-rejected",
+          "expected": "Impossible complete date stays unresolved on repeat, with no newly fabricated offer/date",
+          "matched": false,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "conflicting-weekday-date-remains-rejected",
+          "expected": "Contradictory weekday/date stays unresolved on repeat without fallback offer",
+          "matched": false,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "unfinished-amount-date-only-no-cache",
+          "expected": "Unfinished replacement amount cannot restore cached200/420 by date or consent",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        },
+        {
+          "id": "invalid-high-amount-date-only-no-cache",
+          "expected": "Rejected above-past-due500 cannot be replaced by cached420 on date-only reply",
+          "matched": true,
+          "classification": "authored_producer_conforming_literal_control"
+        }
+      ],
+      "original_faults": [
+        {
+          "id": "malformed-date-remains-rejected",
+          "expected": "Impossible complete date stays unresolved on repeat, with no newly fabricated offer/date",
+          "actual_final": {
+            "route": "talk",
+            "speech": "The latest date I can record is 02 November 2026. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 02 November 2026?",
+            "phase": "offer",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 8,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "qualification": "Parser rejects input date; repeated syntactically valid but calendar-invalid/contradictory assertions increment vague then negotiate 2026-11-02. This violates requested remain-rejected behavior only; no invalid date accepted or promise recorded.",
+          "source_pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+        },
+        {
+          "id": "conflicting-weekday-date-remains-rejected",
+          "expected": "Contradictory weekday/date stays unresolved on repeat without fallback offer",
+          "actual_final": {
+            "route": "talk",
+            "speech": "The latest date I can record is 02 November 2026. The rest stays overdue. Can you pay 126.0 for your credit card ending 4821 on 02 November 2026?",
+            "phase": "offer",
+            "pending": {},
+            "readback": null,
+            "attempts": 0,
+            "wrong": 0,
+            "declines": 0,
+            "formats": 0,
+            "recorded": false,
+            "steps": 8,
+            "security_field": "phone_last4",
+            "security_answer": "4471",
+            "mode": "event",
+            "event": "",
+            "raw": "",
+            "admin": "none",
+            "bank_result": {}
+          },
+          "qualification": "Parser rejects input date; repeated syntactically valid but calendar-invalid/contradictory assertions increment vague then negotiate 2026-11-02. This violates requested remain-rejected behavior only; no invalid date accepted or promise recorded.",
+          "source_pointer": "/workflow/nodes/dispatch/pre_actions/0/function/parameters/properties/code/default"
+        }
+      ],
+      "source": {
+        "path": "analysis/candidate-a5-contract.json",
+        "json_pointer": ""
+      },
+      "qualification": "9/11 local literal-event observations; no extractor execution or hosted success claim; strict invalid-date expectations unchanged"
+    },
+    "A5_hosted_incomplete": {
+      "scope": "originalA5 PUB02_PUB07_PUB09 plannedthree serialrepetitions; boundedincomplete test, NOT0/9score",
+      "execution_status": "incomplete",
+      "original_error_type": "RunnerError",
+      "planned_calls": 9,
+      "completed_repetitions": 0,
+      "observed_scored_calls": 0,
+      "complete_three_repetition_score": null,
+      "expected_version": 5,
+      "test_budget_seconds": 250,
+      "original_manifest_sha256": "daa29d1e6289650d443cb322c567d5399d219a05867aaaddc77a06a7d4d6c859",
+      "original_runner_sha256": "c96da9f9189d82850e46bfc551603ff5a62847025b5c50a77b923ad999f3767c",
+      "original_score_sha256": "daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7",
+      "repetition_sources": [],
+      "stop_snapshot": {
+        "scope": "independent bounded read-only stop-time handoff snapshot; not resume/retry expiredA5test",
+        "workspace_id": "2507ffc9-3031-479a-ac9e-dae277fa0743",
+        "simulation_rows": [
+          {
+            "id": "2c4e43e0-3ac3-4772-b1d4-0320196ac965",
+            "name": "cases 23:49:37",
+            "status": "running",
+            "agentId": "37b17600-df9a-4934-854e-a3de8f2e7987"
+          }
+        ]
+      },
+      "stop_snapshot_sha256": "5994ff83bcb9dd0611258e35a2a84b4c853b3abe16db310520b38e129273bfbf",
+      "limits": [
+        "Original expiredtest was not restarted or resumed; later handoffsnapshot isboundedread-only status, notscored recovery.",
+        "Firstsimulation remainsserver-bounded byoriginalmaxCallDurationSeconds420. No newrepetitionstarted aftertesterror orcutoff.",
+        "Exact cause of incompleteRunnerError isnotfullyclassified; noagent-pass/0of9-failure/ASR inference.",
+        "A5 version5 remains practice-only, alloriginalA4failures retained; fullA5thirtycallbenchmark unresolved.",
+        "At20:54UTC heartbeatPAUSED verified; allsubagents closed."
+      ]
+    }
+  },
+  "prioritized_mechanisms": [
+    {
+      "priority": 1,
+      "id": "component_retention",
+      "categories": [
+        "routing",
+        "persistedvars"
+      ],
+      "first_application": "B10; retain equivalent A6 guards",
+      "finding": "B9 structurally readable c=0/u=date rows contain a complete valid amount and d=16 fragment. Complete-date validation runs before completion handling, discarding 213 and retaining cached 640. The next partial update unions need into amount,date. This is a consumer ordering/state merge defect; the extractor correctly identified the unfinished date.",
+      "scope": "Observed in B9 rep3 at two repeated fragment turns; added clarifications are established. Cause of customer termination and unauthorized writes are not established.",
+      "evidence": [
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/85/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/86/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/93/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/95/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/96/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/97/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/104/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/106/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/108/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/115/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/119/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/126/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/150/message"
+        }
+      ],
+      "code": {
+        "path": "competition/runs/20261010-232341-090e9c/codex-stress-b.workflow.json",
+        "json_pointer": "/workflow/nodes/engine/pre_actions/0/function/parameters/properties/code/default",
+        "snippet_lines": [
+          [
+            96,
+            98
+          ],
+          [
+            288,
+            298
+          ],
+          [
+            433,
+            445
+          ]
+        ]
+      },
+      "source_basis": [
+        "Brief A 29,34,35; Brief B 7",
+        "Guide paragraph beginning For a structurally readable incomplete event"
+      ],
+      "fix": "Validate row structure and resolve target first; classify c/u next. For each complete component, validate and stage its new value even when a sibling component is unfinished. Never run complete-date parsing on a declared unfinished d. Set need from the actual correction scope minus explicit newly completed components, rather than unioning obsolete need. Invalidate active readback/consent; retain unrelated targets and independently valid components. Only a complete date plus amount passes policy checks and generates a new joint readback; a later clear confirmation authorizes writes.",
+      "controls": [
+        "Replay saved raw86 then raw97 through the new B10 producer/consumer grammar: pending amount=213, need=date only; no d=16 eligibility, no extra amount question and no write.",
+        "Replay later raw119 and raw141; all complete sibling terms persist and produce the corrected full readback. A missing or qualified yes cannot write.",
+        "Reuse existing A5 unfinished-amount/date-only, both-completion orders and above-full rejection controls without changing their expectations."
+      ]
+    },
+    {
+      "priority": 2,
+      "id": "producer_contract_and_phase_priority",
+      "categories": [
+        "extractor",
+        "routing",
+        "malformedJSON"
+      ],
+      "first_application": "A6 and B10 generation boundary",
+      "finding": "A4 compound third-party/purpose, complete security/question and support-decline/question events hit rejection or payment recovery. Lower-instalments requests become unfinished amounts or general-human routing. These account for ten failed A4 observations, including two PUB03 observations with actor/context uncertainty. A5 local literal-event checks repair these paths but do not execute the producer. Its producer description simultaneously excludes comma characters and permits ordinary punctuation; some explanatory examples have parenthetic admin annotations outside the row grammar.",
+      "evidence": [
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json",
+          "json_pointer": "/call/messages/7/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json",
+          "json_pointer": "/call/messages/28/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4dff7243-e7cc-4160-89a4-2dda36a22914.json",
+          "json_pointer": "/call/messages/54/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/7ef78672-39b9-4ec5-b19f-1fbfae0a7023.json",
+          "json_pointer": "/call/messages/71/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/14117e48-7d50-43a1-8f4a-7fa64c16c973.json",
+          "json_pointer": "/call/messages/62/message"
+        },
+        {
+          "path": "analysis/candidate-a5-contract.json",
+          "json_pointer": "/source/producer_literal_description"
+        },
+        {
+          "path": "competition/runs/20261010-234004-77e29f/codex-stress-a.workflow.json",
+          "json_pointer": "/workflow/nodes/talk/extraction_schema/0/description"
+        }
+      ],
+      "source_basis": [
+        "Brief A 4-6,10-16,32,41,42",
+        "Guide producer contract, phase-priority and administrative question paragraphs"
+      ],
+      "fix": "Generate one explicit event contract manifest (kind set, keys, completion states, delimiters, value grammar and literal examples) with consistent producer and decoder. Process the current phase's complete nonpayment intent according to input rule precedence before payment-fragment handling. Preserve independent administrative questions until spoken. Valid security plus a question submits only the current complete answer; an AI question is not a human request. Avoid overwriting a restructuring/support queue with a later generic acceptance. Explanations belong outside literal examples. Whole structure remains atomic for authorization; staging uncommitted independently valid fields does not grant consent.",
+      "controls": [
+        "Use the delivered A4 ordinary utterances and literal actual minimal extraction outputs, not manually enriched rows. Check primary event, administrative response, immediate next question, tool route and request body.",
+        "For each advertised kind and active phase, copy the literal producer example into the actual decoder. Positive natural punctuation must agree with the documented delimiter grammar; malformed, duplicate-key and unknown-target negatives remain rejected.",
+        "When parent runs the extractor, separately test actual outer JSON and inner event parsing. A hand-authored consumer pass does not qualify extractor success."
+      ]
+    },
+    {
+      "priority": 3,
+      "id": "whole_date_and_calendar_classes",
+      "categories": [
+        "extractor",
+        "calendar",
+        "routing"
+      ],
+      "first_application": "A6; regression gate for B10",
+      "finding": "A4 PUB04 and PUB07 reject complete yearless/spoken ordinal dates; PUB06 loses a newly stated Friday and confirms cached today. Seven A4 failures are associated with these mechanisms. PUB07 proves normalization/clarification failure, not broken holiday arithmetic. A5 supports normal forms locally but repeated impossible/conflicting dates fall through the vague-date deadline counteroffer (two immutable local expectation mismatches). The brief does not explicitly require the strict remain-unresolved behavior of those controls.",
+      "evidence": [
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9f450d7b-afff-469e-b0ab-c8ea391d1bb8.json",
+          "json_pointer": "/call/messages/62/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json",
+          "json_pointer": "/call/messages/61/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json",
+          "json_pointer": "/call/messages/81/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json",
+          "json_pointer": "/call/messages/72/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json",
+          "json_pointer": "/call/messages/73/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json",
+          "json_pointer": "/call/messages/81/message"
+        },
+        {
+          "path": "analysis/candidate-a5-contract.json",
+          "json_pointer": "/date_helpers"
+        },
+        {
+          "path": "analysis/candidate-a5-contract.json",
+          "json_pointer": "/faults"
+        },
+        {
+          "path": "analysis/candidate-a5-contract.json",
+          "json_pointer": "/parent_policy_qualification"
+        }
+      ],
+      "source_basis": [
+        "Brief A call variables, calendar and 18-23,27,29,34,35",
+        "Brief B 3,6,7"
+      ],
+      "fix": "Normalize one unambiguous whole complete expression using runtime now, the input's relative-date definition and policy calendar. Preserve a newly asserted date on acceptance before readback; an omitted amount may refer only to that target's actually spoken valid offer when no amount correction is unresolved. Classify exact_valid, vague_period, unfinished_component and invalid_or_conflicting separately. Apply one-exact-day fallback only to the source-defined vague class. For other repeated invalid forms retain a bounded safe clarification or separately labelled valid counteroffer with fresh consent only when justified by the input; disclose policy uncertainty rather than inventing a mandatory close outcome.",
+      "controls": [
+        "Use existing source helpers and PUB04/PUB07 date spellings, with this/next weekday, punctuation, holiday roll, date after deadline and per-product clipping computed from supplied policy; never hardcode witness dates into the guide.",
+        "Existing PUB06 acceptance must read back the newly expressed date, then wait for subsequent confirmation.",
+        "Preserve both A5 strict invalid-date expectations as mismatches unless a fresh candidate meets them; separately report whether the source actually mandates them. No malformed-date acceptance or consent-bypass claim is supported by A5."
+      ]
+    },
+    {
+      "priority": 4,
+      "id": "persistent_receipt_and_write_gate",
+      "categories": [
+        "persistedvars",
+        "routing",
+        "infra"
+      ],
+      "first_application": "A6/B10 validation gate; already in guide",
+      "finding": "No stale-receipt loop is established in pinned A4/B9. B9 rep3 receipts have empty awaiting and consumed receipt 3 before correction recovery. A5 checks use a merged persistent store but shared execution namespaces; they do not certify the hosted sandbox. Preserve this preventive control rather than diagnosing a new receipt failure.",
+      "evidence": [
+        {
+          "path": "analysis/candidate-a5-contract.json",
+          "json_pointer": "/method"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/93/message",
+          "decoded_pointer": "/variable_table/state"
+        },
+        {
+          "path": "competition/skills/build-phone-agent.md",
+          "json_pointer": "",
+          "anchor": "Treat persisted platform variables as a store updated by returned key/value patches."
+        },
+        {
+          "path": "competition-v3/build-the-builder/docs/tools-and-code.md",
+          "json_pointer": "",
+          "lines": [
+            456,
+            486
+          ]
+        }
+      ],
+      "source_basis": [
+        "Brief A 11-16,34-38,46,47; Brief B 7,10,11",
+        "Guide explicit neutral sentinels, receipt identity and sandbox scope"
+      ],
+      "fix": "Carry forward explicit neutral patches for consumed completion, response, event and consent variables. Bind each receipt to one outstanding operation; repeats cannot advance retry/verification or record counts. Preserve counters and authoritative bank success state. Helpers return speech/route or set vars explicitly. Apply exact pending/readback/consent guards before every bank write and source-derived closure.",
+      "controls": [
+        "Reuse persistent merged-store sequences for wrong/corrected security, swapped-day hint, repeated stale completions, missing/failed receipts and multiple promise writes. Assert next spoken line and actual graph route after each hop.",
+        "Confirm distinct outer transport failure and valid bank ok:false paths; retries remain source-limited, acknowledgement follows that write's ok:true, successful earlier product records survive later failure.",
+        "Test graph hooks under separate globals/locals where applicable; local shared-namespace success is insufficient for a hosted-sandbox claim."
+      ]
+    },
+    {
+      "priority": 5,
+      "id": "immutable_evidence_and_attribution",
+      "categories": [
+        "actor",
+        "judge",
+        "infra",
+        "extractor",
+        "malformedJSON"
+      ],
+      "first_application": "Parent-owned validation and promotion gate",
+      "finding": "A4 PUB10's two original failed judges cite the mandatory call-recording opening, while the saved promise acknowledgement follows a failed write and one successful retry. B9 rep3 ends immediately after the correct final readback without confirmation; its actual state-retention defect adds turns but does not establish why the actor ended. A5's original nine-call subset has zero scored observations and is incomplete, not 0/9. B9 official original public run summaries are distinct from this authored 2/3 run.",
+      "evidence": [
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json",
+          "json_pointer": "/call/messages/5/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json",
+          "json_pointer": "/call/messages/97/message"
+        },
+        {
+          "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json",
+          "json_pointer": "/ledger/calls"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/judge"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/endedReason"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+          "json_pointer": "/call/messages/150/message"
+        },
+        {
+          "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/personas/a5eed020-a30a-40f7-b35a-eb2d601e81a0.json",
+          "json_pointer": ""
+        },
+        {
+          "path": "analysis/rd-a5-hosted-incomplete.json",
+          "json_pointer": ""
+        }
+      ],
+      "source_basis": [
+        "Brief A 1,34,37,38,46,47; Brief B 7",
+        "Guide evidence-driven repair and input provenance"
+      ],
+      "fix": "Retain original score, judge, actor script and expected records. Report controller/extractor, actor adherence, judge disagreement and infrastructure coverage separately, alongside actual agent/version and source hashes. Do not delete recorded-call disclosure, manufacture missing consent, recast missing repetitions as agent failures, or infer unseen/voice behavior. Parent can validate fresh A6/B10 against unchanged original public and authored tests; no sidecar rerun or platform action occurs.",
+      "controls": [
+        "Require exact source/version bindings, completed score and ledger+ordered transcript for each claimed observation. Keep original A4 11/30 and authored B9 2/3 immutable.",
+        "Compare each delivered actor turn with its authored script; do not use the judge's 'otherwise correctly' wording to erase a independently supported controller defect.",
+        "Distinguish outer extraction_error, parse failure of an extracted inner JSON string, readable tagged-row format rejection and downstream policy result. A format failure does not test below-floor behavior.",
+        "Future unseen-brief checks vary only supplied policy inputs and reuse invariant controls; this sidecar generates no new scenarios or Opus review."
+      ]
+    }
+  ],
+  "classification_boundaries": {
+    "extractor": "A4 emitted semantically wrong/missing fields or mismatched compound shapes. B9 c/u correctly identifies incomplete date. Producer is outside A5 local literal-event audit.",
+    "malformedJSON": {
+      "pinned_extraction_error_count": 0,
+      "refs": [],
+      "qualification": "Readable tagged-row date fragments and yearless dates are not malformed JSON. Outer and inner parse boundaries remain separate; broader archive evidence is only supplementary."
+    },
+    "persistedvars": "B9 pending-component merge defect is observed; stale receipt replay is preventive/unproven in pinned data.",
+    "routing": "Source-priority loss and wrong branch/context are observed in A4; partial-date ordering is observed in B9.",
+    "calendar": "A4 normalization failure is observed. Canonical holiday math failure is not established. A5 invalid/vague fallback is a local design mismatch with a qualified source gap.",
+    "actor": "B9 rep3 actor ends after matching readback instead of required confirmation; cause unknown. A4 PUB03 includes incomplete delivered speech and subsequent question ambiguity. No ASR inference.",
+    "judge": "A4 PUB10 opening/promise-recording confusion is supported; original failed verdicts remain. B9 judge agrees with terminal failure but its otherwise-correct claim overlooks the separately evidenced recovery defect.",
+    "infra": "A5 original subset is incomplete with zero scored observations. Do not assign 0/9 or agent-fault causality to RunnerError. This sidecar does not check current platform state."
+  },
+  "b9_component_state_checkpoints": [
+    {
+      "event": {
+        "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+        "json_pointer": "/call/messages/82/message",
+        "decoded_pointer": "/variable_table/state",
+        "state_is_json_string": true
+      },
+      "state": {
+        "phase": "collect",
+        "format": 0,
+        "current": "p2",
+        "consent": [],
+        "readback": [
+          [
+            "p1",
+            220.0,
+            "2026-10-16"
+          ],
+          [
+            "p2",
+            640.0,
+            "2026-10-16"
+          ],
+          [
+            "p3",
+            75.0,
+            "2026-10-16"
+          ]
+        ],
+        "staged_rows": null
+      },
+      "products": [
+        {
+          "product_id": "p1",
+          "status": "agreed",
+          "amount": 220.0,
+          "date": "2026-10-16",
+          "pending": null
+        },
+        {
+          "product_id": "p2",
+          "status": "open",
+          "amount": 640.0,
+          "date": "2026-10-16",
+          "pending": {
+            "a": "640.0",
+            "d": "2026-10-16",
+            "need": [
+              "amount"
+            ],
+            "incomplete": true
+          }
+        },
+        {
+          "product_id": "p3",
+          "status": "agreed",
+          "amount": 75.0,
+          "date": "2026-10-16",
+          "pending": null
+        }
+      ]
+    },
+    {
+      "event": {
+        "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+        "json_pointer": "/call/messages/93/message",
+        "decoded_pointer": "/variable_table/state",
+        "state_is_json_string": true
+      },
+      "state": {
+        "phase": "collect",
+        "format": 1,
+        "current": "p2",
+        "consent": [],
+        "readback": [
+          [
+            "p1",
+            220.0,
+            "2026-10-16"
+          ],
+          [
+            "p2",
+            640.0,
+            "2026-10-16"
+          ],
+          [
+            "p3",
+            75.0,
+            "2026-10-16"
+          ]
+        ],
+        "staged_rows": []
+      },
+      "products": [
+        {
+          "product_id": "p1",
+          "status": "agreed",
+          "amount": 220.0,
+          "date": "2026-10-16",
+          "pending": null
+        },
+        {
+          "product_id": "p2",
+          "status": "open",
+          "amount": 640.0,
+          "date": "2026-10-16",
+          "pending": {
+            "a": "640.0",
+            "d": "2026-10-16",
+            "need": [
+              "amount"
+            ],
+            "incomplete": true
+          }
+        },
+        {
+          "product_id": "p3",
+          "status": "agreed",
+          "amount": 75.0,
+          "date": "2026-10-16",
+          "pending": null
+        }
+      ]
+    },
+    {
+      "event": {
+        "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+        "json_pointer": "/call/messages/104/message",
+        "decoded_pointer": "/variable_table/state",
+        "state_is_json_string": true
+      },
+      "state": {
+        "phase": "collect",
+        "format": 0,
+        "current": "p2",
+        "consent": [],
+        "readback": [
+          [
+            "p1",
+            220.0,
+            "2026-10-16"
+          ],
+          [
+            "p2",
+            640.0,
+            "2026-10-16"
+          ],
+          [
+            "p3",
+            75.0,
+            "2026-10-16"
+          ]
+        ],
+        "staged_rows": []
+      },
+      "products": [
+        {
+          "product_id": "p1",
+          "status": "agreed",
+          "amount": 220.0,
+          "date": "2026-10-16",
+          "pending": null
+        },
+        {
+          "product_id": "p2",
+          "status": "open",
+          "amount": 640.0,
+          "date": "2026-10-16",
+          "pending": {
+            "a": "640.0",
+            "d": "2026-10-16",
+            "need": [
+              "amount",
+              "date"
+            ],
+            "incomplete": true
+          }
+        },
+        {
+          "product_id": "p3",
+          "status": "agreed",
+          "amount": 75.0,
+          "date": "2026-10-16",
+          "pending": null
+        }
+      ]
+    },
+    {
+      "event": {
+        "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+        "json_pointer": "/call/messages/115/message",
+        "decoded_pointer": "/variable_table/state",
+        "state_is_json_string": true
+      },
+      "state": {
+        "phase": "collect",
+        "format": 1,
+        "current": "p2",
+        "consent": [],
+        "readback": [
+          [
+            "p1",
+            220.0,
+            "2026-10-16"
+          ],
+          [
+            "p2",
+            640.0,
+            "2026-10-16"
+          ],
+          [
+            "p3",
+            75.0,
+            "2026-10-16"
+          ]
+        ],
+        "staged_rows": []
+      },
+      "products": [
+        {
+          "product_id": "p1",
+          "status": "agreed",
+          "amount": 220.0,
+          "date": "2026-10-16",
+          "pending": null
+        },
+        {
+          "product_id": "p2",
+          "status": "open",
+          "amount": 640.0,
+          "date": "2026-10-16",
+          "pending": {
+            "a": "640.0",
+            "d": "2026-10-16",
+            "need": [
+              "amount",
+              "date"
+            ],
+            "incomplete": true
+          }
+        },
+        {
+          "product_id": "p3",
+          "status": "agreed",
+          "amount": 75.0,
+          "date": "2026-10-16",
+          "pending": null
+        }
+      ]
+    },
+    {
+      "event": {
+        "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+        "json_pointer": "/call/messages/126/message",
+        "decoded_pointer": "/variable_table/state",
+        "state_is_json_string": true
+      },
+      "state": {
+        "phase": "confirm",
+        "format": 0,
+        "current": "p2",
+        "consent": [],
+        "readback": [
+          [
+            "p1",
+            220.0,
+            "2026-10-16"
+          ],
+          [
+            "p2",
+            213.0,
+            "2026-10-16"
+          ],
+          [
+            "p3",
+            75.0,
+            "2026-10-16"
+          ]
+        ],
+        "staged_rows": []
+      },
+      "products": [
+        {
+          "product_id": "p1",
+          "status": "agreed",
+          "amount": 220.0,
+          "date": "2026-10-16",
+          "pending": null
+        },
+        {
+          "product_id": "p2",
+          "status": "agreed",
+          "amount": 213.0,
+          "date": "2026-10-16",
+          "pending": null
+        },
+        {
+          "product_id": "p3",
+          "status": "agreed",
+          "amount": 75.0,
+          "date": "2026-10-16",
+          "pending": null
+        }
+      ]
+    },
+    {
+      "event": {
+        "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+        "json_pointer": "/call/messages/148/message",
+        "decoded_pointer": "/variable_table/state",
+        "state_is_json_string": true
+      },
+      "state": {
+        "phase": "confirm",
+        "format": 0,
+        "current": "p2",
+        "consent": [],
+        "readback": [
+          [
+            "p1",
+            220.0,
+            "2026-10-16"
+          ],
+          [
+            "p2",
+            213.0,
+            "2026-10-16"
+          ],
+          [
+            "p3",
+            75.0,
+            "2026-10-23"
+          ]
+        ],
+        "staged_rows": []
+      },
+      "products": [
+        {
+          "product_id": "p1",
+          "status": "agreed",
+          "amount": 220.0,
+          "date": "2026-10-16",
+          "pending": null
+        },
+        {
+          "product_id": "p2",
+          "status": "agreed",
+          "amount": 213.0,
+          "date": "2026-10-16",
+          "pending": null
+        },
+        {
+          "product_id": "p3",
+          "status": "agreed",
+          "amount": 75.0,
+          "date": "2026-10-23",
+          "pending": null
+        }
+      ]
+    }
+  ],
+  "guide_patch_specification": {
+    "target": "competition/skills/build-phone-agent.md",
+    "expected_sha256": "8d4cc3dba0c805594f5579299ecf1370812beeba8c5bd42de794e6a41cb7039c",
+    "already_present": [
+      "mixed-intent source priority",
+      "normalization and preserving newly supplied date",
+      "incomplete date versus complete amount",
+      "explicit persistent-store neutral receipts",
+      "separate call/promise disclosure"
+    ],
+    "operations": [
+      {
+        "operation": "append_after_exact_paragraph",
+        "anchor": {
+          "path": "competition/skills/build-phone-agent.md",
+          "line": 19,
+          "exact_paragraph": "Avoid wide positional rows filled with consecutive empty delimiters: the real extractor can insert an extra empty field even when the semantic answer is correct. Prefer documented native scalar fields, or short tagged rows with explicit field names and only relevant optional fields. Advertise exact escaping, required fields, completion and terminal markers; reject duplicate/unknown fields and malformed sibling rows before applying decisions. Execute the literal examples copied from the advertised extraction prompt through the actual decoder, including recipient confirmation, DOB, phone suffix, heterogeneous decisions and later consent. Also exercise missing/extra separators, explicit partial answers and malformed rows. A hand-built correctly positioned helper fixture alone does not verify the producer contract. Never accept a malformed payment/consent event by trimming, shifting or dropping columns."
+        },
+        "text": "Generate a compact explicit producer/consumer contract manifest with the exact kind set, keys, delimiters, value grammar, completion states and literal examples. Check that every advertised example decodes unchanged and every consumed field is advertised; keep annotations outside literal examples. Distinguish local decoder tests from actual extractor observations. Any ordinary punctuation allowed in natural dates must also be allowed by the event value grammar without stripping malformed syntax or inventing missing values. Resolve the current phase's complete primary intent with the input's precedence, retain independent administrative questions until spoken, and apply payment completion guards only to actual payment corrections."
+      },
+      {
+        "operation": "replace_exact_paragraph",
+        "anchor": {
+          "path": "competition/skills/build-phone-agent.md",
+          "line": 47,
+          "exact_paragraph": "For a structurally readable incomplete event, process the declared unfinished component before applying complete-date validation. If the producer marks the date unfinished and also emits a date fragment, that fragment cannot be used as a date or consent. Retain an independently complete, valid amount for the same target and ask only for the unfinished date; an invalid date fragment must not resurrect an older amount or expand the missing set to both components. Reject malformed structure or ambiguous target scope without a write. A later complete date still requires policy validation, a new full readback and separate confirmation. Include a delivered-event recovery probe with a complete amount beside an unfinished ordinal date, as well as faithful producer examples and malformed-event negative controls."
+        },
+        "text": "Validate event structure and target scope before handling its completion state. For a readable incomplete event, classify the declared unfinished component before applying complete-value validation. Retain each independently complete valid component for that same target even when another component is unfinished; a declared unfinished date fragment is neither a usable date nor a reason to discard a complete amount. Update the correction's required set by subtracting explicit newly completed components, rather than unioning obsolete missing flags or reviving superseded offers. Preserve unaffected target facts, invalidate active readback and consent, and clarify only remaining components. Malformed structure or ambiguous scope authorizes no write. Once all required components are complete and policy-valid, speak a fresh full readback and require later clear confirmation. Validate this with the actual delivered event grammar, persistent merged state and next spoken question, including complete amount plus unfinished date and both completion orders."
+      },
+      {
+        "operation": "append_after_exact_paragraph",
+        "anchor": {
+          "path": "competition/skills/build-phone-agent.md",
+          "line": 59,
+          "exact_paragraph": "Normalize complete ordinary date expressions at the producer/consumer boundary using the call's supplied date context: month names and spoken ordinals, omitted years, weekday plus day ordinal, and the policy's this/next weekday definition. Require a consistent unambiguous whole expression; never infer a date from an unfinished fragment or negate the customer's explicit date by substituting the old offered date. An acceptance of a known offered amount with a newly supplied date adopts that new date before validation and readback. Distinguish a vague period, an unreadable expression and a valid date requiring holiday/deadline adjustment. Use the policy's one exact-day clarification and fallback, rather than asking indefinitely. Preserve unsupported/ambiguous input safeguards and verify both ordinary and contradictory date examples against the actual extraction grammar."
+        },
+        "text": "Keep date normalization outcomes explicit: valid exact expression, source-defined vague period, unfinished component, and invalid or conflicting complete expression. Do not silently count impossible dates or contradictory weekday/date pairs as repeated vague periods. Apply fallback and clarification limits only to the classes covered by the supplied source. If the source leaves repeated invalid-input behavior unspecified, record the interpretation; any distinct valid counteroffer still needs its own complete readback and later consent. Audit expectations remain separate from source obligations. Test the boundary independently from business-day, holiday and deadline arithmetic."
+      },
+      {
+        "operation": "append_after_exact_paragraph",
+        "anchor": {
+          "path": "competition/skills/build-phone-agent.md",
+          "line": 103,
+          "exact_paragraph": "When a later repair phase provides official case failures/transcripts, diagnose the actual root cause: mapping, routing, code exception, missing policy, honesty, or latency. Fix only the generated files in this run. Do not tune to known customer identities, exact expected records, or fixed dates from the test set. Maintain general behavior from the bank evidence. API dry-run rejection is feedback too. Make the smallest coherent correction and regenerate coverage."
+        },
+        "text": "Before claiming a repair, keep separate evidence for actual extractor output, decoded controller behavior under persistent variables, bank receipts/ledger, actor adherence, judge agreement and infrastructure completeness. Preserve original scores, scripts, expected records and failed judges with exact source/version pointers. Local literal-event checks do not qualify the producer or hosted sandbox, and missing repetitions are unobserved. Retain mandatory opening disclosures when a judge confuses them with write acknowledgements. Reuse invariant controls against the current run's source-derived policy; do not embed witness customer values or practice calendar constants into this shared guide."
+      }
+    ],
+    "apply_policy": "Parent applies only against matching hash/anchors or rechecks a concurrently changed guide. Generic text only; no public witness IDs, amounts, dates, queue/outcome constants or changed test expectations."
+  },
+  "parent_validation_order": [
+    "Apply the four focused guide operations, retaining existing source-policy/receipt guards. Generate fresh A6 and B10 from their original inputs; provenance and coverage must name source rules and actual code paths.",
+    "Run literal actual producer examples and saved delivered-event sequences through the new controller, including component retention, phase priority, new-date acceptance and persistent receipt/graph checks. Report actual extractor observations separately.",
+    "Parent runs unchanged original three-repetition A public protocol and separately unchanged B grouped authored protocol; retain every failure and validate call/version binding plus ledger/ordered transcript. The sidecar runs no platform test.",
+    "For an unseen brief, derive calendar, limits, priority, fields, outcomes and queues only from that brief/API. Reuse the boundary and state invariants, with unresolved source semantics disclosed. No claim of unseen success follows from A/B witnesses."
+  ],
+  "bounded_existing_collector": {
+    "scope": "Offline triage of original hosted artifacts; no reevaluation, no hidden-case or voice claims. Direct parse errors do not test below-floor kernel outcomes.",
+    "generated_at": "2026-10-11T01:28:35.092764+00:00",
+    "limits": {
+      "max_runs": 100,
+      "max_files": 1000,
+      "max_file_bytes": 16777216,
+      "max_total_bytes": 67108864,
+      "max_directory_entries": 4096,
+      "max_records": 10000,
+      "max_messages": 10000,
+      "max_seconds": 12
+    },
+    "bytes_read": 66978817,
+    "collection_complete": false,
+    "collection_issues": [
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T195101Z-9337ad15cba6\\evidence",
+        "status": "directory_unavailable"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T191512Z-f92413b3eb8c\\evidence\\0003.json",
+        "relative_path": "20261010T191512Z-f92413b3eb8c/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 12062972,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0002.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1565519,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0003.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1336398,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0004.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0004.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1703110,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0005.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0005.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 428499,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0006.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0006.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 4046299,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0007.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0007.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1565867,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0008.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0008.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1336397,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0009.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0009.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1506691,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0010.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0010.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 428054,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0011.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0011.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2249173,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0012.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0012.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1565514,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0013.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0013.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1337513,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0014.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0014.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1702141,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T190019Z-3f55b7ea5d03\\evidence\\0015.json",
+        "relative_path": "20261010T190019Z-3f55b7ea5d03/evidence/0015.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 429015,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T185507Z-6c58e3f34b55\\evidence\\0001.json",
+        "relative_path": "20261010T185507Z-6c58e3f34b55/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2824350,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T185507Z-6c58e3f34b55\\evidence\\0002.json",
+        "relative_path": "20261010T185507Z-6c58e3f34b55/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1122761,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T185507Z-6c58e3f34b55\\evidence\\0003.json",
+        "relative_path": "20261010T185507Z-6c58e3f34b55/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2899071,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T184929Z-c1ff8c324e2c\\evidence\\0001.json",
+        "relative_path": "20261010T184929Z-c1ff8c324e2c/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1122326,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T184929Z-c1ff8c324e2c\\evidence\\0002.json",
+        "relative_path": "20261010T184929Z-c1ff8c324e2c/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1271880,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T184929Z-c1ff8c324e2c\\evidence\\0003.json",
+        "relative_path": "20261010T184929Z-c1ff8c324e2c/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1119504,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T181427Z-9df7ad21669a\\evidence\\0001.json",
+        "relative_path": "20261010T181427Z-9df7ad21669a/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1332156,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T181427Z-9df7ad21669a\\evidence\\0002.json",
+        "relative_path": "20261010T181427Z-9df7ad21669a/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2030107,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T181427Z-9df7ad21669a\\evidence\\0003.json",
+        "relative_path": "20261010T181427Z-9df7ad21669a/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1680691,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T181326Z-c5ce3bb669b0\\evidence",
+        "status": "directory_unavailable"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T175319Z-4fbd0bfdc9f4\\evidence\\0001.json",
+        "relative_path": "20261010T175319Z-4fbd0bfdc9f4/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1430876,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T175319Z-4fbd0bfdc9f4\\evidence\\0002.json",
+        "relative_path": "20261010T175319Z-4fbd0bfdc9f4/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1310056,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T175319Z-4fbd0bfdc9f4\\evidence\\0003.json",
+        "relative_path": "20261010T175319Z-4fbd0bfdc9f4/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 835578,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T174349Z-03f6264c9384\\evidence\\0001.json",
+        "relative_path": "20261010T174349Z-03f6264c9384/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 616491,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T174349Z-03f6264c9384\\evidence\\0002.json",
+        "relative_path": "20261010T174349Z-03f6264c9384/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 616670,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T174349Z-03f6264c9384\\evidence\\0003.json",
+        "relative_path": "20261010T174349Z-03f6264c9384/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 617106,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T174015Z-fdeecbd9264a\\evidence\\0001.json",
+        "relative_path": "20261010T174015Z-fdeecbd9264a/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 681235,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T174015Z-fdeecbd9264a\\evidence\\0002.json",
+        "relative_path": "20261010T174015Z-fdeecbd9264a/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 994936,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T174015Z-fdeecbd9264a\\evidence\\0003.json",
+        "relative_path": "20261010T174015Z-fdeecbd9264a/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 814592,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T174015Z-fdeecbd9264a\\evidence\\0004.json",
+        "relative_path": "20261010T174015Z-fdeecbd9264a/evidence/0004.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 836238,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T174015Z-fdeecbd9264a\\evidence\\0005.json",
+        "relative_path": "20261010T174015Z-fdeecbd9264a/evidence/0005.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 617163,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T162852Z-dd847d744658\\evidence\\0001.json",
+        "relative_path": "20261010T162852Z-dd847d744658/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 524292,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T162852Z-dd847d744658\\evidence\\0002.json",
+        "relative_path": "20261010T162852Z-dd847d744658/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 523566,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T162852Z-dd847d744658\\evidence\\0003.json",
+        "relative_path": "20261010T162852Z-dd847d744658/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 523909,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161923Z-246250c4ad4d\\evidence\\0001.json",
+        "relative_path": "20261010T161923Z-246250c4ad4d/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 823500,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161923Z-246250c4ad4d\\evidence\\0002.json",
+        "relative_path": "20261010T161923Z-246250c4ad4d/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 980558,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161923Z-246250c4ad4d\\evidence\\0003.json",
+        "relative_path": "20261010T161923Z-246250c4ad4d/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 801066,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161923Z-246250c4ad4d\\evidence\\0004.json",
+        "relative_path": "20261010T161923Z-246250c4ad4d/evidence/0004.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 821926,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161923Z-246250c4ad4d\\evidence\\0005.json",
+        "relative_path": "20261010T161923Z-246250c4ad4d/evidence/0005.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 493185,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161027Z-ca61fab71508\\evidence\\0001.json",
+        "relative_path": "20261010T161027Z-ca61fab71508/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 937672,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161027Z-ca61fab71508\\evidence\\0002.json",
+        "relative_path": "20261010T161027Z-ca61fab71508/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 786888,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161027Z-ca61fab71508\\evidence\\0003.json",
+        "relative_path": "20261010T161027Z-ca61fab71508/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 765319,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161027Z-ca61fab71508\\evidence\\0004.json",
+        "relative_path": "20261010T161027Z-ca61fab71508/evidence/0004.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 786168,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T161027Z-ca61fab71508\\evidence\\0005.json",
+        "relative_path": "20261010T161027Z-ca61fab71508/evidence/0005.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2214338,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0001.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 523332,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0002.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1016926,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0003.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 427483,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0004.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0004.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1274449,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0005.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0005.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 524225,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0006.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0006.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 523154,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0007.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0007.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1017981,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0008.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0008.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 427786,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0009.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0009.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1274246,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0010.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0010.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 524775,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0011.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0011.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 678949,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0012.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0012.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1017808,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0013.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0013.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 427333,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0014.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0014.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1273836,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T155046Z-a38e00ef8bf1\\evidence\\0015.json",
+        "relative_path": "20261010T155046Z-a38e00ef8bf1/evidence/0015.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 524722,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T154227Z-0f78c1b310df\\evidence",
+        "status": "directory_unavailable"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0001.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1391655,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0002.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 3281308,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0003.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 785845,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0004.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0004.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 7301466,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0005.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0005.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1890370,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0006.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0006.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1281425,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0007.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0007.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 3048814,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0008.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0008.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 787648,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0009.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0009.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1014311,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0010.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0010.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 10773482,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0011.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0011.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1282731,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0012.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0012.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2836158,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0013.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0013.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 785441,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0014.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0014.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1015653,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151919Z-b8256297f6a0\\evidence\\0015.json",
+        "relative_path": "20261010T151919Z-b8256297f6a0/evidence/0015.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1313879,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0001.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0001.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 605269,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0002.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0002.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1527312,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0003.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0003.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2676919,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0004.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0004.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 761695,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0005.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0005.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1527578,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0006.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0006.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2091342,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0007.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0007.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 583918,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0008.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0008.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 1977082,
+        "status": "byte_budget_exhausted"
+      },
+      {
+        "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T151434Z-957c1fdb0b77\\evidence\\0009.json",
+        "relative_path": "20261010T151434Z-957c1fdb0b77/evidence/0009.json",
+        "sha256": null,
+        "hash_method": "sha256_exact_file_bytes",
+        "bytes": 2292060,
+        "status": "byte_budget_exhausted"
+      }
+    ],
+    "failure_group_counts": {
+      "policy_receipt_ledger_failure": 1,
+      "infrastructure_incomplete": 46
+    },
+    "notable_findings": [],
+    "source": "integrations/customer-datasets/failure_triage.py",
+    "new_output": "Embedded in this report only; original failure-triage files preserved",
+    "run_count": 24,
+    "format_examples": [],
+    "attribution_limit": "Broader saved synthetic archive, not pinned A4/B9 evidence and not current candidate qualification. Collector grouping is a triage label, not an adjudicated policy result."
+  },
+  "sources": [
+    {
+      "path": "competition/skills/build-phone-agent.md",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\skills\\build-phone-agent.md",
+      "sha256": "8d4cc3dba0c805594f5579299ecf1370812beeba8c5bd42de794e6a41cb7039c",
+      "bytes": 33122,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "competition-v3/build-the-builder/briefs/brief-a.md",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition-v3\\build-the-builder\\briefs\\brief-a.md",
+      "sha256": "d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7",
+      "bytes": 10174,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "competition-v3/build-the-builder/briefs/brief-b.md",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition-v3\\build-the-builder\\briefs\\brief-b.md",
+      "sha256": "c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550",
+      "bytes": 2393,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "competition-v3/build-the-builder/tools/openapi.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition-v3\\build-the-builder\\tools\\openapi.json",
+      "sha256": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+      "bytes": 10557,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "competition-v3/build-the-builder/docs/tools-and-code.md",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition-v3\\build-the-builder\\docs\\tools-and-code.md",
+      "sha256": "56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711",
+      "bytes": 31394,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "competition/builder.py",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\builder.py",
+      "sha256": "460945fe07527a6c1f8022596a01e3822d94fd93bca413a822da96e9dea95fea",
+      "bytes": 31284,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/results.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\results.json",
+      "sha256": "5e91ca47980580de008bc9df4bdd9eeab83d8f0b89ebba6fcb90f69c9be0d025",
+      "bytes": 30255,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/manifest.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\manifest.json",
+      "sha256": "b87762dddc2a1cc9a061c7f8a3506dc4f726b7ea4d96bc064af4e9885a490ec4",
+      "bytes": 5852,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "analysis/official-a-v4.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\official-a-v4.json",
+      "sha256": "b8b4fd5092942d3a099b55ed10e5ef424f82b432a6ecfe1bfa94d8bdf90f4303",
+      "bytes": 584328,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "analysis/candidate-a5-contract.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\candidate-a5-contract.json",
+      "sha256": "7ca0b28379f6b39bde77dc03345b05d2dc3ffce598c3f0d248697ece716d54c9",
+      "bytes": 86935,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "analysis/rd-a5-generation.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\rd-a5-generation.json",
+      "sha256": "bc64a0889399a26d52996fd0bdf0ff1304da6555d45d834cc38763bf78a9cbea",
+      "bytes": 3500,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "analysis/rd-a5-hosted-incomplete.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\rd-a5-hosted-incomplete.json",
+      "sha256": "5190c4241c42cb9175fcfc3e31e940a9fe7a624b4b6b7d67a474d51931a02f6c",
+      "bytes": 1789,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "competition/runs/20261010-234004-77e29f/codex-stress-a.workflow.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261010-234004-77e29f\\codex-stress-a.workflow.json",
+      "sha256": "24397f08e2cb464b9445b2797867e4e2a637e4e95a7e38eec65a4d2bb47cf8c3",
+      "bytes": 83624,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "competition/runs/20261010-234004-77e29f/status.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261010-234004-77e29f\\status.json",
+      "sha256": "2214e365133dc32ada328a38ce515a27f94e81c774674544d9a1f32342bf1d4d",
+      "bytes": 787,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/results.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T203603Z-22cc1dece641\\results.json",
+      "sha256": "482a360766784212147c4c88d02a00ef7e1de1a2c1d5308678edc54b492350ca",
+      "bytes": 489,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/manifest.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T203603Z-22cc1dece641\\manifest.json",
+      "sha256": "68f53f687a57dba30f75189c2b704457fcd548134f5dcfd1b5e7454204a5ce6b",
+      "bytes": 8128,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "analysis/rd-b9-hosted.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\rd-b9-hosted.json",
+      "sha256": "2131c127b14c30fc2ae0bee66a2963b44aeac69df95da9802101c296148860e1",
+      "bytes": 232615,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "competition/runs/20261010-232341-090e9c/codex-stress-b.workflow.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261010-232341-090e9c\\codex-stress-b.workflow.json",
+      "sha256": "1b7a8e05d0808b41846719cbfeabff95b0414d501eda70f9d445257f26b729a7",
+      "bytes": 90834,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "analysis/failure-triage.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\failure-triage.json",
+      "sha256": "580fb6b926eef48511145377cdf7b618a2e37078a662b1054b98750fd8b97b0a",
+      "bytes": 361851,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "analysis/failure-triage.txt",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\failure-triage.txt",
+      "sha256": "397521b2c719fbbeec60aedaaebfc0b854e1851d00afe3e3cb2d870478a5c611",
+      "bytes": 223454,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/79bfff6a-def8-4c31-a936-2748e97e7142.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\79bfff6a-def8-4c31-a936-2748e97e7142.json",
+      "sha256": "e72530d8aefef7f6a7fb057d966c5bdc2361a0f16f343f0675c2b276015ccc39",
+      "bytes": 900132,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\abd07891-628c-4f6c-a1e3-4a6bc1d4016d.json",
+      "sha256": "4e22b0cbeca1bc0472101a3b6f2106bcb2ca174824049b5c87340b9c8055ca79",
+      "bytes": 378034,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/283f29fd-ea03-4bd3-9cac-241c1647430c.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\283f29fd-ea03-4bd3-9cac-241c1647430c.json",
+      "sha256": "908671994b16526caa0829fee0375f4812201dc8a4959a3f2eda01e5ae46b96b",
+      "bytes": 654212,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9f450d7b-afff-469e-b0ab-c8ea391d1bb8.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\9f450d7b-afff-469e-b0ab-c8ea391d1bb8.json",
+      "sha256": "a11b17a59ca7271909b2b4806de0c4ef25b8cb9652dc0b0b1ad308ce91efd40d",
+      "bytes": 1309700,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/7ef78672-39b9-4ec5-b19f-1fbfae0a7023.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\7ef78672-39b9-4ec5-b19f-1fbfae0a7023.json",
+      "sha256": "8040a7fd4fa31d113c8e352862fe968af0c4091cb1a69c0ec27faba47c07215f",
+      "bytes": 1105803,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/82efb77a-8fc3-4200-93c5-1c969fe24122.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\82efb77a-8fc3-4200-93c5-1c969fe24122.json",
+      "sha256": "a5d4be4728d28e7db1858917923131502c4357259a4d629c9a3b26927cf3e726",
+      "bytes": 1033396,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\b1da1cb2-5c05-4d98-8ced-8580edb3aee2.json",
+      "sha256": "76bfd25c9367b417da3d95a10ccaab14e0072aa2a8eb776d3a818cc5a58a58ad",
+      "bytes": 1400508,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/9591f538-0fcb-49ca-91b3-a5a4f79b343c.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\9591f538-0fcb-49ca-91b3-a5a4f79b343c.json",
+      "sha256": "42f79b603ee22679c12b45a1dcd3adb3a20b21ac91e8cbd189da7be19dbae4ce",
+      "bytes": 702652,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/14117e48-7d50-43a1-8f4a-7fa64c16c973.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\14117e48-7d50-43a1-8f4a-7fa64c16c973.json",
+      "sha256": "8081926d95e0388d3fd8a6a32970ef94ca7d9959136e5740cc53a2e3ce240ef0",
+      "bytes": 1475547,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\ec61e48f-c894-429b-a1a3-ab2ea18c77ac.json",
+      "sha256": "ff2adc051b8613a4d499176ae3fd7effde2d5a9e2978c0703f79faf3682bd8df",
+      "bytes": 939662,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/78da1f6e-d83a-4220-87a8-878c2f32a5e6.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\78da1f6e-d83a-4220-87a8-878c2f32a5e6.json",
+      "sha256": "e7796d03cc7c9a601432eee2e08407f7e7ccafab4ee0a7a039faaa1f18e8c369",
+      "bytes": 900793,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c77b2cdc-ea6b-4a9a-a8ac-caf6a0dc1c00.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\c77b2cdc-ea6b-4a9a-a8ac-caf6a0dc1c00.json",
+      "sha256": "43e90d2fb0bc4a1f25740360a1461c6cb284f7ec71ae3e0e30e12e346d12863e",
+      "bytes": 377528,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/d9cafea4-02b7-4f61-826b-301e1ba3f259.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\d9cafea4-02b7-4f61-826b-301e1ba3f259.json",
+      "sha256": "9914d347f5216a857a45170e1a82c4e1eb2112fd7992026a3e67eafa5f3d9388",
+      "bytes": 965216,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c6b8a030-c041-4986-a330-a266c5710bc7.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\c6b8a030-c041-4986-a330-a266c5710bc7.json",
+      "sha256": "d4b7fc6c2934aa6e3d903718e4380241b212b45c46b7ebaf53e6354380681aa8",
+      "bytes": 3301328,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/311ae7c3-acdf-4847-acee-7854e63c1b0c.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\311ae7c3-acdf-4847-acee-7854e63c1b0c.json",
+      "sha256": "2d3762038d7bd043f4463ba6a18eabaf33e34a051c3f413885b0867f5838e536",
+      "bytes": 940368,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/329c23cd-b6c6-43b7-91fe-8d00f208ea19.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\329c23cd-b6c6-43b7-91fe-8d00f208ea19.json",
+      "sha256": "1828ad2119ace78b6bbe1e15161302947f3b15ac13da9423f74774d34ec55271",
+      "bytes": 1027334,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ee16aa8f-96a9-4bca-a94a-b2d4ad1dc279.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\ee16aa8f-96a9-4bca-a94a-b2d4ad1dc279.json",
+      "sha256": "3f626282887dd176666d8cdb096cbba4efbc5e54de5b200f0e83f0393c5393ed",
+      "bytes": 1412880,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/a15402e2-0328-4028-b324-8a3e619b1d94.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\a15402e2-0328-4028-b324-8a3e619b1d94.json",
+      "sha256": "10bf530762ad8419982497a1385a3e510e60c7432688b407ccdd63f03acef519",
+      "bytes": 672454,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/e36da9a6-c163-4933-9c4a-e5d20af9b748.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\e36da9a6-c163-4933-9c4a-e5d20af9b748.json",
+      "sha256": "23022d8be5f901eb78978c386aa0d0ae8b1bfae90a682ad94b4bbe3f37a18265",
+      "bytes": 1026185,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/fd0c0046-6dcd-482d-82f3-fa4175b027b0.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\fd0c0046-6dcd-482d-82f3-fa4175b027b0.json",
+      "sha256": "8f305ae925adcda60f04844ec3170b7b5204f2b70671054371433f05737469fa",
+      "bytes": 940252,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/03dc69dc-1d4b-44c9-99a7-b59e3e412949.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\03dc69dc-1d4b-44c9-99a7-b59e3e412949.json",
+      "sha256": "fb96215562378f9c90ca45729f806b3c9cf19cfc9619e52875ef82ef0f5d013c",
+      "bytes": 1017163,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ed720ae5-957c-44ac-82f6-e4722172ea7a.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\ed720ae5-957c-44ac-82f6-e4722172ea7a.json",
+      "sha256": "54021c805056bf29069d8b6cf3c94871bb636b441356622731da307d0075002a",
+      "bytes": 377389,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4dff7243-e7cc-4160-89a4-2dda36a22914.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\4dff7243-e7cc-4160-89a4-2dda36a22914.json",
+      "sha256": "15b89324fd7bf52a4f36d5b19905c4ea77b35677550fa9273b3b28c2cc8cc9be",
+      "bytes": 963088,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/4d1b8d82-e68c-433c-a4f5-da9abb6d84a3.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\4d1b8d82-e68c-433c-a4f5-da9abb6d84a3.json",
+      "sha256": "1f00db0fbe00ae9583d978efca2d90c71f3e1cb15eaa3dd513aff5d50af50176",
+      "bytes": 1568610,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/c5f058b4-bdfe-46cb-a302-26b4d13107a9.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\c5f058b4-bdfe-46cb-a302-26b4d13107a9.json",
+      "sha256": "1514f1d678ee268c88b563f13ef3311f1811892545aa368322ec2e9926470836",
+      "bytes": 948259,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/3274b005-4aad-4aa2-9969-8bf5fd41821f.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\3274b005-4aad-4aa2-9969-8bf5fd41821f.json",
+      "sha256": "88123460957c4a179348782a7749fef0aa4e825690b00f6dc1ac839501728e49",
+      "bytes": 1034265,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/1d24b0f4-3e12-42d9-b5ac-f2345d3fb82f.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\1d24b0f4-3e12-42d9-b5ac-f2345d3fb82f.json",
+      "sha256": "15e850fa27d4aff54a09d89bc88acb079a620f3f250d3d37d6570d8eff952d8d",
+      "bytes": 1429655,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/f1157490-c580-44d0-86b8-fb27d20163b0.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\f1157490-c580-44d0-86b8-fb27d20163b0.json",
+      "sha256": "4532fce0d01ad1b28f442f18948a1046aaeb1353f33afe021497724946967caf",
+      "bytes": 689639,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ab74e576-ccd1-41b5-b7bb-54b24447fd56.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\ab74e576-ccd1-41b5-b7bb-54b24447fd56.json",
+      "sha256": "faf317b9306bf08752bb97ab5f80ccc64c508e070518e1ce3ccc8dcbc7473aa8",
+      "bytes": 1460983,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/autonomous-rd/official-a-v4-1791663733/ac3cc4d6-68f3-4acf-b4a7-fef70b0abe59.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\autonomous-rd\\official-a-v4-1791663733\\ac3cc4d6-68f3-4acf-b4a7-fef70b0abe59.json",
+      "sha256": "56b4ea49f0e1118da9eedb4eb7c7831b9f0e6961ad7457d01c82ccec45326b39",
+      "bytes": 958845,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0001.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T203603Z-22cc1dece641\\evidence\\0001.json",
+      "sha256": "8805ef06bdf996866931f4cb331445fba7ff66b0a8fb5de56d216b9610969a1c",
+      "bytes": 1707202,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0002.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T203603Z-22cc1dece641\\evidence\\0002.json",
+      "sha256": "2bc04c74f750c391a24f5025a7102bdf3459b43591c560c9b59faca5599314ff",
+      "bytes": 1528347,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/evidence/0003.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T203603Z-22cc1dece641\\evidence\\0003.json",
+      "sha256": "b4146e255ced4f4833e5e238eccb872de63195041d6130f145cb60c72609de7d",
+      "bytes": 2056392,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "local-runs/customer-benchmark/20261010T203603Z-22cc1dece641/personas/a5eed020-a30a-40f7-b35a-eb2d601e81a0.json",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark\\20261010T203603Z-22cc1dece641\\personas\\a5eed020-a30a-40f7-b35a-eb2d601e81a0.json",
+      "sha256": "7369a2e69267dee6672e29ddc8911ad73e2e619ecd7e50f035cf124d657844f4",
+      "bytes": 6043,
+      "unchanged_after_analysis": true
+    },
+    {
+      "path": "integrations/customer-datasets/failure_triage.py",
+      "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\customer-datasets\\failure_triage.py",
+      "sha256": "4a8803cd9bbfbb375984bf58e674234ee500a73f66d342f95b94d5cde9f68710",
+      "bytes": 34182,
+      "unchanged_after_analysis": true
+    }
+  ],
+  "limits": [
+    "Saved public/authored synthetic evidence only; no platform state inspected or mutated.",
+    "No original score, judge, script, expectation, guide, candidate or prior report modified.",
+    "Supplementary collector read budget is 12 seconds/64 MiB; incomplete collection remains labelled and cannot imply agent failures.",
+    "No new candidate, scenario generation, Opus review or independent new behavioral test is claimed."
+  ]
+}

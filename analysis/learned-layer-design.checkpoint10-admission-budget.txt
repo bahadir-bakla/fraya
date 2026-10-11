@@ -1,0 +1,103 @@
+CHECKPOINT10 — ADMISSION, BUDGET AND R3 INVARIANTS
+
+Decision: GPU NO-GO. Current local ledger reports zero verified task cost, zero reservations and zero invocations. Credit balance is not verified. Fix the admission transaction, environment/import isolation, stop recovery and actual data/CPU gates before considering a parent-authorized experiment. All learned outputs remain shadow abstentions.
+
+Evidence actually reviewed
+
+The native exact Opus audit took106.594seconds. Its current JSON contains56 CPU observations, expanded from the earlier36 reported by parent. These are observations, not56 semantic passes. No SDK clients, GPU calls or hosted calls were made by this checkpoint. The relevant frozen source hashes match the audit.
+
+The CPU evidence supports replaying the same grant, admission after four completed invocations, inherited environment variables, and a truncated ID file causing finalization to fail without a stop record. A duplicate listing containing conflicting stopped/running rows is accepted by the current parser. These are offline/mock defects, not deployed double spending or an actual cloud shutdown failure.
+
+The ordinal-amendment finding needs qualification: the actual frozen model predicted correction and returned no readback ID. A separately supplied affirmation label reproduces the resolver weakness. Other actual frozen-model observations include ordinary affirmation and permission withdrawal carrying a readback candidate while has_new_terms is unknown. All remain descriptive_only/abstain; no bank-authority leak is claimed.
+
+Runtime and data invariants for R4
+
+- A non-null readback candidate requires independently qualified source/reference binding AND scoped new_terms exactly False. A detector miss, missing head or unknown is insufficient. With no qualified negative-evidence head, keep the candidate null; do not add an authority head merely to populate it.
+- Match the full required component-token set, not a caller-supplied subset. A deferred refusal tied to amount+date must not survive a changed date just because amount still matches. Unrelated sibling changes remain irrelevant.
+- Apply one privacy predicate across runtime, table builder, diagnostics and teacher: security phase OR security role OR security-field descriptor OR unisolated sensitive content blocks sensitive surface features. Contradictory metadata fails closed. Boolean/hash assertions alone do not prove reviewed isolation.
+- Separate at_utterance_end, at_clause_end and window-clipped features using original offsets. One new read-only probe on “Friday” followed by a newline and another clause reproduced original tail=False but local feature tail=True. This establishes clause-rebasing leakage; arbitrary48-character clipping alone was not shown to causeTrue.
+- Reject absence(kind) when reviewed presence(kind) contradicts it. Require reviewed absence regions to cover the candidate without overlapping a present expression or its anchor. Unmatched boundaries remain masked. Unsupported crossing-clause rows should be masked with a reason, not abort unrelated rows.
+- Parent reports primary27 positive/21 additional-negative TRAIN groups. DATE whole22/19 fails; scoped22/20 requires independently justified scope, canonical closure and exact actual-candidate eligibility. Do not rewrite supervision to reach a count. These are TRAIN counts, not calibration or qualification.
+
+Single-use parent transaction
+
+Use one authoritative parent coordinator on one host. An OS lock or transactional database must serialize read/check/update. Atomic file replacement alone is not compare-and-swap; a OneDrive-synchronized JSON file is not a distributed lock. Parent owns the durable local journal and may project its state into the existing aggregate ledger. No ledger was modified here.
+
+Grant fields: unique parent-generated nonce of at least128 random bits; experiment/reservation/invocation IDs; immutable data, review, source, image and dependency hashes; verified workspace/environment; resource ceilings; absolute deadlines; expiry; and owner/fencing token. A hash binds bytes, not reviewer independence or external identity.
+
+Parent consume, under one transaction:
+
+1. Reload current ledger, verify evidence and require admitted_unlaunched, unexpired nonce.
+2. Require no active or remote-unknown invocation anywhere in this work.
+3. Set ordinal to one plus every previous transition to starting for this work across all experiment IDs. Require ordinal<=3. Cancelled or failed starts still count permanently; a new experiment ID cannot reset the cap.
+4. Allocate a distinct invocation subreservation within the TOTAL experiment envelope of at mostUSD10. Do not reserveUSD10 independently for each of three calls.
+5. Atomically consume nonce and transition admitted_unlaunched -> starting. Persist deadlines, owner/fence, attempt count and armed watchdog before any cloud-capable subprocess.
+6. Launch at most one isolated child. A failed launch cannot revive the nonce or refund the attempt slot.
+
+The child then atomically claims starting -> launch_claimed through the coordinator. A read-only check of starting is insufficient: two children could pass it. A replayed receipt fails before a cloud operation. The child validates its own consumed invocation and immutable receipt, not equality to the old global ledger hash. This removes the current contradiction where recording starting makes child re-admission fail.
+
+State sequence
+
+reserved -> admitted_unlaunched -> starting -> launch_claimed -> app_creating -> app_ready -> spawn_pending -> running -> stopping -> stopped_unsettled -> closed
+
+Record each external-create/spawn intent before the request and each returned app/call ID durably afterward. Do not spawn the function until the app ID has a durable acknowledgment. A crash after an external request but before its ID is recorded becomes remote_unknown. Hold its reservation and global serialization slot. Do not retry an uncertain request without verified provider idempotency semantics.
+
+Local CAS proves at-most-one launch claim, not exactly-once remote creation across failures. An expired lease never authorizes a fresh launch while a remote outcome remains unknown. Only positive evidence of no remote operation permits launch_failed_no_remote; even then the start attempt remains consumed.
+
+Counts, resources and accounting
+
+At most one active invocation globally, one H100 per job, one container, zero warm/buffer containers, zero automatic retries, no fanout/map, endpoint, cron or schedule. Verify what the installed SDK actually enforces for CPU/memory maxima and timeout options. max_containers=1 alone only constrains an app, not two competing parents.
+
+Use integer microUSD or exact Decimal. Let C_closed be reconciled costs of closed invocations and other work, U_i the defensible total-cost upper bound for each unclosed invocation, and H the unused reserved experiment envelope:
+
+E = C_closed + sum(U_i for unclosed invocations) + H
+
+Partial billing inside U_i is tracked without adding it twice. Unknown/stopping/stopped-but-unsettled jobs keep their hold. Atomic settlement replaces U_i with actual billed cost; client exit or stop acknowledgment does not release money.
+
+Admission must satisfy E<=USD30 target and E<=USD35 hard maximum. The experiment itself, including failed/cancelled starts and extra charges, remains<=USD10 across all three possible invocations. USD35 is not a fresh experiment allowance. No new launch when accounting or attribution is unknown.
+
+U_i must bound GPU, CPU, RAM, disk and their billable durations plus build, storage, egress and other charges. Applicable rates and resource/time bounds require actual provider/account evidence. A guessedUSD1 extras allowance is not a proof when build duration or retained resources can be unbounded.
+
+The source's conservative rate arithmetic givesUSD1.55554240 for a420-second smoke envelope plusUSD1 extras, andUSD3.77771200 for a2100-second fit envelope plusUSD1 extras. One smoke plus two fits totalsUSD9.11096640. This is illustrative only: those rates, durations and extras have not been established as enforceable bounds by this checkpoint. Official documentation already supplied says automatic H100-to-H200 upgrades use H100 pricing; the higher source rate is merely an extra conservative envelope.
+
+Fixed wall-time proof obligations
+
+Parent fixes t0 and immutable deadlines: startup<=240seconds; compute<=120seconds smoke or<=1800seconds fit; shutdown reserve60seconds; hard stop no later than2026-10-11T06:13:01Z. Cancel begins60seconds before hard stop. Child may shorten but never recompute a later deadline.
+
+Use the earlier of monotonic elapsed limits and the UTC absolute ceiling. Startup includes image preparation and scheduling in the parent wall budget. SDK function timeout is per attempt and does not bound all these periods. If insufficient time remains at spawn, shorten the allowed computation or abort.
+
+Bound cancellation subprocesses to10+15+15seconds, child termination/kill to at most4seconds, journal finalization to at most6seconds, leaving at least10seconds slack. All waits are clipped to the same hard stop. An independent watchdog must survive parent death; Windows hard termination will not reliably execute child finally blocks.
+
+A local timer cannot guarantee a remote cutoff during host loss, network partition or provider failure. Before any launch, server-side time/resource limits must keep worst-case spend inside U_i even if local cancellation fails. If build or orphaned-resource charges cannot be bounded, the hard-cap proof is incomplete: NO-GO. Do not claim an account spending cap exists without evidence.
+
+Environment, imports and stop proof
+
+Construct an explicit minimal environment for launch, cancel and list. Do not inherit os.environ. Remove inherited token, HF, Python-path, Modal server/environment and proxy variables. Any necessary profile/config/proxy setting is explicitly pinned by parent; do not print credentials.
+
+Use a fixed interpreter with -I -B and a hash-verified bootstrap. -I also removes ordinary script-directory imports, so explicitly load only approved adapter roots. Test that this works without ambient PYTHONPATH or malicious current-directory modules. Pin installed SDK/dependencies and remote file/image allowlists. Verify resolved nonsecret workspace/environment before cloud creation; the profile name alone is not isolation.
+
+Write IDs through atomic durable journal updates. Parse failures must not escape the outer finalizer. Record stop outcome or unknown independently of child exit. A physical disk failure cannot promise a file was written; notify through the independent watchdog and keep the hold.
+
+Do not regex-extract an app ID from arbitrary truncated data and treat it as stop authority. Use a previously validated journal/provider ID bound to the invocation. Never stop by wildcard or unrelated app name.
+
+Stop evidence needs the pinned installed-version schema, correct workspace, exactly one matching app row, stopped state and zero tasks. Duplicate/conflicting, missing, malformed, stale or unknown-schema records mean unverified. A cancel/stop return code alone is insufficient. Related build/container resources and billing may remain unsettled even after an app stops.
+
+CPU-first GPU decision
+
+Current decision is NO-GO. First verify actual reviewed rows, closure, privacy, detector alignment and masks. Run frozen sparse/text/phase/constant/fragment and group-shuffled controls. Fix detector, label, scope, reference and adapter failures locally.
+
+Only then consider a small frozen-encoder CPU comparator. Predeclare a narrow exploratory development target, for example at least0.05 absolute improvement in group-macro balanced accuracy over meaningful CPU controls without worsening designated failure groups. This is an experiment-selection threshold, not a significance, generalization or safety claim.
+
+Measure CPU encoder throughput, token lengths, memory and projected full-run time. If CPU can complete within the available window, use CPU. A GPU proposal needs measured compute limitation and evidence the representation is useful. H100 availability is not evidence. Show offline teacher-logit/student shape parity and a feasible json/re student export<=500KB before proposing deployment relevance.
+
+Any later parent-authorized run still needs the single-use transaction, isolation/stop harness, verified resources/cost envelope and independent watchdog. A successful development run would not qualify live ingress, risk calibration or bank authority.
+
+Required implementer harness
+
+31 offline cases are enumerated in JSON. Use mocked SDK/network/subprocess operations and controlled temporary transaction storage, never the actual budget ledger. Test actual lock races; duplicate parent and child claims; cancellation without attempt refunds; crash windows around cloud requests; stale accounting; clock rollback; inherited credentials/import shadowing; torn ID writes; duplicate stop rows; absent-region contradictions; security masks; original-tail features; exact dependency sets; and actual-candidate class-floor failures.
+
+Each result must include the transition journal, launch/cloud-intent counters, active count, ever-started count, held exposure and fixed deadlines. A function returning admitted=False is insufficient if it already caused an external side effect.
+
+What was executed here
+
+One unchanged local feature comparison reproduced the clause-tail issue. Eleven checks passed on a pure in-memory specification model of nonce/child claims, attempt counts and illustrative arithmetic. They do not test the current adapter, OS atomicity, subprocess behavior or cloud controls. Seven artifact/source consistency checks passed. No real ledger, implementation, model, data, platform or cloud mutation occurred. The four design files plus checkpoint08 and checkpoint09 remain byte-identical.
