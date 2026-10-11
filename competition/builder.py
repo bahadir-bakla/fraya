@@ -381,12 +381,17 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                     if practice is None:practice=self.await_practice(author,holder)
                     if not practice.get('train'):self.event('test_skipped',reason='No audited self-practice cases');completed=True;break
                     from caller_styles import ROTATION
-                    last_result=self.test(ids,number,cases=str(practice['train']),style=ROTATION[(number-1)%len(ROTATION)])
+                    try:last_result=self.test(ids,number,cases=str(practice['train']),style=ROTATION[(number-1)%len(ROTATION)])
+                    except TimeoutError as error:
+                        # A queued or slow practice simulation must not discard the published, already tested candidates.
+                        self.event('self_practice_test_timeout',round=number,error=str(error));self.save_candidate(number,ids,{'passed':-1,'total':0});break
                     candidates.append(self.save_candidate(number,ids,last_result))
                 else:last_result=self.test(ids,number)
                 if last_result['passed']==last_result['total']:completed=True;break
             if author and candidates:
                 completed=self.finish_self_practice(candidates,practice)
+            elif author and self.status.get('freya'):
+                completed=True;self.event('self_practice_untested',reason='No practice round finished in the budget; the published candidate is kept')
             self.phase('completed' if completed else 'needs_attention',ended=stamp(),evaluation='not_evaluated' if self.args.skip_tests else 'self_practice' if author else 'official_practice' if last_result else 'incomplete',latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
         except Exception as error:
             self.phase('failed',ended=stamp(),error=self.clean(str(error)))
