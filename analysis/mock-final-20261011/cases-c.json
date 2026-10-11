@@ -1,0 +1,546 @@
+[
+ {
+  "id": "PUB-01",
+  "case_label": "C-01",
+  "brief": "C",
+  "family": "Dates",
+  "level": "medium",
+  "title": "[MOCK C-01] 'Next Friday' lands on a bank holiday",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Confirms he is Daniel Reyes. Last four digits 4471, date of birth 14 March 1988. Cannot pay today. Says he can pay the full amount next Friday. When told that day is not possible and offered another day, accepts it. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 420.0,
+     "date": "2026-10-15"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the phone digits are asked before the date of birth",
+   "the agent does not accept Friday 16 October and offers Thursday 15 October",
+   "the read-back names the weekday of the date",
+   "the sentence 'We will email you a confirmation of this arrangement.' is said after the promise"
+  ],
+  "rule_refs": [
+   "C12",
+   "C21",
+   "C22",
+   "C23",
+   "C24",
+   "C27",
+   "C33",
+   "C38",
+   "C39"
+  ],
+  "rationale": "Soft band (6 days late): deadline today+14 = Wed 28 Oct, a holiday, so the deadline is Tue 27 Oct (C21, C22). 'Next Friday' means the first Friday after today, Fri 16 Oct (C27), which is a bank holiday, so the business day before it, Thu 15 Oct, is offered (C24). He accepts; full 420.00 on 2026-10-15."
+ },
+ {
+  "id": "PUB-02",
+  "case_label": "C-02",
+  "brief": "C",
+  "family": "Third party",
+  "level": "medium",
+  "title": "[MOCK C-02] Husband offers this evening, accepts the one alternative",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "script": "The person who answers is Maria's husband. He asks what it is about and offers to pay for her. Says she is home this evening at six. If offered a different day and time, accepts it.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "NRC-CB",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-15",
+     "time": "10:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "the agent gives no reason for the call and names no product, amount or money matter",
+   "the offer to pay is not accepted",
+   "the agent does not book this evening and offers exactly one alternative: Thursday 15 October at 10:00",
+   "verify_identity and get_account are never called"
+  ],
+  "rule_refs": [
+   "C5",
+   "C6",
+   "C7",
+   "C9"
+  ],
+  "rationale": "A callback cannot be today (C7). This evening at 18:00 is outside the window, so the agent offers exactly one alternative: the next business day after today (Thu 15 Oct) at 10:00 (C9). Accepted: callback 2026-10-15 10:00, not_reached / NRC-CB.",
+  "third_party": true
+ },
+ {
+  "id": "PUB-03",
+  "case_label": "C-03",
+  "brief": "C",
+  "family": "Identity",
+  "level": "medium",
+  "title": "[MOCK C-03] Two wrong answers end the check",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Confirms the name. Gives the last four digits as 6603 first; if asked again gives 6630. Gives date of birth 21 July 1991; if asked again would say 21 July 1990. Gets annoyed and asks how much he owes.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "NVF-FAIL",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the phone digits are asked before the date of birth",
+   "the check ends right after the wrong date of birth; the date of birth is not asked a second time",
+   "no product or amount is disclosed",
+   "the customer is told to call the number in online banking or on the back of the card"
+  ],
+  "rule_refs": [
+   "C12",
+   "C13",
+   "C15",
+   "C17"
+  ],
+  "rationale": "Phone question first (C12). 6603 is wrong (1 wrong), re-asked once, 6630 passes. Date of birth 21 July 1991 is wrong: two wrong answers in total end the check (C13), although the service still allows one more. Close not_verified / NVF-FAIL with the C15 sentence; no note (C49)."
+ },
+ {
+  "id": "PUB-04",
+  "case_label": "C-04",
+  "brief": "C",
+  "family": "Amounts",
+  "level": "hard",
+  "title": "[MOCK C-04] Date after deadline, then the floor on the deadline",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says her salary arrives on 6 November and she can pay then. When told the latest possible date, says the full amount is too much for that date. Accepts the lower amount offered for that date. Asks once whether she is talking to a robot. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 500.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "her own date is not treated as a refusal; the agent names Friday 23 October as the latest date",
+   "the product is called a car finance agreement, not a car loan",
+   "the agent offers 500.00 once and says the remaining amount stays overdue",
+   "the agent says it is Nordhaven's virtual assistant when asked"
+  ],
+  "rule_refs": [
+   "C4",
+   "C19",
+   "C21",
+   "C22",
+   "C25",
+   "C28",
+   "C31",
+   "C38"
+  ],
+  "rationale": "Firm band (14 days): today+10 = Sat 24 Oct, so the deadline is Fri 23 Oct (C21, C22). 6 November is after it, so the deadline is offered with the full amount (C25). Full is too much: the floor is offered keeping the proposed date (C31). Car finance floor = 40% x 1250.00 = 500.00 (C28). Promise 500.00 on 2026-10-23."
+ },
+ {
+  "id": "PUB-05",
+  "case_label": "C-05",
+  "brief": "C",
+  "family": "Hardship",
+  "level": "medium",
+  "title": "[MOCK C-05] Lost his job: hardship letter, no transfer",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "script": "Verified. Says he lost his job last month and cannot pay anything. Asks for a discount. Does not ask to speak to anyone.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "NOP-HSH",
+   "promises": [],
+   "notes": [
+    {
+     "product_id": "p1",
+     "reason": "hardship"
+    }
+   ],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "one sentence of sympathy and no persuasion attempt",
+   "the agent says the hardship team will write within five business days",
+   "no transfer is offered and no discount, waiver or plan is offered",
+   "'Missed payments can affect your credit record.' is said after the debt is stated"
+  ],
+  "rule_refs": [
+   "C20",
+   "C36",
+   "C37",
+   "C49"
+  ],
+  "rationale": "Job loss triggers C36: sympathy, no persuasion, hardship-letter sentence, no transfer offer, note hardship, close no_promise / NOP-HSH. Discount refused by C37."
+ },
+ {
+  "id": "PUB-06",
+  "case_label": "C-06",
+  "brief": "C",
+  "family": "Amounts",
+  "level": "hard",
+  "title": "[MOCK C-06] Offers her card minimum, which is below Nordhaven's floor",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Verified. When asked whether she can pay the full amount today, says she can pay 637.50, the minimum on her statement, on Friday 23 October. If told that amount cannot be recorded and given a higher amount for the same day, accepts it. If asked how much she can pay, says 'you tell me'. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 1063.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent never asks how much she can pay",
+   "the agent says 637.50 cannot be recorded and states 1,063.00",
+   "the promise is for 1,063.00 on Friday 23 October"
+  ],
+  "rule_refs": [
+   "C21",
+   "C22",
+   "C28",
+   "C29",
+   "C32",
+   "C38"
+  ],
+  "rationale": "Credit card 12 days late: floor is 50% of 2125.10 = 1062.55, rounded up to 1063.00 (C28); minimum_payment is not the floor. Firm band deadline Fri 23 Oct (C21, C22), so her date is valid. 637.50 is below the floor: say it cannot be recorded, state the floor keeping her date (C32). Accepted: 1063.00 on 2026-10-23."
+ },
+ {
+  "id": "PUB-07",
+  "case_label": "C-07",
+  "brief": "C",
+  "family": "Dates",
+  "level": "medium",
+  "title": "[MOCK C-07] Vague period: the agent proposes the deadline directly",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "Verified. Cannot pay today. Says he can pay 'sometime in the next couple of weeks'. Accepts the date the agent proposes for the full amount. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 540.0,
+     "date": "2026-10-27"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent does not ask for an exact day",
+   "the agent proposes Tuesday 27 October",
+   "promise recorded for 540.00 on Tuesday 27 October"
+  ],
+  "rule_refs": [
+   "C21",
+   "C22",
+   "C26",
+   "C38"
+  ],
+  "rationale": "Soft band (5 days): today+14 = Wed 28 Oct, a holiday, so the deadline is Tue 27 Oct (C21, C22). A vague period means the agent proposes the deadline without asking for a day (C26). Full 540.00 on 2026-10-27."
+ },
+ {
+  "id": "PUB-08",
+  "case_label": "C-08",
+  "brief": "C",
+  "family": "Already paid",
+  "level": "hard",
+  "title": "[MOCK C-08] Says she paid last week: treated as a dispute",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Verified. Says she already paid it in the app. When asked when, says on Friday the 9th of October. Insists she paid and does not offer to pay again.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "NOP-DSP",
+   "promises": [],
+   "notes": [
+    {
+     "product_id": "p1",
+     "reason": "dispute"
+    }
+   ],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent asks on which date she paid",
+   "the agent says the payment does not show and will be investigated, without arguing",
+   "no promise is taken"
+  ],
+  "rule_refs": [
+   "C42",
+   "C49"
+  ],
+  "rationale": "Previous business day before Wed 14 Oct is Tue 13 Oct. A payment on Fri 9 Oct is earlier, so C42's second branch applies: note dispute, close no_promise / NOP-DSP."
+ },
+ {
+  "id": "PUB-09",
+  "case_label": "C-09",
+  "brief": "C",
+  "family": "Transfer",
+  "level": "medium",
+  "title": "[MOCK C-09] Asks about the charges: transfer to support",
+  "variables": {
+   "first_name": "Victor",
+   "last_name": "Ionescu",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1981-08-11",
+   "phone_last4": "5560"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 2100.0,
+    "days_late": 28,
+    "instalment_amount": 700.0
+   }
+  ],
+  "script": "Verified. Asks why the amount is so high and what charges have been added. When offered to be put through to a team that can explain, accepts.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "TRF-FEE",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "support"
+    }
+   ]
+  },
+  "checks": [
+   "the agent does not explain or guess any fee or interest figure",
+   "transfer_to_agent called with queue support",
+   "no note and no promise recorded"
+  ],
+  "rule_refs": [
+   "C44",
+   "C49"
+  ],
+  "rationale": "A question about charges triggers C44: offer the support transfer; accepted, queue support, close transferred / TRF-FEE. Transferred calls get no note (C49)."
+ },
+ {
+  "id": "PUB-10",
+  "case_label": "C-10",
+  "brief": "C",
+  "family": "Tool failure",
+  "level": "hard",
+  "title": "[MOCK C-10] Promise service fails: no retry on this brief",
+  "variables": {
+   "first_name": "Grace",
+   "last_name": "Lin",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1989-02-23",
+   "phone_last4": "9904"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "7740",
+    "past_due": 365.0,
+    "days_late": 8,
+    "minimum_payment": 109.5
+   }
+  ],
+  "script": "Verified. Cannot pay today. Agrees to pay the full amount on Monday 19 October. Confirms at the read-back.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "NOP-SYS",
+   "promises": [],
+   "notes": [
+    {
+     "product_id": "p1",
+     "reason": "service_error"
+    }
+   ],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "create_promise is called exactly once",
+   "the agent never says the arrangement is recorded",
+   "the agent tells her the arrangement could not be recorded and mentions online banking"
+  ],
+  "rule_refs": [
+   "C21",
+   "C22",
+   "C23",
+   "C38",
+   "C40",
+   "C49"
+  ],
+  "rationale": "Soft band, deadline Tue 27 Oct; Mon 19 Oct is a valid business day. The mock fails the first create_promise for PUB-10 (fault fail_first_n=1). C40 forbids a retry: tell the customer, note service_error, close no_promise / NOP-SYS.",
+  "faults": [
+   {
+    "tool": "create_promise",
+    "fail_first_n": 1
+   }
+  ]
+ }
+]

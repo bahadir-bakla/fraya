@@ -1,0 +1,27 @@
+PASS PUB-01 medium Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-02 medium Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'NRC-CB')
+       - callbacks [], expected [{'date': '2026-10-15', 'time': '10:00'}]
+FAIL PUB-03 medium Identity       | verify > verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'NVF-FAIL')
+PASS PUB-04 hard   Amounts        | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Hardship       | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('no_promise', 'NOP-HSH')
+       - conversation: The call failed two of the success criteria: First, the agent offered a transfer to the support team in [Message 10] and [Message 14], which violated the 'no transfer is offered' criterion. Second, the agent made a persuasion attempt in [Message 
+PASS PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+PASS PUB-07 medium Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-08 hard   Already paid   | close_call
+       - outcome (None, None), expected ('no_promise', 'NOP-DSP')
+       - notes [], expected [('p1', 'dispute')]
+       - conversation: - The agent failed to ask on which date the payment was made. - The agent did not mention that the payment was missing or would be investigated. - The call ended abruptly after the identity verification phase without addressing the reason for the
+FAIL PUB-09 medium Transfer       | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'TRF-FEE')
+       - transfers [{'queue': 'general'}], expected [{'queue': 'support'}]
+       - conversation: The agent followed most instructions, including not explaining fees and avoiding recording notes or promises. However, the success criteria specifically required the 'transfer_to_agent' tool to be called with 'queue support'. System events show t
+FAIL PUB-10 hard   Tool failure   | verify > verify > get_account > promise > add_note > close_call
+       - outcome (None, None), expected ('no_promise', 'NOP-SYS')
+
+slowest agent turn per call: median 13 s, worst 43 s. Failed calls where the customer hung up: 0.
+WARNING: the phone agent was slow in this run. If the same agent is fast in another run, the model was busy and this score is too low.
+
+4 / 10 passed (bank records and conversation checks). Last simulation ae59a5fc-2b5c-4fd1-9bfd-d3ec18b818b5, status completed, 370 s.

@@ -1,0 +1,57 @@
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+FAIL PUB-11 medium Multi-product  | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 220.0, '2026-10-23'), ('p2', 640.0, '2026-10-23'), ('p3', 75.0, '2026-10-23')]
+       - conversation: The agent failed to meet any of the content-related success criteria because it became stuck in a loop during the identification phase. Despite the user confirming their identity in [Message 1] and [Message 3], the agent repeated the same request
+FAIL PUB-12 hard   Multi-product  | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 510.0, '2026-10-15')]
+       - notes [], expected [('p2', 'refused'), ('p3', 'dispute')]
+       - conversation: The assistant failed to meet any of the success criteria because it became stuck in a loop and ended the call prematurely. Specifically: - The date of birth and phone digits were never asked (Criteria 1 and 2 failed). - No loans (personal, credit
+FAIL PUB-13 hard   Multi-product  | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 300.0, '2026-10-21'), ('p2', 900.0, '2026-10-21')]
+       - conversation: The agent failed all success criteria. It became stuck in a loop, repeatedly asking for the customer's identity despite the user confirming several times (Messages 1, 3, 5). Consequently, the agent never mentioned products, never offered the date
+FAIL PUB-01 easy   Refusal        | close_call
+       - outcome (None, None), expected ('no_promise', 'NP-RTP')
+       - notes [], expected [('p1', 'refused')]
+       - conversation: - The agent failed to make the required persuasion offer (420.00 on Friday 16 October). - The agent failed to greet the user by his first name after he confirmed his identity multiple times; instead, the agent repeatedly asked for him and then en
+FAIL PUB-02 hard   Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'NR-CB')
+       - callbacks [], expected [{'date': '2026-10-16', 'time': '17:30'}]
+       - conversation: The agent failed to meet several success criteria: no callback was booked for Friday 16 October at 17:30, and the agent never reached the stage of asking for alternative times or avoiding a 19:00 booking. The agent ended the call after the user s
+FAIL PUB-03 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'NV-REFUSE')
+       - conversation: The agent failed to meet the first success criterion: it never explained that the questions protect the account. The conversation was also repetitive; the agent asked for Owen Park three times despite the user confirming their identity in message
+FAIL PUB-04 hard   Amounts        | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 625.0, '2026-10-23')]
+       - conversation: The agent failed to acknowledge the user's identity, repeating the same introductory question three times despite the user's clear confirmations in messages 1, 3, and 5. Consequently, the agent never offered the 625.00 payment plan for Friday 23 
+FAIL PUB-05 medium Hardship       | close_call
+       - outcome (None, None), expected ('no_promise', 'NP-FSCB')
+       - notes [], expected [('p1', 'hardship')]
+       - callbacks [], expected [{'date': '2026-10-15', 'time': '14:00'}]
+       - conversation: - The assistant failed to express any sympathy regarding the user's busy day or traffic issues. - No callback was booked for Thursday 15 October at 14:00; the agent simply ended the call. - The assistant repeatedly asked for the user's identity d
+FAIL PUB-06 hard   Dates          | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 637.5, '2026-10-21')]
+       - conversation: The agent failed to recognize the user's confirmation of identity, repeating the opening request multiple times before abruptly ending the call. As a result, none of the specific success criteria were met: - The minimum amount was never offered. 
+FAIL PUB-07 easy   Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'NR-WRONG')
+FAIL PUB-08 medium Already paid   | close_call
+       - outcome (None, None), expected ('paid', None)
+       - notes [], expected [('p1', 'paid')]
+       - conversation: - The agent failed to mention that payments can take up to three business days to show. - The agent repeatedly asked to speak to Hannah Schmidt despite the user confirming her identity three times, leading to an abrupt termination of the call wit
+FAIL PUB-09 hard   Restructuring  | close_call
+       - outcome (None, None), expected ('transferred', 'XFER-RESTR')
+       - transfers [], expected [{'queue': 'restructuring'}]
+       - conversation: The call failed to meet the success criteria because the `transfer_to_agent` function was never called. The agent failed to process the user's confirmation that they were Victor Ionescu, instead repeating the opening question multiple times ([Mes
+FAIL PUB-10 hard   Tool failure   | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 365.0, '2026-10-23')]
+       - conversation: The agent failed to meet the success criteria because it became stuck in a loop asking for the user's identity despite multiple confirmations [Message 1, 3, 5]. Consequently: - The agent never mentioned Friday 23rd October. - No arrangement or pr
+
+slowest agent turn per call: median 4 s, worst 12 s. Failed calls where the customer hung up: 0.
+
+0 / 13 passed (bank records and conversation checks). Last simulation 7c19ed18-806d-4428-a025-d4c7fa59c37f, status completed, 175 s.
