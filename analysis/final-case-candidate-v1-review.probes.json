@@ -1,0 +1,248 @@
+{
+  "review_type": "exact_candidate_local_CPU_witnesses",
+  "candidate_sha256": "5637dc7df1cef75b1a6d136a56ad76e63d2e9451aab0d806bc053af87fcf98f2",
+  "controller_sha256": "d7de6739875c5406f285f569e5c8819db9b678b03941103fe072ce3c3ef052d2",
+  "rows": [
+    {
+      "id": "CPU-CUT-NEXT",
+      "contract": "Cut day uses upcoming statement date and totalDebt",
+      "expected": "Recognize nextStatementDate 09.11.2026 as today; cut-day announcement; TL totalDebt 5000.",
+      "observed": {
+        "line": "Sonu bir bir bir sıfır ile biten Yıldız Miles kartınız. Son ödeme tarihiniz geçmiştir. Türk Lirası toplam borcunuz beş bin Türk Lirası. Dolar borcunuz bulunmamaktadır. Euro borcunuz bulunmamaktadır. Hesap kesim tarihinizi yılda bir kez değiştirebilirsiniz; yıllık hakkınız uygunsa hesap kesim tarihinizi değiştirebilirim ya da ekstrenizi kayıtlı mail adresinize gönderebilirim. Hangisini tercih edersiniz?",
+        "phase": "offer",
+        "statementDate": "09.10.2026",
+        "nextStatementDate": "09.11.2026",
+        "totalDebt": 5000,
+        "statementDebt": 10000
+      },
+      "observation_matches_expected": false,
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "96158684",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "96158684",
+            "intAddressInfoType": "E"
+          }
+        }
+      ],
+      "source_execution": "Unchanged controller and hooks from pinned JSON; Python dict persistence emulates vars. Typed speech is authored, not observed model extraction."
+    },
+    {
+      "id": "CPU-CUT-ISSUED-CONTROL",
+      "contract": "Existing issued-date cut comparison control",
+      "expected": "Candidate recognizes statementDate==today",
+      "observed": {
+        "line": "Sonu bir bir bir sıfır ile biten Yıldız Miles kartınız. Hesap kesim tarihiniz bugün, ekstreniz saat 00.00 itibarıyla kesilecek. Türk Lirası toplam borcunuz beş bin Türk Lirası. Dolar borcunuz bulunmamaktadır. Euro borcunuz bulunmamaktadır. Hesap kesim tarihinizi yılda bir kez değiştirebilirsiniz; yıllık hakkınız uygunsa hesap kesim tarihinizi değiştirebilirim ya da ekstrenizi kayıtlı mail adresinize gönderebilirim. Hangisini tercih edersiniz?"
+      },
+      "observation_matches_expected": true,
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "96158684",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "96158684",
+            "intAddressInfoType": "E"
+          }
+        }
+      ],
+      "source_execution": "Unchanged controller and hooks from pinned JSON; Python dict persistence emulates vars. Typed speech is authored, not observed model extraction."
+    },
+    {
+      "id": "CPU-PDF-EUR",
+      "contract": "Supported explicit PDF currency must survive to scoped readback and dispatch",
+      "expected": "Explicit extracted EUR request -> readback.currency EUR -> currencyType EUR.",
+      "observed": {
+        "readback": {
+          "operation": "statement_pdf_send",
+          "card": "540000******8500",
+          "email": "ece.demir@freyabank.example",
+          "date": "05.10.2026",
+          "currency": "TL"
+        },
+        "route_after_confirmation": "statement_pdf_send",
+        "request_data": {
+          "customerNo": "92460108",
+          "cardNumber": "540000******8500",
+          "currencyType": "TL",
+          "statementDate": "05.10.2026",
+          "emailAddress": "ece.demir@freyabank.example"
+        },
+        "final_line": "Ekstreniz kayıtlı e-posta adresinize gönderildi. Sizi ana menüye yönlendiriyorum."
+      },
+      "observation_matches_expected": false,
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "92460108",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******8500"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "92460108",
+            "intAddressInfoType": "E"
+          }
+        },
+        {
+          "operation": "statement_pdf_send",
+          "data": {
+            "customerNo": "92460108",
+            "cardNumber": "540000******8500",
+            "currencyType": "TL",
+            "statementDate": "05.10.2026",
+            "emailAddress": "ece.demir@freyabank.example"
+          }
+        }
+      ],
+      "source_execution": "Unchanged controller and hooks from pinned JSON; Python dict persistence emulates vars. Typed speech is authored, not observed model extraction."
+    },
+    {
+      "id": "CPU-WEEK-CONTROL",
+      "contract": "Preview, later explicit consent, current day, success receipt",
+      "expected": "Vague -> no write; clear later yes -> one change, current statementDay9 in decide/change, preview dates in completion.",
+      "observed": {
+        "preview_line": "Yeni hesap kesim haftanız her ayın üç. haftası olacak. Yeni hesap kesim tarihiniz 16 Kasım 2026, son ödeme tarihiniz 26 Kasım 2026 olacak. Onaylıyor musunuz?",
+        "vague_route": "listen",
+        "day_requests": [
+          {
+            "operation": "statement_week_decide",
+            "data": {
+              "cardNumber": "540000******1110",
+              "newStatementWeek": 3,
+              "statementDay": 9
+            }
+          },
+          {
+            "operation": "statement_week_change",
+            "data": {
+              "cardNumber": "540000******1110",
+              "newStatementWeek": 3,
+              "statementDay": 9
+            }
+          }
+        ],
+        "final_line": "Sonu bir bir bir sıfır ile biten Yıldız Miles kartınızın hesap kesim haftası her ayın üç. haftası olarak değiştirildi. Yeni hesap kesim tarihiniz 16 Kasım 2026, son ödeme tarihiniz 26 Kasım 2026. Sizi ana menüye yönlendiriyorum."
+      },
+      "observation_matches_expected": true,
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "96158684",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "96158684",
+            "intAddressInfoType": "E"
+          }
+        },
+        {
+          "operation": "statement_week_get",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "statement_week_decide",
+          "data": {
+            "cardNumber": "540000******1110",
+            "newStatementWeek": 3,
+            "statementDay": 9
+          }
+        },
+        {
+          "operation": "statement_week_change",
+          "data": {
+            "cardNumber": "540000******1110",
+            "newStatementWeek": 3,
+            "statementDay": 9
+          }
+        }
+      ],
+      "source_execution": "Unchanged controller and hooks from pinned JSON; Python dict persistence emulates vars. Typed speech is authored, not observed model extraction."
+    },
+    {
+      "id": "CPU-SINGLE-FIGURE-QUALIFICATION",
+      "contract": "Analysis8.5 explicitly sends single-figure answers to offer",
+      "expected": "Source permits single-figure -> offer, so native F1 is not an established blocker.",
+      "observed": {
+        "phase": "offer",
+        "line": "Sonu üç iki sıfır iki ile biten Yıldız Premium kartınız için Borçlarınız için son ödeme tarihiniz 26 Ekim 2026. Hesap kesim tarihinizi yılda bir kez değiştirebilirsiniz; yıllık hakkınız uygunsa hesap kesim tarihinizi değiştirebilirim ya da ekstrenizi kayıtlı mail adresinize gönderebilirim. Hangisini tercih edersiniz?"
+      },
+      "observation_matches_expected": true,
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "92220795",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******3202"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "92220795",
+            "intAddressInfoType": "E"
+          }
+        }
+      ],
+      "source_execution": "Unchanged controller and hooks from pinned JSON; Python dict persistence emulates vars. Typed speech is authored, not observed model extraction."
+    }
+  ],
+  "remote_bank_calls": 0,
+  "freya_calls": 0,
+  "extractor_calls": 0,
+  "limitations": [
+    "No hosted/ASR/extraction frequency measured. Typed events are faithful authored inputs to the advertised schema.",
+    "Local persistence is a Python dict; platform timing, update-store behavior and transitions are not executed.",
+    "Current formal run may have newer artifacts; witnesses bind only the immutable pinned first candidate."
+  ]
+}

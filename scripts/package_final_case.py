@@ -149,7 +149,28 @@ def validate_evidence(run, export, proof_path, mock_url):
         if ids is not None and (not isinstance(ids, dict) or
                 any(ids.get(k) != proof[k] for k in ('workflow_id', 'agent_id', 'version'))):
             raise ValueError('Run publication identity/version mismatch')
-    return raw_export, {'trace.jsonl': host_raw, **logs}, proof_raw
+    complete_logs={'trace.jsonl':host_raw,**logs}
+    # A fresh refinement depends on the original generator. Include its complete
+    # sessions too, preserving original bytes and explicit ancestry frame names.
+    visited={run.name}
+    def ancestors(current_events):
+        for event in current_events:
+            if event.get('kind')!='source_refinement':continue
+            seed_id=event.get('source_run','')
+            if not re.fullmatch(r'[A-Za-z0-9_-]+',seed_id) or seed_id in visited:raise ValueError('Invalid refinement ancestry')
+            visited.add(seed_id);seed=contained(run.parent/seed_id)
+            seed_status=json_object((seed/'status.json').read_bytes(),'ancestor status')
+            if seed_status.get('phase')!='completed':raise ValueError('Ancestor generator did not complete')
+            seed_host=(seed/'trace.jsonl').read_bytes();seed_events=jsonl(seed_host,'ancestor trace')
+            if seed_events[0].get('kind')!='run_start' or seed_events[-1].get('kind')!='run_end' or seed_events[-1].get('phase')!='completed':raise ValueError('Incomplete ancestor host log')
+            complete_logs['ancestors/'+seed_id+'/trace.jsonl']=seed_host
+            for source_log in sorted(seed.glob('model-*.jsonl')):
+                raw=source_log.read_bytes();records=jsonl(raw,source_log.name,allow_diagnostics=True)
+                if 'thread.started' not in [e.get('type') for e in records] or 'turn.started' not in [e.get('type') for e in records]:raise ValueError('Incomplete ancestor coding session')
+                complete_logs['ancestors/'+seed_id+'/'+source_log.name]=raw
+            ancestors(seed_events)
+    ancestors(events)
+    return raw_export, complete_logs, proof_raw
 
 
 def package(args):
@@ -179,7 +200,7 @@ def package(args):
     trace = output / 'final.trace.jsonl'
     with trace.open('wb') as stream:
         for name, raw in logs.items():
-            (originals / name).write_bytes(raw)
+            target=originals/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(raw)
             header = {'trace_file': name, 'sha256': sha256(raw), 'bytes': len(raw),
                       'scope': 'full original run log follows; bytes unmodified'}
             stream.write((json.dumps(header) + '\n').encode())

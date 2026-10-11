@@ -1,0 +1,161 @@
+{
+  "status": "VERIFIED_NATIVE_OPUS_CANDIDATE_REVIEW",
+  "started_utc": "2026-10-11T19:41:21.055855+00:00",
+  "requested_model": "claude-opus-5-5",
+  "attempts": 1,
+  "attempt_limit": 1,
+  "timeout_seconds": 145,
+  "maximum_inference_and_cleanup_seconds": 150,
+  "actual_opus_inference_verified": true,
+  "candidate_reviewed": true,
+  "candidate_manifest": [
+    {
+      "kind": "candidate",
+      "source": "competition/runs/20261011-223232-b788d1/work/workflow.json",
+      "snapshot": "analysis/final-case-candidate-v1-review.candidate.json",
+      "sha256": "5637dc7df1cef75b1a6d136a56ad76e63d2e9451aab0d806bc053af87fcf98f2",
+      "bytes": 75013
+    },
+    {
+      "kind": "policy",
+      "source": "competition/runs/20261011-223232-b788d1/work/policy.json",
+      "snapshot": "analysis/final-case-candidate-v1-review.policy.json",
+      "sha256": "088119dc0febf25427c54b2c2252f6c28b1a34281423ccc4c08fc85bc2cd61d1",
+      "bytes": 43992
+    },
+    {
+      "kind": "coverage",
+      "source": "competition/runs/20261011-223232-b788d1/work/coverage.json",
+      "snapshot": "analysis/final-case-candidate-v1-review.coverage.json",
+      "sha256": "ff924be9c3251defc4a8650bbff1d6e7dd938ed9cb9270e0422c271dcd686cf3",
+      "bytes": 25835
+    },
+    {
+      "kind": "api",
+      "source": "competition/runs/20261011-223232-b788d1/work/inputs/openapi.json",
+      "snapshot": "analysis/final-case-candidate-v1-review.api.json",
+      "sha256": "dba5a76f42a8d4f5cec41a44d4311b8bdf3f05b4958e65000712b83398075034",
+      "bytes": 222202
+    }
+  ],
+  "raw_stdout_saved": false,
+  "thinking_saved": false,
+  "auth_commands": 0,
+  "credential_files_read": false,
+  "network_bank_calls": 0,
+  "freya_calls": 0,
+  "git_commands": 0,
+  "source_manifest": [
+    {
+      "path": "final-case-20261011/Build the Builder - Final Case/sources/documents/2026-10-01-service-contract.md",
+      "sha256": "692414a06036911509072d602b6c85bf38cbf2c791d26488d53d28be1cf35470"
+    },
+    {
+      "path": "final-case-20261011/Build the Builder - Final Case/sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+      "sha256": "c33b5640a06f6be6e6d3cc7f86189ab75bf4ffb4e935874b3ee3b48b03ff1094"
+    },
+    {
+      "path": "final-case-20261011/Build the Builder - Final Case/sources/emails/2026-10-09-decisions-recap.txt",
+      "sha256": "709f18f3d73c4e9398a3ed9dc7249a54b7ca48dcdde8ce7aa7ebbbcdef1b0732"
+    },
+    {
+      "path": "final-case-20261011/Build the Builder - Final Case/sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+      "sha256": "860e3a0249492482535af48c2103430e7de4abc351efe53e6d872b4db837137b"
+    },
+    {
+      "path": "competition/runs/20261011-223232-b788d1/work/inputs/tools-and-code.md",
+      "sha256": "c094579c4b2169427252a8cf4a32ff8bd2e0e837ff12e56ad4d5f8183980d837"
+    }
+  ],
+  "prompt_sha256": "8d67f8c6d9a35040cc92773f0a7e732076de921e168858034c9c77d5067f5d31",
+  "prompt_bytes": 313573,
+  "seconds": 47.969,
+  "exit_code": 0,
+  "rate_limit_blocked": false,
+  "assistant_response_models": [
+    "claude-opus-5-5",
+    "claude-opus-5-5"
+  ],
+  "tool_calls": 0,
+  "model_usage": {
+    "claude-opus-5-5": {
+      "inputTokens": 2,
+      "outputTokens": 4280,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 128709,
+      "webSearchRequests": 0,
+      "costUSD": 1.1152799999999998,
+      "canonicalModel": "claude-opus-5-5",
+      "provider": "firstParty"
+    }
+  },
+  "review": {
+    "review_type": "exact_candidate_source_review_not_executed",
+    "candidate_sha256": "5637dc7df1cef75b1a6d136a56ad76e63d2e9451aab0d806bc053af87fcf98f2",
+    "findings": [
+      {
+        "id": "F1",
+        "priority": "P1",
+        "title": "A single-figure request skips the other-card question and goes straight to the offer, including on NO_DEBT cards",
+        "candidate_refs": [
+          "/nodes/controller/pre_actions/0/function/parameters/properties/code/default after_reading(): `if s.get('detail'): ... return dispatch(s,'contact_email_get')` runs before the `unread` and `no_statement_debt` checks",
+          "speech(): select phase sets s['detail']=e['detail']"
+        ],
+        "source_refs": [
+          "2026-10-10 transcript L50-L59",
+          "2026-10-08 analysis §4.7 L166, §5.1 L200",
+          "policy other_before_offer, no_statement_debt"
+        ],
+        "concrete_counterexample": "The caller has two eligible cards. In the select phase they say 'Yıldız Pratik kartımın son ödeme tarihi ne?' (detail=due). After cards_balance returns, after_reading dispatches contact_email_get, then offer(). The caller is never asked 'Başka bir kartınızın borcunu öğrenmek ister misiniz?'. If the card's statementPaymentStatus is NO_DEBT, the caller is also given the week/email offer instead of going to the main menu.",
+        "observed_source_path": "receive(cards_balance) → after_reading(detail='due') → dispatch contact_email_get → receive(contact_email_get) → offer()",
+        "expected": "Ask the other-card question first whenever an unread eligible card exists. For NO_DEBT cards, go to the menu and make no offer.",
+        "highest_impact_generic_builder_repair": "Make the builder generate the post-reading ordering as one shared gate: other-card question, then the NO_DEBT menu, then the offer or email step. Every reading mode (full reading, single figure, debt plus email) must pass through this gate, and the builder must not emit any early return before it. Regenerate.",
+        "local_CPU_probe": "Feed the controller a two-card cards_list, a select reply with detail=due, and a balance with statementPaymentStatus=NO_DEBT. Assert that the phase is 'another', the route is not contact_email_get, and the offer text is never produced."
+      },
+      {
+        "id": "F2",
+        "priority": "P2",
+        "title": "The cut-day branch compares the last issued statementDate with now, so the real cut day never triggers it",
+        "candidate_refs": [
+          "debt_reading(): `if sd==today or (due and today>due)` where sd is b['statementDate']"
+        ],
+        "source_refs": [
+          "2026-10-10 transcript L98, L105 ('On the cut day the last statement is from a month ago')",
+          "service contract L267 (nextStatementDate is the coming statement)"
+        ],
+        "concrete_counterexample": "now=2026-11-05T10:00. Balance has statementDate 05.10.2026, lastPayDate 15.10.2026 and nextStatementDate 05.11.2026. The code never produces the cut-day 00.00 announcement. It takes the overdue branch and says 'Son ödeme tarihiniz geçmiştir', and it can add the autopay line. If lastPayDate were still in the future, it would read the old statementDebt.",
+        "observed_source_path": "receive(cards_balance) → debt_reading → sd(05.10)≠today; today>due → overdue text",
+        "expected": "When nextStatementDate equals now's date, announce that the statement is cut today at 00.00. The meeting also accepts a due-date-first opening. Then read totalDebt for each returned currency.",
+        "highest_impact_generic_builder_repair": "Make the builder derive date bands from a field-semantics table: cut day is nextStatementDate==now, and issued-statement checks use statementDate. Use generated band predicates instead of hand-written comparisons. Regenerate.",
+        "local_CPU_probe": "Run debt_reading with the fixture above and now=2026-11-05. Assert that the output contains '00.00' and the totalDebt amounts, and does not contain 'geçmiştir'."
+      }
+    ],
+    "verified_controls": [
+      "customerNumber is bound in the pre_process_code hooks from vars, so the caller is never asked for identity",
+      "statementDay from statement.week.get is sent to both decide and change",
+      "Week change requires a readback match, explicit consent and an exitState OK receipt",
+      "statement.pdf.send uses only the registered ibanEmail and the issued statementDate; maxRetries is 0",
+      "A missing currency block is excluded and not treated as zero; currency names are spoken in full",
+      "Exactly seven bank operations are defined"
+    ],
+    "limitations": [
+      "Source-only review; nothing was executed and no hosted extractor or platform behaviour was verified",
+      "The annual-eligibility and masked-last-six gaps are excluded because they are already acknowledged",
+      "The candidate SHA is taken from the prompt, not recomputed"
+    ]
+  },
+  "final_answer_sha256": "901b30d62ec805cae49a75845ad09dfb419fb26ff60ef45b69f5ca691d122794",
+  "finished_utc": "2026-10-11T19:42:09.099139+00:00",
+  "candidate_source_stability": {
+    "competition/runs/20261011-223232-b788d1/work/workflow.json": false,
+    "competition/runs/20261011-223232-b788d1/work/policy.json": false,
+    "competition/runs/20261011-223232-b788d1/work/coverage.json": false,
+    "competition/runs/20261011-223232-b788d1/work/inputs/openapi.json": true
+  },
+  "snapshot_stability": {
+    "analysis/final-case-candidate-v1-review.candidate.json": true,
+    "analysis/final-case-candidate-v1-review.policy.json": true,
+    "analysis/final-case-candidate-v1-review.coverage.json": true,
+    "analysis/final-case-candidate-v1-review.api.json": true
+  }
+}

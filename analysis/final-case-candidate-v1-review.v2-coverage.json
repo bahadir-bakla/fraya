@@ -1,0 +1,595 @@
+{
+  "schema_version": "1.0",
+  "rules": [
+    {
+      "rule_id": "entry",
+      "rule": "IVR authenticates; customerNumber and Istanbul now supplied, never ask identity/security/customer number.",
+      "source": "inputs/02-01-README.txt; inputs/11-10-2026-10-08-statement-debt-analysis.txt §2",
+      "status": "implemented",
+      "implementation": "controller initialization; system_prompt"
+    },
+    {
+      "rule_id": "scope",
+      "rule": "Turkish only, statement debt one own eligible credit card at a time; no payments or payment-channel advice.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §§1,8",
+      "status": "implemented",
+      "implementation": "speech/payment/non_turkish; select_reply"
+    },
+    {
+      "rule_id": "card_list",
+      "rule": "Call cards.list first, preserve exact returned identifiers, no reconstruction from speech.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §3; service contract §5.1",
+      "status": "implemented",
+      "implementation": "receive/cards_list; selected_card; API pre_hooks"
+    },
+    {
+      "rule_id": "no_card",
+      "rule": "404 FB_IVR_CHANNEL_102 is no-card warning, not outage; no eligible card to main menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §2",
+      "status": "implemented",
+      "implementation": "receive/cards_list"
+    },
+    {
+      "rule_id": "single",
+      "rule": "One eligible card auto-select; no selection confirmation.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §3.1",
+      "status": "implemented",
+      "implementation": "receive/cards_list"
+    },
+    {
+      "rule_id": "multiple",
+      "rule": "Multiple cards at most two own names as examples; existing unique initial card reference can skip question.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §3.1",
+      "status": "implemented",
+      "implementation": "selection; receive/cards_list initialCardReference"
+    },
+    {
+      "rule_id": "ambiguous_names",
+      "rule": "Resolve unique names or matching subsets; duplicate name asks last4, then last6, then full number.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §3.2; inputs/12-11-2026-10-09-decisions-recap.txt",
+      "status": "implemented",
+      "implementation": "resolve; select_reply"
+    },
+    {
+      "rule_id": "masked_match",
+      "rule": "Never guess masked hidden digits; production full-number last6/full matching supported.",
+      "source": "inputs/12-11-2026-10-09-decisions-recap.txt",
+      "status": "implemented",
+      "implementation": "resolve; select_reply masked fallback"
+    },
+    {
+      "rule_id": "selection_failures",
+      "rule": "All cards, unavailable names, wrong digits, missing card count as unusable attempt; three per question.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §3.3",
+      "status": "implemented",
+      "implementation": "select_reply; retry"
+    },
+    {
+      "rule_id": "supplementary",
+      "rule": "isMainCard false is ineligible; ask different own eligible card or no-card menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §3.3",
+      "status": "implemented",
+      "implementation": "eligible; select_reply; receive/cards_list"
+    },
+    {
+      "rule_id": "empty_names",
+      "rule": "Empty productName introduced only by last four.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §3.3",
+      "status": "implemented",
+      "implementation": "intro"
+    },
+    {
+      "rule_id": "switch",
+      "rule": "Switching card goes to selection; each newly selected card loads own balance.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §3.3",
+      "status": "implemented",
+      "implementation": "speech/select; select_reply"
+    },
+    {
+      "rule_id": "read_order",
+      "rule": "Intro+statement date on first currency; TL USD EUR GBP then one no-debt sentence, autopay, due date.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.1-4.2",
+      "status": "implemented",
+      "implementation": "debt_reading"
+    },
+    {
+      "rule_id": "tl_none_paid",
+      "rule": "remainingDebt positive, remainingMinPayment positive and >= minPayment: statementDebt and minPayment.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.3",
+      "status": "implemented",
+      "implementation": "debt_reading TL branch"
+    },
+    {
+      "rule_id": "tl_min_paid",
+      "rule": "remainingDebt positive and remainingMinPayment<=0: statementDebt, remainingDebt and minimum payment thanks.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.3",
+      "status": "implemented",
+      "implementation": "debt_reading TL branch"
+    },
+    {
+      "rule_id": "tl_partial",
+      "rule": "positive remainingMinPayment below minPayment: all four statement/min/remaining/min remaining figures.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.3",
+      "status": "implemented",
+      "implementation": "debt_reading TL branch"
+    },
+    {
+      "rule_id": "tl_zero",
+      "rule": "remainingDebt<=0 is no debt, including exact zero and credit.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §§4.3,4.10",
+      "status": "implemented",
+      "implementation": "debt_reading clear list"
+    },
+    {
+      "rule_id": "foreign",
+      "rule": "Foreign currencies always statementDebt remainingDebt minPayment; no payment split.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.4",
+      "status": "implemented",
+      "implementation": "debt_reading foreign branch"
+    },
+    {
+      "rule_id": "transfer_currency",
+      "rule": "Positive foreign transferAmount: name transferred currency before TL figures.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.4",
+      "status": "implemented",
+      "implementation": "debt_reading transferred prefix"
+    },
+    {
+      "rule_id": "no_debt_combination",
+      "rule": "All 14 nonempty proper subsets combined in single sentence; missing/empty blocks excluded.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.5",
+      "status": "implemented",
+      "implementation": "join_names; debt_reading clear list"
+    },
+    {
+      "rule_id": "automatic_payment",
+      "rule": "Read remaining automatic amount in TL only overdue AND flag Y AND positive amount, before due info.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.6",
+      "status": "implemented",
+      "implementation": "debt_reading overdue branch"
+    },
+    {
+      "rule_id": "no_statement_debt",
+      "rule": "NO_DEBT: issued statement wording plus TL future-inclusive total and due, other-card then menu; no offer.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.7; inputs/13-12-2026-10-10-follow-up-session-transcript.txt 00:04:49",
+      "status": "implemented",
+      "implementation": "debt_reading; after_reading; speech/another"
+    },
+    {
+      "rule_id": "due_today",
+      "rule": "Due today say bugün; other dates service day month year.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.8",
+      "status": "implemented",
+      "implementation": "debt_reading; date"
+    },
+    {
+      "rule_id": "spoken_currency",
+      "rule": "Always Türk Lirası Dolar Euro İngiliz Sterlini, no codes/short Sterling; latest shortening suggestion rejected.",
+      "source": "inputs/13-12-2026-10-10-follow-up-session-transcript.txt 00:05:01",
+      "status": "implemented",
+      "implementation": "money; debt_reading"
+    },
+    {
+      "rule_id": "precision",
+      "rule": "Exact amounts, large amounts in words; cents/peni/kuruş, omit zero fraction, no rounding.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.9",
+      "status": "implemented",
+      "implementation": "money; integer"
+    },
+    {
+      "rule_id": "spoken_digits",
+      "rule": "Last4 individual digits only; never first6, middle, last6 or full number spoken, even caller supplied.",
+      "source": "inputs/12-11-2026-10-09-decisions-recap.txt",
+      "status": "implemented",
+      "implementation": "digits; intro; private_digits; suppress_tool_results"
+    },
+    {
+      "rule_id": "no_invention",
+      "rule": "No invented amounts/dates/address/rates; reference examples are not runtime facts.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.9",
+      "status": "implemented",
+      "implementation": "controller uses returned data; empty test_variables"
+    },
+    {
+      "rule_id": "new_card",
+      "rule": "No issued statement: no invented issued date; optional first closing date only from response.",
+      "source": "inputs/13-12-2026-10-10-follow-up-session-transcript.txt 00:06:51-00:07:20",
+      "status": "implemented",
+      "implementation": "debt_reading not sd"
+    },
+    {
+      "rule_id": "cut_day",
+      "rule": "Cut day: 00.00 announcement first, then totalDebt per returned currency, never old statementDebt.",
+      "source": "inputs/13-12-2026-10-10-follow-up-session-transcript.txt 00:07:59-00:09:08",
+      "status": "implemented",
+      "implementation": "debt_reading sd==today"
+    },
+    {
+      "rule_id": "normal_band",
+      "rule": "Between cut and due inclusive normal statement reading, due today today wording.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.10",
+      "status": "implemented",
+      "implementation": "debt_reading normal branch"
+    },
+    {
+      "rule_id": "overdue",
+      "rule": "After due: say passed then totalDebt, never negative debt.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §4.10",
+      "status": "implemented",
+      "implementation": "debt_reading overdue branch"
+    },
+    {
+      "rule_id": "other_before_offer",
+      "rule": "Other unread eligible card question before offer; one card/no cards left omit; no-debt branch retained.",
+      "source": "inputs/13-12-2026-10-10-follow-up-session-transcript.txt 00:04:13-00:04:57",
+      "status": "implemented",
+      "implementation": "after_reading; seen"
+    },
+    {
+      "rule_id": "offer_contact",
+      "rule": "contact.email.get before offer; exclude email for Phone/empty address.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §5",
+      "status": "implemented",
+      "implementation": "after_reading; offer"
+    },
+    {
+      "rule_id": "offer_matrix",
+      "rule": "Both abilities: both; email absent: week only; annual used: email only; neither: menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §5.2",
+      "status": "implemented",
+      "implementation": "offer; changed state (annual pre-check gap below)"
+    },
+    {
+      "rule_id": "email_address",
+      "rule": "Registered ibanEmail only; read readable address or shorten long address; never take/update another address.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §6",
+      "status": "implemented",
+      "implementation": "email_question; API binding registered_email"
+    },
+    {
+      "rule_id": "email_confirm",
+      "rule": "Send only explicit current confirmation after address readback; no hedged yes, no pressure bypass.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §6; inputs/03-02-example-scenarios.txt",
+      "status": "implemented",
+      "implementation": "speech/email_confirm; readback authorized_terms"
+    },
+    {
+      "rule_id": "email_latest",
+      "rule": "Most recent issued statement only; past/other address explain limitation and seek latest acceptance, then address confirmation.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §6; inputs/03-02-example-scenarios.txt",
+      "status": "implemented",
+      "implementation": "latest_accept; email_question"
+    },
+    {
+      "rule_id": "email_decline",
+      "rule": "No/wrong address: nothing sent, wrong address cannot change, menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §6",
+      "status": "implemented",
+      "implementation": "speech/email_confirm"
+    },
+    {
+      "rule_id": "email_format",
+      "rule": "No paper or SMS statement; explanation then menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §6",
+      "status": "implemented",
+      "implementation": "speech/offer paper sms"
+    },
+    {
+      "rule_id": "email_limit",
+      "rule": "Max three sends in call, no automatic retries; success only DONE receipt.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §6; service contract §5.7",
+      "status": "implemented",
+      "implementation": "send_count; receive/statement_pdf_send; API maxRetries=0"
+    },
+    {
+      "rule_id": "week_annual",
+      "rule": "Once per card per calendar year, January reset, optional limit explanation, do not claim an exposed pre-check.",
+      "source": "inputs/10-09-2026-10-07-analysis-session-transcript.txt 00:18:24",
+      "status": "implemented",
+      "implementation": "offer annual wording; changed runtime state; eligibility gap"
+    },
+    {
+      "rule_id": "week_current",
+      "rule": "Read current week and next dates before choice; joint M/C both last4 names shared dates.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §7",
+      "status": "implemented",
+      "implementation": "current_week"
+    },
+    {
+      "rule_id": "week_choices",
+      "rule": "Only weeks1-4 excluding current; arbitrary date/day rejected; current week no change.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §7",
+      "status": "implemented",
+      "implementation": "week_options; speech/week_select"
+    },
+    {
+      "rule_id": "week_preview",
+      "rule": "decide preview first, chosen week plus current statementDay; does not mutate.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §7; service contract §5.4",
+      "status": "implemented",
+      "implementation": "statement_week_decide; preview_question"
+    },
+    {
+      "rule_id": "joint_before_confirm",
+      "rule": "Joint impact on linked/main card explained BEFORE confirm question.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §7",
+      "status": "implemented",
+      "implementation": "preview_question"
+    },
+    {
+      "rule_id": "week_consent",
+      "rule": "Change only clear yes AFTER complete preview+joint warning; hedged answer gets three tries.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §7",
+      "status": "implemented",
+      "implementation": "speech/week_confirm"
+    },
+    {
+      "rule_id": "week_write",
+      "rule": "Exact selected identifier, new week and original current day; no retry and successful write only OK/responseCode0.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §7; service contract §5.5",
+      "status": "implemented",
+      "implementation": "API pre_hook; receive/statement_week_change"
+    },
+    {
+      "rule_id": "week_success",
+      "rule": "Success dates from preview, not returned day; change affects both joint cards; then menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §7",
+      "status": "implemented",
+      "implementation": "receive/statement_week_change"
+    },
+    {
+      "rule_id": "tries",
+      "rule": "Three unusable/declined answers per question; exact failure line; repeat never counts.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.1; inputs/12-11-2026-10-09-decisions-recap.txt",
+      "status": "implemented",
+      "implementation": "retry; say question_key; speech/repeat"
+    },
+    {
+      "rule_id": "silence",
+      "rule": "First two short repeats; third exact no-input farewell and disconnect, never menu.",
+      "source": "inputs/12-11-2026-10-09-decisions-recap.txt",
+      "status": "implemented",
+      "implementation": "speech/silence; finish DISCONNECT"
+    },
+    {
+      "rule_id": "agent",
+      "rule": "First explicit human request immediate, no persuasion.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.3",
+      "status": "implemented",
+      "implementation": "speech/human"
+    },
+    {
+      "rule_id": "payment_exit",
+      "rule": "Wants pay or how/where payment: exact payment agent line, no channels.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.3",
+      "status": "implemented",
+      "implementation": "speech/payment"
+    },
+    {
+      "rule_id": "dispute_exit",
+      "rule": "Wrong debt or paid not showing: exact dispute agent line; no booking/value-date explanation.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.3",
+      "status": "implemented",
+      "implementation": "speech/dispute"
+    },
+    {
+      "rule_id": "complaint",
+      "rule": "Three calming replies; only continued complaint after third agent, never insult back; human takes priority.",
+      "source": "inputs/12-11-2026-10-09-decisions-recap.txt",
+      "status": "implemented",
+      "implementation": "speech/complaint"
+    },
+    {
+      "rule_id": "service_errors",
+      "rule": "All failed service responses incl document not found/timeouts to agent, week-specific failure line.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.3; service contract §4",
+      "status": "implemented",
+      "implementation": "receive; fail; HTTP status fallback"
+    },
+    {
+      "rule_id": "out_scope",
+      "rule": "Out-of-scope ask menu permission; yes menu, continue restores exact phase, unclear three tries.",
+      "source": "inputs/12-11-2026-10-09-decisions-recap.txt",
+      "status": "implemented",
+      "implementation": "speech/out_of_scope; scope resume state"
+    },
+    {
+      "rule_id": "transaction_switch",
+      "rule": "Explicit different transaction mid-flow ends to main menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.4",
+      "status": "implemented",
+      "implementation": "speech/other_transaction"
+    },
+    {
+      "rule_id": "goodbye",
+      "rule": "Thanks/goodbye after reading no repeat offer, normal menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.4",
+      "status": "implemented",
+      "implementation": "speech/done"
+    },
+    {
+      "rule_id": "fact_only",
+      "rule": "Only due/minimum/etc requested: only requested figure and offer.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.5",
+      "status": "implemented",
+      "implementation": "detail; debt_reading; after_reading"
+    },
+    {
+      "rule_id": "debt_email",
+      "rule": "Debt + email: read debt then address+consent without generic offer.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.5",
+      "status": "implemented",
+      "implementation": "followup; email_pending; after_reading"
+    },
+    {
+      "rule_id": "third_party",
+      "rule": "Actual request for other person card: no existence disclosure, own-only security line, IVR login.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.6",
+      "status": "implemented",
+      "implementation": "speech/third_party; finish IVR_LOGIN"
+    },
+    {
+      "rule_id": "secrets",
+      "rule": "Volunteered PIN/code/full number not requested ignored, not repeated; remind never ask passwords.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.6",
+      "status": "implemented",
+      "implementation": "speech/secret"
+    },
+    {
+      "rule_id": "injection",
+      "rule": "Ignore role overrides/raw-service/instruction requests, carry on without disclosure.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §8.6",
+      "status": "implemented",
+      "implementation": "speech/injection; system_prompt"
+    },
+    {
+      "rule_id": "routing",
+      "rule": "IVR owns agent queue/main menu/login; explicit result flag + documented termination, no invented HTTP routing.",
+      "source": "service contract intro; inputs/11-10-2026-10-08-statement-debt-analysis.txt §10",
+      "status": "implemented",
+      "implementation": "routing_result; finish/end_call"
+    },
+    {
+      "rule_id": "success_envelope",
+      "rule": "HTTP200 and returnCode1; errors diagnostic only, do not read messageText.",
+      "source": "inputs/09-08-2026-10-01-service-contract.txt §§3-4",
+      "status": "implemented",
+      "implementation": "receive; suppress_tool_results"
+    },
+    {
+      "rule_id": "api_types",
+      "rule": "Exact POST seven operations; data envelope and call metadata; integer statementDay; bank date dd.MM.yyyy.",
+      "source": "inputs/openapi.json; service contract §5",
+      "status": "implemented",
+      "implementation": "generated schemas and API pre-hooks"
+    },
+    {
+      "rule_id": "producer",
+      "rule": "Scalar per-variable contract; exact current acts completion consent; stale fields cleared every reply.",
+      "source": "BUILD_INSTRUCTIONS.md",
+      "status": "implemented",
+      "implementation": "listen extraction_schema; controller clears fields"
+    },
+    {
+      "rule_id": "no_bank_invented",
+      "rule": "No unsupported collection identity promises notes callbacks close_call or payment endpoint.",
+      "source": "BUILD_INSTRUCTIONS.md; inputs/openapi.json",
+      "status": "implemented",
+      "implementation": "only seven generated bank operations"
+    },
+    {
+      "rule_id": "slow_wait_announcement",
+      "rule": "Service execution is synchronous and silent in documented API nodes; timed waiting announcement is not exposed by the supplied platform docs. A 25s timeout is configured, but the while-waiting sentence requires host voice integration.",
+      "source": "latest analysis §8.3",
+      "status": "partial",
+      "implementation": "api_request on_enter silent; host wait integration"
+    },
+    {
+      "rule_id": "annual_precheck",
+      "rule": "No supplied service exposes entitlement used in current calendar year; unconditional eligibility-filtered offer cannot be proven. Conditional wording used; no invented flag. Requests still follow preview+consent and authoritative change result.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §11.1",
+      "status": "partial",
+      "implementation": "offer; policy unresolved_conflicts"
+    },
+    {
+      "rule_id": "masked_collision",
+      "rule": "Masked test cards with same name+last4 cannot be distinguished by hidden last6/full digits; production full records supported. Bounded clarification instead of guessing.",
+      "source": "inputs/12-11-2026-10-09-decisions-recap.txt",
+      "status": "partial",
+      "implementation": "resolve; select_reply"
+    },
+    {
+      "rule_id": "timeout",
+      "rule": "Bank-approved timeout unset. Implementation uses 25 seconds, no retry, exceeding documented >10s successful latency.",
+      "source": "service contract §7; latest analysis §11.2",
+      "status": "interpretation",
+      "implementation": "API timeoutMs=25000"
+    },
+    {
+      "rule_id": "foreign_future",
+      "rule": "Foreign future-inclusive total in NO_DEBT branch still undecided; retain TL-only authoritative wording.",
+      "source": "latest analysis §11.3",
+      "status": "implemented",
+      "implementation": "workflow.nodes.controller / debt_reading NO_DEBT: reads only debtTL.totalDebt; foreign future totals are never included.",
+      "decision_status": "awaiting_bank_decision",
+      "enforcement_scope": "Conservative current behavior only; unresolved bank decision is not represented as resolved."
+    },
+    {
+      "rule_id": "recording_mask",
+      "rule": "Recording/log masking and mandatory notice list still awaiting compliance; do not add notices or unsupported recording controls.",
+      "source": "latest analysis §11.5,11.7",
+      "status": "implemented",
+      "implementation": "workflow.nodes API suppress_tool_results and controller computed speech: no added recording/legal notice, no recording/log control or masking claim; only last4 spoken.",
+      "decision_status": "awaiting_bank_decision",
+      "enforcement_scope": "Conservative current behavior only; unresolved bank decision is not represented as resolved."
+    },
+    {
+      "rule_id": "metrics",
+      "rule": "Monthly volume/success criteria not supplied; no runtime rule invented.",
+      "source": "latest analysis §11.6",
+      "status": "implemented",
+      "implementation": "workflow definition: no success criteria, monthly volume, target or runtime metric threshold is configured; policy.machine_policy.pending_bank_decisions records absence.",
+      "decision_status": "awaiting_bank_decision",
+      "enforcement_scope": "Conservative current behavior only; unresolved bank decision is not represented as resolved."
+    },
+    {
+      "rule_id": "undo_after_end",
+      "rule": "Undo after completed change cannot be handled after terminal IVR handoff; no undo endpoint exists. Preview retained for audit, successful result irreversible.",
+      "source": "latest analysis §7",
+      "status": "partial",
+      "implementation": "receive week success; finish"
+    },
+    {
+      "rule_id": "repeat_send_after_end",
+      "rule": "Repeat sends guarded max3 but ordinary success hands off immediately; post-handoff request belongs upstream IVR.",
+      "source": "latest analysis §6",
+      "status": "partial",
+      "implementation": "send_count; finish"
+    },
+    {
+      "rule_id": "interrupt_reading",
+      "rule": "Latest request extraction can handle cut-in intents, but TTS barge-in timing not documented/tested here.",
+      "source": "latest analysis §8.5",
+      "status": "partial",
+      "implementation": "listen extraction; platform voice interrupt support required"
+    },
+    {
+      "rule_id": "real_extractor_tests",
+      "rule": "No network/platform tests authorized; local persistent-state contract checks only, not hosted extractor evidence.",
+      "source": "user constraints; BUILD_INSTRUCTIONS.md",
+      "status": "not_tested",
+      "implementation": "local_checks.json"
+    },
+    {
+      "rule_id": "provider_flattened_receipts",
+      "rule": "Reconstruct all seven current operation envelopes from dotted leaves and numeric array indices; convert scalars using supplied response schemas, clear stale leaves explicitly before dispatch and after receipt. Missing data is never evidence of an empty card list.",
+      "source": "inputs/tools-and-code.md; refinement-feedback.json",
+      "status": "implemented",
+      "implementation": "controller provider_receipt, clear_response, dispatch, pending receipt branch"
+    },
+    {
+      "rule_id": "all_reading_followup_gates",
+      "rule": "Every reading mode, including requested single figures and queued email requests, asks about unread eligible cards before additional transactions. No-statement-debt branches then return to menu.",
+      "source": "inputs/11-10-2026-10-08-statement-debt-analysis.txt §§4.7,5.1; inputs/13-12-2026-10-10-follow-up-session-transcript.txt 00:04:13-00:04:57",
+      "status": "implemented",
+      "implementation": "controller after_reading; speech another; local_checks all-reading-modes-unread-gate"
+    },
+    {
+      "rule_id": "closing_calendar_semantics",
+      "rule": "Closing day is nextStatementDate equal to the supplied call date, never the last-issued statementDate. On closing day read totalDebt per returned currency.",
+      "source": "inputs/09-08-2026-10-01-service-contract.txt §5.2; inputs/13-12-2026-10-10-follow-up-session-transcript.txt 00:08:17-00:09:08",
+      "status": "implemented",
+      "implementation": "controller debt_reading next_sd; local_checks cut-day-total-not-statement and issued-date-not-closing-day"
+    }
+  ],
+  "validation": {
+    "local": "local_checks.json",
+    "hosted_extractor": "not_run",
+    "platform": "host_pending"
+  },
+  "summary": {
+    "rule_count": 82,
+    "implemented": 74,
+    "gaps": 8
+  }
+}

@@ -1,0 +1,379 @@
+{
+  "created_utc": "2026-10-11T19:52:05.174094+00:00",
+  "run": "20261011-224723-9d9433",
+  "candidate_sha256": "c38e9eb2c994a6eaff1182f7398d0291414e2f42e8218510ae77c04e4c9ccced",
+  "manifest": [
+    {
+      "kind": "candidate",
+      "source": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-224723-9d9433\\work\\workflow.json",
+      "snapshot": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\final-case-candidate-v1-review.v2-candidate.json",
+      "sha256": "c38e9eb2c994a6eaff1182f7398d0291414e2f42e8218510ae77c04e4c9ccced",
+      "bytes": 102679
+    },
+    {
+      "kind": "policy",
+      "source": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-224723-9d9433\\work\\policy.json",
+      "snapshot": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\final-case-candidate-v1-review.v2-policy.json",
+      "sha256": "1dcb2157967cb9138165da1dda33ec415c317e001bd905412d35ef9d3cb49146",
+      "bytes": 48279
+    },
+    {
+      "kind": "coverage",
+      "source": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-224723-9d9433\\work\\coverage.json",
+      "snapshot": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\final-case-candidate-v1-review.v2-coverage.json",
+      "sha256": "79540d2d8c2abbb50304483c56862ce478a161124aa232e9cd17a325cd95ae70",
+      "bytes": 28895
+    },
+    {
+      "kind": "api",
+      "source": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-224723-9d9433\\work\\inputs\\openapi.json",
+      "snapshot": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\final-case-candidate-v1-review.v2-api.json",
+      "sha256": "dba5a76f42a8d4f5cec41a44d4311b8bdf3f05b4958e65000712b83398075034",
+      "bytes": 222202
+    }
+  ],
+  "controller_sha256": "0b642d23b796c98890e7bbf742d1d87d80a1a288bed97e0122c28551f48f8241",
+  "source_stable_after_cpu": true,
+  "api_byte_equal_prior_pin": true,
+  "rows": [
+    {
+      "id": "DOTTED-CARDS-ARRAY",
+      "passed": true,
+      "observed": {
+        "phase": "select",
+        "card_count": 2,
+        "exact_array_equal": true,
+        "line": "Hangi kartınızın borcunu öğrenmek istersiniz? Örneğin, Yıldız Pratik ve Yıldız Premium diyebilirsiniz."
+      },
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "92220795",
+            "aiFlow": "CardOps"
+          }
+        }
+      ]
+    },
+    {
+      "id": "DOTTED-BALANCE-LOSSLESS",
+      "passed": true,
+      "observed": {
+        "phase": "offer",
+        "exact_balance_equal": true,
+        "line": "Sonu bir bir bir sıfır ile biten Yıldız Miles kartınıza ait 9 Ekim 2026 tarihinde kesilen ekstre Türk Lirası borcunuz on bin Türk Lirası, kalan toplam borcunuz beş bin Türk Lirası. Minimum ödemenizi yaptığınız için teşekkür ederiz. Dolar ve Euro borcunuz bulunmamaktadır. Borçlarınız için son ödeme tarihiniz 19 Ekim 2026. Hesap kesim tarihinizi yılda bir kez değiştirebilirsiniz; yıllık hakkınız uygunsa hesap kesim tarihinizi değiştirebilirim ya da ekstrenizi kayıtlı mail adresinize gönderebilirim. Hangisini tercih edersiniz?"
+      },
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "96158684",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "96158684",
+            "intAddressInfoType": "E"
+          }
+        },
+        {
+          "operation": "statement_week_get",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "statement_week_decide",
+          "data": {
+            "cardNumber": "540000******1110",
+            "newStatementWeek": 3,
+            "statementDay": 9
+          }
+        },
+        {
+          "operation": "statement_week_change",
+          "data": {
+            "cardNumber": "540000******1110",
+            "newStatementWeek": 3,
+            "statementDay": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "DOTTED-WEEK-FRESH-CONSENT-RECEIPT",
+      "passed": true,
+      "observed": {
+        "preview": "Yeni hesap kesim haftanız her ayın üç. haftası olacak. Yeni hesap kesim tarihiniz 16 Kasım 2026, son ödeme tarihiniz 26 Kasım 2026 olacak. Onaylıyor musunuz?",
+        "readback": {
+          "operation": "statement_week_change",
+          "card": "540000******1110",
+          "week": 3,
+          "day": 9,
+          "statementDate": "16.11.2026",
+          "dueDate": "26.11.2026"
+        },
+        "vague_route": "listen",
+        "explicit_route": "statement_week_change",
+        "write_count": 1,
+        "current_days": [
+          9,
+          9
+        ],
+        "completion": "Sonu bir bir bir sıfır ile biten Yıldız Miles kartınızın hesap kesim haftası her ayın üç. haftası olarak değiştirildi. Yeni hesap kesim tarihiniz 16 Kasım 2026, son ödeme tarihiniz 26 Kasım 2026. Sizi ana menüye yönlendiriyorum.",
+        "route": "finish"
+      },
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "96158684",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "96158684",
+            "intAddressInfoType": "E"
+          }
+        },
+        {
+          "operation": "statement_week_get",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "statement_week_decide",
+          "data": {
+            "cardNumber": "540000******1110",
+            "newStatementWeek": 3,
+            "statementDay": 9
+          }
+        },
+        {
+          "operation": "statement_week_change",
+          "data": {
+            "cardNumber": "540000******1110",
+            "newStatementWeek": 3,
+            "statementDay": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "DOTTED-FAILED-WRITE-NO-SUCCESS",
+      "passed": true,
+      "observed": {
+        "route": "finish",
+        "destination": "AGENT",
+        "line": "Şu anda hesap kesim tarihinizi değiştiremiyorum, sizi müşteri temsilcimize aktarıyorum."
+      },
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "96158684",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "96158684",
+            "intAddressInfoType": "E"
+          }
+        },
+        {
+          "operation": "statement_week_get",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "statement_week_decide",
+          "data": {
+            "cardNumber": "540000******1110",
+            "newStatementWeek": 3,
+            "statementDay": 9
+          }
+        },
+        {
+          "operation": "statement_week_change",
+          "data": {
+            "cardNumber": "540000******1110",
+            "newStatementWeek": 3,
+            "statementDay": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "DOTTED-MISSING-FRESH-WRITE-DATA",
+      "passed": true,
+      "observed": {
+        "route": "finish",
+        "destination": "AGENT",
+        "line": "Şu anda işleminizi gerçekleştiremiyorum, sizi müşteri temsilcimize aktarıyorum.",
+        "note": "Exact candidate dispatch neutralizes old same-operation DONE leaves; fresh incomplete receipt must fail."
+      },
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "92460108",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******8500"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "92460108",
+            "intAddressInfoType": "E"
+          }
+        },
+        {
+          "operation": "statement_pdf_send",
+          "data": {
+            "customerNo": "92460108",
+            "cardNumber": "540000******8500",
+            "currencyType": "TL",
+            "statementDate": "05.10.2026",
+            "emailAddress": "ece.demir@freyabank.example"
+          }
+        },
+        {
+          "operation": "statement_pdf_send",
+          "data": {
+            "customerNo": "92460108",
+            "cardNumber": "540000******8500",
+            "currencyType": "TL",
+            "statementDate": "05.10.2026",
+            "emailAddress": "ece.demir@freyabank.example"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EXPLICIT-PDF-EUR",
+      "passed": true,
+      "observed": {
+        "readback": {
+          "operation": "statement_pdf_send",
+          "card": "540000******8500",
+          "email": "ece.demir@freyabank.example",
+          "date": "05.10.2026",
+          "currency": "EUR"
+        },
+        "request_data": {
+          "customerNo": "92460108",
+          "cardNumber": "540000******8500",
+          "currencyType": "EUR",
+          "statementDate": "05.10.2026",
+          "emailAddress": "ece.demir@freyabank.example"
+        },
+        "line": "Ekstreniz kayıtlı e-posta adresinize gönderildi. Sizi ana menüye yönlendiriyorum."
+      },
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "92460108",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******8500"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "92460108",
+            "intAddressInfoType": "E"
+          }
+        },
+        {
+          "operation": "statement_pdf_send",
+          "data": {
+            "customerNo": "92460108",
+            "cardNumber": "540000******8500",
+            "currencyType": "EUR",
+            "statementDate": "05.10.2026",
+            "emailAddress": "ece.demir@freyabank.example"
+          }
+        }
+      ]
+    },
+    {
+      "id": "UPCOMING-CUT-DAY",
+      "passed": true,
+      "observed": {
+        "nextStatementDate": "09.11.2026",
+        "statementDate": "09.10.2026",
+        "line": "Sonu bir bir bir sıfır ile biten Yıldız Miles kartınız. Hesap kesim tarihiniz bugün, ekstreniz saat 00.00 itibarıyla kesilecek. Türk Lirası toplam borcunuz beş bin Türk Lirası. Dolar borcunuz bulunmamaktadır. Euro borcunuz bulunmamaktadır. Hesap kesim tarihinizi yılda bir kez değiştirebilirsiniz; yıllık hakkınız uygunsa hesap kesim tarihinizi değiştirebilirim ya da ekstrenizi kayıtlı mail adresinize gönderebilirim. Hangisini tercih edersiniz?"
+      },
+      "requests": [
+        {
+          "operation": "cards_list",
+          "data": {
+            "customerNo": "96158684",
+            "aiFlow": "CardOps"
+          }
+        },
+        {
+          "operation": "cards_balance",
+          "data": {
+            "cardNumber": "540000******1110"
+          }
+        },
+        {
+          "operation": "contact_email_get",
+          "data": {
+            "customerNo": "96158684",
+            "intAddressInfoType": "E"
+          }
+        }
+      ]
+    }
+  ],
+  "passed": 7,
+  "total": 7,
+  "native_calls_added": 0,
+  "bank_network_calls": 0,
+  "freya_calls": 0,
+  "limits": [
+    "Exact unchanged new controller and API pre/post hooks executed on official fixtures; vars is a Python dict with dotted leaves.",
+    "Speech events authored to advertised extraction schema; no hosted frequency, ASR, model extraction, or platform-store semantics measured.",
+    "Run status completed at snapshot; claims bind this SHA256 only."
+  ]
+}
