@@ -1,0 +1,69 @@
+{
+  "CAL_read_scope": "first row schema/type inspection only; no diagnostic metric/calibrator fit",
+  "EVAL_labels_parsed": 0,
+  "completed_diagnostic_tests": 0,
+  "diagnostic_CAL_EVAL_executions": 0,
+  "diagnostic_code_exists": false,
+  "diagnostic_intended_contract_pending_implementation": {
+    "CAL_rows": 993,
+    "EVAL_rows": 993,
+    "arms": [
+      "hard",
+      "distill"
+    ],
+    "bank_authority": false,
+    "calibration": "CAL-only scalar T in [0.05,20], fixed threshold grid 0..1 step .01, maximize empirical coverage at precision>=.90 and >=100 accepted; otherwise abstain all",
+    "freeze_order": "freeze BOTH calibrators/source/model/report pins before parsing EVAL; existing exposed EVAL once, no selection or qualification",
+    "parity": "full 993 CAL + 993 EVAL for each arm, native vs stdlib logits/top1/selected decisions, all77 classes and denominators",
+    "planned_wall_seconds": 180,
+    "raw_metrics": [
+      "top1_accuracy",
+      "macro_F1",
+      "per_class_counts"
+    ],
+    "runtime": "existing compact student + stdlib only; teacher encoder absent"
+  },
+  "execution_authorized_now": false,
+  "input_artifact_sha256": {
+    "analysis/day2-distill-experiment.json": "9cb30809b42895dfe93f4d3b808d70efc842a07d28024ca0af589451abe1e0a3",
+    "analysis/day2-parent-distill-cpu-authorization.json": "bd5bc90365edb95f63ce1fb9ebeefbb88281d804fea95e75fd41353f5703a558",
+    "integrations/learned-dialogue/day2_distill_data.py": "384320437d04ea489e2e41c5c8fc55a997759e31066913fe25adb718647ae878",
+    "integrations/learned-dialogue/day2_distill_eval.py": "3f034163061edb3ac570d34c6756eed214ef10e6b5b54021031d0973c7d6bcc4",
+    "integrations/learned-dialogue/day2_distill_freeze.json": "092abc6a6c5e4328d8f99884dfe50f289741d675c0e631713864080c4103084e",
+    "integrations/learned-dialogue/day2_distill_model.distill.json": "1cdd1b9bec2f0f1fe75306204602ad8990dc7ecbc95f3846ac626bb7deb3a8df",
+    "integrations/learned-dialogue/day2_distill_model.hard.json": "ad1c21c4f22d300057c2d5897f7a5e95f80f66e7f4194f01a1b76b250394c607",
+    "integrations/learned-dialogue/day2_distill_model.py": "8fa9a7e49b1ea3b1d185f129088029c81554cecec6225d7935e934e11f91d2d5",
+    "integrations/learned-dialogue/day2_distill_runtime.py": "47c6ff9034c2810684b8276135fc4c87c99ed3be4d1f18f8a9a77e2cbcc95698",
+    "integrations/learned-dialogue/day2_distill_state.distill.safetensors": "fff9428c8f58639c0dc461ea367b6aa1cc5bb8cc1e45d0655ba839ffa3679b3c",
+    "integrations/learned-dialogue/day2_distill_state.hard.safetensors": "1c48aa0cd9dc154a7b5a9487dc3884374d4579f0865321178efef884ef73a748",
+    "integrations/learned-dialogue/day2_distill_test.py": "985df110e9605be32215f5c8645a6d4775d6b9874e705b0b27eb1bfd04983710",
+    "integrations/learned-dialogue/day2_distill_train.py": "46d2a870e44294e281d6d1249111613318bb92e480b889f68da99e50ef4c319e",
+    "research/customer-benchmark/day2-training-data/calibration.jsonl": "cdaf6e6045e7fb13118bee7f4c3b07d2df5214b9ea3a46d5fbca4e22cf18870d",
+    "research/customer-benchmark/day2-training-data/eval.jsonl": "3c178ba644a4f5db7d58dedb3f4ca19009c4008a7958b3afdccbe2a84cf714db"
+  },
+  "new_training_executions": 0,
+  "pending": [
+    "implement NEW day2_distill_diagnostic.py",
+    "run source-only smoke without CAL/EVAL execution",
+    "replace this draft with a distinct versioned exact-source executable plan after user resumes",
+    "parent authorizes diagnostic execution for the newly frozen plan; no old-grant reuse",
+    "execute once under watchdog and write actual diagnostic metrics"
+  ],
+  "pins_verified": 15,
+  "prior_fit": {
+    "epochs": {
+      "distill": 40,
+      "hard": 40
+    },
+    "reported_parent_session": 53584,
+    "status": "completed",
+    "wall_seconds": 8.421999999998661,
+    "watchdog": {
+      "automatic_retries": 0,
+      "exit_code": 0,
+      "wall_seconds": 9.015999999999622
+    }
+  },
+  "restart_note": "Prior paired fit is complete and frozen. Do not rerun training. No diagnostic runner/weights/calibrators were produced. Resume only when user requests; no background job was started by this owner.",
+  "status": "DRAFT_NOT_EXECUTABLE_STOPPED_AT_USER_WRAP_REQUEST"
+}

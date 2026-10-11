@@ -1,0 +1,135 @@
+{
+  "status": "CLOSED_FROZEN_CODEX_SGD_V2_TRAIN_SOURCE_CPU_REVIEW",
+  "reviewer": "Independent Codex; no native inference",
+  "started_at_utc": "2026-10-11T10:01:10Z",
+  "closed_at_utc": "2026-10-11T10:05:10.487215+00:00",
+  "deadline_utc": "2026-10-11T10:09:10Z",
+  "manifest": {
+    "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\research\\customer-benchmark\\day2-training-data\\sgd\\full-v2\\manifest.json",
+    "sha256": "d0eda9a9cb3e88420cedcc919643d8ecd92123b94f39e29e78ac8b3b12efca23"
+  },
+  "counts": {
+    "checks": 10732,
+    "passed": 10731,
+    "failed": 1,
+    "shards_hashed": 37,
+    "TRAIN_sample_rows": 5038,
+    "known_partialword_witnesses_repaired": 15,
+    "batch_rows": 256
+  },
+  "source_hashes": {
+    "research/customer-benchmark/day2-training-data/sgd/full-v2/manifest.json": "d0eda9a9cb3e88420cedcc919643d8ecd92123b94f39e29e78ac8b3b12efca23",
+    "research/customer-benchmark/day2-training-data/sgd/full-v2/split-plan.json": "4e30601875eb6d37d3a885ab969bf32c8e55bf0b9d4a5fc01b36040cf1d3ba41",
+    "research/customer-benchmark/day2-training-data/sgd/full-v1/manifest.json": "7176ce8bf20c7e6adce899a276f7de0c042e0e33eb63999462264ca6c1843513",
+    "research/customer-benchmark/day2-training-data/sgd/full-v1/split-plan.json": "4e30601875eb6d37d3a885ab969bf32c8e55bf0b9d4a5fc01b36040cf1d3ba41",
+    "research/customer-benchmark/day2-training-data/sgd/process.py": "3cc4fbdc7cc3757b7ab80998f3a3e585b97cb6c3d28e11b33ff46b618224b032",
+    "research/customer-benchmark/day2-training-data/sgd/process-v2.py": "6cb7befbbb7d79dc62fc97a2968844a6bdd992ff3dc0382d0b3f9d9907691aa5",
+    "research/customer-benchmark/day2-training-data/sgd/batches.py": "e4f4772ea049c24145effec0f1dc1831a98b0aeec7f08c9c6f6d2d040c4d8b1c",
+    "research/customer-benchmark/day2-training-data/sgd/batches-v2.py": "9c132ec8d4ec02c883c44b64fcb5265028a3bddcf5e6527e6e45dabdae6d2601",
+    "analysis/day2-sgd-independent-review.json": "1454790c4d8a62e17fe09bcad96e0edc43c5d03e13b783fff4a75c7b500a48a4",
+    "analysis/day2-sgd-independent-review.txt": "124d1e1c2adcde0d46c94d02593b5af1d75d8ac86613fb280bee3018c3e0aedf",
+    "analysis/day2-sgd-independent-review-witnesses.json": "a85ecb0fa241e41fde49602e26fc79b6351e557a9a6c9ae01b04c08bd10895ca",
+    "analysis/day2-sgd-v2-handoff.json": "4014e0cda6b2aceaa2f668d85837fb214a824eaad112ddc7ccd356b3bcf5b15e",
+    "research/customer-benchmark/day2-training-data/sgd/collect.py": "8858b5bc9afb27e0a4d16c095dd39764acd8b5db84e4c0be96f1fb9b50137338",
+    "research/customer-benchmark/day2-training-data/sgd/source-inventory.json": "6825312f34494923fee656660ff252825ff612bdb41ade3d8226e8102954dc88",
+    "research/customer-benchmark/day2-training-data/sgd/service-schema.json": "97b6c21673aa7e5c2d1ceef52aa35170c565223cdcbf33bb24c69739bda04a82",
+    "research/customer-benchmark/day2-training-data/sgd/LICENSE.txt": "71a43a169b52bb1b39510b65ec5b43b4bbb59196d449a835fe58b50af6a72742",
+    "research/customer-benchmark/day2-training-data/sgd/NOTICE.txt": "5df01f478eef5c5a5b6cb6befac1b02849e9aeef3dc3046948ac87b8ab21b216",
+    "research/customer-benchmark/day2-training-data/sgd/PUBLISHER-README.md": "e16545f163578037e6b7315b8da243f9f9871f4f071a812ab86b73702f124168",
+    "research/customer-benchmark/day2-training-data/sgd/design-contract.json": "f97bbc128a99048964761453c1ba13f4f66d2373ff4bae09e6bc6d4f14b11ab2"
+  },
+  "all_protected_unchanged": true,
+  "split_plan_byte_invariant": true,
+  "split_metadata_group_disjoint": true,
+  "data_version_repair": "15/15 known actual TRAIN partial-word values are null/masked; their dependent updates are masked. First5038 TRAIN inputs/ancestry/unrelated publisher labels equal V1. Integer/index bounds and actual requested-shard cache rehash controls pass.",
+  "findings": [
+    {
+      "id": "V2-CACHE-01",
+      "priority": "P2",
+      "classification": "actual_code_conditional_completed_cache_provenance",
+      "evidence": "Actual V2 iterator hashes pinned V2 TRAIN shard, then trusts completed SQLite record paths/offsets. A memory-only corrupted cache pointed to unchanged V1 TRAIN data and yielded a V1 row under the V2 manifest without rejection. No actual disk cache or corpus was altered.",
+      "recommendation": "Bind derivative cache contents to allowed V2 shard paths; validate path/offset/length plus row schema, split/group/dialogue/turn identity on read, or rebuild/verify a content-addressed derived index. Fresh shard hashes alone do not authenticate cached pointers."
+    },
+    {
+      "id": "V2-UNICODE-01",
+      "priority": "P3",
+      "classification": "authored_uncovered_segmentation_controls_not_observed_TRAIN_defect",
+      "evidence": [
+        {
+          "id": "format-character-token-continuation",
+          "character": "U+00AD",
+          "source_visible_unchanged": true,
+          "actual_mask": true,
+          "scope": "authored Unicode segmentation challenge; outside the explicitly enumerated LMN/Pc/apostrophe/hyphen boundary policy; not observed TRAIN corruption"
+        },
+        {
+          "id": "format-character-token-continuation",
+          "character": "U+200D",
+          "source_visible_unchanged": true,
+          "actual_mask": true,
+          "scope": "authored Unicode segmentation challenge; outside the explicitly enumerated LMN/Pc/apostrophe/hyphen boundary policy; not observed TRAIN corruption"
+        },
+        {
+          "id": "format-character-token-continuation",
+          "character": "U+200C",
+          "source_visible_unchanged": true,
+          "actual_mask": true,
+          "scope": "authored Unicode segmentation challenge; outside the explicitly enumerated LMN/Pc/apostrophe/hyphen boundary policy; not observed TRAIN corruption"
+        },
+        {
+          "id": "format-character-token-continuation",
+          "character": "U+2060",
+          "source_visible_unchanged": true,
+          "actual_mask": true,
+          "scope": "authored Unicode segmentation challenge; outside the explicitly enumerated LMN/Pc/apostrophe/hyphen boundary policy; not observed TRAIN corruption"
+        }
+      ],
+      "recommendation": "Specify format-character treatment for soft hyphen, joiner/nonjoiner and word joiner before any span qualification. Current declared LMN/Pc/apostrophe/hyphen policy matches code but does not define these linguistic continuations; do not call this an actual TRAIN defect without corpus evidence."
+    },
+    {
+      "id": "V2-AUTHORITY-01",
+      "priority": "P2",
+      "classification": "retained_protocol_limits",
+      "evidence": "Missing state/requested slots are unknown/masked; named removals are UNKNOWN with DELETE_mask false. All bank policy/permission/ledger masks remain false. Source privacy transform unchanged and can erase semantics. Publisher KEEP/SET map deltas are not current-turn corrections, bank consent or human gold.",
+      "recommendation": "Use strict input-only projection with all service schemas; loss masks and current frames cannot route graph/features. Keep proposal/abstention and deterministic bank authority separate; no bank deployment or span qualification follows from this data repair."
+    }
+  ],
+  "head_admission": {
+    "previous_15_partialword_blocker": "Reproduced repaired in actual V2 TRAIN sample; this specific blocker resolved.",
+    "value_KEEP_SET_publisher_baseline": "Data mask repair supported within tested scope; secure consumer must bind derived cache or bypass corrupted cache safely through a reviewed reader. No fit authorized or performed by this review.",
+    "unrelated_V1_pilot": "Untouched; this review does not stop or modify it.",
+    "DELETE_bankpolicy_permission_ledger": "No new gold; unknown/unqualified."
+  },
+  "failures": [
+    {
+      "id": "cache_rejects_unpinned_record_path",
+      "pass": false,
+      "detail": {
+        "actual_schema_version": "sgd.observed-user-input.publisher-targets.v1",
+        "advertised_version": "sgd.training-packet.v2",
+        "scope": "conditional stale/corrupt memory index; actual V2 source shards unchanged"
+      }
+    }
+  ],
+  "witnesses": {
+    "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-sgd-v2-independent-review-witnesses.json",
+    "sha256": "8ae37b37f68b93e7965e74d0c179f348633ef9557b83d48c949f4d23052383be"
+  },
+  "source_causality": "16 direct observed() -> input_for() annotation/future mutations pass; 5038 actual V2 input equality to frozen V1; previous V1 128 actual source reconstructions remain separate preserved evidence, not newly replayed here.",
+  "heldout_access": {
+    "CAL_EVAL_shards": 8,
+    "operation": "opaque SHA256/byte/newline accounting only",
+    "payload_JSON_decoded": false,
+    "labels_or_model_outcomes_inspected": false
+  },
+  "limits": [
+    "No training/model/teacher/metric outcomes read, fits, native calls, platform/Git/budget/credentials actions.",
+    "Full37 byte hashes independently verified; label/feature checks restricted to first5038 TRAIN rows.",
+    "Full cross-partition exact feature closure remains producer-reported; metadata split closure and split-plan byte identity independently verified.",
+    "Only named new review/witness files written; no real SQLite cache writes."
+  ],
+  "new_fits": 0,
+  "native_calls": 0,
+  "platform_calls": 0,
+  "elapsed_script_seconds": 5.063000000001921
+}

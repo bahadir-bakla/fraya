@@ -1,0 +1,32 @@
+FREYA SPRINT DEVİR NOTU — 2026-10-11T10:11:57.186876+00:00
+Repo: https://github.com/bahadir-bakla/fraya (private)
+Branch: codex/builder-rd
+Arkadaşın bu branch'i çeksin; çalışma ağacındaki kendi değişikliklerini korusun. Son commit: git log -1.
+
+KAPANIŞ
+Bu sprintin parent eğitim/build/test süreçleri tamamlandı veya durdu. Subagentler kapatıldı. Freya heartbeat PAUSED. Kullanıcı bilgisayarı yeniden başlatacak; otomatik yeni tur yok. Arkadaşın Freya simülasyonları bizim tarafımızdan iptal edilmedi. Anahtarlar, 439 MB kaynak cache'i, 700 MB işlenmiş shardlar, SQLite indeksleri ve ham Freya exportları Git'e alınmadı; bu makinede yerel kalır.
+
+TAMAMLANAN GERÇEK EĞİTİMLER
+1) MiniLM dondurulmuş encoder + yeni Banking77 başlığı: 7.943 TRAIN, 993 CAL, 993 EVAL; doğruluk %89,83, kabul edilen örneklerde %95,14 doğruluk ve %89,12 kapsama. Tam encoder 91 MB; küçük başlık tek başına encoder yerine geçmez. analysis/day2-pretrained-baseline.json.
+2) Üç kaynaklı 12.084 örnekle sparse/GNN/noedges gerçekten eğitildi; GNN banka niyeti %61,43'e düştü. Sonuç korunur, güçlü referansın yerine alınmaz. analysis/day2-multisource-model-experiment.completion.txt.
+3) Resmî SGD TRAIN havuzundan 16.142 diyalog, 132.615 TRAIN /16.072 CAL /16.295 EVAL tur hazır. İki model gerçekten 2.382 optimizer adımıyla eğitildi; fit192 sn, toplam245 sn. GNN koşullu niyet %75,69; kabul edilen %38,80 bölümde %95,66 doğruluk. Şema+iki model+runtime 434.041 bayt. Requested/acts başlıkları kalibrasyon sonrası çoğunlukla öneri üretemedi; yeni kayıp/dengesizlik tasarımı hazır, sonraki fit çalışmadı. Finansal işlem/izin/ledger veya genel DST doğrulaması değildir. analysis/day2-sgd-model-completion.txt.
+4) MiniLM'den iki 194 KB öğrenci: hard CE ve distillation, 40 epoch/kol, gerçek8,422 sn. TRAIN/export doğrulaması tamam; CAL/EVAL karşılaştırma kodu henüz yazılmadı, fayda henüz ölçülmedi. analysis/day2-distill-experiment.json; analysis/day2-distill-diagnostic-plan.json. Eğitimi yeniden çalıştırma.
+Bulut/GPU harcaması: 0 USD. Önceden yetkilendirilen toplam üst sınır35 USD değişmedi.
+
+KLASİK YEDEK VE PLATFORM
+competition/releases/classic-baseline/manifest.json: A10/B14 kaynaklarından review-only, credential-placeholder yedek. Gerçek tarihî skor12/13 vaka üçteüç;38/39 çağrı. Yeni yayın veya13/13 iddiası yok.
+A11 resmîA:27/30combined,29/30bank,8/10üçteüç; PUB06 üçteüç. PUB08 paid yorumu ve PUB10 kayıt-disclaimer judge sorunları ayrıdır.
+A12 yayımlandı, bağımsız kaynak incelemesi mevcut; hosted yeniden test edilmedi. A13 otomatik draft yerelde169check geçti; dryRun HTTP504 ve süre sınırı nedeniyle yayımlanmadı. Orijinal failedrun20261011-123411-65d0e4 değiştirilmedi. Ham draft competition/runs altında yerelde kalır; yeni ve ayrı süreli finalize adımı gerekir, eski süre resetlenmez.
+Arkadaş workspace'i kullanıyor: yeni simülasyon başlatma. Sıra bırakıldığında actualagent/version/exporthash doğrulayarak özgün score.py/actor/expected ile A+B ve zor vakaları üç ayrı tekrarda çalıştır. Workspace başına tek simulation, max5eşzamanlıcall.
+
+YENİ VAKALAR
+Dört yeni vaka bağımsız kaynak/beklenen ledger incelemesinde PASS. 12'lik boundcatalog4yeni+8eski;12yeni çağrı planlandı,0yapıldı. Yeni pack: research/customer-benchmark/day2-expanded-catalog-v2.json. Eski8'in HOLD vakasını çalıştırma. Aktör/judge/expected/scorer sonuç geçirmek için değişmez. Metin testleri ASR/aksan/ses doğrulaması değildir.
+
+RESTART İLK İŞLER
+A) Arkadaşla platform sırası netleşince engine public/isim-unvan/zor vaka testleri; A13 yalnız yeni süreli otomatik finalize ve bağımsız kaynak audit.
+B) Distillation için dondurulmuş iki modele mevcut993CAL/993EVAL tek sefer diagnostic runner yaz; test ve exact-source planından sonra çalıştır. EVAL'de hyperparam/model seçme; önceki split artık fresh/blind qualification değildir.
+C) SGD V2 bütün15bilinen partial-wordmask kusurunu onardı. Bağımsız audit10.731/10.732 geçti; SQLite completedcacheV1path kabulü kaldı. batches-v3.py henüz yazılmadı; cacheprovenance onarımı ilk veri işi. V1/V2 dosya ve etiketlerini değiştirme. İlkV1modelin tümvalue/KEEP/SET/DELETE başlıkları UNKNOWN korunur.
+D) Aynı Astra tasarımını kullan: analysis/day2-sgd-model-next-design.json/.txt. TRAIN-only kaynak analizi tamam; yeni dengeli fit yapılmadı. Aynı Hooke/Sol uygulama ve bağımsız Opus/Codex audit zincirini sürdür. Başlangıçtaki mini test başarıları bankpolicysafety yerine geçmez; öğrenen katman semantik öneri, deterministik guards ve gerçek receipt işlem otoritesidir.
+
+KORUNAN DOSYALAR
+Özgün ZIP/brief/OpenAPI/public actor/expected/score.py/run_cases.py: 16/16 dosya byte-eşit. Secret snapshot temiz. Hiçbir gizli teste yetkisiz erişim yok. Baseline/fit/metric/freeze hash'lerini koru; başarısız skorları değiştirme. Bu notun durumları sprint kapanışı içindir; sonraki koşular ayrı sürüm ve kanıtla kaydedilir.

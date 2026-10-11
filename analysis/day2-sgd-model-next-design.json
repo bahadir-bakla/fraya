@@ -1,0 +1,79 @@
+{
+  "version": "day2.sgd.next.design.1",
+  "status": "SAVED_DEFERRED_UNTIL_AFTER_RESTART",
+  "scope": {"new_fits": 0, "optimizer_steps": 0, "GPU_USD": 0, "bank_authority": false, "writes": ["analysis/day2-sgd-model-next-design.json", "analysis/day2-sgd-model-next-design.txt"], "other_jobs": "Hooke Banking77 distillation unchanged; no SGD job launched", "final_steering": "User requested wrapping for restart: no more probes/jobs; finish/save current design and stop."},
+  "source_sha256": {
+    "analysis/day2-sgd-model-report.json": "36fac151cbf2eeb04a1d77b0c65ba69946a00e577c0213b259965db8659a5f1a",
+    "analysis/day2-sgd-model-plan.json": "68e63c5c1a5424a440b88f458a9a874c4b552b1936536f6756a9cb8c2cf865fa",
+    "analysis/day2-sgd-model-fit-frozen.json": "d23cb0625ad0d3377116fe579f38df9952edf386bce773f4cf3cb4c214a25bd6",
+    "analysis/day2-sgd-model-index-TRAIN.sqlite3": "203ccc780890296ad75dc13be76a4e24942840e6729de5cccc1dce3b88b4013d",
+    "research/customer-benchmark/day2-training-data/sgd/full-v1/manifest.json": "7176ce8bf20c7e6adce899a276f7de0c042e0e33eb63999462264ca6c1843513",
+    "research/customer-benchmark/day2-training-data/sgd/service-schema.json": "97b6c21673aa7e5c2d1ceef52aa35170c565223cdcbf33bb24c69739bda04a82",
+    "integrations/learned-dialogue/day2_sgd_train.py": "82da81e5822c79a65a3ffddd490fddec01b770c4e76742a3fbc0e46dc10fdd94",
+    "integrations/learned-dialogue/day2_sgd_model.py": "9abe955a74a6db94c26263c75d06adcec530ff441e126dff036295ed1b41a7de",
+    "integrations/learned-dialogue/day2_sgd_adapter.py": "ea7d0d3069488fb5baf81b22f0f09bd1fb622d8ac445dc4532d31a90e55332a7",
+    "integrations/learned-dialogue/day2_sgd_data.py": "eb3aaddd53e2a9e83a3877b536efd8181cf6aa0abe8ad5f035f6c548bd6954b7",
+    "integrations/learned-dialogue/day2_sgd_metrics.py": "0475bcf2ba56938d96237c3a9c2229eaf66871fc4b98f253431a1bbbec7f40a2",
+    "integrations/learned-dialogue/day2_sgd_runtime.py": "d426d3102e4e46e58b8650f7997f8aada7f800e56a33c500da51dd3285b2c71e"
+  },
+  "actual_first_pilot": {
+    "fit_seconds": 192.0700104000025,
+    "TRAIN_events": 132615,
+    "EVAL_events": 16295,
+    "known_EVAL_service_frame_intents": 17406,
+    "optimizer_steps_total_both_arms": 2382,
+    "compiled_schema_runtime_adapter_bytes": 434041,
+    "size_cap": 500000,
+    "G_relations": {"conditional_intent_accuracy": 0.756865448695852, "accepted_precision": 0.956611876203169, "coverage": 0.3879696656325405, "accepted": 6753, "presence_F1": 0.43281416020939695, "presence_recall": 0.2805947580645161, "requested_available": false, "requested_F1": 0, "acts_available": false, "acts_F1": 0},
+    "Zero_edges": {"conditional_intent_accuracy": 0.7514650120648052, "presence_F1": 0.44196761821411107, "requested_available": true, "requested_F1": 0.05092592592592592, "requested_recall": 0.026198273295623697},
+    "common_Zero_prior_diagnostic": {"G_intent_accuracy": 0.7554291623578077, "G_presence_F1": 0.42034102201998014},
+    "Banking_TRAIN_publisher_intent_counts": {"CheckBalance": 1599, "TransferMoney": 924, "NONE": 284},
+    "Banking_exposed_EVAL_recall": {"TransferMoney_approx": 0.1667, "CheckBalance_approx": 0.8756},
+    "interpretation": "Conditional known-frame semantics only. No service routing, belief-value correctness, bank permissions, or deployment safety established. Requested/act F1=0 results from calibrated unavailable heads; raw fixed-threshold F1 was not provided and cannot be inferred. No per-head TRAIN loss history was saved. CAL threshold selection is adaptive empirical precision, not a group-risk guarantee. Existing EVAL is exposed diagnostic, never a fresh qualification split."
+  },
+  "completed_TRAIN_probe": {
+    "executed_before_restart_request": true,
+    "elapsed_seconds": 20.95300000000134,
+    "new_optimizer_steps": 0,
+    "parameter_bytes_unchanged": true,
+    "method": "python -B; frozen trainer module loaded without prepare/execute; library initialization only; DialogStream('TRAIN') revalidated TRAIN shards and read existing index in mode=ro. Loaded both frozen float32 states, consumed first hash-ordered 128-event chronological chunk with own detached predicted priors. autograd.grad measured data, L2 and head embedding gradients without optimizer. Then scanned all29 TRAIN shards with unchanged adapter.targets and group/event weights for label census. No CAL/EVAL stream or target rows opened. No output files from the probe.",
+    "head_census": {
+      "requested": {"positives": 26960, "known_negatives": 1260244, "positive_per_coordinate_min": 0, "positive_per_coordinate_max": 1187, "zero_positive_coordinates": 120, "group_weighted_negative_positive_ratio_median_supported": 20.971837131627957},
+      "presence": {"positives": 480019, "known_negatives": 807185, "positive_per_coordinate_min": 0, "positive_per_coordinate_max": 13166, "zero_positive_coordinates": 71, "group_weighted_negative_positive_ratio_median_supported": 0.8396445570278164},
+      "acts": {"positives": 188870, "known_negatives": 1364737, "positive_per_coordinate_min": 0, "positive_per_coordinate_max": 5180, "zero_positive_coordinates": 24, "group_weighted_negative_positive_ratio_median_supported": 7.955472356944454}
+    },
+    "first_chunk_frozen_state_losses": {
+      "G_relations": {"normalized_data_loss": 1.4315383434295654, "L2_loss": 0.21203672885894775, "data_gradient_norm": 0.4890386164188385, "L2_gradient_norm": 0.02059304341673851, "head_loss": {"intent": 0.4086085855960846, "requested": 0.13659906387329102, "presence": 0.6371383666992188, "acts": 0.24919232726097107}, "head_embedding_gradient_norm": {"intent": 0.15448734164237976, "requested": 0.043638747185468674, "presence": 0.24375644326210022, "acts": 0.020668767392635345}},
+      "Zero_edges": {"normalized_data_loss": 1.4375864267349243, "L2_loss": 0.20540985465049744, "data_gradient_norm": 0.470254510641098, "L2_gradient_norm": 0.02026868797838688, "head_loss": {"intent": 0.4242957532405853, "requested": 0.1291809380054474, "presence": 0.6355099678039551, "acts": 0.2485997974872589}, "head_embedding_gradient_norm": {"intent": 0.16273698210716248, "requested": 0.04650764912366867, "presence": 0.2236890196800232, "acts": 0.02108783833682537}}
+    },
+    "limits": "This is a complete TRAIN label census plus one nonrandom, final-state causal TRAIN chunk, not a fit or representative convergence study. Gradient magnitudes do not establish destructive interference. L2/data gradient ratio is approximately4.2%/4.3%; no evidence here that L2 dominates learning. Labels and support are publisher source supervision, not independent bank gold."
+  },
+  "source_mechanisms": [
+    {"mechanism": "Sparse positive supervision", "evidence": "requested has about46.7 known negatives per positive globally and120/215 zero-positive coordinates; acts about7.2 global ratio and24/286 zero-positive coordinates", "consequence": "Unweighted element-mean BCE can favor negative predictions. Presence is not globally comparably sparse: its median supported coordinate N/P is0.84. Do not blindly apply the same imbalance narrative to every head."},
+    {"mechanism": "Shared schema-query capacity", "evidence": "Shared E(512x32), Whead per head; every label is a text-derived schema query; head-specific embedding gradients differ strongly in one TRAIN chunk", "consequence": "Query semantics and task gradients may conflict, but independent-head benefit is unmeasured. First isolate weighting with matched architecture before adding private encoders or graph depth."},
+    {"mechanism": "Causal memory is model-generated, not gold", "evidence": "memory() detaches service-wise softmax intent and sigmoid presence; requested/acts zero; global known=1 after forward; train resets at dialogue boundaries", "consequence": "All services receive proposal probabilities even without an observed publisher frame. Such memory is not an authenticated active-service/known-state declaration. No gradient flows through previous turns because memory is detached. Keep chronology and resets; do not teacher-force gold frames/state or route using current targets."},
+    {"mechanism": "Selective metrics conflate unavailability with raw classification", "evidence": "metrics.report uses cfg.available and calibrated threshold; requested/acts unavailable produces all-false decisions", "consequence": "Record raw0.5 F1/PR diagnostics independently of selective acceptance and confidence. Do not claim weighting repairs calibrated coverage from raw recall alone."},
+    {"mechanism": "Reference limitation", "evidence": "Features include up to8 earlier turns plus current; lexical input truncated to64 tokens per utterance and hashed to512; no recovered values/update head", "consequence": "Observed-text references can be a later separate adapter test, but value resolution cannot be backfilled from current gold frames. No parser expansion in this next weighting experiment."}
+  ],
+  "deferred_matched_CPU_pilot": {
+    "status": "NOT_LAUNCHED_DEFERRED_AFTER_RESTART",
+    "experiment": "Two fresh G_relations models: unweighted versus TRAIN-class-balanced; same initial weights, architecture, observed features, schema queries, chronology, chunks, priors and total processing budget. Graph/Zero comparison is not rerun in this pilot.",
+    "data": "Only frozen full-v1 TRAIN132615 events, same29 pinned shards and closure groups. V2 audit/admission remains a separate task; do not replace supervision while interpreting weighting effects.",
+    "inputs": "adapter.features allowlist: current USER utterance and observed earlier role/text only; schema text is available product metadata. No current frame/service labels, ancestry, requested slots, actions, value maps or oracle service routing in features.",
+    "support_weights": "a_i=1/(G*n_dialogues_in_group*n_events_in_dialogue). For a binary coordinate j, P_j=sum a_i*m_ij*y_ij; N_j=sum a_i*m_ij*(1-y_ij). Set q_j=min(20,max(1,sqrt(N_j/P_j))) when P_j>0,N_j>0; otherwise q_j=1 with unsupported-positive/negative metadata. These are training weights, not qualification gates.",
+    "binary_loss": "ell_ij(q)=q_j*y_ij*softplus(-z_ij)+(1-y_ij)*softplus(z_ij). Let b_ij=a_i*m_ij/max(1,sum_k m_ik) within this head. K_j=sum_i b_ij*(q_j*y_ij+1-y_ij)/sum_i b_ij for supported coordinates, otherwise1. Replace BCE with ell_ij(q)/K_j, retain exact original known-element row means, head multipliers, /log(2), group event weights and fixed128 chunk denominator. q=K=1 in unweighted arm. Unknown masks still contribute zero gradient. Row denominators in b match the original objective when known-coordinate counts differ.",
+    "intent_loss": "For service s, C_sc=sum_i a_i*m_is*1[y_is=c]/max(1,sum_t m_it). Let u_sc=min(4,max(.25,sqrt(mean_{supported c} C_sc/C_sc))) for C_sc>0, otherwise1. Normalize u_sc by sum_c C_sc*u_sc/sum_c C_sc. Multiply the original conditional per-service CE by u_s,y; keep /log(max(2,classes)), frame masks, row means and denominator128 identical. Use group-weighted counts, not exposed Banks EVAL errors, to determine all weights.",
+    "knownness": "Known absence is valid negative supervision; absent frame or invalid annotation is UNKNOWN. A coordinate with zero TRAIN positives is not relabeled or subject to an invented20 floor; declare unsupported positive-direction acceptance rather than inventing learned positive evidence. Values, KEEP/SET and DELETE remain UNKNOWN.",
+    "memory": "Both arms retain the original own detached raw predicted memory and resets so the treatment is loss weighting only. Weighted scores and their induced memory are not calibrated posterior beliefs. Log raw memory entropy/presence drift; a later common-prior causal diagnostic can separate immediate prediction and rollout effects without retraining. No oracle previous state.",
+    "optimizer": {"seed": 20261011, "CPU_threads": 2, "epochs": 1, "batch_dialogues": 32, "USER_unroll": 4, "optimizer": "Adam", "lr": 0.003, "clip_norm": 1, "L2_once_per_chunk": 0.0005, "automatic_retries": 0},
+    "L2": "Retain .0005*sum(parameter^2) in both arms to isolate weighting; log regularizer separately. Do not change the regularizer and then attribute all change to balancing. Probe did not justify an L2-dominance claim.",
+    "wall_seconds": {"total_max": 360, "TRAIN_support_pin_verification_and_gradient_checks": 40, "paired_fit_max": 245, "TRAIN_diagnostics_parity_export_freeze": 45, "reserve": 30},
+    "timeout": "One paired one-epoch pass; check monotonic wall between chunks. If interrupted, preserve exact states/counts as incomplete; no CAL/EVAL, no automatic retry or GPU fallback. Actual first paired graph/zero fit192s motivates feasibility, does not guarantee it.",
+    "logging": ["Per-head normalized and raw data loss, positive and negative BCE separately; regularizer separately", "Gradient norms per head/shared embedding, clipping fraction, all-coordinate finite checks", "Processed events, optimizer steps, elapsed time and all group support weights", "TRAIN raw0.5 requested/presence/act F1, PR summaries and supported per-class intent recall; not training generalization", "Conditional Banks counts and diagnostics disclosed but no Banks-specific handpicked weights", "Own-memory entropy/presence drift and reset checks"],
+    "gradient_checks": ["Finite-difference one known positive and known negative for requested/acts; q increases positive gradient with fixed logits", "Any unknown element or padded event contributes exactly zero data gradient", "q=K=u=1 reproduces frozen original masked_loss and gradients on a TRAIN witness", "Changing targets/frame/ancestry leaves feature bytes identical", "No current gold labels enter prior; new dialogue resets all prior coordinates; future utterance mutation cannot alter earlier predictions", "Parameters identical at initialization, same event sequence and same optimizer schedule in both arms"],
+    "export": "Use existing stdlib architecture. Store support weights/training provenance as metadata; no annotation-dependent runtime features. Each required compiled artifact including schema/runtime/adapter must measure<=500000 bytes; original434041 leaves65959 bytes, not an assumed new-size pass. Pin new code, weights, transforms and evaluation script before any further calibration/evaluation.",
+    "post_freeze_evaluation": "Only a separately initiated post-restart execution may evaluate exposed CAL-fit/CAL-select/EVAL using frozen settings. Report raw fixed-threshold metrics and calibrated availability separately; temperature-fit and threshold-selection groups remain separate. No hyperparameter selection on EVAL. No fresh-qualification claim or statistical graph-advantage claim from this weighting pilot. New independently held-out lineage/OOD data is needed for risk qualification; conditional service-frame scoring is not routing/DST.",
+    "falsification": "If requested raw recall stays collapsed despite adequate positive gradients and falling loss, representation or labels/observability is the next cause to test; do not celebrate lower BCE. If raw recall improves with severe precision loss, report the tradeoff; do not lower bank authority guards. Independent task adapters or frozen text-encoder query representations are a later separate matched experiment, not silently added now."
+  },
+  "restart_handoff": "Saved current design only. No model/source/data edits, no new job, fit, GPU or hosted calls. Parent can push completed reports and decide the post-restart experiment. Hooke's separate Banking77 task was not redirected."
+}
