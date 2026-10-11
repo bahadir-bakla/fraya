@@ -345,7 +345,7 @@ def arguments():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('briefs',nargs='+');parser.add_argument('--tool-api',default=str(KIT/'tools/openapi.json'))
     parser.add_argument('--cases',default=str(KIT/'public-test-set.json'));parser.add_argument('--slot',default='competition-builder')
-    parser.add_argument('--rounds',type=int,default=3);parser.add_argument('--minutes',type=float,default=30)
+    parser.add_argument('--rounds',type=int,help='Build/repair rounds within the same 30 minutes (default 3 with tests, 6 with --skip-tests)');parser.add_argument('--minutes',type=float,default=30)
     parser.add_argument('--brief',help='Case group in the provided test set; public A/B groups are inferred from their exact evidence')
     parser.add_argument('--only');parser.add_argument('--style',choices=['pieces','corrects','talkative','asks_back','in_words'])
     parser.add_argument('--skip-tests',action='store_true');parser.add_argument('--model',default=os.environ.get('BUILDER_MODEL'))
@@ -358,6 +358,8 @@ def arguments():
     except ValueError as error:parser.error(str(error))
     if args.resume_run and args.practice_repair:parser.error('Use either same-budget resume or a separate public practice repair cycle')
     if not 0<args.minutes<=30:parser.error('Each build is limited to 30 minutes.')
+    # Without tests a round costs only model time, so the full budget may need more than three short rounds.
+    if args.rounds is None:args.rounds=6 if args.skip_tests else 3
     if not 1<=args.rounds<=6:parser.error('Use 1 to 6 bounded build/repair rounds within the same 30-minute maximum.')
     if not re.fullmatch(r'[A-Za-z0-9_-]+',args.slot):parser.error('slot must use letters, numbers, - or _.')
     if not args.model:
