@@ -366,9 +366,14 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             first_round=self.status['round']+1 if self.args.resume_run else 1
             for number in range(first_round,self.args.rounds+1):
                 if completed or self.remaining()<90:break
+                if author and self.status.get('freya') and self.remaining()<300:
+                    # A repair this late cannot finish; keep the published, already tested candidate instead.
+                    self.event('self_practice_repair_skipped',round=number,remaining_seconds=round(self.remaining()));break
                 try:
                     workflow=self.model(number);ids=self.publish(workflow)
                 except TimeoutError as error:
+                    if self.remaining()<120 and author and self.status.get('freya'):
+                        self.event('self_practice_repair_timeout',round=number);break
                     if self.remaining()<120:raise
                     self.feedback=[{'model_step_timeout':str(error),'existing_artifacts':[name for name in ('workflow.json','policy.json','coverage.json') if (self.work/name).exists()],'read_file':f'../model-{number}.jsonl','instruction':'Continue this same run automatically; inspect already generated artifacts and the last model message, finish essential repairs, then return the required artifact contract. Do not change input evidence.'}]
                     self.event('model_timeout_recovery',round=number,remaining_seconds=round(self.remaining()))
