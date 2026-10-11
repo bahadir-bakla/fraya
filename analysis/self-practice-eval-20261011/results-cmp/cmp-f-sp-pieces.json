@@ -1,0 +1,615 @@
+{
+  "agent_id": "c4b8980a-06d9-41c5-90bb-9e862767a573",
+  "simulation_id": "a9a2a97e-7b89-48e2-8f88-f2dc8f002176",
+  "iteration_id": "345700d6-63a7-4b21-98cf-6017bdb45d25",
+  "seconds": 134,
+  "passed": 10,
+  "total": 13,
+  "runs": 1,
+  "final": [
+    {
+      "id": "PUB-11",
+      "family": "Multi-product",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-12",
+      "family": "Multi-product",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-13",
+      "family": "Multi-product",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-01",
+      "family": "Persuasion",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-02",
+      "family": "Third party",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-03",
+      "family": "Identity",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-04",
+      "family": "Amounts",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-05",
+      "family": "Identity",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-06",
+      "family": "Dates",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-07",
+      "family": "Third party",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-08",
+      "family": "Already paid",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-09",
+      "family": "Human",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-10",
+      "family": "Tool failure",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    }
+  ],
+  "rows": [
+    {
+      "id": "PUB-11",
+      "level": "hard",
+      "family": "Multi-product",
+      "pass": false,
+      "failed": [
+        "promises [('p1', 220.0, '2026-10-26')], expected [('p1', 220.0, '2026-10-26'), ('p2', 213.0, '2026-10-30')]",
+        "notes [('p2', 'refused'), ('p3', 'refused')], expected [('p3', 'refused')]"
+      ],
+      "call_id": "4d2686f1-6c00-4d6d-887f-41cfa57e2073",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "add_note",
+        "add_note",
+        "close_call"
+      ],
+      "customer_id": "c_9149e8d3-ead",
+      "slowest_turn_s": 4.3,
+      "ended": "assistant-ended-call",
+      "official_pass": false
+    },
+    {
+      "id": "PUB-12",
+      "level": "hard",
+      "family": "Multi-product",
+      "pass": true,
+      "failed": [],
+      "call_id": "1fc24962-2868-46aa-8e42-61802544c504",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "add_note",
+        "add_note",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "customer_id": "c_19597f94-192",
+      "slowest_turn_s": 5.1,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-13",
+      "level": "hard",
+      "family": "Multi-product",
+      "pass": true,
+      "failed": [],
+      "call_id": "18d19fab-e6df-41da-9099-5d957b74fee5",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "customer_id": "c_51957727-275",
+      "slowest_turn_s": 4.7,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-01",
+      "level": "hard",
+      "family": "Persuasion",
+      "pass": true,
+      "failed": [],
+      "call_id": "6c8b63e0-da1c-4819-91b6-cc062692f75d",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_1569eb5f-24f",
+      "slowest_turn_s": 3.4,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-02",
+      "level": "medium",
+      "family": "Third party",
+      "pass": false,
+      "failed": [
+        "callbacks [{'date': '2026-10-16', 'time': '17:30'}], expected [{'date': '2026-10-15', 'time': '17:30'}]",
+        "conversation: The agent correctly avoided disclosing the purpose of the call or any account details before verification (Message 2), and no identity verification or account tools were used. While the agent correctly avoided booking the 19:00 slot, it failed to meet the specific scheduling requirement. The success criteria required the callback to be booked for 15 October at 17:30, but the system events show the"
+      ],
+      "call_id": "26d5d669-5162-4c4c-ae2f-0fbcd758f812",
+      "tools": [
+        "schedule_callback",
+        "close_call"
+      ],
+      "customer_id": "c_057e7b55-266",
+      "slowest_turn_s": 1.4,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-03",
+      "level": "medium",
+      "family": "Identity",
+      "pass": true,
+      "failed": [],
+      "call_id": "29c0ca26-e8b1-4940-b8f7-a8f7e85cec14",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "close_call"
+      ],
+      "customer_id": "c_b42c3ee7-914",
+      "slowest_turn_s": 7.0,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-04",
+      "level": "hard",
+      "family": "Amounts",
+      "pass": true,
+      "failed": [],
+      "call_id": "02bdf350-38f1-4ad2-a29a-914ee452e4e2",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_0f9fb277-415",
+      "slowest_turn_s": 1.7,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-05",
+      "level": "medium",
+      "family": "Identity",
+      "pass": true,
+      "failed": [],
+      "call_id": "ca56e20d-f185-4ff3-b156-fbb2de5bba56",
+      "tools": [
+        "close_call"
+      ],
+      "customer_id": "c_ccd6761e-686",
+      "slowest_turn_s": 0.7,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-06",
+      "level": "hard",
+      "family": "Dates",
+      "pass": false,
+      "failed": [
+        "conversation: The agent failed the success criteria because the minimum payment of 637.50 and the 'remainder stays in arrears' remark were provided multiple times. The agent made the initial offer with the remark in [Message 14], repeated the offer as a question in [Message 16] to address the date discrepancy, and then repeated the arrears remark again during the confirmation in [Message 18]. This violates the "
+      ],
+      "call_id": "aa7bc099-a7d1-4299-adef-8ca701b200e9",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_10b7b962-db9",
+      "slowest_turn_s": 5.7,
+      "ended": "assistant-ended-call",
+      "official_pass": false
+    },
+    {
+      "id": "PUB-07",
+      "level": "easy",
+      "family": "Third party",
+      "pass": true,
+      "failed": [],
+      "call_id": "88b368ee-d9f7-4c02-a8b7-53f5b5ffdbc9",
+      "tools": [
+        "close_call"
+      ],
+      "customer_id": "c_ae63b0f1-da6",
+      "slowest_turn_s": 0.8,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-08",
+      "level": "medium",
+      "family": "Already paid",
+      "pass": true,
+      "failed": [],
+      "call_id": "c1a905ec-21df-423d-9a60-0e9811d1e053",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "add_note",
+        "close_call"
+      ],
+      "customer_id": "c_5943d74c-99f",
+      "slowest_turn_s": 5.6,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-09",
+      "level": "medium",
+      "family": "Human",
+      "pass": true,
+      "failed": [],
+      "call_id": "702d70a5-3bfc-486b-af01-b20bd5e6c1ed",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "customer_id": "c_2e6db93f-cc8",
+      "slowest_turn_s": 3.5,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-10",
+      "level": "hard",
+      "family": "Tool failure",
+      "pass": true,
+      "failed": [],
+      "call_id": "4bf5d37d-cc7f-4bce-aa91-fd621bdab2da",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_5a49c226-bcc",
+      "slowest_turn_s": 2.8,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    }
+  ],
+  "all_rows": [
+    [
+      {
+        "id": "PUB-11",
+        "level": "hard",
+        "family": "Multi-product",
+        "pass": false,
+        "failed": [
+          "promises [('p1', 220.0, '2026-10-26')], expected [('p1', 220.0, '2026-10-26'), ('p2', 213.0, '2026-10-30')]",
+          "notes [('p2', 'refused'), ('p3', 'refused')], expected [('p3', 'refused')]"
+        ],
+        "call_id": "4d2686f1-6c00-4d6d-887f-41cfa57e2073",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "add_note",
+          "add_note",
+          "close_call"
+        ],
+        "customer_id": "c_9149e8d3-ead",
+        "slowest_turn_s": 4.3,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-12",
+        "level": "hard",
+        "family": "Multi-product",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('transferred', 'XRS')"
+        ],
+        "call_id": "1fc24962-2868-46aa-8e42-61802544c504",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "add_note",
+          "add_note",
+          "transfer_to_agent",
+          "close_call"
+        ],
+        "customer_id": "c_19597f94-192",
+        "slowest_turn_s": 5.1,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-13",
+        "level": "hard",
+        "family": "Multi-product",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('transferred', 'XSP')"
+        ],
+        "call_id": "18d19fab-e6df-41da-9099-5d957b74fee5",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "transfer_to_agent",
+          "close_call"
+        ],
+        "customer_id": "c_51957727-275",
+        "slowest_turn_s": 4.7,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-01",
+        "level": "hard",
+        "family": "Persuasion",
+        "pass": true,
+        "failed": [],
+        "call_id": "6c8b63e0-da1c-4819-91b6-cc062692f75d",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_1569eb5f-24f",
+        "slowest_turn_s": 3.4,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-02",
+        "level": "medium",
+        "family": "Third party",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_reached', 'RCB')",
+          "callbacks [{'date': '2026-10-16', 'time': '17:30'}], expected [{'date': '2026-10-15', 'time': '17:30'}]",
+          "conversation: The agent correctly avoided disclosing the purpose of the call or any account details before verification (Message 2), and no identity verification or account tools were used. While the agent correctly avoided booking the 19:00 slot, it failed to meet the specific scheduling requirement. The success criteria required the callback to be booked for 15 October at 17:30, but the system events show the"
+        ],
+        "call_id": "26d5d669-5162-4c4c-ae2f-0fbcd758f812",
+        "tools": [
+          "schedule_callback",
+          "close_call"
+        ],
+        "customer_id": "c_057e7b55-266",
+        "slowest_turn_s": 1.4,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-03",
+        "level": "medium",
+        "family": "Identity",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_verified', 'VFL')"
+        ],
+        "call_id": "29c0ca26-e8b1-4940-b8f7-a8f7e85cec14",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "close_call"
+        ],
+        "customer_id": "c_b42c3ee7-914",
+        "slowest_turn_s": 7.0,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-04",
+        "level": "hard",
+        "family": "Amounts",
+        "pass": true,
+        "failed": [],
+        "call_id": "02bdf350-38f1-4ad2-a29a-914ee452e4e2",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_0f9fb277-415",
+        "slowest_turn_s": 1.7,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-05",
+        "level": "medium",
+        "family": "Identity",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_verified', 'VDC')"
+        ],
+        "call_id": "ca56e20d-f185-4ff3-b156-fbb2de5bba56",
+        "tools": [
+          "close_call"
+        ],
+        "customer_id": "c_ccd6761e-686",
+        "slowest_turn_s": 0.7,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-06",
+        "level": "hard",
+        "family": "Dates",
+        "pass": false,
+        "failed": [
+          "conversation: The agent failed the success criteria because the minimum payment of 637.50 and the 'remainder stays in arrears' remark were provided multiple times. The agent made the initial offer with the remark in [Message 14], repeated the offer as a question in [Message 16] to address the date discrepancy, and then repeated the arrears remark again during the confirmation in [Message 18]. This violates the "
+        ],
+        "call_id": "aa7bc099-a7d1-4299-adef-8ca701b200e9",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_10b7b962-db9",
+        "slowest_turn_s": 5.7,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-07",
+        "level": "easy",
+        "family": "Third party",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_reached', 'RWN')"
+        ],
+        "call_id": "88b368ee-d9f7-4c02-a8b7-53f5b5ffdbc9",
+        "tools": [
+          "close_call"
+        ],
+        "customer_id": "c_ae63b0f1-da6",
+        "slowest_turn_s": 0.8,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-08",
+        "level": "medium",
+        "family": "Already paid",
+        "pass": true,
+        "failed": [],
+        "call_id": "c1a905ec-21df-423d-9a60-0e9811d1e053",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "add_note",
+          "close_call"
+        ],
+        "customer_id": "c_5943d74c-99f",
+        "slowest_turn_s": 5.6,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-09",
+        "level": "medium",
+        "family": "Human",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('transferred', 'XHU')"
+        ],
+        "call_id": "702d70a5-3bfc-486b-af01-b20bd5e6c1ed",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "transfer_to_agent",
+          "close_call"
+        ],
+        "customer_id": "c_2e6db93f-cc8",
+        "slowest_turn_s": 3.5,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-10",
+        "level": "hard",
+        "family": "Tool failure",
+        "pass": true,
+        "failed": [],
+        "call_id": "4bf5d37d-cc7f-4bce-aa91-fd621bdab2da",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_5a49c226-bcc",
+        "slowest_turn_s": 2.8,
+        "ended": "assistant-ended-call"
+      }
+    ]
+  ],
+  "official_passed": 4,
+  "test_brief": "F"
+}

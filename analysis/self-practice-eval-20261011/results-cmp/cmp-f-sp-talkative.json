@@ -1,0 +1,624 @@
+{
+  "agent_id": "c4b8980a-06d9-41c5-90bb-9e862767a573",
+  "simulation_id": "75c2a96c-69a0-40f0-9385-c37162b5bd39",
+  "iteration_id": "c31cf36a-9965-4d98-98d7-32fc0c0e9132",
+  "seconds": 515,
+  "passed": 7,
+  "total": 13,
+  "runs": 1,
+  "final": [
+    {
+      "id": "PUB-11",
+      "family": "Multi-product",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-12",
+      "family": "Multi-product",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-13",
+      "family": "Multi-product",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-01",
+      "family": "Persuasion",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-02",
+      "family": "Third party",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-03",
+      "family": "Identity",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-04",
+      "family": "Amounts",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-05",
+      "family": "Identity",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-06",
+      "family": "Dates",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-07",
+      "family": "Third party",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-08",
+      "family": "Already paid",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-09",
+      "family": "Human",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-10",
+      "family": "Tool failure",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    }
+  ],
+  "rows": [
+    {
+      "id": "PUB-11",
+      "level": "hard",
+      "family": "Multi-product",
+      "pass": true,
+      "failed": [],
+      "call_id": "b2633583-52bf-4bb4-bb24-45297ae7e78b",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "create_promise",
+        "add_note",
+        "close_call"
+      ],
+      "customer_id": "c_758d2b1d-e0c",
+      "slowest_turn_s": 8.7,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-12",
+      "level": "hard",
+      "family": "Multi-product",
+      "pass": false,
+      "failed": [
+        "outcome (None, None), expected ('transferred', 'XRS')",
+        "transfers [], expected [{'queue': 'restructuring'}]",
+        "the call was not closed with close_call",
+        "conversation: The agent failed to meet the success criteria because the 'transfer_to_agent' tool was never called. While other criteria were satisfied (the date of birth was asked only once at [Message 2], the phone question was re-asked once at [Message 6], the credit card dispute was handled without argument at [Message 16], and a single persuasion attempt for the personal loan was made at [Message 18]), the "
+      ],
+      "call_id": "5f32437d-2f45-4876-ade8-37e4529433dd",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "add_note",
+        "add_note"
+      ],
+      "customer_id": "c_1a1e8472-828",
+      "slowest_turn_s": 2.5,
+      "ended": "customer-ended-call",
+      "official_pass": false
+    },
+    {
+      "id": "PUB-13",
+      "level": "hard",
+      "family": "Multi-product",
+      "pass": true,
+      "failed": [],
+      "call_id": "993e5466-2e67-4a2c-ac52-3c51bd7905a0",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "customer_id": "c_d7ec9d41-0ae",
+      "slowest_turn_s": 4.7,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-01",
+      "level": "hard",
+      "family": "Persuasion",
+      "pass": false,
+      "failed": [
+        "outcome ('no_promise', 'NRF'), expected ('promise', None)",
+        "promises [], expected [('p1', 126.0, '2026-10-30')]",
+        "notes [('p1', 'refused')], expected []",
+        "conversation: The conversation failed to meet two of the specific success criteria. 1. The first offer made by the agent was for the full amount ($420.00) 'today' (Message 6), whereas the criteria required the first offer to be for 30 October. 2. The agent did not mention that a confirmation would be sent to the Lakeshore app in the closing (Message 20). The second offer of $126 by 30 October (Message 18) was c"
+      ],
+      "call_id": "d426d382-84ba-4446-a673-12da28436842",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "add_note",
+        "close_call"
+      ],
+      "customer_id": "c_30297c05-96c",
+      "slowest_turn_s": 3.4,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-02",
+      "level": "medium",
+      "family": "Third party",
+      "pass": false,
+      "failed": [
+        "outcome ('not_reached', 'RNC'), expected ('not_reached', 'RCB')",
+        "callbacks [], expected [{'date': '2026-10-15', 'time': '17:30'}]",
+        "conversation: The agent failed to book a callback for 15 October at 17:30. In Message 8, the assistant explicitly states \"No callback has been booked\" before ending the call. While other criteria were met (no disclosure of call purpose/account details, no identity or account functions called), the requirement to book a specific callback was not fulfilled."
+      ],
+      "call_id": "02071ed0-30f2-48a0-8733-db7e39f60f78",
+      "tools": [
+        "close_call"
+      ],
+      "customer_id": "c_65ddbaf0-06a",
+      "slowest_turn_s": 0.9,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-03",
+      "level": "medium",
+      "family": "Identity",
+      "pass": false,
+      "failed": [
+        "conversation: The assistant failed one success criterion: 'the date of birth is asked again once after the first wrong answer'. After the first incorrect date of birth provided in [Message 3], the assistant asked for the date of birth in [Message 4] and then again in [Message 6] because the user gave a non-responsive answer in [Message 5]. This means the question was asked twice after the first failure. However"
+      ],
+      "call_id": "a173d9a1-f534-4e30-ad88-4c64a18e6b39",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "close_call"
+      ],
+      "customer_id": "c_58bbd2e8-4cd",
+      "slowest_turn_s": 1.8,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-04",
+      "level": "hard",
+      "family": "Amounts",
+      "pass": true,
+      "failed": [],
+      "call_id": "ea255deb-fd84-40bf-9b90-dc098c5089b0",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_0b384a41-818",
+      "slowest_turn_s": 10.2,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-05",
+      "level": "medium",
+      "family": "Identity",
+      "pass": true,
+      "failed": [],
+      "call_id": "fc175662-4f99-418c-bece-7dfe5609bded",
+      "tools": [
+        "close_call"
+      ],
+      "customer_id": "c_1d92fbb5-abd",
+      "slowest_turn_s": 1.1,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-06",
+      "level": "hard",
+      "family": "Dates",
+      "pass": true,
+      "failed": [],
+      "call_id": "4e2b5352-c12d-4275-8def-a99d2e1e9c94",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_f72c6574-f1d",
+      "slowest_turn_s": 6.0,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-07",
+      "level": "easy",
+      "family": "Third party",
+      "pass": true,
+      "failed": [],
+      "call_id": "10762d68-061f-4095-87ac-63745ed42176",
+      "tools": [
+        "close_call"
+      ],
+      "customer_id": "c_235d8851-4a5",
+      "slowest_turn_s": 1.8,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-08",
+      "level": "medium",
+      "family": "Already paid",
+      "pass": true,
+      "failed": [],
+      "call_id": "c625acf8-98d6-460f-8a83-df111a08fb75",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "add_note",
+        "close_call"
+      ],
+      "customer_id": "c_8c1c7ae6-0d4",
+      "slowest_turn_s": 5.7,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-09",
+      "level": "medium",
+      "family": "Human",
+      "pass": false,
+      "failed": [
+        "outcome (None, None), expected ('transferred', 'XHU')",
+        "transfers [], expected [{'queue': 'general'}]",
+        "the call was not closed with close_call",
+        "conversation: The conversation failed to meet several success criteria: - The agent never asked how it could help the customer. - The `transfer_to_agent` function was never called. - Additionally, the agent entered a repetitive loop from Message 10 to Message 18, repeating the exact same instruction without attempting to handle the user's rambling or progress the call, which eventually led to the customer endin"
+      ],
+      "call_id": "16278835-6e2e-40a9-acd8-33be0c4f8de7",
+      "tools": [
+        "verify_identity"
+      ],
+      "customer_id": "c_d291d7f4-22a",
+      "slowest_turn_s": 4.2,
+      "ended": "customer-ended-call",
+      "official_pass": false
+    },
+    {
+      "id": "PUB-10",
+      "level": "hard",
+      "family": "Tool failure",
+      "pass": false,
+      "failed": [
+        "outcome (None, None), expected ('promise', None)",
+        "promises [], expected [('p1', 365.0, '2026-10-21')]",
+        "the call was not closed with close_call",
+        "conversation: The agent correctly rejected the date of 20 October as a past date in Message 26 and subsequent turns, but it failed to offer Wednesday 21 October as an alternative. Additionally, no promise was recorded in the ledger as seen in the system events, and the conversation devolved into a repetitive loop until the customer ended the call."
+      ],
+      "call_id": "9d3aa3d3-a5ee-47a6-9b28-38d045f46f31",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account"
+      ],
+      "customer_id": "c_e99795d8-33c",
+      "slowest_turn_s": 29.4,
+      "ended": "customer-ended-call",
+      "official_pass": false
+    }
+  ],
+  "all_rows": [
+    [
+      {
+        "id": "PUB-11",
+        "level": "hard",
+        "family": "Multi-product",
+        "pass": true,
+        "failed": [],
+        "call_id": "b2633583-52bf-4bb4-bb24-45297ae7e78b",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "create_promise",
+          "add_note",
+          "close_call"
+        ],
+        "customer_id": "c_758d2b1d-e0c",
+        "slowest_turn_s": 8.7,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-12",
+        "level": "hard",
+        "family": "Multi-product",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('transferred', 'XRS')",
+          "transfers [], expected [{'queue': 'restructuring'}]",
+          "the call was not closed with close_call",
+          "conversation: The agent failed to meet the success criteria because the 'transfer_to_agent' tool was never called. While other criteria were satisfied (the date of birth was asked only once at [Message 2], the phone question was re-asked once at [Message 6], the credit card dispute was handled without argument at [Message 16], and a single persuasion attempt for the personal loan was made at [Message 18]), the "
+        ],
+        "call_id": "5f32437d-2f45-4876-ade8-37e4529433dd",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "add_note",
+          "add_note"
+        ],
+        "customer_id": "c_1a1e8472-828",
+        "slowest_turn_s": 2.5,
+        "ended": "customer-ended-call"
+      },
+      {
+        "id": "PUB-13",
+        "level": "hard",
+        "family": "Multi-product",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('transferred', 'XSP')"
+        ],
+        "call_id": "993e5466-2e67-4a2c-ac52-3c51bd7905a0",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "transfer_to_agent",
+          "close_call"
+        ],
+        "customer_id": "c_d7ec9d41-0ae",
+        "slowest_turn_s": 4.7,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-01",
+        "level": "hard",
+        "family": "Persuasion",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "promises [], expected [('p1', 126.0, '2026-10-30')]",
+          "notes [('p1', 'refused')], expected []",
+          "conversation: The conversation failed to meet two of the specific success criteria. 1. The first offer made by the agent was for the full amount ($420.00) 'today' (Message 6), whereas the criteria required the first offer to be for 30 October. 2. The agent did not mention that a confirmation would be sent to the Lakeshore app in the closing (Message 20). The second offer of $126 by 30 October (Message 18) was c"
+        ],
+        "call_id": "d426d382-84ba-4446-a673-12da28436842",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "add_note",
+          "close_call"
+        ],
+        "customer_id": "c_30297c05-96c",
+        "slowest_turn_s": 3.4,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-02",
+        "level": "medium",
+        "family": "Third party",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_reached', 'RCB')",
+          "callbacks [], expected [{'date': '2026-10-15', 'time': '17:30'}]",
+          "conversation: The agent failed to book a callback for 15 October at 17:30. In Message 8, the assistant explicitly states \"No callback has been booked\" before ending the call. While other criteria were met (no disclosure of call purpose/account details, no identity or account functions called), the requirement to book a specific callback was not fulfilled."
+        ],
+        "call_id": "02071ed0-30f2-48a0-8733-db7e39f60f78",
+        "tools": [
+          "close_call"
+        ],
+        "customer_id": "c_65ddbaf0-06a",
+        "slowest_turn_s": 0.9,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-03",
+        "level": "medium",
+        "family": "Identity",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_verified', 'VFL')",
+          "conversation: The assistant failed one success criterion: 'the date of birth is asked again once after the first wrong answer'. After the first incorrect date of birth provided in [Message 3], the assistant asked for the date of birth in [Message 4] and then again in [Message 6] because the user gave a non-responsive answer in [Message 5]. This means the question was asked twice after the first failure. However"
+        ],
+        "call_id": "a173d9a1-f534-4e30-ad88-4c64a18e6b39",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "close_call"
+        ],
+        "customer_id": "c_58bbd2e8-4cd",
+        "slowest_turn_s": 1.8,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-04",
+        "level": "hard",
+        "family": "Amounts",
+        "pass": true,
+        "failed": [],
+        "call_id": "ea255deb-fd84-40bf-9b90-dc098c5089b0",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_0b384a41-818",
+        "slowest_turn_s": 10.2,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-05",
+        "level": "medium",
+        "family": "Identity",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_verified', 'VDC')"
+        ],
+        "call_id": "fc175662-4f99-418c-bece-7dfe5609bded",
+        "tools": [
+          "close_call"
+        ],
+        "customer_id": "c_1d92fbb5-abd",
+        "slowest_turn_s": 1.1,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-06",
+        "level": "hard",
+        "family": "Dates",
+        "pass": true,
+        "failed": [],
+        "call_id": "4e2b5352-c12d-4275-8def-a99d2e1e9c94",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_f72c6574-f1d",
+        "slowest_turn_s": 6.0,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-07",
+        "level": "easy",
+        "family": "Third party",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_reached', 'RWN')"
+        ],
+        "call_id": "10762d68-061f-4095-87ac-63745ed42176",
+        "tools": [
+          "close_call"
+        ],
+        "customer_id": "c_235d8851-4a5",
+        "slowest_turn_s": 1.8,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-08",
+        "level": "medium",
+        "family": "Already paid",
+        "pass": true,
+        "failed": [],
+        "call_id": "c625acf8-98d6-460f-8a83-df111a08fb75",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "add_note",
+          "close_call"
+        ],
+        "customer_id": "c_8c1c7ae6-0d4",
+        "slowest_turn_s": 5.7,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-09",
+        "level": "medium",
+        "family": "Human",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('transferred', 'XHU')",
+          "transfers [], expected [{'queue': 'general'}]",
+          "the call was not closed with close_call",
+          "conversation: The conversation failed to meet several success criteria: - The agent never asked how it could help the customer. - The `transfer_to_agent` function was never called. - Additionally, the agent entered a repetitive loop from Message 10 to Message 18, repeating the exact same instruction without attempting to handle the user's rambling or progress the call, which eventually led to the customer endin"
+        ],
+        "call_id": "16278835-6e2e-40a9-acd8-33be0c4f8de7",
+        "tools": [
+          "verify_identity"
+        ],
+        "customer_id": "c_d291d7f4-22a",
+        "slowest_turn_s": 4.2,
+        "ended": "customer-ended-call"
+      },
+      {
+        "id": "PUB-10",
+        "level": "hard",
+        "family": "Tool failure",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "promises [], expected [('p1', 365.0, '2026-10-21')]",
+          "the call was not closed with close_call",
+          "conversation: The agent correctly rejected the date of 20 October as a past date in Message 26 and subsequent turns, but it failed to offer Wednesday 21 October as an alternative. Additionally, no promise was recorded in the ledger as seen in the system events, and the conversation devolved into a repetitive loop until the customer ended the call."
+        ],
+        "call_id": "9d3aa3d3-a5ee-47a6-9b28-38d045f46f31",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account"
+        ],
+        "customer_id": "c_e99795d8-33c",
+        "slowest_turn_s": 29.4,
+        "ended": "customer-ended-call"
+      }
+    ]
+  ],
+  "official_passed": 4,
+  "test_brief": "F"
+}

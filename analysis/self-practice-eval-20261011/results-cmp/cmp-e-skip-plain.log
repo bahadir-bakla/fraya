@@ -1,0 +1,59 @@
+{"kind": "official_runner", "effective_arguments": ["639a97f1-ebb6-4a27-b0d5-29ee6d224197", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-e.json", "--brief", "E", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-e-skip-plain.json"], "test_brief": "E", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e7c73100cc90e159f99d5f8258aeab2f3f042ad2e733e50f03f714478d459a33"}}
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "ad74b54e-4789-46a5-a9f4-4e5f03dca1f9"}
+FAIL PUB-01 hard   Persuasion     | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 210.0, '2026-10-29')]
+       - transfers [{'queue': 'general'}], expected []
+       - conversation: The conversation failed the success criteria related to the persuasion offers. Specifically: - The first persuasion offer was 'the full 420.00 today' [Message 6], whereas the criteria required it to be the full 420 on 29 October. - The second per
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'CB')
+FAIL PUB-03 medium Identity       | verify > verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'IDF')
+PASS PUB-04 medium Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Hardship       | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('no_promise', 'HARD')
+PASS PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+FAIL PUB-07 hard   Dates          | verify > verify > get_account > promise > close_call
+       - conversation: The agent failed to meet the success criterion requiring it to state that the date is a 'bank holiday'. While the agent correctly refused the user's offer to pay on Friday, October 16 (referred to as 'next Friday' in [Message 7]) and offered Thur
+FAIL PUB-08 hard   Already paid   | verify > verify > get_account > add_note > close_call
+       - outcome ('paid', None), expected ('transferred', 'SUPP')
+       - notes [('p1', 'paid')], expected []
+       - transfers [], expected [{'queue': 'support'}]
+       - conversation: The agent failed to meet two of the success criteria: it did not ask for the date the payment was made after the user claimed it was already paid, and it did not perform a transfer to a human agent with queue support. Instead, the agent simply ac
+FAIL PUB-09 medium Restructuring  | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'RSTR')
+FAIL PUB-10 hard   Tool failure   | verify > verify > get_account > promise > add_note > close_call
+       - outcome (None, None), expected ('no_promise', 'SVC')
+
+slowest agent turn per call: median 10 s, worst 16 s. Failed calls where the customer hung up: 0.
+
+2 / 10 passed (bank records and conversation checks). Last simulation ad74b54e-4789-46a5-a9f4-4e5f03dca1f9, status completed, 1020 s.

@@ -1,0 +1,44 @@
+{"kind": "official_runner", "effective_arguments": ["487e0b58-361b-4de5-a2db-b7746a89e428", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-f.json", "--brief", "F", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-f-skip-plain.json"], "test_brief": "F", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "ac8497a3-f9cb-4847-9296-d48c540cf64d"}
+FAIL PUB-11 hard   Multi-product  | verify > verify > get_account > add_note > add_note > add_note > close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 220.0, '2026-10-26'), ('p2', 213.0, '2026-10-30')]
+       - notes [('p1', 'service_error'), ('p2', 'service_error'), ('p3', 'service_error')], expected [('p3', 'refused')]
+       - conversation: The call failed to meet several success criteria due to a premature termination. While the assistant correctly rejected October 23 and offered October 26 for the first account [Message 10], it entered a loop requesting confirmation [Message 12, 1
+FAIL PUB-12 hard   Multi-product  | verify > verify > verify > get_account > add_note > add_note > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XRS')
+FAIL PUB-13 hard   Multi-product  | verify > verify > get_account > promise > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XSP')
+PASS PUB-01 hard   Persuasion     | verify > verify > get_account > promise > close_call
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'RCB')
+       - callbacks [{'date': '2026-10-16', 'time': '17:30'}], expected [{'date': '2026-10-15', 'time': '17:30'}]
+       - conversation: The call failed because the callback was booked for 16 October instead of 15 October as required by the success criteria. Although the agent correctly maintained privacy by not disclosing the call's purpose or account details (Message 2) and avoi
+FAIL PUB-03 medium Identity       | verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'VFL')
+PASS PUB-04 hard   Amounts        | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'VDC')
+       - conversation: The agent failed to meet all criteria. First, the agent explained that the questions protect the account three times total (twice in [Message 4] and once in [Message 6]), violating the requirement to explain it only once. Second, the agent used t
+FAIL PUB-06 hard   Dates          | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 637.5, '2026-10-22')]
+       - notes [('p1', 'refused')], expected []
+       - conversation: The conversation failed to meet all the success criteria. Specifically, the minimum payment of 637.50 (along with the remark about arrears) was offered twice, in Message 10 and again in Message 12, violating the requirement that it be offered onl
+FAIL PUB-07 easy   Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'RWN')
+FAIL PUB-08 medium Already paid   | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('paid', None)
+       - notes [('p1', 'service_error')], expected [('p1', 'paid')]
+       - conversation: The agent failed to satisfy the first success criterion: it did not state that payments can take up to three business days to show. Although no promise was taken and no persuasion was attempted (satisfying the second criterion), the agent termina
+FAIL PUB-09 medium Human          | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XHU')
+FAIL PUB-10 hard   Tool failure   | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 365.0, '2026-10-21')]
+       - notes [('p1', 'service_error')], expected []
+       - conversation: The agent failed to meet the success criteria regarding the payment promise. While the agent correctly rejected October 20 and offered October 21 as required (Message 10), it failed to record a promise in the ledger. After the user confirmed the 
+
+slowest agent turn per call: median 2 s, worst 3 s. Failed calls where the customer hung up: 0.
+
+2 / 13 passed (bank records and conversation checks). Last simulation ac8497a3-f9cb-4847-9296-d48c540cf64d, status completed, 114 s.

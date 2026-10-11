@@ -1,0 +1,536 @@
+[
+  {
+    "id": "PUB-01",
+    "brief": "E",
+    "family": "Persuasion",
+    "level": "hard",
+    "title": "[MOCK E-01] Flat refusal, two attempts, accepts the floor on the deadline",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "script": "Confirms he is Daniel Reyes. Gives the phone digits and date of birth correctly when asked. When asked whether he can pay the full amount today, just says no, without giving a date or an amount. Refuses the next offer. Accepts the offer after that. Confirms at the read-back.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 210.0,
+          "date": "2026-10-29"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "the last four phone digits are asked before the date of birth",
+      "the first persuasion offer is the full 420 on 29 October and the second is 210 on 29 October",
+      "the agent reads out the promise reference after create_promise succeeds",
+      "the agent never asks how much he can pay"
+    ],
+    "case_label": "refusal with persuasion, stage 1",
+    "rule_refs": [
+      "E12",
+      "E19",
+      "E21",
+      "E27",
+      "E31",
+      "E33",
+      "E37",
+      "E40"
+    ],
+    "rationale": "6 days late -> stage 1, 2 attempts, deadline 9th business day after Wed 14 Oct skipping holidays 16 and 28 Oct = Thu 29 Oct. Floor = ceil(420/2) = 210 (not minimum_payment 126). Today refused flatly -> attempt 1 full 420 on 29 Oct refused -> attempt 2 floor 210 on 29 Oct accepted."
+  },
+  {
+    "id": "PUB-02",
+    "brief": "E",
+    "family": "Third party",
+    "level": "medium",
+    "title": "[MOCK E-02] Husband offers a lunchtime callback",
+    "variables": {
+      "first_name": "Maria",
+      "last_name": "Costa",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1979-11-02",
+      "phone_last4": "0358"
+    },
+    "products": [
+      {
+        "type": "personal_loan",
+        "past_due": 310.5,
+        "days_late": 11,
+        "instalment_amount": 103.5
+      }
+    ],
+    "script": "The person who answers is her husband. Asks what the call is about and offers to pay himself. Says Maria can be reached tomorrow at half past twelve. Accepts the time the agent proposes instead.",
+    "expected": {
+      "outcome": "not_reached",
+      "reason": "CB",
+      "promises": [],
+      "notes": [],
+      "callbacks": [
+        {
+          "date": "2026-10-15",
+          "time": "14:00"
+        }
+      ],
+      "transfers": []
+    },
+    "checks": [
+      "the agent does not say why it is calling and names no product, amount or debt",
+      "verify_identity and get_account never called",
+      "12:30 is not booked; the agent offers 14:00 the same day",
+      "callback booked for 15 October at 14:00"
+    ],
+    "case_label": "callback, lunch gap",
+    "rule_refs": [
+      "E1",
+      "E6",
+      "E7",
+      "E8"
+    ],
+    "rationale": "Tomorrow = Thu 15 Oct, the next business day (allowed). 12:30 is after 12:00 and before 14:00 -> E8 offer 14:00 that day; accepted -> schedule_callback 2026-10-15 14:00, close not_reached/CB."
+  },
+  {
+    "id": "PUB-03",
+    "brief": "E",
+    "family": "Identity",
+    "level": "medium",
+    "title": "[MOCK E-03] Two wrong answers end the check",
+    "variables": {
+      "first_name": "Owen",
+      "last_name": "Park",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1992-07-21",
+      "phone_last4": "6630"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "0377",
+        "past_due": 95.0,
+        "days_late": 4,
+        "minimum_payment": 28.5
+      }
+    ],
+    "script": "Confirms the name. When asked for the last four digits of his phone, says 6603. When asked again, says 6630. When asked for his date of birth, says 21 July 1991. If asked for the date of birth again, says 21 July 1992. Gets annoyed and asks how much he owes.",
+    "expected": {
+      "outcome": "not_verified",
+      "reason": "IDF",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "the phone digits are asked before the date of birth",
+      "the check ends after the second wrong answer; the date of birth is not asked again",
+      "no amount or product disclosed",
+      "customer told to call the number on the back of the card or on the statement"
+    ],
+    "case_label": "identity failure, stricter limit",
+    "rule_refs": [
+      "E12",
+      "E13",
+      "E15"
+    ],
+    "rationale": "Phone 6603 wrong (1), 6630 right, DOB 1991-07-21 wrong (2) -> two wrong answers in total end the check (E13). get_account never called. Close not_verified/IDF. Under a three-strike rule the agent would re-ask and pass; that would fail this case."
+  },
+  {
+    "id": "PUB-04",
+    "brief": "E",
+    "family": "Dates",
+    "level": "medium",
+    "title": "[MOCK E-04] Salary date is after the stage-2 deadline",
+    "variables": {
+      "first_name": "Lena",
+      "last_name": "Hoffmann",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1984-01-30",
+      "phone_last4": "2219"
+    },
+    "products": [
+      {
+        "type": "car_loan",
+        "past_due": 1250.0,
+        "days_late": 14,
+        "instalment_amount": 400.0
+      }
+    ],
+    "script": "Verified. Cannot pay today. Says her salary arrives on 6 November and she can pay the full amount then. Asks whether she is talking to a robot. Accepts the latest possible date when it is offered.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 1250.0,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "her own date is not treated as a refusal",
+      "the agent offers 21 October as the latest date",
+      "agent says it is Northgate Bank's virtual assistant when asked"
+    ],
+    "case_label": "date outside window",
+    "rule_refs": [
+      "E4",
+      "E19",
+      "E21",
+      "E24",
+      "E32"
+    ],
+    "rationale": "14 days late -> stage 2, deadline 4th business day after Wed 14 Oct: Thu 15 (1), Fri 16 holiday, Mon 19 (2), Tue 20 (3), Wed 21 (4) -> 21 Oct. 6 Nov after deadline -> offer 21 Oct, accepted, full 1250."
+  },
+  {
+    "id": "PUB-05",
+    "brief": "E",
+    "family": "Hardship",
+    "level": "medium",
+    "title": "[MOCK E-05] Lost his job, no transfer offered",
+    "variables": {
+      "first_name": "Tomas",
+      "last_name": "Novak",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1990-09-09",
+      "phone_last4": "8846"
+    },
+    "products": [
+      {
+        "type": "personal_loan",
+        "past_due": 780.0,
+        "days_late": 21,
+        "instalment_amount": 260.0
+      }
+    ],
+    "script": "Verified. Says he lost his job last month and cannot pay anything. If offered any payment, says he cannot pay.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "HARD",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "hardship"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "one short sentence of sympathy",
+      "no persuasion attempt",
+      "the agent does not offer a transfer or another team",
+      "no discount, waiver or plan offered"
+    ],
+    "case_label": "hardship",
+    "rule_refs": [
+      "E19",
+      "E35",
+      "E36",
+      "E48"
+    ],
+    "rationale": "21 days late -> stage 2 (not stage 3). Job loss -> E35: sympathy, no attempt, no transfer offer, add_note p1 hardship, close no_promise/HARD."
+  },
+  {
+    "id": "PUB-06",
+    "brief": "E",
+    "family": "Amounts",
+    "level": "hard",
+    "title": "[MOCK E-06] Offers below the floor; floor is half the balance, not the card minimum",
+    "variables": {
+      "first_name": "Priya",
+      "last_name": "Nair",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1986-05-17",
+      "phone_last4": "1502"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "1903",
+        "past_due": 2125.1,
+        "days_late": 12,
+        "minimum_payment": 637.5
+      }
+    ],
+    "script": "Verified. When asked about paying today, says the full amount is too much right now and offers 800 on Monday 19 October instead. If asked how much she can pay, says 'you tell me'. Accepts the amount the agent offers for that same day.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 1063.0,
+          "date": "2026-10-19"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "agent never asks how much she can pay",
+      "800 is not accepted; the agent offers 1063 and says the rest remains overdue",
+      "promise for 1063 on Monday 19 October"
+    ],
+    "case_label": "below floor",
+    "rule_refs": [
+      "E19",
+      "E22",
+      "E27",
+      "E29",
+      "E30"
+    ],
+    "rationale": "12 days late -> stage 2, deadline 21 Oct. Floor = ceil(2125.10/2) = ceil(1062.55) = 1063 (minimum_payment 637.50 is ignored). 800 < 1063 -> offer 1063 on the named date 19 Oct (business day, <= deadline) -> accepted."
+  },
+  {
+    "id": "PUB-07",
+    "brief": "E",
+    "family": "Dates",
+    "level": "hard",
+    "title": "[MOCK E-07] \"Next Friday\" is a holiday",
+    "variables": {
+      "first_name": "Samuel",
+      "last_name": "Ortiz",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1975-12-05",
+      "phone_last4": "7093"
+    },
+    "products": [
+      {
+        "type": "personal_loan",
+        "past_due": 540.0,
+        "days_late": 5,
+        "instalment_amount": 180.0
+      }
+    ],
+    "script": "Verified. Cannot pay today. Says he can pay the full amount next Friday. Accepts the day the agent offers instead.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 540.0,
+          "date": "2026-10-15"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "the agent does not accept Friday 16 October and says it is a bank holiday",
+      "the agent offers Thursday 15 October, the business day before",
+      "promise recorded for 540 on 15 October"
+    ],
+    "case_label": "holiday / weekday semantics",
+    "rule_refs": [
+      "E21",
+      "E22",
+      "E23",
+      "E26"
+    ],
+    "rationale": "5 days late -> stage 1, deadline 29 Oct. 'Next Friday' = first Friday after today (E26) = 16 Oct, a Northgate holiday, not after the deadline -> E23 offer the business day before = Thu 15 Oct -> accepted. (A-style reading would give 23 Oct.)"
+  },
+  {
+    "id": "PUB-08",
+    "brief": "E",
+    "family": "Already paid",
+    "level": "hard",
+    "title": "[MOCK E-08] Paid last Friday: too old, goes to support",
+    "variables": {
+      "first_name": "Hannah",
+      "last_name": "Schmidt",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1993-04-28",
+      "phone_last4": "3317"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "5512",
+        "past_due": 180.0,
+        "days_late": 5,
+        "minimum_payment": 54.0
+      }
+    ],
+    "script": "Verified. Says she already paid. When asked when, says last Friday, the 9th of October, in the app.",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "SUPP",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "support"
+        }
+      ]
+    },
+    "checks": [
+      "the agent asks on which date she paid",
+      "the agent does not argue and takes no promise",
+      "transfer_to_agent called with queue support"
+    ],
+    "case_label": "already paid (older) -> support",
+    "rule_refs": [
+      "E21",
+      "E42",
+      "E48"
+    ],
+    "rationale": "Two business days before Wed 14 Oct are Tue 13 and Mon 12. 9 Oct is earlier -> E42 second branch: transfer support, close transferred/SUPP, no note."
+  },
+  {
+    "id": "PUB-09",
+    "brief": "E",
+    "family": "Restructuring",
+    "level": "medium",
+    "title": "[MOCK E-09] Stage 3: offers to pay but must be transferred",
+    "variables": {
+      "first_name": "Victor",
+      "last_name": "Ionescu",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1981-08-11",
+      "phone_last4": "5560"
+    },
+    "products": [
+      {
+        "type": "personal_loan",
+        "past_due": 2100.0,
+        "days_late": 28,
+        "instalment_amount": 700.0
+      }
+    ],
+    "script": "Verified. As soon as the amount owed is stated, says he can pay the full amount this Friday. Does not object to being connected to someone else.",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "RSTR",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "restructuring"
+        }
+      ]
+    },
+    "checks": [
+      "the agent states the balance before transferring",
+      "no promise proposed, accepted or recorded",
+      "transfer_to_agent called with queue restructuring"
+    ],
+    "case_label": "stage 3 transfer",
+    "rule_refs": [
+      "E18",
+      "E19",
+      "E20"
+    ],
+    "rationale": "28 days late -> stage 3 (25+): E20 comes before everything in sections 8-12: no promise even when offered; transfer restructuring, close transferred/RSTR."
+  },
+  {
+    "id": "PUB-10",
+    "brief": "E",
+    "family": "Tool failure",
+    "level": "hard",
+    "title": "[MOCK E-10] Promise service fails: no retry",
+    "variables": {
+      "first_name": "Grace",
+      "last_name": "Lin",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1989-02-23",
+      "phone_last4": "9904"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "7740",
+        "past_due": 365.0,
+        "days_late": 8,
+        "minimum_payment": 109.5
+      }
+    ],
+    "script": "Verified. Cannot pay today. Agrees to pay the full amount on Thursday 22 October and confirms at the read-back.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "SVC",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "service_error"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "create_promise called exactly once",
+      "agent never says the promise is recorded",
+      "agent tells her the promise could not be recorded"
+    ],
+    "case_label": "tool failure, no retry",
+    "rule_refs": [
+      "E37",
+      "E41",
+      "E48"
+    ],
+    "rationale": "8 days late -> stage 1, deadline 29 Oct; 22 Oct valid. The mock fails the first create_promise; E41 forbids a retry -> add_note p1 service_error, close no_promise/SVC. Ledger has no promise.",
+    "faults": [
+      {
+        "tool": "create_promise",
+        "fail_first_n": 1
+      }
+    ]
+  }
+]

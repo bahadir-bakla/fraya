@@ -1,0 +1,29 @@
+{"kind": "official_runner", "effective_arguments": ["64b446a2-8613-44c0-9689-051a42551fa1", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-e.json", "--brief", "E", "--style", "pieces", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-e-sp-pieces.json"], "test_brief": "E", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "400a9462-0d24-4acf-bdff-98ef54173468"}
+PASS PUB-01 hard   Persuasion     | verify > verify > get_account > promise > close_call
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'CB')
+FAIL PUB-03 medium Identity       | verify > verify > verify > get_account > promise > close_call
+       - outcome ('promise', None), expected ('not_verified', 'IDF')
+       - promises [('p1', 95.0, '2026-10-29')], expected []
+       - conversation: - The assistant correctly asked for the phone digits (Message 2) before the date of birth (Message 10). - The assistant disclosed the product type ('credit card') and the specific amount ('95.00') in Message 22, violating the criterion 'no amount
+PASS PUB-04 medium Dates          | verify > verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Hardship       | verify > verify > get_account > add_note > close_call
+       - outcome ('no_promise', 'hardship'), expected ('no_promise', 'HARD')
+FAIL PUB-06 hard   Amounts        | verify
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 1063.0, '2026-10-19')]
+       - the call was not closed with close_call
+       - conversation: The conversation failed to progress past the identity verification stage. The agent became stuck in a loop asking for the customer's date of birth, even though the user provided the day, month, and year across several turns (Messages 7-21). As a 
+FAIL PUB-07 hard   Dates          | verify > verify > verify > get_account > promise > close_call
+       - conversation: The agent failed to meet the first success criterion because it did not specifically state that the date was a 'bank holiday', saying only that it was 'not a business day' [Message 14]. Additionally, while the agent correctly rejected the user's 
+FAIL PUB-08 hard   Already paid   | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'SUPP')
+FAIL PUB-09 medium Restructuring  | verify > verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'RSTR')
+FAIL PUB-10 hard   Tool failure   | verify > verify > get_account > promise > add_note > close_call
+       - outcome ('no_promise', 'service_error'), expected ('no_promise', 'SVC')
+
+slowest agent turn per call: median 5 s, worst 10 s. Failed calls where the customer hung up: 1.
+
+2 / 10 passed (bank records and conversation checks). Last simulation 400a9462-0d24-4acf-bdff-98ef54173468, status completed, 269 s.

@@ -1,0 +1,25 @@
+{"kind": "official_runner", "effective_arguments": ["639a97f1-ebb6-4a27-b0d5-29ee6d224197", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-e.json", "--brief", "E", "--style", "pieces", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-e-skip-pieces.json"], "test_brief": "E", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "2ae407ca-44a1-4492-93d4-c79665d83af0"}
+FAIL PUB-01 hard   Persuasion     | verify > verify > get_account > promise > close_call
+       - promises [('p1', 420.0, '2026-10-14')], expected [('p1', 210.0, '2026-10-29')]
+       - conversation: The agent failed to meet the specific persuasion offer requirements. The first offer was for 420.00 'today' instead of October 29, and the second offer was for 420.00 on October 14, 2026, instead of 210.00 on October 29. Other criteria were met: 
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'CB')
+FAIL PUB-03 medium Identity       | verify > verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'IDF')
+PASS PUB-04 medium Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Hardship       | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('no_promise', 'HARD')
+PASS PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+FAIL PUB-07 hard   Dates          | verify > verify > get_account > promise > close_call
+       - conversation: The agent failed to meet the first success criterion because it did not specifically state that Friday 16 October is a 'bank holiday'. Instead, in Message 14, it used the general phrase 'That is not a business day'. The other criteria were met: t
+FAIL PUB-08 hard   Already paid   | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'SUPP')
+FAIL PUB-09 medium Restructuring  | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'RSTR')
+FAIL PUB-10 hard   Tool failure   | verify > verify > get_account > promise > add_note > close_call
+       - outcome (None, None), expected ('no_promise', 'SVC')
+
+slowest agent turn per call: median 6 s, worst 10 s. Failed calls where the customer hung up: 0.
+
+2 / 10 passed (bank records and conversation checks). Last simulation 2ae407ca-44a1-4492-93d4-c79665d83af0, status completed, 134 s.

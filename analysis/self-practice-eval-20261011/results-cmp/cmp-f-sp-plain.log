@@ -1,0 +1,33 @@
+{"kind": "official_runner", "effective_arguments": ["c4b8980a-06d9-41c5-90bb-9e862767a573", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-f.json", "--brief", "F", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-f-sp-plain.json"], "test_brief": "F", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "b955a4c3-2c55-4bc4-8bfc-c2621f673784"}
+PASS PUB-11 hard   Multi-product  | verify > verify > get_account > promise > promise > add_note > close_call
+FAIL PUB-12 hard   Multi-product  | verify > verify > verify > get_account > add_note > add_note > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XRS')
+FAIL PUB-13 hard   Multi-product  | verify > verify > get_account
+       - outcome (None, None), expected ('transferred', 'XSP')
+       - promises [], expected [('p2', 900.0, '2026-10-22')]
+       - transfers [], expected [{'queue': 'support'}]
+       - the call was not closed with close_call
+       - conversation: The conversation ended prematurely before several success criteria could be met. 1. While the personal loan was the primary focus of the negotiation starting at Message 7, the credit card was introduced simultaneously in Message 6. 2. The loan pr
+PASS PUB-01 hard   Persuasion     | verify > verify > get_account > promise > close_call
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'RCB')
+       - callbacks [{'date': '2026-10-16', 'time': '17:30'}], expected [{'date': '2026-10-15', 'time': '17:30'}]
+       - conversation: The call failed to meet one of the specific success criteria. While the agent correctly withheld account information and did not call the forbidden tools, the callback was scheduled for the wrong date. The user requested 'tomorrow' in response to
+FAIL PUB-03 medium Identity       | verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'VFL')
+PASS PUB-04 hard   Amounts        | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'VDC')
+FAIL PUB-06 hard   Dates          | verify > verify > get_account > promise > close_call
+       - conversation: - The agent correctly never asks the user how much they can pay, instead proposing the full amount in Messages 6 and 8. - The agent correctly handles the date constraint, rejecting the 'next Friday' (October 23) suggestion and offering October 22
+FAIL PUB-07 easy   Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'RWN')
+PASS PUB-08 medium Already paid   | verify > verify > get_account > add_note > close_call
+FAIL PUB-09 medium Human          | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XHU')
+PASS PUB-10 hard   Tool failure   | verify > verify > get_account > promise > promise > close_call
+
+slowest agent turn per call: median 5 s, worst 11 s. Failed calls where the customer hung up: 1.
+
+5 / 13 passed (bank records and conversation checks). Last simulation b955a4c3-2c55-4bc4-8bfc-c2621f673784, status completed, 124 s.

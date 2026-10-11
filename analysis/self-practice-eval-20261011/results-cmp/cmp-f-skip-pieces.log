@@ -1,0 +1,57 @@
+{"kind": "official_runner", "effective_arguments": ["487e0b58-361b-4de5-a2db-b7746a89e428", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-f.json", "--brief", "F", "--style", "pieces", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-f-skip-pieces.json"], "test_brief": "F", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "f2e1602c-a8d1-4a99-b351-e6a13b498026"}
+FAIL PUB-11 hard   Multi-product  | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 220.0, '2026-10-26'), ('p2', 213.0, '2026-10-30')]
+       - notes [], expected [('p3', 'refused')]
+       - conversation: The conversation failed to meet any of the success criteria because the assistant was unable to verify the caller's identity. The call ended after the security check failed at message 14, meaning no accounts (credit card, personal loan, or car fi
+FAIL PUB-12 hard   Multi-product  | close_call
+       - outcome (None, None), expected ('transferred', 'XRS')
+       - notes [], expected [('p1', 'dispute'), ('p2', 'refused')]
+       - transfers [], expected [{'queue': 'restructuring'}]
+       - conversation: The conversation failed to meet any of the success criteria. The agent asked for the date of birth multiple times (Messages 2, 6, 10) instead of asking the phone question as required. Consequently, the call never reached the card dispute, persona
+FAIL PUB-13 hard   Multi-product  | close_call
+       - outcome (None, None), expected ('transferred', 'XSP')
+       - promises [], expected [('p2', 900.0, '2026-10-22')]
+       - transfers [], expected [{'queue': 'support'}]
+       - conversation: The agent failed to verify the user's identity and terminated the call prematurely. As a result, none of the success criteria were met: the personal loan and credit card were never discussed, and no transfer to support occurred.
+FAIL PUB-01 hard   Persuasion     | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 126.0, '2026-10-30')]
+       - conversation: The agent failed the security verification process and ended the call before any payment negotiations could occur. As a result, the required offers (420 and 126 by 30 October) were never made, and the confirmation via the Lakeshore app was never 
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'RCB')
+       - callbacks [{'date': '2026-10-16', 'time': '17:30'}], expected [{'date': '2026-10-15', 'time': '17:30'}]
+       - conversation: - The agent correctly avoided giving the reason for the call or any account details in Message 2. - Neither verify_identity nor get_account were called in the system events. - The callback for 19:00 was not booked; the agent instead offered speci
+FAIL PUB-03 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'VFL')
+       - conversation: The assistant failed two of the success criteria related to the verification process. First, the criteria required that the date of birth be asked again only 'once' after the first wrong answer; however, the assistant asked for it twice more (onc
+FAIL PUB-04 hard   Amounts        | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 1250.0, '2026-10-22')]
+       - conversation: The agent ended the call because it was unable to complete the security verification process. As a result, the conversation never reached the stage where payments or promises could be discussed. None of the specific success criteria regarding the
+FAIL PUB-05 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'VDC')
+       - conversation: The agent failed the requirement to explain only once that the questions protect the account. In [Message 4], the agent states 'The questions protect your account' and 'These questions protect your account'. In [Message 6], the agent repeats 'The
+FAIL PUB-06 hard   Dates          | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 637.5, '2026-10-22')]
+       - conversation: The call failed to progress past the security check because the agent and user entered a loop regarding the date of birth (Messages 2-13). As a result, the conversation was terminated by the agent at Message 14 before any payment negotiation coul
+FAIL PUB-07 easy   Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'RWN')
+FAIL PUB-08 medium Already paid   | close_call
+       - outcome (None, None), expected ('paid', None)
+       - notes [], expected [('p1', 'paid')]
+       - conversation: The call ended early because the agent could not verify the customer's identity after multiple attempts. As a result, the following criteria were not met: - The agent did not state that payments can take up to three business days to show.
+FAIL PUB-09 medium Human          | close_call
+       - outcome (None, None), expected ('transferred', 'XHU')
+       - transfers [], expected [{'queue': 'general'}]
+       - conversation: - The agent never asked how it could help; it only asked for identification at the start of the call. - The function `transfer_to_agent` with queue `general` was never called; the agent ended the call after the security check failed. - No promise
+FAIL PUB-10 hard   Tool failure   | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 365.0, '2026-10-21')]
+       - conversation: The call failed because it never reached the date negotiation or promise recording phase. The agent became stuck in a loop during the security verification process (asking for the date of birth repeatedly despite the user providing it) and eventu
+
+slowest agent turn per call: median 1 s, worst 6 s. Failed calls where the customer hung up: 0.
+
+0 / 13 passed (bank records and conversation checks). Last simulation f2e1602c-a8d1-4a99-b351-e6a13b498026, status completed, 606 s.

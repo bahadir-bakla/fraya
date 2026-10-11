@@ -1,0 +1,485 @@
+{
+  "agent_id": "64b446a2-8613-44c0-9689-051a42551fa1",
+  "simulation_id": "b2ea9847-5ae5-4468-bba7-8c3dd6637d76",
+  "iteration_id": "f3c64374-6651-4e2a-be72-ff2d5ac4e68d",
+  "seconds": 186,
+  "passed": 5,
+  "total": 10,
+  "runs": 1,
+  "final": [
+    {
+      "id": "PUB-01",
+      "family": "Persuasion",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-02",
+      "family": "Third party",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-03",
+      "family": "Identity",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-04",
+      "family": "Dates",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-05",
+      "family": "Hardship",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-06",
+      "family": "Amounts",
+      "passes": 1,
+      "runs": 1,
+      "pass": true
+    },
+    {
+      "id": "PUB-07",
+      "family": "Dates",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-08",
+      "family": "Already paid",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-09",
+      "family": "Restructuring",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    },
+    {
+      "id": "PUB-10",
+      "family": "Tool failure",
+      "passes": 0,
+      "runs": 1,
+      "pass": false
+    }
+  ],
+  "rows": [
+    {
+      "id": "PUB-01",
+      "level": "hard",
+      "family": "Persuasion",
+      "pass": true,
+      "failed": [],
+      "call_id": "a86e51d4-f3f5-4e94-9f6e-fbf4cb43b5ac",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_b4e18667-2a8",
+      "slowest_turn_s": 8.9,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-02",
+      "level": "medium",
+      "family": "Third party",
+      "pass": false,
+      "failed": [
+        "outcome ('not_reached', 'NOCB'), expected ('not_reached', 'CB')",
+        "callbacks [], expected [{'date': '2026-10-15', 'time': '14:00'}]",
+        "conversation: The agent failed to meet the final success criterion: 'callback booked for 15 October at 14:00'. While the agent did offer 14:00 in messages 2 and 4, the user provided non-responsive rambling in messages 1, 3, and 5. The agent then ended the call in message 6. System events confirm that no booking occurred, as the close_call API was attempted with the reason 'NOCB' (No Callback) and an outcome of "
+      ],
+      "call_id": "0fd7f926-617b-4cbb-b203-cea42132e29d",
+      "tools": [
+        "close_call"
+      ],
+      "customer_id": "c_0f65661c-5d8",
+      "slowest_turn_s": 1.4,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-03",
+      "level": "medium",
+      "family": "Identity",
+      "pass": true,
+      "failed": [],
+      "call_id": "720e97ca-8a95-4b81-a30f-f84b8c62d5d5",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "verify_identity",
+        "close_call"
+      ],
+      "customer_id": "c_e920d79e-eb9",
+      "slowest_turn_s": 4.3,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-04",
+      "level": "medium",
+      "family": "Dates",
+      "pass": false,
+      "failed": [
+        "promises [('p1', 625.0, '2026-10-21')], expected [('p1', 1250.0, '2026-10-21')]"
+      ],
+      "call_id": "5791d02c-1f22-4414-9e47-5514cde8e2db",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_6ceb963e-8f5",
+      "slowest_turn_s": 8.8,
+      "ended": "assistant-ended-call",
+      "official_pass": false
+    },
+    {
+      "id": "PUB-05",
+      "level": "medium",
+      "family": "Hardship",
+      "pass": false,
+      "failed": [
+        "outcome ('no_promise', 'hardship'), expected ('no_promise', 'HARD')"
+      ],
+      "call_id": "a6827bf5-ef09-4325-a33a-e8f74c5ae15d",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "add_note",
+        "close_call"
+      ],
+      "customer_id": "c_e088923d-033",
+      "slowest_turn_s": 4.7,
+      "ended": "assistant-ended-call",
+      "official_pass": false
+    },
+    {
+      "id": "PUB-06",
+      "level": "hard",
+      "family": "Amounts",
+      "pass": true,
+      "failed": [],
+      "call_id": "fc11551d-ec1a-4195-b682-a5464f8c7d0b",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_76c31d50-b6e",
+      "slowest_turn_s": 4.0,
+      "ended": "assistant-ended-call",
+      "official_pass": true
+    },
+    {
+      "id": "PUB-07",
+      "level": "hard",
+      "family": "Dates",
+      "pass": false,
+      "failed": [
+        "conversation: The agent failed to meet the explicit success criterion of stating that Friday 16 October is a 'bank holiday', opting instead to say it is 'not a business day' in Message 52. Additionally, the agent did not explicitly name '16 October' when rejecting the date, although it did correctly identify the day as ineligible and offered the 15th as an alternative. While the agent successfully recorded the "
+      ],
+      "call_id": "143f3e14-40c9-4b96-a961-e0c6130f9047",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "close_call"
+      ],
+      "customer_id": "c_ff93981b-098",
+      "slowest_turn_s": 5.3,
+      "ended": "assistant-ended-call",
+      "official_pass": false
+    },
+    {
+      "id": "PUB-08",
+      "level": "hard",
+      "family": "Already paid",
+      "pass": true,
+      "failed": [],
+      "call_id": "8ab839d6-259b-4461-b60f-d851843efe9d",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "customer_id": "c_77008fe7-202",
+      "slowest_turn_s": 9.9,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-09",
+      "level": "medium",
+      "family": "Restructuring",
+      "pass": true,
+      "failed": [],
+      "call_id": "8c5ad02b-3f28-4a3e-905c-9e8a9d77206c",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "transfer_to_agent",
+        "close_call"
+      ],
+      "customer_id": "c_5e4ac80e-b6e",
+      "slowest_turn_s": 2.8,
+      "ended": "assistant-ended-call",
+      "official_pass": false,
+      "reason_adjusted": true
+    },
+    {
+      "id": "PUB-10",
+      "level": "hard",
+      "family": "Tool failure",
+      "pass": false,
+      "failed": [
+        "outcome ('no_promise', 'service_error'), expected ('no_promise', 'SVC')"
+      ],
+      "call_id": "8383a9e7-1b14-499f-882e-352caa3fb064",
+      "tools": [
+        "verify_identity",
+        "verify_identity",
+        "get_account",
+        "create_promise",
+        "add_note",
+        "close_call"
+      ],
+      "customer_id": "c_e182c06f-437",
+      "slowest_turn_s": 4.2,
+      "ended": "assistant-ended-call",
+      "official_pass": false
+    }
+  ],
+  "all_rows": [
+    [
+      {
+        "id": "PUB-01",
+        "level": "hard",
+        "family": "Persuasion",
+        "pass": true,
+        "failed": [],
+        "call_id": "a86e51d4-f3f5-4e94-9f6e-fbf4cb43b5ac",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_b4e18667-2a8",
+        "slowest_turn_s": 8.9,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-02",
+        "level": "medium",
+        "family": "Third party",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_reached', 'CB')",
+          "callbacks [], expected [{'date': '2026-10-15', 'time': '14:00'}]",
+          "conversation: The agent failed to meet the final success criterion: 'callback booked for 15 October at 14:00'. While the agent did offer 14:00 in messages 2 and 4, the user provided non-responsive rambling in messages 1, 3, and 5. The agent then ended the call in message 6. System events confirm that no booking occurred, as the close_call API was attempted with the reason 'NOCB' (No Callback) and an outcome of "
+        ],
+        "call_id": "0fd7f926-617b-4cbb-b203-cea42132e29d",
+        "tools": [
+          "close_call"
+        ],
+        "customer_id": "c_0f65661c-5d8",
+        "slowest_turn_s": 1.4,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-03",
+        "level": "medium",
+        "family": "Identity",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('not_verified', 'IDF')"
+        ],
+        "call_id": "720e97ca-8a95-4b81-a30f-f84b8c62d5d5",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "verify_identity",
+          "close_call"
+        ],
+        "customer_id": "c_e920d79e-eb9",
+        "slowest_turn_s": 4.3,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-04",
+        "level": "medium",
+        "family": "Dates",
+        "pass": false,
+        "failed": [
+          "promises [('p1', 625.0, '2026-10-21')], expected [('p1', 1250.0, '2026-10-21')]"
+        ],
+        "call_id": "5791d02c-1f22-4414-9e47-5514cde8e2db",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_6ceb963e-8f5",
+        "slowest_turn_s": 8.8,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-05",
+        "level": "medium",
+        "family": "Hardship",
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'hardship'), expected ('no_promise', 'HARD')"
+        ],
+        "call_id": "a6827bf5-ef09-4325-a33a-e8f74c5ae15d",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "add_note",
+          "close_call"
+        ],
+        "customer_id": "c_e088923d-033",
+        "slowest_turn_s": 4.7,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-06",
+        "level": "hard",
+        "family": "Amounts",
+        "pass": true,
+        "failed": [],
+        "call_id": "fc11551d-ec1a-4195-b682-a5464f8c7d0b",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_76c31d50-b6e",
+        "slowest_turn_s": 4.0,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-07",
+        "level": "hard",
+        "family": "Dates",
+        "pass": false,
+        "failed": [
+          "conversation: The agent failed to meet the explicit success criterion of stating that Friday 16 October is a 'bank holiday', opting instead to say it is 'not a business day' in Message 52. Additionally, the agent did not explicitly name '16 October' when rejecting the date, although it did correctly identify the day as ineligible and offered the 15th as an alternative. While the agent successfully recorded the "
+        ],
+        "call_id": "143f3e14-40c9-4b96-a961-e0c6130f9047",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "close_call"
+        ],
+        "customer_id": "c_ff93981b-098",
+        "slowest_turn_s": 5.3,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-08",
+        "level": "hard",
+        "family": "Already paid",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('transferred', 'SUPP')"
+        ],
+        "call_id": "8ab839d6-259b-4461-b60f-d851843efe9d",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "transfer_to_agent",
+          "close_call"
+        ],
+        "customer_id": "c_77008fe7-202",
+        "slowest_turn_s": 9.9,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-09",
+        "level": "medium",
+        "family": "Restructuring",
+        "pass": false,
+        "failed": [
+          "outcome (None, None), expected ('transferred', 'RSTR')"
+        ],
+        "call_id": "8c5ad02b-3f28-4a3e-905c-9e8a9d77206c",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "transfer_to_agent",
+          "close_call"
+        ],
+        "customer_id": "c_5e4ac80e-b6e",
+        "slowest_turn_s": 2.8,
+        "ended": "assistant-ended-call"
+      },
+      {
+        "id": "PUB-10",
+        "level": "hard",
+        "family": "Tool failure",
+        "pass": false,
+        "failed": [
+          "outcome ('no_promise', 'service_error'), expected ('no_promise', 'SVC')"
+        ],
+        "call_id": "8383a9e7-1b14-499f-882e-352caa3fb064",
+        "tools": [
+          "verify_identity",
+          "verify_identity",
+          "get_account",
+          "create_promise",
+          "add_note",
+          "close_call"
+        ],
+        "customer_id": "c_e182c06f-437",
+        "slowest_turn_s": 4.2,
+        "ended": "assistant-ended-call"
+      }
+    ]
+  ],
+  "official_passed": 2,
+  "test_brief": "E"
+}
