@@ -1,0 +1,85 @@
+From: Deniz Arı <deniz.ari@freya.example>
+To: Selin Aydın <selin.aydin@freyabank.example>
+Cc: Kerem Yalçın <kerem.yalcin@freyabank.example>, Burcu Tan <burcu.tan@freyabank.example>, Elçin Ural <elcin.ural@freyabank.example>, Ozan Er <ozan.er@freya.example>
+Date: Fri, 9 Oct 2026 17:48:12 +0300
+Subject: Re: Statement debt - what we took away from Wednesday
+
+Thanks Selin, clear. Three calming replies it is, I've fixed it on our side.
+
+On the card number: noted. Our mocks follow the test environment for now,
+but we'll build the last-six and full-number steps as agreed, so they work
+once the service sends full numbers.
+
+Deniz
+
+-----
+
+On 9 Oct 2026, at 15:02, Selin Aydın <selin.aydin@freyabank.example> wrote:
+
+> Hi Deniz,
+>
+> Thanks for writing this up, saves me a job. Yes, the points below apply,
+> with one correction further down. I haven't had time to put them into the
+> analysis document yet, so the one I sent yesterday (8 Oct) won't show them,
+> especially the out-of-scope part and the card number. Please build to these.
+>
+> One correction: on the angry caller it was three calming replies, not two.
+> Burcu wanted room for the caller to settle before we hand over. Only if they
+> are still complaining after the third one do we say "Sizi müşteri
+> temsilcimize aktarıyorum." and transfer to an agent. And the assistant never
+> answers insults in kind, whatever the count.
+>
+> Also, Elçin raised this after you'd dropped off: the card list service in
+> production gives the full card number. What you see in the test environment
+> is masked (first six and last four), that's a test-data thing only, so please
+> don't design around it. Whatever comes back, the assistant never reads out
+> more than the last four digits of a card, not the full number and not the
+> middle digits, not even to confirm.
+>
+> Kerem, anything to add on the card list?
+>
+> Selin
+>
+> On 9 Oct 2026, at 10:14, Deniz Arı <deniz.ari@freya.example> wrote:
+>
+>> Hi Selin,
+>>
+>> Thanks again for Wednesday, long session but very useful. Below is what I
+>> noted down as agreed on the statement debt flow. It's not everything we
+>> talked about, just the points that change what we're building. Shout if I
+>> got anything wrong.
+>>
+>> 1. Silence. If the caller says nothing, the assistant asks the question
+>>    again, shortly, the first two times. On the third silence it says
+>>    "Sesinizi alamadığım için görüşmeyi sonlandırıyorum." and ends the call.
+>>    No main menu in this case.
+>>
+>> 2. Questions outside the flow (e.g. loan rates, branch hours). The assistant
+>>    doesn't send the caller away straight off; it first asks
+>>    "Size bu konuda yardımcı olamıyorum. Sizi ana menüye aktarmamı ister misiniz?"
+>>    Yes -> main menu. If they'd rather go on, we pick the flow back up where
+>>    it was. If the answer isn't clear, ask again, three tries.
+>>
+>> 3. Three tries used up at any question: "Size şu anda yardımcı olamıyorum.
+>>    Sizi ana menüye aktarıyorum." then main menu. Asking us to repeat
+>>    something we just read doesn't count as a try.
+>>
+>> 4. Two cards with the same name and the same last four digits: we ask for
+>>    the last six, "Son dört hanesi 4253 olan birden fazla kartınız var.
+>>    Kartınızın son altı hanesini söyler misiniz?" (with the caller's own
+>>    digits), and if those match too, the full number: "Son altı hanesi aynı
+>>    olan birden fazla kartınız var. Kart numaranızı söyler misiniz?"
+>>
+>> 5. Angry or abusive caller: up to two calming replies, then agent.
+>>
+>> 6. Currencies are always read with their full names, never the codes:
+>>    Türk Lirası, Dolar, Euro, İngiliz Sterlini. Also where the table in the
+>>    document says "TL".
+>>
+>> I've left out the statement week and the joint statement points, Ozan is
+>> writing those up separately with the sample sentences. Still open on our
+>> side: how long we wait on a slow service before handing over, we'll come
+>> back with a proposal.
+>>
+>> Best,
+>> Deniz

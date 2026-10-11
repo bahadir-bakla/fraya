@@ -1,0 +1,43 @@
+{"kind": "official_runner", "effective_arguments": ["c4b8980a-06d9-41c5-90bb-9e862767a573", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-f.json", "--brief", "F", "--style", "talkative", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-f-sp-talkative.json"], "test_brief": "F", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "75c2a96c-69a0-40f0-9385-c37162b5bd39"}
+PASS PUB-11 hard   Multi-product  | verify > verify > get_account > promise > promise > add_note > close_call
+FAIL PUB-12 hard   Multi-product  | verify > verify > verify > get_account > add_note > add_note
+       - outcome (None, None), expected ('transferred', 'XRS')
+       - transfers [], expected [{'queue': 'restructuring'}]
+       - the call was not closed with close_call
+       - conversation: The agent failed to meet the success criteria because the 'transfer_to_agent' tool was never called. While other criteria were satisfied (the date of birth was asked only once at [Message 2], the phone question was re-asked once at [Message 6], t
+FAIL PUB-13 hard   Multi-product  | verify > verify > get_account > promise > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XSP')
+FAIL PUB-01 hard   Persuasion     | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 126.0, '2026-10-30')]
+       - notes [('p1', 'refused')], expected []
+       - conversation: The conversation failed to meet two of the specific success criteria. 1. The first offer made by the agent was for the full amount ($420.00) 'today' (Message 6), whereas the criteria required the first offer to be for 30 October. 2. The agent did
+FAIL PUB-02 medium Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'RCB')
+       - callbacks [], expected [{'date': '2026-10-15', 'time': '17:30'}]
+       - conversation: The agent failed to book a callback for 15 October at 17:30. In Message 8, the assistant explicitly states "No callback has been booked" before ending the call. While other criteria were met (no disclosure of call purpose/account details, no iden
+FAIL PUB-03 medium Identity       | verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'VFL')
+       - conversation: The assistant failed one success criterion: 'the date of birth is asked again once after the first wrong answer'. After the first incorrect date of birth provided in [Message 3], the assistant asked for the date of birth in [Message 4] and then a
+PASS PUB-04 hard   Amounts        | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'VDC')
+PASS PUB-06 hard   Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-07 easy   Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'RWN')
+PASS PUB-08 medium Already paid   | verify > verify > get_account > add_note > close_call
+FAIL PUB-09 medium Human          | verify
+       - outcome (None, None), expected ('transferred', 'XHU')
+       - transfers [], expected [{'queue': 'general'}]
+       - the call was not closed with close_call
+       - conversation: The conversation failed to meet several success criteria: - The agent never asked how it could help the customer. - The `transfer_to_agent` function was never called. - Additionally, the agent entered a repetitive loop from Message 10 to Message 
+FAIL PUB-10 hard   Tool failure   | verify > verify > get_account
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 365.0, '2026-10-21')]
+       - the call was not closed with close_call
+       - conversation: The agent correctly rejected the date of 20 October as a past date in Message 26 and subsequent turns, but it failed to offer Wednesday 21 October as an alternative. Additionally, no promise was recorded in the ledger as seen in the system events
+
+slowest agent turn per call: median 4 s, worst 29 s. Failed calls where the customer hung up: 3.
+
+4 / 13 passed (bank records and conversation checks). Last simulation 75c2a96c-69a0-40f0-9385-c37162b5bd39, status completed, 515 s.

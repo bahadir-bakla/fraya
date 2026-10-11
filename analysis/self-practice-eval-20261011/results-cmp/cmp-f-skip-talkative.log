@@ -1,0 +1,45 @@
+{"kind": "official_runner", "effective_arguments": ["487e0b58-361b-4de5-a2db-b7746a89e428", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-f.json", "--brief", "F", "--style", "talkative", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-f-skip-talkative.json"], "test_brief": "F", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "2bb5794e-b8a4-40ce-b441-e5a183e79ecc"}
+PASS PUB-11 hard   Multi-product  | verify > verify > get_account > promise > promise > add_note > close_call
+FAIL PUB-12 hard   Multi-product  | verify > verify > verify > get_account > add_note > add_note > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XRS')
+       - conversation: The conversation failed several success criteria: 1. The phone number question was asked a total of three times (Messages 4, 6, and 8), meaning it was asked again twice rather than once. 2. The agent argued/ignored the user's credit card dispute 
+FAIL PUB-13 hard   Multi-product  | verify > verify > get_account > promise > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XSP')
+FAIL PUB-01 hard   Persuasion     | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 126.0, '2026-10-30')]
+       - notes [('p1', 'refused')], expected []
+       - conversation: The conversation failed to meet several success criteria: 1. The first offer (Message 46) was for the full amount 'today' rather than 'by 30 October'. 2. The second offer (Message 48) was for the full amount 'by 2026-10-30' instead of the minimum
+FAIL PUB-02 medium Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'RCB')
+       - callbacks [], expected [{'date': '2026-10-15', 'time': '17:30'}]
+       - conversation: The success criteria required a callback to be booked for 15 October at 17:30, which did not happen. The transcript shows the agent offering alternative times in [Message 8] after the user suggested 7:00 PM today in [Message 7], but the agent end
+FAIL PUB-03 medium Identity       | verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'VFL')
+PASS PUB-04 hard   Amounts        | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'VDC')
+       - conversation: The conversation failed to meet two success criteria. First, the agent explained that the questions protect the account twice in Message 4, violating the requirement to only explain this once. Second, the agent used the prohibited word 'account' 
+FAIL PUB-06 hard   Dates          | verify > verify > get_account
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 637.5, '2026-10-22')]
+       - the call was not closed with close_call
+       - conversation: - The agent repeatedly asked the user to propose an amount and date (starting at [Message 30]) but failed to offer the minimum payment of 637.50 as required by the success criteria. - The agent failed to explicitly offer October 22nd as the lates
+FAIL PUB-07 easy   Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'RWN')
+FAIL PUB-08 medium Already paid   | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('paid', None)
+       - notes [('p1', 'service_error')], expected [('p1', 'paid')]
+       - conversation: The agent failed to meet the success criteria because it did not mention that payments can take up to three business days to show. Additionally, the agent entered a repetitive loop in messages 8 and 10, failing to acknowledge the user's clear res
+FAIL PUB-09 medium Human          | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XHU')
+       - conversation: The agent asked 'May I help you with this call?' twice (Message 20 and Message 22), violating the criterion to ask only once. The other criteria were met: transfer_to_agent was called with the 'general' queue (as seen in the system events followi
+FAIL PUB-10 hard   Tool failure   | verify > close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 365.0, '2026-10-21')]
+       - conversation: The conversation failed to meet the success criteria because it never progressed beyond the identity verification stage. The user repeatedly provided irrelevant information instead of answering the security question about the last four digits of 
+
+slowest agent turn per call: median 2 s, worst 4 s. Failed calls where the customer hung up: 1.
+
+2 / 13 passed (bank records and conversation checks). Last simulation 2bb5794e-b8a4-40ce-b441-e5a183e79ecc, status completed, 329 s.

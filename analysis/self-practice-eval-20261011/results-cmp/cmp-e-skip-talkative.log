@@ -1,0 +1,36 @@
+{"kind": "official_runner", "effective_arguments": ["639a97f1-ebb6-4a27-b0d5-29ee6d224197", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-e.json", "--brief", "E", "--style", "talkative", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-e-skip-talkative.json"], "test_brief": "E", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "7c94e742-c5b0-413e-b75b-31bf0827ca23"}
+FAIL PUB-01 hard   Persuasion     | verify > verify > get_account
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 210.0, '2026-10-29')]
+       - the call was not closed with close_call
+       - conversation: - The agent failed to make the second persuasion offer of 210 on 29 October after the first offer was rejected. - No promise was created (create_promise was never called), so no promise reference was read out to the customer. - The agent entered 
+FAIL PUB-02 medium Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'CB')
+       - callbacks [], expected [{'date': '2026-10-15', 'time': '14:00'}]
+       - conversation: The agent failed to book a callback for 15 October at 14:00. While the agent offered the correct date and time range in Message 4, it proceeded to end the call in Message 6 without securing a booking after the user's response in Message 5. System
+FAIL PUB-03 medium Identity       | verify > verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'IDF')
+PASS PUB-04 medium Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Hardship       | verify > verify > get_account > add_note > close_call
+       - outcome (None, None), expected ('no_promise', 'HARD')
+PASS PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+PASS PUB-07 hard   Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-08 hard   Already paid   | verify > verify > get_account > add_note > close_call
+       - outcome ('paid', None), expected ('transferred', 'SUPP')
+       - notes [('p1', 'paid')], expected []
+       - transfers [], expected [{'queue': 'support'}]
+       - conversation: The agent failed on several criteria: - The agent did not ask the user for the date on which they made the payment. - The agent did not call the 'transfer_to_agent' tool as required by the success criteria; instead, it ended the call directly.
+FAIL PUB-09 medium Restructuring  | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'RSTR')
+FAIL PUB-10 hard   Tool failure   | verify > verify > get_account > promise > add_note > close_call
+       - outcome (None, None), expected ('no_promise', 'SVC')
+
+slowest agent turn per call: median 5 s, worst 12 s. Failed calls where the customer hung up: 1.
+
+3 / 10 passed (bank records and conversation checks). Last simulation 7c94e742-c5b0-413e-b75b-31bf0827ca23, status completed, 254 s.

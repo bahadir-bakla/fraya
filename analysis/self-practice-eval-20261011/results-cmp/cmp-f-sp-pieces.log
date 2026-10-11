@@ -1,0 +1,31 @@
+{"kind": "official_runner", "effective_arguments": ["c4b8980a-06d9-41c5-90bb-9e862767a573", "--cases", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/frozen2/cases-f.json", "--brief", "F", "--style", "pieces", "--out", "/tmp/claude-1000/-home-yusuf-Masa-st--fraya/a14c6606-13c5-4c26-948c-6c15f8c5aa95/scratchpad/results-cmp/cmp-f-sp-pieces.json"], "test_brief": "F", "sha256": {"simulate.py": "da946e33d5625877eaea1cec2f148958e6b04f9903f90b0b7c63dee6091afd42", "bounded_freya.py": "37dc915f017d4d85e2d4b3a1c59db3c46001cfd1efda2cc9bf7680ccae6dbf0b", "builder.py": "e0dbfbe746e174e91afd68aa43ab068da70e221013e77509c6c8595cf0dab6e0"}}
+{"kind": "freya_api", "method": "POST", "path": "/api/v2/simulations", "simulation_id": "a9a2a97e-7b89-48e2-8f88-f2dc8f002176"}
+FAIL PUB-11 hard   Multi-product  | verify > verify > get_account > promise > add_note > add_note > close_call
+       - promises [('p1', 220.0, '2026-10-26')], expected [('p1', 220.0, '2026-10-26'), ('p2', 213.0, '2026-10-30')]
+       - notes [('p2', 'refused'), ('p3', 'refused')], expected [('p3', 'refused')]
+FAIL PUB-12 hard   Multi-product  | verify > verify > verify > get_account > add_note > add_note > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XRS')
+FAIL PUB-13 hard   Multi-product  | verify > verify > get_account > promise > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XSP')
+PASS PUB-01 hard   Persuasion     | verify > verify > get_account > promise > close_call
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'RCB')
+       - callbacks [{'date': '2026-10-16', 'time': '17:30'}], expected [{'date': '2026-10-15', 'time': '17:30'}]
+       - conversation: The agent correctly avoided disclosing the purpose of the call or any account details before verification (Message 2), and no identity verification or account tools were used. While the agent correctly avoided booking the 19:00 slot, it failed to
+FAIL PUB-03 medium Identity       | verify > verify > close_call
+       - outcome (None, None), expected ('not_verified', 'VFL')
+PASS PUB-04 hard   Amounts        | verify > verify > get_account > promise > close_call
+FAIL PUB-05 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'VDC')
+FAIL PUB-06 hard   Dates          | verify > verify > get_account > promise > close_call
+       - conversation: The agent failed the success criteria because the minimum payment of 637.50 and the 'remainder stays in arrears' remark were provided multiple times. The agent made the initial offer with the remark in [Message 14], repeated the offer as a questi
+FAIL PUB-07 easy   Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'RWN')
+PASS PUB-08 medium Already paid   | verify > verify > get_account > add_note > close_call
+FAIL PUB-09 medium Human          | verify > verify > get_account > transfer_to_agent > close_call
+       - outcome (None, None), expected ('transferred', 'XHU')
+PASS PUB-10 hard   Tool failure   | verify > verify > get_account > promise > promise > close_call
+
+slowest agent turn per call: median 3 s, worst 7 s. Failed calls where the customer hung up: 0.
+
+4 / 13 passed (bank records and conversation checks). Last simulation a9a2a97e-7b89-48e2-8f88-f2dc8f002176, status completed, 134 s.

@@ -1,0 +1,125 @@
+From: Deniz Arı <deniz@freya.example>
+To: Selin Aydın <selin.aydin@freyabank.example>
+Cc: Kerem Yalçın <kerem.yalcin@freyabank.example>; Burcu Tan <burcu.tan@freyabank.example>; Ozan Er <ozan.er@freya.example>
+Date: Tue, 29 Sep 2026 09:18
+Subject: RE: Statement debt - questions after reading the 2 Sep analysis
+
+Thanks all, this unblocks most of what we wanted to start on.
+
+Short version of where we are on our side:
+- Q1-Q5, Q8, Q10, Q11, Q12: clear, we build to these (except the address read-out in Q3, Selin is checking).
+- Q6, Q7, Q9: still open, we keep them on the list for the analysis session (Selin suggested 7 Oct on our call, that works for us).
+
+Burcu, one small follow-up on Q8: when you send the caller back for the login step, is that a fixed transfer code on your side or do we just end our part with a flag? Not urgent, Mert can answer when he is back.
+
+Deniz
+
+
+From: Burcu Tan <burcu.tan@freyabank.example>
+Date: Mon, 28 Sep 2026 17:52
+To: Deniz Arı <deniz@freya.example>; Selin Aydın <selin.aydin@freyabank.example>
+Cc: Kerem Yalçın <kerem.yalcin@freyabank.example>; Ozan Er <ozan.er@freya.example>
+Subject: RE: Statement debt - questions after reading the 2 Sep analysis
+
+Hi Deniz,
+
+Sorry for the delay, quarter-end week at the call centre. My bits:
+
+Q1 - to add to Selin's answer: by the time a call reaches you, the IVR has already done the full identity step, and we pass you the customer number with it. Nothing more to check. I know the call flow drawing has a box for an extra code, that box came from an early workshop and we never built it. Please don't ask for one.
+
+Q6 - silence: in the menu today we repeat the prompt twice and on the third silence we send the caller to the main menu. Whether the assistant does the same or simply ends the call is not decided. I would like to talk it through with Elçin first, so please keep it open.
+
+Q8 - someone calling about a card that isn't theirs (spouse, parent etc.): the assistant tells them that for security reasons it can only help with their own cards, and the call goes back to the IVR for the login step, so the right person can identify. No info at all to the third party, not even whether a card exists.
+
+Q10 - non-Turkish speech: we don't support other languages in this flow. Say "Sizi ana menüye aktarıyorum." and hand it to the main menu, the menu has an English option there.
+
+Burcu
+
+
+From: Kerem Yalçın <kerem.yalcin@freyabank.example>
+Date: Fri, 25 Sep 2026 16:40
+To: Deniz Arı <deniz@freya.example>; Selin Aydın <selin.aydin@freyabank.example>
+Cc: Burcu Tan <burcu.tan@freyabank.example>; Ozan Er <ozan.er@freya.example>
+Subject: RE: Statement debt - questions after reading the 2 Sep analysis
+
+Hi Deniz,
+
+Taking Q2, Q5 and Q9 since they sit with card payments.
+
+Q2 - No payments in the assistant, full stop. If the caller wants to pay, or asks how / where to pay (app, branch, auto-pay, whatever), treat it the same: "Borç ödeme işleminiz için sizi müşteri temsilcimize aktarıyorum." and transfer to an agent. We don't want the assistant explaining payment channels, those change too often.
+
+Q5 - Disputes, "I paid but it doesn't show", wrong amount etc.: also an agent. Sentence: "Bu konuda size müşteri temsilcimiz yardımcı olacak, sizi aktarıyorum." Please don't let it try to explain the difference between booking date and value date, we've had complaints about that from the web chat.
+
+Q9 - statement week. Today the IVR follows the "ayda bir" and "yılda üç" limits, you'll see them in Burcu's prompt sheet. To be honest the product side is discussing changing this and I don't want you to build on the current numbers yet. Will check and come back, worst case we settle it in the session.
+
+(Side note, the service that tells whether the customer still has the right to change is something Mert is looking at, don't assume it exists.)
+
+Kerem
+
+
+From: Selin Aydın <selin.aydin@freyabank.example>
+Date: Fri, 25 Sep 2026 11:05
+To: Deniz Arı <deniz@freya.example>
+Cc: Kerem Yalçın <kerem.yalcin@freyabank.example>; Burcu Tan <burcu.tan@freyabank.example>; Ozan Er <ozan.er@freya.example>
+Subject: RE: Statement debt - questions after reading the 2 Sep analysis
+
+Hi Deniz,
+
+Answers inline below (marked >>). I left Q2, Q5, Q9 to Kerem and the IVR ones to Burcu, they will reply separately.
+
+Selin
+
+
+From: Deniz Arı <deniz@freya.example>
+Date: Thu, 24 Sep 2026 14:27
+To: Selin Aydın <selin.aydin@freyabank.example>
+Cc: Kerem Yalçın <kerem.yalcin@freyabank.example>; Burcu Tan <burcu.tan@freyabank.example>; Ozan Er <ozan.er@freya.example>
+Subject: Statement debt - questions after reading the 2 Sep analysis
+
+Hi Selin,
+
+Thanks again for the 2 Sep analysis, Ozan and I went through it twice this week. Overall it is very clear on the debt reading part. We have a list of questions before we start building, mostly edge cases and a couple of places where the doc and the call flow drawing don't say the same thing. Numbered so you can answer inline, no need for long answers.
+
+1. Authentication. The call flow drawing shows a possible second factor (SMS code?) before the debt is read, the analysis doesn't mention it. Does the assistant do any identity check itself?
+>> No. The caller is already authenticated in the IVR before the transfer, the assistant gets the customer number with the call. There is no second factor in the assistant. (Burcu may add detail.)
+
+2. Payments. Can the caller pay the debt in the conversation, or at least be told how to pay?
+>> Kerem
+
+3. Statement by e-mail: can the caller give a different address than the one we have on file, e.g. a work address?
+>> No. We only send to the e-mail address registered at the bank. If they want another address they have to change it through the usual channels, the assistant can't change it. Before sending, the assistant reads the registered address back to the customer and asks for permission: "Ekstrenizi … adresine göndermemi ister misiniz?". It sends only after a clear yes. Once it has gone out: "Ekstreniz kayıtlı e-posta adresinize gönderildi."
+How to read long or strange addresses aloud, I need to check with Elçin, will come back.
+
+4. Which statement is sent? Callers will ask for "last month's" or "the one from March".
+>> Only the last cut statement. Earlier periods can't be sent from the assistant, it should just tell the caller that only the last statement can be sent.
+
+5. Disputes / payment not showing up.
+>> Kerem
+
+6. Silence. The analysis says three silences and then main menu. Is that the IVR rule or something you want specifically for the assistant?
+>> Burcu
+
+7. Service timeouts. If the debt service is slow, how long should we wait before we give up? And what does the caller hear while waiting?
+>> Honestly not defined yet. Mert owns the service side, I've asked him, he is on leave until the 5th. While waiting I think "Bilgilerinizi kontrol ediyorum." is fine but let's confirm the timing with him. If a service returns an error, it's an agent, not the main menu: "Şu anda işleminizi gerçekleştiremiyorum, sizi müşteri temsilcimize aktarıyorum."
+
+8. Third party calls (someone asking about a spouse's card).
+>> Burcu
+
+9. Statement week change: the analysis has the step but not the limits. How often can a customer change it, and does the assistant need to say the limit?
+>> Kerem
+
+10. Callers who speak another language.
+>> Burcu
+
+11. Agent requests. If the caller asks for a person right at the start, do we try to help first?
+>> For now no: transfer on the first request, no persuading. "Sizi müşteri temsilcimize aktarıyorum." We might revisit once we see the numbers after go-live.
+
+12. (small one) Card names: in the analysis table some rows say "Yıldız Gold" and some "Yıldız Altın". Which one comes back from the service?
+>> Use whatever the card list service returns, don't translate. I'll fix the table. Btw we've seen a few cards where the name comes back empty from the service, in that case just introduce it by the last four digits ("Sonu 4253 ile biten kartınıza ait …").
+
+Thanks,
+Deniz
+
+--
+Deniz Arı
+Solutions Engineer, Freya

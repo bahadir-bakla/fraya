@@ -1,7 +1,7 @@
 """Autonomous evidence -> Freya -> official tests -> repair -> export. Standard library only."""
 import argparse, codecs, contextlib, datetime, getpass, hashlib, json, os, pathlib, queue, re, shutil, signal, subprocess, sys, threading, time, tomllib, uuid
 from validation import validate,validate_coverage
-from transcripts import compact_messages
+from transcripts import compact_messages,loop_signals
 from semantic_assist import PROMPT_NOTICE, child_env, python_executable, validate_result
 from dialogue_assist import NOTICE as DIALOGUE_NOTICE, PINS as DIALOGUE_PINS, validate_result as validate_dialogue_result
 from finetuned_assist import NOTICE as FINETUNED_NOTICE, copy_runtime as copy_finetuned_runtime, prepare_request as finetuned_request, validate_result as validate_finetuned_result, child_environment as finetuned_environment, read_json as read_finetuned_json
@@ -114,6 +114,9 @@ class Run:
         self.trace=self.path/'trace.jsonl';self.work=self.path/'work';self.work.mkdir(exist_ok=bool(args.resume_run))
         self.feedback=[]
         self.test_brief=getattr(args,'brief',None) or infer_practice_group(args.briefs)
+        if getattr(args,'self_practice',False):
+            from self_practice import GROUP
+            self.test_brief=GROUP
         self.status['test_brief']=self.test_brief
         write_json(ROOT/'.state/latest.json',{'run_id':self.id})
     def clean(self,value):
@@ -121,9 +124,10 @@ class Run:
         for secret in self.secrets:
             if secret:text=text.replace(secret,'[REDACTED]')
         return json.loads(re.sub(r'fak_[A-Za-z0-9_-]+','[REDACTED]',text))
+    _trace_lock=threading.Lock()
     def event(self,kind,**data):
         record=self.clean({'at':stamp(),'kind':kind,**data})
-        with self.trace.open('a') as out:out.write(json.dumps(record,ensure_ascii=False)+'\n')
+        with self._trace_lock,self.trace.open('a') as out:out.write(json.dumps(record,ensure_ascii=False)+'\n')
     def phase(self,name,**data):
         self.status.update(phase=name,**data,updated=stamp(),elapsed_s=round(self.elapsed()))
         write_json(self.path/'status.json',self.clean(self.status));self.event('phase',phase=name,**data)
@@ -132,7 +136,7 @@ class Run:
     def elapsed(self):return max(time.monotonic()-self.start,time.time()-datetime.datetime.fromisoformat(self.status['started']).timestamp())
     def prepare(self):
         source=self.path/('builder-source-resume' if self.args.resume_run else 'builder-source');source.mkdir(exist_ok=True)
-        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py','finetuned_context_audit.py','live_layer.py')
+        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py','finetuned_context_audit.py','live_layer.py','self_practice.py','caller_styles.py')
         for name in source_names:
             shutil.copyfile(ROOT/name,source/name)
         self.event('builder_source',sha256={name:hashlib.sha256((source/name).read_bytes()).hexdigest() for name in source_names})
@@ -256,11 +260,11 @@ class Run:
             (self.work/'dialogue-evidence.json').unlink(missing_ok=True)
             self.event('dialogue_assist',status='unavailable',error_type=type(error).__name__)
             if mode=='required':raise RuntimeError('Required dialogue diagnostics unavailable') from None
-    def child(self,command,*,timeout,env=None,stdin=None,log_name='command.jsonl',purpose='command'):
+    def child(self,command,*,timeout,env=None,stdin=None,log_name='command.jsonl',purpose='command',cwd=None):
         end=time.monotonic()+min(timeout,self.remaining())
         wall_end=time.time()+min(timeout,self.remaining())
         self.event('command_start',command=command,purpose=purpose,timeout_s=round(end-time.monotonic()))
-        proc=subprocess.Popen(command,cwd=self.work,env=env,stdin=subprocess.PIPE if stdin is not None else subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,start_new_session=True)
+        proc=subprocess.Popen(command,cwd=cwd or self.work,env=env,stdin=subprocess.PIPE if stdin is not None else subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,start_new_session=True)
         chunks=queue.Queue()
         def read_output():
             try:
@@ -463,20 +467,25 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
         self.status['artifacts']={'workflow':export.name,'policy':'work/policy.json','coverage':'work/coverage.json','trace':'trace.jsonl'}
         self.phase('published',freya=ids)
         return ids
-    def test(self,ids,round_number):
+    def test(self,ids,round_number,cases=None,style=None,label=None,repair_feedback=True):
         import freya
-        self.phase('official_simulation',round=round_number)
-        report=self.path/f'results-{round_number}.json'
-        command=[sys.executable,str(ROOT/'simulate.py'),ids['agent_id'],'--cases',str(pathlib.Path(self.args.cases).resolve()),'--out',str(report)]
+        cases=cases or self.args.cases;style=style or self.args.style;label=label or str(round_number)
+        self.phase('official_simulation' if cases==self.args.cases else 'self_practice_simulation',round=round_number,style=style)
+        report=self.path/f'results-{label}.json'
+        command=[sys.executable,str(ROOT/'simulate.py'),ids['agent_id'],'--cases',str(pathlib.Path(cases).resolve()),'--out',str(report)]
         if self.test_brief:command+=['--brief',self.test_brief]
         if self.args.only:command+=['--only',self.args.only]
-        if self.args.style:command+=['--style',self.args.style]
+        if style:command+=['--style',style]
+        if cases!=self.args.cases:command+=['--adjust-reasons']
         env={**os.environ,'COMPETITION_DEADLINE_EPOCH':str(time.time()+self.remaining())}
         self.child(command,timeout=min(900,self.remaining()),env=env,log_name=f'simulation-{round_number}.log',purpose='Official practice customers: bank ledger plus conversation judge')
         result=json.loads(report.read_text())
         if result.get('total',0)<=0:raise RuntimeError('No customer was evaluated; an empty test cannot count as success')
-        result.update(freya_version=ids['version'],workflow_id=ids['workflow_id'],test_brief=self.test_brief);write_json(report,self.clean(result));self.status['tests'].append({'freya_version':ids['version'],'round':round_number,'passed':result['passed'],'total':result['total'],'simulation_id':result['simulation_id'],'report':report.name})
-        self.event('official_test',**self.status['tests'][-1])
+        result.update(freya_version=ids['version'],workflow_id=ids['workflow_id'],test_brief=self.test_brief,style=style);write_json(report,self.clean(result))
+        entry={'freya_version':ids['version'],'round':round_number,'passed':result['passed'],'total':result['total'],'simulation_id':result['simulation_id'],'report':report.name,'style':style}
+        if 'official_passed' in result:entry['official_passed']=result['official_passed']
+        if not repair_feedback:self.event('holdout_test',**entry);return result
+        self.status['tests'].append(entry);self.event('official_test',**entry)
         failures=[row for row in result['rows'] if not row['pass']]
         self.feedback=[{'official_report':report.name,'passed':result['passed'],'total':result['total'],'failures':failures}]
         transcripts=[]
@@ -487,13 +496,42 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                     call=freya.get_call(row['call_id']);messages=call.get('messages',[])
                     raw=self.path/'call-transcripts'/f"{row['id']}.json"
                     write_json(raw,self.clean(call))
-                    entry={'case':row['id'],'failed':row['failed'],'endedReason':call.get('endedReason'),'full_call':str(raw.relative_to(self.path)),'messages':compact_messages(messages)}
+                    entry={'case':row['id'],'failed':row['failed'],'endedReason':call.get('endedReason'),'loop_signals':loop_signals(messages,call.get('endedReason')),'full_call':str(raw.relative_to(self.path)),'messages':compact_messages(messages)}
                     transcripts.append(entry)
                 except Exception as error:self.event('transcript_error',case=row['id'],error=str(error))
         if transcripts:
             write_json(self.work/'failed-calls.json',self.clean(transcripts))
             self.feedback.append({'read_file':'failed-calls.json','instruction':'Read actual tool/routing events and dialogue before repairing. Do not hardcode case identities or expected outcomes.'})
+            looping=[{'case':t['case'],'signals':t['loop_signals']} for t in transcripts if t.get('loop_signals')]
+            if looping:
+                self.event('loop_detected',calls=looping)
+                self.feedback.append({'loops':looping,'instruction':'These calls looped. Remove the loop at its source: never ask the same question a third time after the same answer twice; change approach (offer one concrete option the caller can accept, or apply the policy fallback); a turn the code cannot use never closes the call and is never a service error; a verified call can never close as not verified. Keep every policy guard.'})
         return result
+    def await_practice(self,author,holder):
+        author.join(timeout=max(0,self.remaining()-150))
+        result=holder.get('result') or {'train':None,'holdout':None,'report':{'error':holder.get('error','case authoring did not finish in time')}}
+        self.status['self_practice']=self.clean({k:(str(v) if isinstance(v,pathlib.Path) else v) for k,v in result.items()})
+        self.event('self_practice_cases',**self.status['self_practice'])
+        return result
+    def save_candidate(self,number,ids,result):
+        folder=self.work/'candidates'/f'round-{number}';folder.mkdir(parents=True,exist_ok=True)
+        for name in ('workflow.json','policy.json','coverage.json'):
+            if (self.work/name).exists():shutil.copyfile(self.work/name,folder/name)
+        return {'round':number,'passed':result['passed'],'total':result['total'],'folder':folder,'version':ids['version']}
+    def finish_self_practice(self,candidates,practice):
+        """Keep the candidate with the best self-practice score (latest on ties), then measure it once on holdout cases."""
+        best=max(candidates,key=lambda c:(c['passed'],c['round']))
+        if best is not candidates[-1] and self.remaining()>150:
+            for name in ('workflow.json','policy.json','coverage.json'):
+                if (best['folder']/name).exists():shutil.copyfile(best['folder']/name,self.work/name)
+            try:self.publish(json.loads((self.work/'workflow.json').read_text()));self.event('self_practice_restored',round=best['round'],passed=best['passed'])
+            except (ValueError,RuntimeError,TimeoutError) as error:self.event('self_practice_restore_failed',error=str(error))
+        self.status['self_practice_choice']={'round':best['round'],'passed':best['passed'],'total':best['total']}
+        if practice.get('holdout') and self.remaining()>150:
+            from caller_styles import ROTATION
+            ids=self.status['freya'];held=self.test(ids,best['round'],cases=str(practice['holdout']),style=ROTATION[best['round']%len(ROTATION)],label='holdout',repair_feedback=False)
+            self.status['holdout']={'passed':held['passed'],'total':held['total'],'official_passed':held.get('official_passed')}
+        return bool(self.status.get('freya'))
     def execute(self):
         local_only=getattr(self.args,'local_only',False)
         if not local_only:
@@ -502,6 +540,15 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             install(freya,self.remaining,self.event)
         self.event('run_resume' if self.args.resume_run else 'run_start',model=self.args.model,phone_agent_model=None if local_only else freya.AGENT_LLM,local_only=local_only,maximum_minutes=self.args.minutes,remaining_seconds=round(self.remaining()))
         self.prepare();last_result=None;completed=False
+        practice=None;candidates=[];author=None
+        if getattr(self.args,'self_practice',False):
+            from self_practice import build_cases
+            holder={}
+            def write_cases():
+                try:holder['result']=build_cases(self,KIT)
+                except Exception as error:holder['error']=self.clean(str(error))
+            author=threading.Thread(target=write_cases,daemon=True);author.start()
+            self.event('self_practice_started')
         if self.args.resume_run:
             self.feedback=[{'resume_same_budget':'Continue these generated artifacts in the same run, with unchanged bank evidence and the original deadline. Read the latest model log and fix the actual remaining failure.'}]
             if self.status['tests']:
@@ -517,6 +564,9 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             first_round=self.status['round']+1 if self.args.resume_run else 1
             for number in range(first_round,self.args.rounds+1):
                 if completed or self.remaining()<90:break
+                if author and self.status.get('freya') and self.remaining()<300:
+                    # A repair this late cannot finish; keep the published, already tested candidate instead.
+                    self.event('self_practice_repair_skipped',round=number,remaining_seconds=round(self.remaining()));break
                 try:
                     workflow=self.model(number)
                     if local_only:
@@ -527,6 +577,8 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                         completed=True;break
                     ids=self.publish(workflow)
                 except TimeoutError as error:
+                    if self.remaining()<120 and author and self.status.get('freya'):
+                        self.event('self_practice_repair_timeout',round=number);break
                     if self.remaining()<120:raise
                     self.feedback=[{'model_step_timeout':str(error),'existing_artifacts':[name for name in ('workflow.json','policy.json','coverage.json') if (self.work/name).exists()],'read_file':f'../model-{number}.jsonl','instruction':'Continue this same run automatically; inspect already generated artifacts and the last model message, finish essential repairs, then return the required artifact contract. Do not change input evidence.'}]
                     self.event('model_timeout_recovery',round=number,remaining_seconds=round(self.remaining()))
@@ -535,9 +587,22 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                     self.feedback=[{'validation_or_build_error':str(error)}];self.event('build_error',round=number,error=str(error));continue
                 if self.args.skip_tests:completed=True;break
                 if self.remaining()<120:self.event('test_skipped',reason='Insufficient remaining run budget');break
-                last_result=self.test(ids,number)
+                if author:
+                    if practice is None:practice=self.await_practice(author,holder)
+                    if not practice.get('train'):self.event('test_skipped',reason='No audited self-practice cases');completed=True;break
+                    from caller_styles import ROTATION
+                    try:last_result=self.test(ids,number,cases=str(practice['train']),style=ROTATION[(number-1)%len(ROTATION)])
+                    except TimeoutError as error:
+                        # A queued or slow practice simulation must not discard the published, already tested candidates.
+                        self.event('self_practice_test_timeout',round=number,error=str(error));self.save_candidate(number,ids,{'passed':-1,'total':0});break
+                    candidates.append(self.save_candidate(number,ids,last_result))
+                else:last_result=self.test(ids,number)
                 if last_result['passed']==last_result['total']:completed=True;break
-            self.phase('completed' if completed else 'needs_attention',ended=stamp(),evaluation='local_validation_only' if local_only else 'not_evaluated' if self.args.skip_tests else 'official_practice' if last_result else 'incomplete',published=False if local_only else bool(self.status.get('freya')),latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
+            if author and candidates:
+                completed=self.finish_self_practice(candidates,practice)
+            elif author and self.status.get('freya'):
+                completed=True;self.event('self_practice_untested',reason='No practice round finished in the budget; the published candidate is kept')
+            self.phase('completed' if completed else 'needs_attention',ended=stamp(),evaluation='local_validation_only' if local_only else 'not_evaluated' if self.args.skip_tests else 'self_practice' if author else 'official_practice' if last_result else 'incomplete',published=False if local_only else bool(self.status.get('freya')),latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
         except Exception as error:
             self.phase('failed',ended=stamp(),error=self.clean(str(error)))
             raise
@@ -565,6 +630,7 @@ def arguments():
     parser.add_argument('--live-student-sha256',help='Explicit manifest SHA256 for a frozen portable V2 student')
     parser.add_argument('--live-student-use',choices=['shadow','clarify'],default='shadow',help='Explicit experimental source-grounded clarification; never bank authority')
     parser.add_argument('--local-only',action='store_true',help='Generate and locally validate without credentials, Freya publication or simulation')
+    parser.add_argument('--self-practice',action='store_true',help='Source-grounded author/audit/test loop for compatible unseen briefs')
     parser.add_argument('--practice-repair',help='New explicitly logged practice cycle from a stopped public-brief run; never permitted for unseen briefs')
     parser.add_argument('--repair-first',action='store_true',help='With public practice repair, use the existing failed-call evidence before rerunning the candidate')
     parser.add_argument('--resume-run',help='Continue a stopped run with identical evidence and its original total time budget')
@@ -572,12 +638,13 @@ def arguments():
     if args.live_layer=='v2-student' and (not args.live_student or not re.fullmatch(r'[a-f0-9]{64}',args.live_student_sha256 or '')):parser.error('V2 live student requires a directory and explicit frozen manifest SHA256')
     if args.live_layer!='v2-student' and (args.live_student or args.live_student_sha256):parser.error('Student arguments require --live-layer v2-student')
     if args.repair_first and not args.practice_repair:parser.error('--repair-first requires --practice-repair')
-    try:validate_case_scope(args.briefs,args.cases,args.skip_tests or args.local_only)
+    try:validate_case_scope(args.briefs,args.cases,args.skip_tests or args.local_only or args.self_practice)
     except ValueError as error:parser.error(str(error))
     if args.resume_run and args.practice_repair:parser.error('Use either same-budget resume or a separate public practice repair cycle')
     if not 0<args.minutes<=30:parser.error('Each build is limited to 30 minutes.')
     # Without tests a round costs only model time, so the full budget may need more than three short rounds.
-    if args.rounds is None:args.rounds=6 if args.skip_tests else 3
+    if args.self_practice and args.skip_tests:parser.error('--self-practice runs tests; do not combine it with --skip-tests')
+    if args.rounds is None:args.rounds=6 if args.skip_tests else 4 if args.self_practice else 3
     if not 1<=args.rounds<=6:parser.error('Use 1 to 6 bounded build/repair rounds within the same 30-minute maximum.')
     if not re.fullmatch(r'[A-Za-z0-9_-]+',args.slot):parser.error('slot must use letters, numbers, - or _.')
     if not args.model:
