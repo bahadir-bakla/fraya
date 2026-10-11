@@ -12,6 +12,16 @@ spec.loader.exec_module(adapter)
 
 
 class CaseFolder(unittest.TestCase):
+    def test_local_refs_preserve_nested_schema_and_reject_cycles(self):
+        original = {'components': {'schemas': {'Envelope': {'type': 'object', 'required': ['data'],
+                      'properties': {'data': {'type': 'object', 'required': ['key'],
+                      'properties': {'key': {'type': 'string', 'enum': ['one', 'two']}}}}}}}}
+        resolved = adapter.expand_references({'$ref': '#/components/schemas/Envelope'}, original)
+        self.assertEqual(resolved, original['components']['schemas']['Envelope'])
+        for document in ({'x': {'$ref': '#/x'}}, {'x': {'$ref': 'https://example.com'}}):
+            with self.assertRaises(ValueError):
+                adapter.expand_references(document['x'], document)
+
     def test_config_only_change_and_source_pins(self):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)

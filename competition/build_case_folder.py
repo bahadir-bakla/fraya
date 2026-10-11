@@ -18,6 +18,27 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def expand_references(value, document, active=()):
+    """Inline only local JSON references without weakening any schema field."""
+    if isinstance(value, list):
+        return [expand_references(item, document, active) for item in value]
+    if not isinstance(value, dict):
+        return value
+    if '$ref' in value:
+        ref = value['$ref']
+        if not isinstance(ref, str) or not ref.startswith('#/') or ref in active:
+            raise ValueError('Unsupported external or recursive API reference')
+        target = document
+        for part in ref[2:].split('/'):
+            target = target[part.replace('~1', '/').replace('~0', '~')]
+        result = expand_references(target, document, active + (ref,))
+        if not isinstance(result, dict):
+            raise ValueError('API reference must resolve to an object')
+        result.update({key: expand_references(item, document, active) for key, item in value.items() if key != '$ref'})
+        return result
+    return {key: expand_references(item, document, active) for key, item in value.items()}
+
+
 def prepare(folder, api_path, mock_url, output):
     folder = Path(folder).resolve()
     origin = mock_url.rstrip('/')
@@ -51,14 +72,15 @@ def prepare(folder, api_path, mock_url, output):
         records.append({'source': str(path.relative_to(folder)), 'sha256': digest(raw),
                         'prepared': dest.name, 'prepared_sha256': digest(dest.read_bytes())})
         paths.append(str(dest))
-    api = json.loads(Path(api_path).read_text(encoding='utf-8-sig'))
+    source_api = json.loads(Path(api_path).read_text(encoding='utf-8-sig'))
+    api = expand_references(source_api, source_api)
     api['servers'] = [{'url': origin}]
     prepared_api = output / 'openapi.json'
     prepared_api.write_text(json.dumps(api, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     manifest = {'case_folder': str(folder), 'mock_url': origin, 'documents': records,
                 'source_api_sha256': digest(Path(api_path).read_bytes()),
                 'prepared_api_sha256': digest(prepared_api.read_bytes()),
-                'configuration_change': 'servers only', 'manual_workflow_edits': False}
+                'configuration_change': 'servers; local references expanded losslessly', 'manual_workflow_edits': False}
     (output / 'source-manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     return paths, prepared_api
 

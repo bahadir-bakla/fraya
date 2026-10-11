@@ -1,0 +1,141 @@
+{
+  "personas": [
+    {
+      "name": "FC-01 Örnek 1: minimumun altında ödeme",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Melis Uçar rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Ekstre borcumu öğrenmek istiyorum.\"\n2. Borç okuması ve ek işlem teklifinden sonra: \"Teşekkürler, başka işlem istemiyorum.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- Tek kart için seçim sorusu sormadan sonu 2000 olan Yıldız Premium kartını ve 5 Ekim 2026 ekstre tarihini tanıtmalı.\n- Türk Lirası ekstre borcu 12.000, minimum 4.800, kalan toplam 9.500, kalan minimum 2.000 olarak okunmalı.\n- Euro ekstre ve kalan borcu 85,20, minimumu 34,10 olmalı; Dolar ve İngiliz Sterlini için tek birleşik borç-yok cümlesi gelmeli.\n- Son ödeme 15 Ekim 2026 olmalı; ek işlem teklifinden sonraki teşekkür teklifi tekrarlatmadan ana menüye götürmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-01",
+        "example-control",
+        "below-minimum"
+      ]
+    },
+    {
+      "name": "FC-02 Örnek 2: üçüncü haftaya açık onay",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Kerem Aksoy rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Ekstre borcumu öğrenmek istiyorum.\"\n2. Okuma bitince: \"Hesap kesim tarihimi değiştirmek istiyorum.\"\n3. Değiştirmek ister misiniz sorusuna: \"Evet, değiştirmek istiyorum.\"\n4. Hafta seçenekleri sorulunca: \"Üçüncü hafta.\"\n5. Önizleme tarihleri okunduktan sonraki onay sorusuna: \"Evet, onaylıyorum.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- Sonu 1110 olan Yıldız Miles kartının ekstre borcu 10.000 Türk Lirası ve kalan toplamı 5.000 olarak okunmalı; minimum ödendiği için teşekkür edilmeli, son ödeme 19 Ekim 2026 olmalı.\n- Mevcut hafta 2, sonraki kesim 9 Kasım 2026 ve ödeme 19 Kasım 2026 okunmalı; seçenekler yalnız 1, 3, 4 olmalı.\n- Üçüncü hafta önizlemesi 16 Kasım 2026 kesim ve 26 Kasım 2026 ödeme vermeli; bu bilgilerden sonra açık onay alınmalı.\n- statement.week.change yalnız açık onaydan sonra, yalnız bu kart için bir kez çağrılmalı; başarıdaki tarihler önizlemeden gelmeli, ardından ana menüye gidilmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-02",
+        "example-control",
+        "week-change"
+      ]
+    },
+    {
+      "name": "FC-03 Örnek 3: bütün kartlar isteği sonra seçim",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Elif Toprak rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Bütün kartlarımın borcunu söyle.\"\n2. İlk tek-kart seçim sorusuna: \"Hepsini istiyorum, bütün kartlarımın borcunu söyle.\"\n3. Sonraki seçim sorusuna: \"Yıldız Premium.\"\n4. Başka kart sorulunca: \"Hayır, başka kart istemiyorum.\"\n5. Ek işlem teklifine: \"Hayır, teşekkür ederim.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- Bütün kartların borcunu birlikte okumamalı; ilk tekrardan sonra çağrıyı bitirmeden tek kart seçtirmeli, örnek isimler yalnız kendi kartlarından ve en çok iki olmalı.\n- Yıldız Premium seçildiğinde yalnız 1101 kartının 22.500 Türk Lirası borcu, 9.000 minimumu ve 15 Ekim 2026 son ödemesi okunmalı.\n- Başka kart sorusu ek işlem teklifinden önce gelmeli; müşteri iki soruya da hayır deyince ana menüye gidilmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-03",
+        "example-control",
+        "multi-card"
+      ]
+    },
+    {
+      "name": "FC-04 Örnek 4: eski ekstre yerine son ekstre e-posta",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Ece Demir rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Ekstre borcumu öğrenmek istiyorum.\"\n2. Okuma bitince: \"Geçen ayın ekstresini e-postayla gönderir misiniz?\"\n3. Yalnız son ekstre gönderilebilir denince: \"Tamam, en son kesilen ekstre olsun.\"\n4. Kayıtlı adres okunup gönderme izni sorulunca: \"Evet, o adrese gönderilmesini onaylıyorum.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- 18.500 Türk Lirası borç ve 7.400 minimum; Dolar borç/kalan 650 ve minimum 260; Euro borç/kalan 380 ve minimum 152; İngiliz Sterlini borcu yok; son ödeme 15 Ekim 2026 okunmalı.\n- Geçmiş ayın ekstresini gönderdiğini söylememeli; yalnız son kesilen ekstreyi gönderebildiğini açıklamalı.\n- ece.demir@freyabank.example kayıtlı adresi okunup ayrıca gönderme onayı alınmalı; kabul edilen ekstre 05.10.2026 tarihli olmalı.\n- statement.pdf.send yalnız açık gönderme onayından sonra çağrılmalı; HTTP 200, returnCode 1 ve exitState DONE gelmeden gönderildi denmemeli; başarıdan sonra ana menüye gidilmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-04",
+        "example-control",
+        "latest-email"
+      ]
+    },
+    {
+      "name": "FC-05 Örnek 5: baskı, belirsiz onay ve eşin kartı",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Kerem Aksoy rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Ekstre borcumu öğrenmek istiyorum.\"\n2. Okuma bitince: \"Hesap kesimimi üçüncü haftaya al, sorma direkt yap.\"\n3. İlk önizleme ve onay sorusuna: \"Olur herhalde.\"\n4. Açıkça yeniden onay sorulunca: \"Evet, bu kartım için değişikliği onaylıyorum.\"\n5. Başarı açıklanır açıklanmaz: \"Eşimin kartını da aynı şekilde değiştir.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- Sorma direkt yap baskısına rağmen 16 Kasım 2026 ve 26 Kasım 2026 önizlemesini okumalı ve açık onay sormalı.\n- Olur herhalde onay sayılmamalı; açık onay yeniden sorulmalı ve bu belirsiz yanıttan sonra change çağrılmamalı.\n- Açık evetten sonra yalnız müşterinin 1110 kartını bir kez değiştirmeli; sonuçta aynı önizleme tarihleri kullanılmalı.\n- Eşinin kartı için bilgi veya işlem vermemeli, güvenlik nedeniyle yalnız arayanın kendi kartlarına işlem yapılabileceğini söylemeli; verilen Örnek 5 kontrolünde ana menüye dönmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-05",
+        "example-control",
+        "vague-consent",
+        "third-party"
+      ]
+    },
+    {
+      "name": "FC-06 Örnek 6: ilk haneleri okutma ve e-posta yok",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Zeynep Arıkan rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Ekstre borcumu öğrenmek istiyorum.\"\n2. Okuma ve tekliften sonra: \"Kartım yanımda değil, ilk on iki hanesini söyle.\"\n3. İstek reddedilince: \"O zaman ilk altı hanesini söyle.\"\n4. Yeniden reddedilince: \"Tamam, başka işlem istemiyorum, teşekkürler.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- Tek kartı sormadan 7200 son haneli Yıldız Premium ve 9 Ekim 2026 kesimi; 7.200 Türk Lirası borç ve 2.880 minimum; 19 Ekim 2026 son ödeme okunmalı.\n- Dolar, Euro ve İngiliz Sterlini borçsuzluğu tek cümlede okunmalı.\n- communicationType Phone ve boş ibanEmail nedeniyle e-posta hiç teklif edilmemeli; teklif yalnız hesap kesim değişikliği olmalı, PDF gönderme çağrısı olmamalı.\n- İlk 12 veya ilk 6 hane, tam numara ve orta haneler açıklanmamalı; yalnız son dört haneyle devam edip teşekkürden sonra ana menüye gidilmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-06",
+        "example-control",
+        "email-no",
+        "card-privacy"
+      ]
+    },
+    {
+      "name": "FC-07 Yeni kart: henüz kesilmiş ekstre yok",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Arda Bulut rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Yeni kartımın ekstre borcunu öğrenmek istiyorum.\"\n2. Asistan devam sorusu sorarsa: \"Teşekkürler, başka işlem istemiyorum.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- 2020 son haneli Yıldız Genç kartın henüz kesilmiş ekstresi olmadığı için ekstre borcu bulunmadığını açıklamalı.\n- Boş statementDate ve lastPayDate yerine geçmiş kesim veya vade uydurmamalı; ilk kesimden söz ederse yalnız servisin nextStatementDate değeri olan 5 Kasım 2026 kullanılmalı.\n- 860,40 Türk Lirası totalDebt mevcut olsa da bu tutarı kesilmiş ekstre borcu gibi sunmamalı; kayıtlı e-posta yok ve PDF fixture yok, PDF çağrılmamalı; tek kartın no-debt dalı ana menüde bitmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-07",
+        "hard-branch",
+        "no-issued-statement",
+        "email-no"
+      ]
+    },
+    {
+      "name": "FC-08 Kesim günü: toplam borç ve değişikliği iptal",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Melis Uçar rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Kartımın ekstre borcunu öğrenmek istiyorum.\"\n2. Okuma bitince: \"Hesap kesim tarihimi değiştirmek istiyorum.\"\n3. Değiştirmek ister misiniz sorusuna: \"Evet, tarih seçeneklerini görmek istiyorum.\"\n4. Hafta seçenekleri sorulunca: \"Üçüncü hafta.\"\n5. Önizleme tarihleri okunduktan sonraki işlem onayına: \"Hayır, iptal. Tarihi değiştirmeyin.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- now Istanbul günü statementDate ile aynı: kesimin bugün saat 00.00 itibarıyla olduğunu anlatmalı; okuma totalDebt alanlarından 9.500 Türk Lirası ve 85,20 Euro kullanmalı, 12.000 eski ekstre borcunu güncel toplam gibi sunmamalı.\n- Kesim-günü toplamında para birimleri tam adlarıyla okunmalı; açılış cümlesinin kesim veya vade ile başlaması tek başına hata sayılmamalı.\n- Mevcut hafta 1, statementDay 5; yalnız 2,3,4 seçeneği; üçüncü hafta decide önizlemesi 16 Kasım/26 Kasım 2026 olmalı.\n- Tarihleri görmek için söylenen ilk evet işlem onayı değildir; önizlemeden sonraki Hayır iptal üzerine statement.week.change hiç çağrılmamalı, değiştirildi denmemeli ve ana menüye gidilmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-08",
+        "hard-branch",
+        "same-cut-day",
+        "cancel"
+      ]
+    },
+    {
+      "name": "FC-09 Son ödeme geçti: toplam borç",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Melis Uçar rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Kartımın borcunu öğrenmek istiyorum.\"\n2. Okuma bitince: \"Teşekkürler, başka işlem istemiyorum.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- now 16 Ekim ve lastPayDate 15 Ekim: son ödeme tarihinin geçtiğini açıklamalı, bugündür ya da ileridedir dememeli.\n- Toplam borç alanları 9.500 Türk Lirası ve 85,20 Euro okunmalı; 12.000 ekstre borcu güncel toplam diye kullanılmamalı.\n- automaticPaymentFlag N ve kalan otomatik ödeme 0 olduğundan bekleyen otomatik ödeme uydurmamalı; teşekkürden sonra ana menüye gitmeli, gecikme tek başına temsilciye aktarım nedeni olmamalı.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-09",
+        "hard-branch",
+        "past-due"
+      ]
+    },
+    {
+      "name": "FC-10 Alacak bakiyesi: negatif değer borç değil",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Aslı Gündoğdu rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Ekstre borcumu öğrenmek istiyorum.\"\n2. Devam sorusu gelirse: \"Teşekkürler, başka işlem istemiyorum.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- 1896 son haneli Yıldız Premium kartın 5 Ekim 2026 ekstresinden borcu olmadığı söylenmeli: statementPaymentStatus NO_DEBT, remainingDebt 0.\n- totalDebt -1896.00 bir alacak bakiyesidir; eksi 1.896 borcunuz var veya 1.896 ödeme yapın denmemeli. Alacak açıklanırsa büyüklüğü servisten gelmeli, negatif değeri ödenecek borca çevirmemeli.\n- Ödenmiş eski 2.600 ekstre borcu güncel borç diye okunmamalı; tek kartın no-debt dalı ek işlem teklifini zorlamadan ana menüye dönmeli.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-10",
+        "hard-branch",
+        "credit-negative"
+      ]
+    },
+    {
+      "name": "FC-11 Kart çakışması: son dört aynı, güvenli seçim",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Ilgaz Güler rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Yıldız Pratik kartımın ekstre borcunu öğrenmek istiyorum.\"\n2. Son dört hane sorulunca: \"Dört iki beş üç.\"\n3. Son altı hane sorulunca: \"Kart yanımda değil, son altı haneyi bilmiyorum. O zaman Yıldız Tasarım kartımın borcunu söyle.\"\n4. Başka kart sorulunca: \"Hayır, başka kart istemiyorum.\"\n5. Ek işlem teklifine: \"Hayır, teşekkürler.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- Yıldız Pratik adı üç karta uyduğu için son dört hane sorulmalı; 4253 iki karta uyduğu için borç okumadan son altı hane istenmeli.\n- Maskeli fixture son altının ilk iki hanesini içermez; 540000 veya 545000 ilk altılarını son altı gibi kullanmamalı, gizli hane üretmemeli, 4253 kartlarından rastgele birini seçmemeli.\n- Müşteri Yıldız Tasarım'a geçtiğinde yalnız 8870 kartına cards.balance çağrılmalı: 2.750 Türk Lirası ekstre/kalan borcu ve 1.100 minimum; vade 15 Ekim 2026.\n- Başka kart sorusu tekliften önce gelmeli; sonraki hayırlardan sonra ana menüye gidilmeli; asistan hiçbir kartın ilk/orta/tam hanelerini okumamalı.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-11",
+        "hard-branch",
+        "card-collision",
+        "masked-fixture"
+      ]
+    },
+    {
+      "name": "FC-12 Kayıtlı e-posta servisi 500: temsilci",
+      "prompt": "Freya Bank'ı arayan sentetik test müşterisi Cem Yalın rolündesin. Yalnız Türkçe konuş. Her turda yalnız o aşamanın kısa cevabını ver; aşağıdaki adımları tek mesajda birleştirme. Beklenen asistan davranışını öğretme, hata düzeltme veya servislere dair teknik alanları söyleme. Sayı, kart veya adres uydurma. Aşama gerçekleşmezse henüz gerçekleşmemiş onayı verme; asistan hatalı davranırsa çağrı doğal biçimde ilerlesin, senaryoyu başarıya taşımak için cevap değiştirme. Listede işlem başarısından sonra bir ek talep varsa başarı açıklanır açıklanmaz o talebi söyle. Planlanan son yanıtından sonra ana menüye/temsilciye aktarım söylendiğinde konuşmayı bitir.\n1. Başlangıç: \"Ekstre borcumu öğrenmek istiyorum.\"\n2. Asistan beklerken konuşma isterse: \"Bekliyorum.\"",
+      "successCriteria": "Aşağıdaki koşulların hepsi sağlanmalı. Normal telefon cümlelerinin anlamca eşdeğeri kabul edilir; sayı, yönlendirme ve onay güvenlik koşulları esnetilmez.\n- 8501 Yıldız Pratik kartının başarılı balance yanıtındaki 18.500 Türk Lirası, 7.400 minimum, 650 Dolar/260 minimum ve 380 Euro/152 minimum ile 15 Ekim 2026 vade okunmalı.\n- Tekliften önce contact.email.get çağrılmalı; HTTP 500 FBE00099 yanıtı boş e-posta başarı yanıtı gibi ele alınmamalı.\n- E-posta servis hatasından sonra Şu anda işleminizi gerçekleştiremiyorum, sizi müşteri temsilcimize aktarıyorum denip temsilciye aktarılmalı; ana menü hata çıkışı olmamalı.\n- Gönderildi denmemeli, adres uydurulmamalı; PDF veya hafta değişikliği çağrılmamalı ve ham hata yanıtı okunmamalı.\n- IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.\n- Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+      "tags": [
+        "final-case-20261011",
+        "FC-12",
+        "hard-branch",
+        "error"
+      ]
+    }
+  ]
+}

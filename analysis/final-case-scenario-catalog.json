@@ -1,0 +1,5191 @@
+{
+  "case_folder": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\final-case-20261011\\Build the Builder - Final Case",
+  "source_inventory": [
+    {
+      "path": "BRIEF.md",
+      "sha256": "b81506df0cb43ab5ce023b3e3880d6f477021da81bc4ed3c8b5d0aab61e42da9"
+    },
+    {
+      "path": "cloudflare-mock/example/example-response.json",
+      "sha256": "0deeee4de065d3fdbd78818ba270547c5d9601ab8398b1e4d5596603196401a9"
+    },
+    {
+      "path": "cloudflare-mock/example/worker.js",
+      "sha256": "0fb2a47300c8e131a47e6e265ff33350733e0bdb19c17097aab4168dc6901d24"
+    },
+    {
+      "path": "cloudflare-mock/example/wrangler.toml",
+      "sha256": "a7a80f867f971916c521ef2133d405ce8698423b4db19f93f734f03f987ea60b"
+    },
+    {
+      "path": "cloudflare-mock/README.md",
+      "sha256": "6e50898b1bcc91ca76646b557786d722888bb8ae96aa719f20b659daa23abd6a"
+    },
+    {
+      "path": "example-scenarios.md",
+      "sha256": "c7534cb5d591d6399a72c3c717f35d75c81ff2d07c1587ba5ab90245d283d989"
+    },
+    {
+      "path": "README.md",
+      "sha256": "476f99af2e66739de8ed4a192b04c003cc6ab5d31a9bce6825af4d9608852cc6"
+    },
+    {
+      "path": "sources/documents/2025-08-14-cards-faq.md",
+      "sha256": "bb26e035f72da6d5add21d62271dc798106c1a859deb00fa9a9878dc8f6d8f26"
+    },
+    {
+      "path": "sources/documents/2026-09-10-ivr-prompt-sheet.md",
+      "sha256": "dfb0d352d57dc22466c0b11ee557b4af1ba0f266be48b455aabae140a64dd463"
+    },
+    {
+      "path": "sources/documents/2026-10-01-service-contract.md",
+      "sha256": "692414a06036911509072d602b6c85bf38cbf2c791d26488d53d28be1cf35470"
+    },
+    {
+      "path": "sources/emails/2026-09-24-kickoff-questions.txt",
+      "sha256": "d19e44e8098850f378fd6816892f7b9196ec6f469ccd6dc8dea76566b850be74"
+    },
+    {
+      "path": "sources/emails/2026-10-09-decisions-recap.txt",
+      "sha256": "709f18f3d73c4e9398a3ed9dc7249a54b7ca48dcdde8ce7aa7ebbbcdef1b0732"
+    },
+    {
+      "path": "sources/emails/attachments/2026-09-02-statement-debt-analysis.md",
+      "sha256": "16915b44652e16afeea64d5f3ecf6d09b9bcce54d7d39b132ff8237369c507a2"
+    },
+    {
+      "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+      "sha256": "c33b5640a06f6be6e6d3cc7f86189ab75bf4ffb4e935874b3ee3b48b03ff1094"
+    },
+    {
+      "path": "sources/meetings/2026-10-07-analysis-session-transcript.txt",
+      "sha256": "6e75d0013cf6c653f4a25a6ce0c2f6e0a96b4472474e530d6ab4bebf8b21b20d"
+    },
+    {
+      "path": "sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+      "sha256": "860e3a0249492482535af48c2103430e7de4abc351efe53e6d872b4db837137b"
+    },
+    {
+      "path": "statement-debt-call-flow.pdf",
+      "sha256": "1092fe84329911c89477e794ed874f8216aeb31cc4c825931c4e017374eb69ca"
+    },
+    {
+      "path": "test-environment/test-customers.json",
+      "sha256": "d6ce155638f61ab17910d53ea993a2b0d68cf4e10d6b9db2fb8e4a7add0ef44d"
+    },
+    {
+      "path": "test-environment/test-customers.md",
+      "sha256": "f0c6607e8ad2c874608dc39d8ab13fbb11f5f1f2975c08fe871a378c32815375"
+    }
+  ],
+  "persona_schema_sources": [
+    "skill-creator-skill-lift/integrations/freya-mcp/freya_mcp/bridge.py:create_personas/start",
+    "skill-creator-skill-lift/integrations/freya-mcp/freya_mcp/server.py:freya_create_personas/freya_start_simulation",
+    "build-the-builder 2/docs/api.md:Personas"
+  ],
+  "controls_fixed": true,
+  "first_batch": [
+    "FC-01",
+    "FC-02",
+    "FC-03",
+    "FC-04",
+    "FC-05"
+  ],
+  "scenarios": [
+    {
+      "id": "FC-01",
+      "persona_name": "FC-01 Örnek 1: minimumun altında ödeme",
+      "example_number": 1,
+      "primary_branch": "normal",
+      "tags": [
+        "example-control",
+        "below-minimum"
+      ],
+      "variables": {
+        "customerNumber": "95004361",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Ekstre borcumu öğrenmek istiyorum."
+        },
+        {
+          "when": "Borç okuması ve ek işlem teklifinden sonra",
+          "say": "Teşekkürler, başka işlem istemiyorum."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "95004361",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******2000",
+            "cardNumberLast4": "2000",
+            "productName": "Yıldız Premium",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********2000",
+          "cardNumberLast4": "2000",
+          "productName": "Yıldız Premium",
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 12000.0,
+            "minPayment": 4800.0,
+            "remainingDebt": 9500.0,
+            "remainingMinPayment": 2000.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 9500.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 85.2,
+            "minPayment": 34.1,
+            "remainingDebt": 85.2,
+            "remainingMinPayment": 34.1,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 85.2,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "melis.ucar@freyabank.example",
+              "ttsEmail": "melis.ucar@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "05.10.2026",
+        "lastPayDate": "15.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Ekstre borcumu öğrenmek istiyorum."
+          ],
+          [
+            "Borç okuması ve ek işlem teklifinden sonra",
+            "Teşekkürler, başka işlem istemiyorum."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-01-C01",
+          "condition": "Tek kart için seçim sorusu sormadan sonu 2000 olan Yıldız Premium kartını ve 5 Ekim 2026 ekstre tarihini tanıtmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 3.1"
+          },
+          "fixture_predicate": "one_card"
+        },
+        {
+          "id": "FC-01-C02",
+          "condition": "Türk Lirası ekstre borcu 12.000, minimum 4.800, kalan toplam 9.500, kalan minimum 2.000 olarak okunmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 1:"
+          },
+          "fixture_predicate": "tl_partial"
+        },
+        {
+          "id": "FC-01-C03",
+          "condition": "Euro ekstre ve kalan borcu 85,20, minimumu 34,10 olmalı; Dolar ve İngiliz Sterlini için tek birleşik borç-yok cümlesi gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.4"
+          },
+          "fixture_predicate": "fx_partial"
+        },
+        {
+          "id": "FC-01-C04",
+          "condition": "Son ödeme 15 Ekim 2026 olmalı; ek işlem teklifinden sonraki teşekkür teklifi tekrarlatmadan ana menüye götürmeli.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 1:"
+          },
+          "fixture_predicate": "thanks_exit"
+        },
+        {
+          "id": "FC-01-C05",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-01-C06",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "95004361",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******2000",
+                  "cardNumberLast4": "2000",
+                  "productName": "Yıldız Premium",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0088",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0088",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******2000"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/cards.balance/540000******2000",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********2000",
+              "cardNumberLast4": "2000",
+              "productName": "Yıldız Premium",
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 12000.0,
+                "minPayment": 4800.0,
+                "remainingDebt": 9500.0,
+                "remainingMinPayment": 2000.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 9500.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 85.2,
+                "minPayment": 34.1,
+                "remainingDebt": 85.2,
+                "remainingMinPayment": 34.1,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 85.2,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0089",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0089",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "95004361",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "melis.ucar@freyabank.example",
+              "ttsEmail": "melis.ucar@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-02",
+      "persona_name": "FC-02 Örnek 2: üçüncü haftaya açık onay",
+      "example_number": 2,
+      "primary_branch": "normal",
+      "tags": [
+        "example-control",
+        "week-change"
+      ],
+      "variables": {
+        "customerNumber": "96158684",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Ekstre borcumu öğrenmek istiyorum."
+        },
+        {
+          "when": "Okuma bitince",
+          "say": "Hesap kesim tarihimi değiştirmek istiyorum."
+        },
+        {
+          "when": "Değiştirmek ister misiniz sorusuna",
+          "say": "Evet, değiştirmek istiyorum."
+        },
+        {
+          "when": "Hafta seçenekleri sorulunca",
+          "say": "Üçüncü hafta."
+        },
+        {
+          "when": "Önizleme tarihleri okunduktan sonraki onay sorusuna",
+          "say": "Evet, onaylıyorum."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "96158684",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******1110",
+            "cardNumberLast4": "1110",
+            "productName": "Yıldız Miles",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********1110",
+          "cardNumberLast4": "1110",
+          "productName": "Yıldız Miles",
+          "statementDate": "09.10.2026",
+          "lastPayDate": "19.10.2026",
+          "nextStatementDate": "09.11.2026",
+          "nextLastPayDate": "19.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 10000.0,
+            "minPayment": 4000.0,
+            "remainingDebt": 5000.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 5000.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "kerem.aksoy@freyabank.example",
+              "ttsEmail": "kerem.aksoy@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0042",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0042",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "09.10.2026",
+        "lastPayDate": "19.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Ekstre borcumu öğrenmek istiyorum."
+          ],
+          [
+            "Okuma bitince",
+            "Hesap kesim tarihimi değiştirmek istiyorum."
+          ],
+          [
+            "Değiştirmek ister misiniz sorusuna",
+            "Evet, değiştirmek istiyorum."
+          ],
+          [
+            "Hafta seçenekleri sorulunca",
+            "Üçüncü hafta."
+          ],
+          [
+            "Önizleme tarihleri okunduktan sonraki onay sorusuna",
+            "Evet, onaylıyorum."
+          ]
+        ],
+        "currentWeek": {
+          "cardNumber": "540000******1110",
+          "cardNumberLast4": "1110",
+          "productName": "Yıldız Miles",
+          "statementWeek": 2,
+          "statementDay": 9,
+          "statementDate": "09.10.2026",
+          "lastPayDate": "19.10.2026",
+          "nextStatementDate": "09.11.2026",
+          "nextLastPayDate": "19.11.2026",
+          "relationType": "",
+          "relatedCardNumber": "",
+          "relatedCardProductName": ""
+        },
+        "preview": {
+          "statementDate": "16.11.2026",
+          "statementDueDate": "26.11.2026",
+          "statementDay": 16,
+          "responseCode": 0,
+          "responseMessage": "Success"
+        }
+      },
+      "checks": [
+        {
+          "id": "FC-02-C01",
+          "condition": "Sonu 1110 olan Yıldız Miles kartının ekstre borcu 10.000 Türk Lirası ve kalan toplamı 5.000 olarak okunmalı; minimum ödendiği için teşekkür edilmeli, son ödeme 19 Ekim 2026 olmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 2:"
+          },
+          "fixture_predicate": "minimum_paid"
+        },
+        {
+          "id": "FC-02-C02",
+          "condition": "Mevcut hafta 2, sonraki kesim 9 Kasım 2026 ve ödeme 19 Kasım 2026 okunmalı; seçenekler yalnız 1, 3, 4 olmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 7."
+          },
+          "fixture_predicate": "week_options"
+        },
+        {
+          "id": "FC-02-C03",
+          "condition": "Üçüncü hafta önizlemesi 16 Kasım 2026 kesim ve 26 Kasım 2026 ödeme vermeli; bu bilgilerden sonra açık onay alınmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 2:"
+          },
+          "fixture_predicate": "preview"
+        },
+        {
+          "id": "FC-02-C04",
+          "condition": "statement.week.change yalnız açık onaydan sonra, yalnız bu kart için bir kez çağrılmalı; başarıdaki tarihler önizlemeden gelmeli, ardından ana menüye gidilmeli.",
+          "source": {
+            "path": "sources/documents/2026-10-01-service-contract.md",
+            "anchor": "### 5.5"
+          },
+          "fixture_predicate": "commit_once"
+        },
+        {
+          "id": "FC-02-C05",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-02-C06",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "96158684",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******1110",
+                  "cardNumberLast4": "1110",
+                  "productName": "Yıldız Miles",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0033",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0033",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1110"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/cards.balance/540000******1110",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********1110",
+              "cardNumberLast4": "1110",
+              "productName": "Yıldız Miles",
+              "statementDate": "09.10.2026",
+              "lastPayDate": "19.10.2026",
+              "nextStatementDate": "09.11.2026",
+              "nextLastPayDate": "19.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 10000.0,
+                "minPayment": 4000.0,
+                "remainingDebt": 5000.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 5000.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0034",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0034",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "96158684",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "kerem.aksoy@freyabank.example",
+              "ttsEmail": "kerem.aksoy@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0042",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0042",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        },
+        {
+          "service": "statement.week.get",
+          "method": "POST",
+          "path": "/voice/v1/statement.week.get",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1110"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/statement.week.get/540000******1110",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "540000******1110",
+              "cardNumberLast4": "1110",
+              "productName": "Yıldız Miles",
+              "statementWeek": 2,
+              "statementDay": 9,
+              "statementDate": "09.10.2026",
+              "lastPayDate": "19.10.2026",
+              "nextStatementDate": "09.11.2026",
+              "nextLastPayDate": "19.11.2026",
+              "relationType": "",
+              "relatedCardNumber": "",
+              "relatedCardProductName": ""
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0035",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0035",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "After caller requests week change; never fabricate annual-right flag.",
+          "required": true
+        },
+        {
+          "service": "statement.week.decide",
+          "method": "POST",
+          "path": "/voice/v1/statement.week.decide",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1110",
+              "newStatementWeek": 3,
+              "statementDay": 9
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/statement.week.decide/540000******1110/3",
+          "http": 200,
+          "response": {
+            "data": {
+              "statementDate": "16.11.2026",
+              "statementDueDate": "26.11.2026",
+              "statementDay": 16,
+              "responseCode": 0,
+              "responseMessage": "Success"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0037",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0037",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Chosen alternative week; current statementDay, no side effect.",
+          "required": true
+        },
+        {
+          "service": "statement.week.change",
+          "method": "POST",
+          "path": "/voice/v1/statement.week.change",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1110",
+              "newStatementWeek": 3,
+              "statementDay": 9
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/statement.week.change/540000******1110/3",
+          "http": 200,
+          "response": {
+            "data": {
+              "responseCode": 0,
+              "responseMessage": "00",
+              "statementWeek": "3",
+              "statementDay": "16",
+              "exitState": "OK"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0040",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0040",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "After preview dates and explicit confirmation only; exactly once.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-03",
+      "persona_name": "FC-03 Örnek 3: bütün kartlar isteği sonra seçim",
+      "example_number": 3,
+      "primary_branch": "normal",
+      "tags": [
+        "example-control",
+        "multi-card"
+      ],
+      "variables": {
+        "customerNumber": "97526380",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Bütün kartlarımın borcunu söyle."
+        },
+        {
+          "when": "İlk tek-kart seçim sorusuna",
+          "say": "Hepsini istiyorum, bütün kartlarımın borcunu söyle."
+        },
+        {
+          "when": "Sonraki seçim sorusuna",
+          "say": "Yıldız Premium."
+        },
+        {
+          "when": "Başka kart sorulunca",
+          "say": "Hayır, başka kart istemiyorum."
+        },
+        {
+          "when": "Ek işlem teklifine",
+          "say": "Hayır, teşekkür ederim."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "97526380",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******1101",
+            "cardNumberLast4": "1101",
+            "productName": "Yıldız Premium",
+            "status": "A",
+            "isMainCard": true
+          },
+          {
+            "cardNumber": "540000******1102",
+            "cardNumberLast4": "1102",
+            "productName": "Yıldız Fly",
+            "status": "A",
+            "isMainCard": true
+          },
+          {
+            "cardNumber": "540000******1103",
+            "cardNumberLast4": "1103",
+            "productName": "Yıldız Platinum",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********1101",
+          "cardNumberLast4": "1101",
+          "productName": "Yıldız Premium",
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 22500.0,
+            "minPayment": 9000.0,
+            "remainingDebt": 22500.0,
+            "remainingMinPayment": 9000.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 22500.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "elif.toprak@freyabank.example",
+              "ttsEmail": "elif.toprak@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0212",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0212",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "05.10.2026",
+        "lastPayDate": "15.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Bütün kartlarımın borcunu söyle."
+          ],
+          [
+            "İlk tek-kart seçim sorusuna",
+            "Hepsini istiyorum, bütün kartlarımın borcunu söyle."
+          ],
+          [
+            "Sonraki seçim sorusuna",
+            "Yıldız Premium."
+          ],
+          [
+            "Başka kart sorulunca",
+            "Hayır, başka kart istemiyorum."
+          ],
+          [
+            "Ek işlem teklifine",
+            "Hayır, teşekkür ederim."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-03-C01",
+          "condition": "Bütün kartların borcunu birlikte okumamalı; ilk tekrardan sonra çağrıyı bitirmeden tek kart seçtirmeli, örnek isimler yalnız kendi kartlarından ve en çok iki olmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 3:"
+          },
+          "fixture_predicate": "all_cards_retry"
+        },
+        {
+          "id": "FC-03-C02",
+          "condition": "Yıldız Premium seçildiğinde yalnız 1101 kartının 22.500 Türk Lirası borcu, 9.000 minimumu ve 15 Ekim 2026 son ödemesi okunmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 3:"
+          },
+          "fixture_predicate": "premium_selected"
+        },
+        {
+          "id": "FC-03-C03",
+          "condition": "Başka kart sorusu ek işlem teklifinden önce gelmeli; müşteri iki soruya da hayır deyince ana menüye gidilmeli.",
+          "source": {
+            "path": "sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+            "anchor": "[00:04:19]"
+          },
+          "fixture_predicate": "another_first"
+        },
+        {
+          "id": "FC-03-C04",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-03-C05",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "97526380",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/27/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******1101",
+                  "cardNumberLast4": "1101",
+                  "productName": "Yıldız Premium",
+                  "status": "A",
+                  "isMainCard": true
+                },
+                {
+                  "cardNumber": "540000******1102",
+                  "cardNumberLast4": "1102",
+                  "productName": "Yıldız Fly",
+                  "status": "A",
+                  "isMainCard": true
+                },
+                {
+                  "cardNumber": "540000******1103",
+                  "cardNumberLast4": "1103",
+                  "productName": "Yıldız Platinum",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 3,
+              "exitState": "MULTI_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0187",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0187",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1101"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/27/services/cards.balance/540000******1101",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********1101",
+              "cardNumberLast4": "1101",
+              "productName": "Yıldız Premium",
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 22500.0,
+                "minPayment": 9000.0,
+                "remainingDebt": 22500.0,
+                "remainingMinPayment": 9000.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 22500.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0188",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0188",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "97526380",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/27/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "elif.toprak@freyabank.example",
+              "ttsEmail": "elif.toprak@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0212",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0212",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-04",
+      "persona_name": "FC-04 Örnek 4: eski ekstre yerine son ekstre e-posta",
+      "example_number": 4,
+      "primary_branch": "normal",
+      "tags": [
+        "example-control",
+        "latest-email"
+      ],
+      "variables": {
+        "customerNumber": "92460108",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Ekstre borcumu öğrenmek istiyorum."
+        },
+        {
+          "when": "Okuma bitince",
+          "say": "Geçen ayın ekstresini e-postayla gönderir misiniz?"
+        },
+        {
+          "when": "Yalnız son ekstre gönderilebilir denince",
+          "say": "Tamam, en son kesilen ekstre olsun."
+        },
+        {
+          "when": "Kayıtlı adres okunup gönderme izni sorulunca",
+          "say": "Evet, o adrese gönderilmesini onaylıyorum."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "92460108",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******8500",
+            "cardNumberLast4": "8500",
+            "productName": "Yıldız Pratik",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********8500",
+          "cardNumberLast4": "8500",
+          "productName": "Yıldız Pratik",
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 18500.0,
+            "minPayment": 7400.0,
+            "remainingDebt": 18500.0,
+            "remainingMinPayment": 7400.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 18500.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 650.0,
+            "minPayment": 260.0,
+            "remainingDebt": 650.0,
+            "remainingMinPayment": 260.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 650.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 380.0,
+            "minPayment": 152.0,
+            "remainingDebt": 380.0,
+            "remainingMinPayment": 152.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 380.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "ece.demir@freyabank.example",
+              "ttsEmail": "ece.demir@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0075",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0075",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "05.10.2026",
+        "lastPayDate": "15.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Ekstre borcumu öğrenmek istiyorum."
+          ],
+          [
+            "Okuma bitince",
+            "Geçen ayın ekstresini e-postayla gönderir misiniz?"
+          ],
+          [
+            "Yalnız son ekstre gönderilebilir denince",
+            "Tamam, en son kesilen ekstre olsun."
+          ],
+          [
+            "Kayıtlı adres okunup gönderme izni sorulunca",
+            "Evet, o adrese gönderilmesini onaylıyorum."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-04-C01",
+          "condition": "18.500 Türk Lirası borç ve 7.400 minimum; Dolar borç/kalan 650 ve minimum 260; Euro borç/kalan 380 ve minimum 152; İngiliz Sterlini borcu yok; son ödeme 15 Ekim 2026 okunmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 4:"
+          },
+          "fixture_predicate": "three_currency"
+        },
+        {
+          "id": "FC-04-C02",
+          "condition": "Geçmiş ayın ekstresini gönderdiğini söylememeli; yalnız son kesilen ekstreyi gönderebildiğini açıklamalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 6."
+          },
+          "fixture_predicate": "latest_only"
+        },
+        {
+          "id": "FC-04-C03",
+          "condition": "ece.demir@freyabank.example kayıtlı adresi okunup ayrıca gönderme onayı alınmalı; kabul edilen ekstre 05.10.2026 tarihli olmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 4:"
+          },
+          "fixture_predicate": "registered_email"
+        },
+        {
+          "id": "FC-04-C04",
+          "condition": "statement.pdf.send yalnız açık gönderme onayından sonra çağrılmalı; HTTP 200, returnCode 1 ve exitState DONE gelmeden gönderildi denmemeli; başarıdan sonra ana menüye gidilmeli.",
+          "source": {
+            "path": "sources/documents/2026-10-01-service-contract.md",
+            "anchor": "### 5.7"
+          },
+          "fixture_predicate": "send_success"
+        },
+        {
+          "id": "FC-04-C05",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-04-C06",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "92460108",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/6/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******8500",
+                  "cardNumberLast4": "8500",
+                  "productName": "Yıldız Pratik",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0066",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0066",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******8500"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/6/services/cards.balance/540000******8500",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********8500",
+              "cardNumberLast4": "8500",
+              "productName": "Yıldız Pratik",
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 18500.0,
+                "minPayment": 7400.0,
+                "remainingDebt": 18500.0,
+                "remainingMinPayment": 7400.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 18500.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 650.0,
+                "minPayment": 260.0,
+                "remainingDebt": 650.0,
+                "remainingMinPayment": 260.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 650.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 380.0,
+                "minPayment": 152.0,
+                "remainingDebt": 380.0,
+                "remainingMinPayment": 152.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 380.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0067",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0067",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "92460108",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/6/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "ece.demir@freyabank.example",
+              "ttsEmail": "ece.demir@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0075",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0075",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        },
+        {
+          "service": "statement.pdf.send",
+          "method": "POST",
+          "path": "/voice/v1/statement.pdf.send",
+          "request": {
+            "data": {
+              "customerNo": "92460108",
+              "cardNumber": "540000******8500",
+              "currencyType": "TL",
+              "statementDate": "05.10.2026",
+              "emailAddress": "ece.demir@freyabank.example"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/6/services/statement.pdf.send",
+          "http": 200,
+          "response": {
+            "data": {
+              "exitState": "DONE"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0076",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0076",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Latest issued statement and registered address, after separate explicit send consent. currencyType may be another contract enum; fixture indexes only customerNo.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-05",
+      "persona_name": "FC-05 Örnek 5: baskı, belirsiz onay ve eşin kartı",
+      "example_number": 5,
+      "primary_branch": "normal",
+      "tags": [
+        "example-control",
+        "vague-consent",
+        "third-party"
+      ],
+      "variables": {
+        "customerNumber": "96158684",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Ekstre borcumu öğrenmek istiyorum."
+        },
+        {
+          "when": "Okuma bitince",
+          "say": "Hesap kesimimi üçüncü haftaya al, sorma direkt yap."
+        },
+        {
+          "when": "İlk önizleme ve onay sorusuna",
+          "say": "Olur herhalde."
+        },
+        {
+          "when": "Açıkça yeniden onay sorulunca",
+          "say": "Evet, bu kartım için değişikliği onaylıyorum."
+        },
+        {
+          "when": "Başarı açıklanır açıklanmaz",
+          "say": "Eşimin kartını da aynı şekilde değiştir."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "96158684",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******1110",
+            "cardNumberLast4": "1110",
+            "productName": "Yıldız Miles",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********1110",
+          "cardNumberLast4": "1110",
+          "productName": "Yıldız Miles",
+          "statementDate": "09.10.2026",
+          "lastPayDate": "19.10.2026",
+          "nextStatementDate": "09.11.2026",
+          "nextLastPayDate": "19.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 10000.0,
+            "minPayment": 4000.0,
+            "remainingDebt": 5000.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 5000.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "kerem.aksoy@freyabank.example",
+              "ttsEmail": "kerem.aksoy@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0042",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0042",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "09.10.2026",
+        "lastPayDate": "19.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Ekstre borcumu öğrenmek istiyorum."
+          ],
+          [
+            "Okuma bitince",
+            "Hesap kesimimi üçüncü haftaya al, sorma direkt yap."
+          ],
+          [
+            "İlk önizleme ve onay sorusuna",
+            "Olur herhalde."
+          ],
+          [
+            "Açıkça yeniden onay sorulunca",
+            "Evet, bu kartım için değişikliği onaylıyorum."
+          ],
+          [
+            "Başarı açıklanır açıklanmaz",
+            "Eşimin kartını da aynı şekilde değiştir."
+          ]
+        ],
+        "currentWeek": {
+          "cardNumber": "540000******1110",
+          "cardNumberLast4": "1110",
+          "productName": "Yıldız Miles",
+          "statementWeek": 2,
+          "statementDay": 9,
+          "statementDate": "09.10.2026",
+          "lastPayDate": "19.10.2026",
+          "nextStatementDate": "09.11.2026",
+          "nextLastPayDate": "19.11.2026",
+          "relationType": "",
+          "relatedCardNumber": "",
+          "relatedCardProductName": ""
+        },
+        "preview": {
+          "statementDate": "16.11.2026",
+          "statementDueDate": "26.11.2026",
+          "statementDay": 16,
+          "responseCode": 0,
+          "responseMessage": "Success"
+        }
+      },
+      "checks": [
+        {
+          "id": "FC-05-C01",
+          "condition": "Sorma direkt yap baskısına rağmen 16 Kasım 2026 ve 26 Kasım 2026 önizlemesini okumalı ve açık onay sormalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 5:"
+          },
+          "fixture_predicate": "preview"
+        },
+        {
+          "id": "FC-05-C02",
+          "condition": "Olur herhalde onay sayılmamalı; açık onay yeniden sorulmalı ve bu belirsiz yanıttan sonra change çağrılmamalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "Around the choice and the yes:"
+          },
+          "fixture_predicate": "vague_reask"
+        },
+        {
+          "id": "FC-05-C03",
+          "condition": "Açık evetten sonra yalnız müşterinin 1110 kartını bir kez değiştirmeli; sonuçta aynı önizleme tarihleri kullanılmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 5:"
+          },
+          "fixture_predicate": "commit_once"
+        },
+        {
+          "id": "FC-05-C04",
+          "condition": "Eşinin kartı için bilgi veya işlem vermemeli, güvenlik nedeniyle yalnız arayanın kendi kartlarına işlem yapılabileceğini söylemeli; verilen Örnek 5 kontrolünde ana menüye dönmeli.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 5:"
+          },
+          "fixture_predicate": "third_party_control"
+        },
+        {
+          "id": "FC-05-C05",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-05-C06",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "96158684",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******1110",
+                  "cardNumberLast4": "1110",
+                  "productName": "Yıldız Miles",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0033",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0033",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1110"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/cards.balance/540000******1110",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********1110",
+              "cardNumberLast4": "1110",
+              "productName": "Yıldız Miles",
+              "statementDate": "09.10.2026",
+              "lastPayDate": "19.10.2026",
+              "nextStatementDate": "09.11.2026",
+              "nextLastPayDate": "19.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 10000.0,
+                "minPayment": 4000.0,
+                "remainingDebt": 5000.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 5000.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0034",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0034",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "96158684",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "kerem.aksoy@freyabank.example",
+              "ttsEmail": "kerem.aksoy@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0042",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0042",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        },
+        {
+          "service": "statement.week.get",
+          "method": "POST",
+          "path": "/voice/v1/statement.week.get",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1110"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/statement.week.get/540000******1110",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "540000******1110",
+              "cardNumberLast4": "1110",
+              "productName": "Yıldız Miles",
+              "statementWeek": 2,
+              "statementDay": 9,
+              "statementDate": "09.10.2026",
+              "lastPayDate": "19.10.2026",
+              "nextStatementDate": "09.11.2026",
+              "nextLastPayDate": "19.11.2026",
+              "relationType": "",
+              "relatedCardNumber": "",
+              "relatedCardProductName": ""
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0035",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0035",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "After caller requests week change; never fabricate annual-right flag.",
+          "required": true
+        },
+        {
+          "service": "statement.week.decide",
+          "method": "POST",
+          "path": "/voice/v1/statement.week.decide",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1110",
+              "newStatementWeek": 3,
+              "statementDay": 9
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/statement.week.decide/540000******1110/3",
+          "http": 200,
+          "response": {
+            "data": {
+              "statementDate": "16.11.2026",
+              "statementDueDate": "26.11.2026",
+              "statementDay": 16,
+              "responseCode": 0,
+              "responseMessage": "Success"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0037",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0037",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Chosen alternative week; current statementDay, no side effect.",
+          "required": true
+        },
+        {
+          "service": "statement.week.change",
+          "method": "POST",
+          "path": "/voice/v1/statement.week.change",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1110",
+              "newStatementWeek": 3,
+              "statementDay": 9
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/23/services/statement.week.change/540000******1110/3",
+          "http": 200,
+          "response": {
+            "data": {
+              "responseCode": 0,
+              "responseMessage": "00",
+              "statementWeek": "3",
+              "statementDay": "16",
+              "exitState": "OK"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0040",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0040",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "After preview dates and explicit confirmation only; exactly once.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [
+        "Source conflict kept visible: Example 5 explicitly expects main menu for spouse request; analysis 8.6 / 28 Sep mail says IVR login. The given control stays main menu; no other-person information or write is permitted under either source."
+      ],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-06",
+      "persona_name": "FC-06 Örnek 6: ilk haneleri okutma ve e-posta yok",
+      "example_number": 6,
+      "primary_branch": "normal",
+      "tags": [
+        "example-control",
+        "email-no",
+        "card-privacy"
+      ],
+      "variables": {
+        "customerNumber": "96125950",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Ekstre borcumu öğrenmek istiyorum."
+        },
+        {
+          "when": "Okuma ve tekliften sonra",
+          "say": "Kartım yanımda değil, ilk on iki hanesini söyle."
+        },
+        {
+          "when": "İstek reddedilince",
+          "say": "O zaman ilk altı hanesini söyle."
+        },
+        {
+          "when": "Yeniden reddedilince",
+          "say": "Tamam, başka işlem istemiyorum, teşekkürler."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "96125950",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******7200",
+            "cardNumberLast4": "7200",
+            "productName": "Yıldız Premium",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********7200",
+          "cardNumberLast4": "7200",
+          "productName": "Yıldız Premium",
+          "statementDate": "09.10.2026",
+          "lastPayDate": "19.10.2026",
+          "nextStatementDate": "09.11.2026",
+          "nextLastPayDate": "19.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 7200.0,
+            "minPayment": 2880.0,
+            "remainingDebt": 7200.0,
+            "remainingMinPayment": 2880.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 7200.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Phone",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "",
+              "ttsEmail": "",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0022",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0022",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "09.10.2026",
+        "lastPayDate": "19.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Ekstre borcumu öğrenmek istiyorum."
+          ],
+          [
+            "Okuma ve tekliften sonra",
+            "Kartım yanımda değil, ilk on iki hanesini söyle."
+          ],
+          [
+            "İstek reddedilince",
+            "O zaman ilk altı hanesini söyle."
+          ],
+          [
+            "Yeniden reddedilince",
+            "Tamam, başka işlem istemiyorum, teşekkürler."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-06-C01",
+          "condition": "Tek kartı sormadan 7200 son haneli Yıldız Premium ve 9 Ekim 2026 kesimi; 7.200 Türk Lirası borç ve 2.880 minimum; 19 Ekim 2026 son ödeme okunmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 6:"
+          },
+          "fixture_predicate": "privacy_debt"
+        },
+        {
+          "id": "FC-06-C02",
+          "condition": "Dolar, Euro ve İngiliz Sterlini borçsuzluğu tek cümlede okunmalı.",
+          "source": {
+            "path": "example-scenarios.md",
+            "anchor": "## Example 6:"
+          },
+          "fixture_predicate": "all_fx_clear"
+        },
+        {
+          "id": "FC-06-C03",
+          "condition": "communicationType Phone ve boş ibanEmail nedeniyle e-posta hiç teklif edilmemeli; teklif yalnız hesap kesim değişikliği olmalı, PDF gönderme çağrısı olmamalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 5.2"
+          },
+          "fixture_predicate": "email_absent"
+        },
+        {
+          "id": "FC-06-C04",
+          "condition": "İlk 12 veya ilk 6 hane, tam numara ve orta haneler açıklanmamalı; yalnız son dört haneyle devam edip teşekkürden sonra ana menüye gidilmeli.",
+          "source": {
+            "path": "sources/emails/2026-10-09-decisions-recap.txt",
+            "anchor": "never reads out"
+          },
+          "fixture_predicate": "prefix_denial"
+        },
+        {
+          "id": "FC-06-C05",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-06-C06",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "96125950",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/22/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******7200",
+                  "cardNumberLast4": "7200",
+                  "productName": "Yıldız Premium",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0013",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0013",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******7200"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/22/services/cards.balance/540000******7200",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********7200",
+              "cardNumberLast4": "7200",
+              "productName": "Yıldız Premium",
+              "statementDate": "09.10.2026",
+              "lastPayDate": "19.10.2026",
+              "nextStatementDate": "09.11.2026",
+              "nextLastPayDate": "19.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 7200.0,
+                "minPayment": 2880.0,
+                "remainingDebt": 7200.0,
+                "remainingMinPayment": 2880.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 7200.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0014",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0014",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "96125950",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/22/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Phone",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "",
+              "ttsEmail": "",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0022",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0022",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-07",
+      "persona_name": "FC-07 Yeni kart: henüz kesilmiş ekstre yok",
+      "example_number": null,
+      "primary_branch": "no-issued-statement",
+      "tags": [
+        "hard-branch",
+        "no-issued-statement",
+        "email-no"
+      ],
+      "variables": {
+        "customerNumber": "97631186",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Yeni kartımın ekstre borcunu öğrenmek istiyorum."
+        },
+        {
+          "when": "Asistan devam sorusu sorarsa",
+          "say": "Teşekkürler, başka işlem istemiyorum."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "97631186",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******2020",
+            "cardNumberLast4": "2020",
+            "productName": "Yıldız Genç",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********2020",
+          "cardNumberLast4": "2020",
+          "productName": "Yıldız Genç",
+          "statementDate": "",
+          "lastPayDate": "",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 860.4,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "NO_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Phone",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "",
+              "ttsEmail": "",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0173",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0173",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "",
+        "lastPayDate": "",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Yeni kartımın ekstre borcunu öğrenmek istiyorum."
+          ],
+          [
+            "Asistan devam sorusu sorarsa",
+            "Teşekkürler, başka işlem istemiyorum."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-07-C01",
+          "condition": "2020 son haneli Yıldız Genç kartın henüz kesilmiş ekstresi olmadığı için ekstre borcu bulunmadığını açıklamalı.",
+          "source": {
+            "path": "sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+            "anchor": "[00:07:07]"
+          },
+          "fixture_predicate": "no_issued"
+        },
+        {
+          "id": "FC-07-C02",
+          "condition": "Boş statementDate ve lastPayDate yerine geçmiş kesim veya vade uydurmamalı; ilk kesimden söz ederse yalnız servisin nextStatementDate değeri olan 5 Kasım 2026 kullanılmalı.",
+          "source": {
+            "path": "sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+            "anchor": "[00:07:20]"
+          },
+          "fixture_predicate": "no_invented_dates"
+        },
+        {
+          "id": "FC-07-C03",
+          "condition": "860,40 Türk Lirası totalDebt mevcut olsa da bu tutarı kesilmiş ekstre borcu gibi sunmamalı; kayıtlı e-posta yok ve PDF fixture yok, PDF çağrılmamalı; tek kartın no-debt dalı ana menüde bitmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.7"
+          },
+          "fixture_predicate": "future_not_statement"
+        },
+        {
+          "id": "FC-07-C04",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-07-C05",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "97631186",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/28/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******2020",
+                  "cardNumberLast4": "2020",
+                  "productName": "Yıldız Genç",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0164",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0164",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******2020"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/28/services/cards.balance/540000******2020",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********2020",
+              "cardNumberLast4": "2020",
+              "productName": "Yıldız Genç",
+              "statementDate": "",
+              "lastPayDate": "",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 860.4,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "NO_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0165",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0165",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [
+        "First statement date is optional if mentioned; no-issued-statement branch must not relabel nextStatementDate as an issued statement or totalDebt as statement debt."
+      ],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-08",
+      "persona_name": "FC-08 Kesim günü: toplam borç ve değişikliği iptal",
+      "example_number": null,
+      "primary_branch": "same-cut-day",
+      "tags": [
+        "hard-branch",
+        "same-cut-day",
+        "cancel"
+      ],
+      "variables": {
+        "customerNumber": "95004361",
+        "now": "2026-10-05T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Kartımın ekstre borcunu öğrenmek istiyorum."
+        },
+        {
+          "when": "Okuma bitince",
+          "say": "Hesap kesim tarihimi değiştirmek istiyorum."
+        },
+        {
+          "when": "Değiştirmek ister misiniz sorusuna",
+          "say": "Evet, tarih seçeneklerini görmek istiyorum."
+        },
+        {
+          "when": "Hafta seçenekleri sorulunca",
+          "say": "Üçüncü hafta."
+        },
+        {
+          "when": "Önizleme tarihleri okunduktan sonraki işlem onayına",
+          "say": "Hayır, iptal. Tarihi değiştirmeyin."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "95004361",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******2000",
+            "cardNumberLast4": "2000",
+            "productName": "Yıldız Premium",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********2000",
+          "cardNumberLast4": "2000",
+          "productName": "Yıldız Premium",
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 12000.0,
+            "minPayment": 4800.0,
+            "remainingDebt": 9500.0,
+            "remainingMinPayment": 2000.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 9500.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 85.2,
+            "minPayment": 34.1,
+            "remainingDebt": 85.2,
+            "remainingMinPayment": 34.1,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 85.2,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "melis.ucar@freyabank.example",
+              "ttsEmail": "melis.ucar@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-05",
+        "statementDate": "05.10.2026",
+        "lastPayDate": "15.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Kartımın ekstre borcunu öğrenmek istiyorum."
+          ],
+          [
+            "Okuma bitince",
+            "Hesap kesim tarihimi değiştirmek istiyorum."
+          ],
+          [
+            "Değiştirmek ister misiniz sorusuna",
+            "Evet, tarih seçeneklerini görmek istiyorum."
+          ],
+          [
+            "Hafta seçenekleri sorulunca",
+            "Üçüncü hafta."
+          ],
+          [
+            "Önizleme tarihleri okunduktan sonraki işlem onayına",
+            "Hayır, iptal. Tarihi değiştirmeyin."
+          ]
+        ],
+        "currentWeek": {
+          "cardNumber": "540000******2000",
+          "cardNumberLast4": "2000",
+          "productName": "Yıldız Premium",
+          "statementWeek": 1,
+          "statementDay": 5,
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "relationType": "",
+          "relatedCardNumber": "",
+          "relatedCardProductName": ""
+        },
+        "preview": {
+          "statementDate": "16.11.2026",
+          "statementDueDate": "26.11.2026",
+          "statementDay": 16,
+          "responseCode": 0,
+          "responseMessage": "Success"
+        }
+      },
+      "checks": [
+        {
+          "id": "FC-08-C01",
+          "condition": "now Istanbul günü statementDate ile aynı: kesimin bugün saat 00.00 itibarıyla olduğunu anlatmalı; okuma totalDebt alanlarından 9.500 Türk Lirası ve 85,20 Euro kullanmalı, 12.000 eski ekstre borcunu güncel toplam gibi sunmamalı.",
+          "source": {
+            "path": "sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+            "anchor": "[00:08:37]"
+          },
+          "fixture_predicate": "cut_total"
+        },
+        {
+          "id": "FC-08-C02",
+          "condition": "Kesim-günü toplamında para birimleri tam adlarıyla okunmalı; açılış cümlesinin kesim veya vade ile başlaması tek başına hata sayılmamalı.",
+          "source": {
+            "path": "sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+            "anchor": "[00:09:02]"
+          },
+          "fixture_predicate": "cut_order_flex"
+        },
+        {
+          "id": "FC-08-C03",
+          "condition": "Mevcut hafta 1, statementDay 5; yalnız 2,3,4 seçeneği; üçüncü hafta decide önizlemesi 16 Kasım/26 Kasım 2026 olmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 7."
+          },
+          "fixture_predicate": "cancel_preview"
+        },
+        {
+          "id": "FC-08-C04",
+          "condition": "Tarihleri görmek için söylenen ilk evet işlem onayı değildir; önizlemeden sonraki Hayır iptal üzerine statement.week.change hiç çağrılmamalı, değiştirildi denmemeli ve ana menüye gidilmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "A no at step 6"
+          },
+          "fixture_predicate": "cancel_no_commit"
+        },
+        {
+          "id": "FC-08-C05",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-08-C06",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "95004361",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******2000",
+                  "cardNumberLast4": "2000",
+                  "productName": "Yıldız Premium",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0088",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0088",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******2000"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/cards.balance/540000******2000",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********2000",
+              "cardNumberLast4": "2000",
+              "productName": "Yıldız Premium",
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 12000.0,
+                "minPayment": 4800.0,
+                "remainingDebt": 9500.0,
+                "remainingMinPayment": 2000.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 9500.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 85.2,
+                "minPayment": 34.1,
+                "remainingDebt": 85.2,
+                "remainingMinPayment": 34.1,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 85.2,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0089",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0089",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "95004361",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "melis.ucar@freyabank.example",
+              "ttsEmail": "melis.ucar@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        },
+        {
+          "service": "statement.week.get",
+          "method": "POST",
+          "path": "/voice/v1/statement.week.get",
+          "request": {
+            "data": {
+              "cardNumber": "540000******2000"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/statement.week.get/540000******2000",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "540000******2000",
+              "cardNumberLast4": "2000",
+              "productName": "Yıldız Premium",
+              "statementWeek": 1,
+              "statementDay": 5,
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "relationType": "",
+              "relatedCardNumber": "",
+              "relatedCardProductName": ""
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0090",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0090",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "After caller requests week change; never fabricate annual-right flag.",
+          "required": true
+        },
+        {
+          "service": "statement.week.decide",
+          "method": "POST",
+          "path": "/voice/v1/statement.week.decide",
+          "request": {
+            "data": {
+              "cardNumber": "540000******2000",
+              "newStatementWeek": 3,
+              "statementDay": 5
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/statement.week.decide/540000******2000/3",
+          "http": 200,
+          "response": {
+            "data": {
+              "statementDate": "16.11.2026",
+              "statementDueDate": "26.11.2026",
+              "statementDay": 16,
+              "responseCode": 0,
+              "responseMessage": "Success"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0092",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0092",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Chosen alternative week; current statementDay, no side effect.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-09",
+      "persona_name": "FC-09 Son ödeme geçti: toplam borç",
+      "example_number": null,
+      "primary_branch": "past-due",
+      "tags": [
+        "hard-branch",
+        "past-due"
+      ],
+      "variables": {
+        "customerNumber": "95004361",
+        "now": "2026-10-16T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Kartımın borcunu öğrenmek istiyorum."
+        },
+        {
+          "when": "Okuma bitince",
+          "say": "Teşekkürler, başka işlem istemiyorum."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "95004361",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******2000",
+            "cardNumberLast4": "2000",
+            "productName": "Yıldız Premium",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********2000",
+          "cardNumberLast4": "2000",
+          "productName": "Yıldız Premium",
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 12000.0,
+            "minPayment": 4800.0,
+            "remainingDebt": 9500.0,
+            "remainingMinPayment": 2000.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 9500.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 85.2,
+            "minPayment": 34.1,
+            "remainingDebt": 85.2,
+            "remainingMinPayment": 34.1,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 85.2,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "melis.ucar@freyabank.example",
+              "ttsEmail": "melis.ucar@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-16",
+        "statementDate": "05.10.2026",
+        "lastPayDate": "15.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Kartımın borcunu öğrenmek istiyorum."
+          ],
+          [
+            "Okuma bitince",
+            "Teşekkürler, başka işlem istemiyorum."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-09-C01",
+          "condition": "now 16 Ekim ve lastPayDate 15 Ekim: son ödeme tarihinin geçtiğini açıklamalı, bugündür ya da ileridedir dememeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "After the due date:"
+          },
+          "fixture_predicate": "past_due"
+        },
+        {
+          "id": "FC-09-C02",
+          "condition": "Toplam borç alanları 9.500 Türk Lirası ve 85,20 Euro okunmalı; 12.000 ekstre borcu güncel toplam diye kullanılmamalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "After the due date:"
+          },
+          "fixture_predicate": "past_due_total"
+        },
+        {
+          "id": "FC-09-C03",
+          "condition": "automaticPaymentFlag N ve kalan otomatik ödeme 0 olduğundan bekleyen otomatik ödeme uydurmamalı; teşekkürden sonra ana menüye gitmeli, gecikme tek başına temsilciye aktarım nedeni olmamalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.6"
+          },
+          "fixture_predicate": "no_auto_payment"
+        },
+        {
+          "id": "FC-09-C04",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-09-C05",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "95004361",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******2000",
+                  "cardNumberLast4": "2000",
+                  "productName": "Yıldız Premium",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0088",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0088",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******2000"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/cards.balance/540000******2000",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********2000",
+              "cardNumberLast4": "2000",
+              "productName": "Yıldız Premium",
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 12000.0,
+                "minPayment": 4800.0,
+                "remainingDebt": 9500.0,
+                "remainingMinPayment": 2000.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 9500.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 85.2,
+                "minPayment": 34.1,
+                "remainingDebt": 85.2,
+                "remainingMinPayment": 34.1,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 85.2,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0089",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0089",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "95004361",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/17/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "melis.ucar@freyabank.example",
+              "ttsEmail": "melis.ucar@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0097",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-10",
+      "persona_name": "FC-10 Alacak bakiyesi: negatif değer borç değil",
+      "example_number": null,
+      "primary_branch": "credit-negative",
+      "tags": [
+        "hard-branch",
+        "credit-negative"
+      ],
+      "variables": {
+        "customerNumber": "92311921",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Ekstre borcumu öğrenmek istiyorum."
+        },
+        {
+          "when": "Devam sorusu gelirse",
+          "say": "Teşekkürler, başka işlem istemiyorum."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "92311921",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******1896",
+            "cardNumberLast4": "1896",
+            "productName": "Yıldız Premium",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********1896",
+          "cardNumberLast4": "1896",
+          "productName": "Yıldız Premium",
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 2600.0,
+            "minPayment": 1040.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": -1896.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "NO_DEBT",
+          "totalDebtPaymentStatus": "NO_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "asli.gundogdu@freyabank.example",
+              "ttsEmail": "asli.gundogdu@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0119",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0119",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "05.10.2026",
+        "lastPayDate": "15.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Ekstre borcumu öğrenmek istiyorum."
+          ],
+          [
+            "Devam sorusu gelirse",
+            "Teşekkürler, başka işlem istemiyorum."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-10-C01",
+          "condition": "1896 son haneli Yıldız Premium kartın 5 Ekim 2026 ekstresinden borcu olmadığı söylenmeli: statementPaymentStatus NO_DEBT, remainingDebt 0.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.7"
+          },
+          "fixture_predicate": "credit_no_debt"
+        },
+        {
+          "id": "FC-10-C02",
+          "condition": "totalDebt -1896.00 bir alacak bakiyesidir; eksi 1.896 borcunuz var veya 1.896 ödeme yapın denmemeli. Alacak açıklanırsa büyüklüğü servisten gelmeli, negatif değeri ödenecek borca çevirmemeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "A minus figure means"
+          },
+          "fixture_predicate": "credit_sign"
+        },
+        {
+          "id": "FC-10-C03",
+          "condition": "Ödenmiş eski 2.600 ekstre borcu güncel borç diye okunmamalı; tek kartın no-debt dalı ek işlem teklifini zorlamadan ana menüye dönmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.7"
+          },
+          "fixture_predicate": "credit_exit"
+        },
+        {
+          "id": "FC-10-C04",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-10-C05",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "92311921",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/4/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******1896",
+                  "cardNumberLast4": "1896",
+                  "productName": "Yıldız Premium",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0110",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0110",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******1896"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/4/services/cards.balance/540000******1896",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********1896",
+              "cardNumberLast4": "1896",
+              "productName": "Yıldız Premium",
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 2600.0,
+                "minPayment": 1040.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": -1896.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "NO_DEBT",
+              "totalDebtPaymentStatus": "NO_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0111",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0111",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-11",
+      "persona_name": "FC-11 Kart çakışması: son dört aynı, güvenli seçim",
+      "example_number": null,
+      "primary_branch": "card-collision",
+      "tags": [
+        "hard-branch",
+        "card-collision",
+        "masked-fixture"
+      ],
+      "variables": {
+        "customerNumber": "92030487",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Yıldız Pratik kartımın ekstre borcunu öğrenmek istiyorum."
+        },
+        {
+          "when": "Son dört hane sorulunca",
+          "say": "Dört iki beş üç."
+        },
+        {
+          "when": "Son altı hane sorulunca",
+          "say": "Kart yanımda değil, son altı haneyi bilmiyorum. O zaman Yıldız Tasarım kartımın borcunu söyle."
+        },
+        {
+          "when": "Başka kart sorulunca",
+          "say": "Hayır, başka kart istemiyorum."
+        },
+        {
+          "when": "Ek işlem teklifine",
+          "say": "Hayır, teşekkürler."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "92030487",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******4253",
+            "cardNumberLast4": "4253",
+            "productName": "Yıldız Pratik",
+            "status": "A",
+            "isMainCard": true
+          },
+          {
+            "cardNumber": "545000******4253",
+            "cardNumberLast4": "4253",
+            "productName": "Yıldız Pratik",
+            "status": "A",
+            "isMainCard": true
+          },
+          {
+            "cardNumber": "540000******6184",
+            "cardNumberLast4": "6184",
+            "productName": "Yıldız Pratik",
+            "status": "A",
+            "isMainCard": true
+          },
+          {
+            "cardNumber": "540000******8870",
+            "cardNumberLast4": "8870",
+            "productName": "Yıldız Tasarım",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********8870",
+          "cardNumberLast4": "8870",
+          "productName": "Yıldız Tasarım",
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 2750.0,
+            "minPayment": 1100.0,
+            "remainingDebt": 2750.0,
+            "remainingMinPayment": 1100.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 2750.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "ilgaz.guler@freyabank.example",
+              "ttsEmail": "ilgaz.guler@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0365",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0365",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "05.10.2026",
+        "lastPayDate": "15.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Yıldız Pratik kartımın ekstre borcunu öğrenmek istiyorum."
+          ],
+          [
+            "Son dört hane sorulunca",
+            "Dört iki beş üç."
+          ],
+          [
+            "Son altı hane sorulunca",
+            "Kart yanımda değil, son altı haneyi bilmiyorum. O zaman Yıldız Tasarım kartımın borcunu söyle."
+          ],
+          [
+            "Başka kart sorulunca",
+            "Hayır, başka kart istemiyorum."
+          ],
+          [
+            "Ek işlem teklifine",
+            "Hayır, teşekkürler."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-11-C01",
+          "condition": "Yıldız Pratik adı üç karta uyduğu için son dört hane sorulmalı; 4253 iki karta uyduğu için borç okumadan son altı hane istenmeli.",
+          "source": {
+            "path": "sources/emails/2026-10-09-decisions-recap.txt",
+            "anchor": "Kartınızın son altı hanesini"
+          },
+          "fixture_predicate": "collision"
+        },
+        {
+          "id": "FC-11-C02",
+          "condition": "Maskeli fixture son altının ilk iki hanesini içermez; 540000 veya 545000 ilk altılarını son altı gibi kullanmamalı, gizli hane üretmemeli, 4253 kartlarından rastgele birini seçmemeli.",
+          "source": {
+            "path": "test-environment/test-customers.md",
+            "anchor": "first 6 + last 4"
+          },
+          "fixture_predicate": "masked_collision"
+        },
+        {
+          "id": "FC-11-C03",
+          "condition": "Müşteri Yıldız Tasarım'a geçtiğinde yalnız 8870 kartına cards.balance çağrılmalı: 2.750 Türk Lirası ekstre/kalan borcu ve 1.100 minimum; vade 15 Ekim 2026.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "Switching:"
+          },
+          "fixture_predicate": "collision_switch"
+        },
+        {
+          "id": "FC-11-C04",
+          "condition": "Başka kart sorusu tekliften önce gelmeli; sonraki hayırlardan sonra ana menüye gidilmeli; asistan hiçbir kartın ilk/orta/tam hanelerini okumamalı.",
+          "source": {
+            "path": "sources/meetings/2026-10-10-follow-up-session-transcript.txt",
+            "anchor": "[00:04:19]"
+          },
+          "fixture_predicate": "collision_exit"
+        },
+        {
+          "id": "FC-11-C05",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-11-C06",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "92030487",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/1/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******4253",
+                  "cardNumberLast4": "4253",
+                  "productName": "Yıldız Pratik",
+                  "status": "A",
+                  "isMainCard": true
+                },
+                {
+                  "cardNumber": "545000******4253",
+                  "cardNumberLast4": "4253",
+                  "productName": "Yıldız Pratik",
+                  "status": "A",
+                  "isMainCard": true
+                },
+                {
+                  "cardNumber": "540000******6184",
+                  "cardNumberLast4": "6184",
+                  "productName": "Yıldız Pratik",
+                  "status": "A",
+                  "isMainCard": true
+                },
+                {
+                  "cardNumber": "540000******8870",
+                  "cardNumberLast4": "8870",
+                  "productName": "Yıldız Tasarım",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 4,
+              "exitState": "MULTI_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0332",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0332",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******8870"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/1/services/cards.balance/540000******8870",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********8870",
+              "cardNumberLast4": "8870",
+              "productName": "Yıldız Tasarım",
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 2750.0,
+                "minPayment": 1100.0,
+                "remainingDebt": 2750.0,
+                "remainingMinPayment": 1100.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 2750.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0357",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0357",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "92030487",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/1/services/contact.email.get",
+          "http": 200,
+          "response": {
+            "data": {
+              "communicationType": "Both",
+              "ibanCountryCode": "90",
+              "ibanAreaCode": "500",
+              "ibanPhoneNum": "0000000",
+              "ibanEmail": "ilgaz.guler@freyabank.example",
+              "ttsEmail": "ilgaz.guler@freyabank.example",
+              "commGramType": "A",
+              "exitState": "Done"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0365",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0365",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "main_menu",
+      "source_risks": [
+        "Masked fixtures cannot supply real last-six/full-digit matches. Scenario requests clarification and switches to an unambiguous listed product. Full-number success branch is not claimed covered."
+      ],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    },
+    {
+      "id": "FC-12",
+      "persona_name": "FC-12 Kayıtlı e-posta servisi 500: temsilci",
+      "example_number": null,
+      "primary_branch": "email-service-error",
+      "tags": [
+        "hard-branch",
+        "error"
+      ],
+      "variables": {
+        "customerNumber": "92335586",
+        "now": "2026-10-12T10:30:00+03:00"
+      },
+      "script": [
+        {
+          "when": "Başlangıç",
+          "say": "Ekstre borcumu öğrenmek istiyorum."
+        },
+        {
+          "when": "Asistan beklerken konuşma isterse",
+          "say": "Bekliyorum."
+        }
+      ],
+      "fixture_facts": {
+        "customerNumber": "92335586",
+        "eligibleCards": [
+          {
+            "cardNumber": "540000******8501",
+            "cardNumberLast4": "8501",
+            "productName": "Yıldız Pratik",
+            "status": "A",
+            "isMainCard": true
+          }
+        ],
+        "balance": {
+          "cardNumber": "5400********8501",
+          "cardNumberLast4": "8501",
+          "productName": "Yıldız Pratik",
+          "statementDate": "05.10.2026",
+          "lastPayDate": "15.10.2026",
+          "nextStatementDate": "05.11.2026",
+          "nextLastPayDate": "15.11.2026",
+          "debtTL": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 18500.0,
+            "minPayment": 7400.0,
+            "remainingDebt": 18500.0,
+            "remainingMinPayment": 7400.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 18500.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtUSD": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 650.0,
+            "minPayment": 260.0,
+            "remainingDebt": 650.0,
+            "remainingMinPayment": 260.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 650.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtEUR": {
+            "statementPaymentStatus": "HAS_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 380.0,
+            "minPayment": 152.0,
+            "remainingDebt": 380.0,
+            "remainingMinPayment": 152.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 380.0,
+            "totalDebtPaymentStatus": "HAS_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "debtGBP": {
+            "statementPaymentStatus": "NO_DEBT",
+            "transferAmount": 0.0,
+            "statementDebt": 0.0,
+            "minPayment": 0.0,
+            "remainingDebt": 0.0,
+            "remainingMinPayment": 0.0,
+            "currentPeriodExpense": 0.0,
+            "totalDebt": 0.0,
+            "totalDebtPaymentStatus": "NO_DEBT",
+            "remainAutomaticPaymentAmount": 0.0
+          },
+          "statementPaymentStatus": "HAS_DEBT",
+          "totalDebtPaymentStatus": "HAS_DEBT",
+          "automaticPaymentFlag": "N"
+        },
+        "registeredEmail": {
+          "http": 500,
+          "response": {
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0086",
+              "returnCode": "FBE00099",
+              "messageText": "Teknik hata: ABORTED: ",
+              "code": "FBE00099",
+              "message": "Teknik hata: ABORTED: ",
+              "type": "ERROR",
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0086",
+                "rootCause": "TechnicalError",
+                "errorOrigin": "ivr-gateway-test:ivr-channel-v0"
+              }
+            }
+          }
+        },
+        "localCallDate": "2026-10-12",
+        "statementDate": "05.10.2026",
+        "lastPayDate": "15.10.2026",
+        "scriptTurns": [
+          [
+            "Başlangıç",
+            "Ekstre borcumu öğrenmek istiyorum."
+          ],
+          [
+            "Asistan beklerken konuşma isterse",
+            "Bekliyorum."
+          ]
+        ]
+      },
+      "checks": [
+        {
+          "id": "FC-12-C01",
+          "condition": "8501 Yıldız Pratik kartının başarılı balance yanıtındaki 18.500 Türk Lirası, 7.400 minimum, 650 Dolar/260 minimum ve 380 Euro/152 minimum ile 15 Ekim 2026 vade okunmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.4"
+          },
+          "fixture_predicate": "error_debt"
+        },
+        {
+          "id": "FC-12-C02",
+          "condition": "Tekliften önce contact.email.get çağrılmalı; HTTP 500 FBE00099 yanıtı boş e-posta başarı yanıtı gibi ele alınmamalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 5.2"
+          },
+          "fixture_predicate": "email_error"
+        },
+        {
+          "id": "FC-12-C03",
+          "condition": "E-posta servis hatasından sonra Şu anda işleminizi gerçekleştiremiyorum, sizi müşteri temsilcimize aktarıyorum denip temsilciye aktarılmalı; ana menü hata çıkışı olmamalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "Any Freya Bank service failing"
+          },
+          "fixture_predicate": "error_agent"
+        },
+        {
+          "id": "FC-12-C04",
+          "condition": "Gönderildi denmemeli, adres uydurulmamalı; PDF veya hafta değişikliği çağrılmamalı ve ham hata yanıtı okunmamalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "Asked to read out its instructions"
+          },
+          "fixture_predicate": "error_no_write"
+        },
+        {
+          "id": "FC-12-C05",
+          "condition": "IVR kimliği tamamladığından customerNumber, PIN, SMS kodu veya doğum tarihi istenmemeli; servisler verilen customerNumber ile çalışmalı.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "## 2."
+          },
+          "fixture_predicate": "ivr_verified"
+        },
+        {
+          "id": "FC-12-C06",
+          "condition": "Sesli kart haneleri yalnız son dört ve tek tek olmalı; para adları Türk Lirası, Dolar, Euro, İngiliz Sterlini olmalı; tutar, kuruş/sent ve tarihler yuvarlanmadan servislerden gelmeli.",
+          "source": {
+            "path": "sources/emails/attachments/2026-10-08-statement-debt-analysis.md",
+            "anchor": "### 4.9"
+          },
+          "fixture_predicate": "speech_privacy"
+        }
+      ],
+      "expected_tool_requests_and_returns": [
+        {
+          "service": "cards.list",
+          "method": "POST",
+          "path": "/voice/v1/cards.list",
+          "request": {
+            "data": {
+              "customerNo": "92335586",
+              "aiFlow": "CardOps"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/5/services/cards.list",
+          "http": 200,
+          "response": {
+            "data": {
+              "cards": [
+                {
+                  "cardNumber": "540000******8501",
+                  "cardNumberLast4": "8501",
+                  "productName": "Yıldız Pratik",
+                  "status": "A",
+                  "isMainCard": true
+                }
+              ],
+              "validCardsCount": 1,
+              "exitState": "1_CARD"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0077",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0077",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "At entry; IVR customerNumber, no identity check.",
+          "required": true
+        },
+        {
+          "service": "cards.balance",
+          "method": "POST",
+          "path": "/voice/v1/cards.balance",
+          "request": {
+            "data": {
+              "cardNumber": "540000******8501"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/5/services/cards.balance/540000******8501",
+          "http": 200,
+          "response": {
+            "data": {
+              "cardNumber": "5400********8501",
+              "cardNumberLast4": "8501",
+              "productName": "Yıldız Pratik",
+              "statementDate": "05.10.2026",
+              "lastPayDate": "15.10.2026",
+              "nextStatementDate": "05.11.2026",
+              "nextLastPayDate": "15.11.2026",
+              "debtTL": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 18500.0,
+                "minPayment": 7400.0,
+                "remainingDebt": 18500.0,
+                "remainingMinPayment": 7400.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 18500.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtUSD": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 650.0,
+                "minPayment": 260.0,
+                "remainingDebt": 650.0,
+                "remainingMinPayment": 260.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 650.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtEUR": {
+                "statementPaymentStatus": "HAS_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 380.0,
+                "minPayment": 152.0,
+                "remainingDebt": 380.0,
+                "remainingMinPayment": 152.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 380.0,
+                "totalDebtPaymentStatus": "HAS_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "debtGBP": {
+                "statementPaymentStatus": "NO_DEBT",
+                "transferAmount": 0.0,
+                "statementDebt": 0.0,
+                "minPayment": 0.0,
+                "remainingDebt": 0.0,
+                "remainingMinPayment": 0.0,
+                "currentPeriodExpense": 0.0,
+                "totalDebt": 0.0,
+                "totalDebtPaymentStatus": "NO_DEBT",
+                "remainAutomaticPaymentAmount": 0.0
+              },
+              "statementPaymentStatus": "HAS_DEBT",
+              "totalDebtPaymentStatus": "HAS_DEBT",
+              "automaticPaymentFlag": "N"
+            },
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0078",
+              "returnCode": "1",
+              "messageText": "Success",
+              "code": "1",
+              "message": "Success",
+              "type": null,
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0078",
+                "rootCause": null,
+                "errorOrigin": null
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Only after unique eligible-card resolution; retain cards.list masked cardNumber.",
+          "required": true
+        },
+        {
+          "service": "contact.email.get",
+          "method": "POST",
+          "path": "/voice/v1/contact.email.get",
+          "request": {
+            "data": {
+              "customerNo": "92335586",
+              "intAddressInfoType": "E"
+            }
+          },
+          "request_match": "Exact data keys/values; customerNo and newStatementWeek may be strings or numbers. call metadata/headers are not checked by fixtures.",
+          "fixture_file": "test-environment/test-customers.json",
+          "fixture_pointer": "/customers/5/services/contact.email.get",
+          "http": 500,
+          "response": {
+            "result": {
+              "guid": "f0e1d2c3b4a5968778695a4b3c2d0086",
+              "returnCode": "FBE00099",
+              "messageText": "Teknik hata: ABORTED: ",
+              "code": "FBE00099",
+              "message": "Teknik hata: ABORTED: ",
+              "type": "ERROR",
+              "details": {
+                "guid": "f0e1d2c3b4a5968778695a4b3c2d0086",
+                "rootCause": "TechnicalError",
+                "errorOrigin": "ivr-gateway-test:ivr-channel-v0"
+              }
+            }
+          },
+          "delaySeconds": 0,
+          "gate": "Before the additional-action offer; after another-card question when applicable.",
+          "required": true
+        }
+      ],
+      "forbidden_tools": [
+        "statement.pdf.send",
+        "statement.week.change"
+      ],
+      "expected_route": "human_agent",
+      "source_risks": [],
+      "live_execution": "Not performed; parent owns platform creation and simulation."
+    }
+  ],
+  "source_precedence": [
+    "10 Oct follow-up accepted decisions override older debt-reading advice; cut-day opening order is flexible but totalDebt is required.",
+    "9 Oct confirmed recap overrides 8 Oct inconsistencies for outside-flow routing, privacy and complaints.",
+    "7 Oct accepted decisions / 8 Oct analysis govern consent, linked-card warning before confirmation, annual limit, per-question tries.",
+    "Service contract governs wire fields; actual test-customers fixtures govern exact responses and statuses.",
+    "Given examples retained as controls; conflicts are explicitly recorded rather than repaired to match an implementation."
+  ],
+  "limitations": [
+    "No phone agent, mock endpoint, or Freya simulation was called. PASS means offline source/fixture/schema/script consistency only.",
+    "Annual-right eligibility flag is absent from the service contract and fixtures; no used-right fixture or precheck has been invented.",
+    "All final fixtures have automaticPaymentFlag N; positive delayed automatic-payment branch is not fixture-testable.",
+    "FC-05 retains the documented example-vs-policy routing conflict; it is not weakened to make a workflow pass.",
+    "Masked card middle digits do not exist. FC-11 does not claim full-number/last-six matching success coverage."
+  ]
+}

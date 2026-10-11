@@ -1,0 +1,99 @@
+{
+  "status": "implemented-and-locally-verified",
+  "verifiedAtUtc": "2026-10-11T18:51:56Z",
+  "scope": "final-bank-mock/** and analysis/final-case-mock.* only",
+  "worker": "final-bank-mock/src/index.js",
+  "wranglerConfig": "final-bank-mock/wrangler.toml",
+  "openapi": "final-bank-mock/openapi.json",
+  "openapiServer": "https://final-bank-mock.invalid",
+  "source": {
+    "brief": "final-case-20261011/Build the Builder - Final Case/BRIEF.md",
+    "contract": "final-case-20261011/Build the Builder - Final Case/sources/documents/2026-10-01-service-contract.md",
+    "fixtures": "final-case-20261011/Build the Builder - Final Case/test-environment/test-customers.json",
+    "fixturesSha256": "d6ce155638f61ab17910d53ea993a2b0d68cf4e10d6b9db2fb8e4a7add0ef44d",
+    "fixturesChanged": false
+  },
+  "customers": 34,
+  "fixtureResponses": 617,
+  "responsesByService": {
+    "cards.list": 34,
+    "cards.balance": 65,
+    "statement.week.get": 65,
+    "statement.week.decide": 195,
+    "statement.week.change": 195,
+    "contact.email.get": 34,
+    "statement.pdf.send": 29
+  },
+  "nodeTests": {
+    "command": "node --test --test-reporter=spec test/worker.test.js",
+    "nodeVersion": "v24.13.1",
+    "exitCode": 0,
+    "tests": 22,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 12403.0098,
+    "realDelayTestDurationMs": 12004.7684,
+    "checks": [
+      "Every original fixture HTTP status and complete JSON body",
+      "Fixture snapshot and original-source hash equality",
+      "Customer/week numeric and string variants",
+      "Missing and empty required fields, malformed JSON and data envelope",
+      "Service-specific unknown-customer/card/week errors",
+      "All same-week requests rejected because no fixture exists",
+      "Week mutation required day, supported week, type and range validation",
+      "PDF required fields, currencies and valid date validation",
+      "Customer-only PDF lookup, without added bank business policies",
+      "Immutable repeated mutation, preview and joint-card reads",
+      "Ignored token/headers, call metadata, aiFlow and supplied now",
+      "Missing currency blocks, duplicate last-four cards, amounts and masks preserved",
+      "OpenAPI local references, seven POST paths and actual fixture schema compatibility",
+      "Real 12-second balance delay"
+    ]
+  },
+  "wranglerDryRun": {
+    "version": "4.149.0",
+    "command": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "exitCode": 0,
+    "totalUploadKiB": 696.15,
+    "gzipKiB": 24.28,
+    "bindings": 0
+  },
+  "localHttpVerification": {
+    "command": "node scripts/verify-http.mjs http://127.0.0.1:8797",
+    "runtime": "wrangler dev --local",
+    "exitCode": 0,
+    "checked": 617,
+    "fixtureErrors": 8,
+    "delayedResponses": 1,
+    "ok": true,
+    "temporaryLocalServerStoppedAfterVerification": true
+  },
+  "schemaCorrection": {
+    "customerNo": "97631186",
+    "services": ["cards.balance", "statement.week.get"],
+    "fields": ["statementDate", "lastPayDate"],
+    "fixtureValue": "",
+    "change": "OpenAPI issued-date schemas accept an empty string for a not-yet-issued statement. Fixture data remains unchanged; PDF request dates remain required and nonempty."
+  },
+  "dateBehavior": "All response dates are exact fixture constants. No Worker route uses the system clock. The phone agent must use its supplied now variable for business date decisions.",
+  "mutationBehavior": "Stateless exact fixture acknowledgement; no DB or persisted changes, preserving subsequent exact responses. Consent and registered-address policy belong to the phone workflow.",
+  "parentHandoff": {
+    "workingDirectory": "final-bank-mock",
+    "deploymentCommand": "npx wrangler deploy",
+    "authenticationOwner": "parent",
+    "deploymentOwner": "parent",
+    "hostConfigStep": "Replace openapi.json servers[0].url with the actual public origin in HOSTCONFIG before builder execution. Do not manually edit the candidate phone workflow.",
+    "publicVerificationCommand": "node scripts/verify-http.mjs https://<actual-public-origin>",
+    "doNotRegenerateAfterHostConfig": "npm run prepare regenerates the placeholder server; use only before HOSTCONFIG or replace the origin again afterwards.",
+    "instructions": "final-bank-mock/README.md"
+  },
+  "publicDeployment": {
+    "performedByThisWork": false,
+    "verifiedPublicUrl": null
+  },
+  "authenticationOperationsPerformed": false,
+  "gitOperationsPerformed": false,
+  "phoneWorkflowChanged": false,
+  "opusRedteamPerformedByThisWork": false
+}
