@@ -1,0 +1,16 @@
+{
+  "source_document": "analysis/day2-multisource-gnn-design.json",
+  "source_document_sha256": "c843b3cace891f17830bbad7b36b50dcf644e179055cd0247c7f70237586978a",
+  "contract": {
+    "source": "https://github.com/google-research-datasets/dstc8-schema-guided-dialogue",
+    "status": "collector pending; no SGD corpus opened, trained or evaluated by designer",
+    "route": "Separate service-schema encoder plus intent/slot-presence and belief-update heads from actual published frame annotations; streaming conversation-group minibatches after manifest freeze. Do not reshuffle Banking77 to mimic complex dialogues.",
+    "fields_to_validate": "dialogue_id,turns[].speaker,utterance,frames[].service,state.active_intent,state.requested_slots,state.slot_values,actions[]; schema service slots/intents with required_slots/optional_slots/is_transactional where actually present",
+    "losses": "masked active-intentCE incl published NONE, requested-slotBCE, slot-presenceBCE; consecutive USER-frame deltas derive KEEP/SET/DELETE only for slot states whose annotation completeness is documented. Missing frame/state is unknown, not DELETE. Correction/negation labels only if publisher action taxonomy actually supports them; lexical heuristics are weaklabels, not gold.",
+    "graph": "observed turn order and explicit frame-service/schema-slot membership; previous annotated state is teacher forcing TRAIN input only for that ablation. Main autoregressive evaluation feeds predicted prior belief and reports error accumulation; compare no-context and oracle-state separately. Gold current state is never a runtime feature.",
+    "split": "Preserve official conversations and service-domain evaluation protocol; union exact templates/descendants without inventing IID gold. No unseen service/schema label in TRAIN target lookup. Schema descriptions may be inference features only under predeclared schema-generalization protocol.",
+    "streaming": "TRAIN-only iterator,shuffle dialogue groups with fixedseed,carry bounded typed proposal state within dialogue,detach between batches; no cross-split memory/cache; current turn frames cannot leak into input. Report event/update denominator and per-service support.",
+    "authority": "Publisher is_transactional/confirm acts are schema/semantic labels, not current bank permission or successful receipts. Map no actual bankingauthority. CCBYSA license/attribution pinned by collector before redistribution. CPU minbatch path first;90sec current fits do not justify GPU."
+  },
+  "collector_does_not_use_parent_eval_results": true
+}

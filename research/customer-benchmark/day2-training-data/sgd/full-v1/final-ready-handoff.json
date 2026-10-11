@@ -1,0 +1,1010 @@
+{
+  "actual_head_mask_counts": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/full-v1/head-mask-counts.json",
+    "sha256": "6f27b88ea2f0a26a249ca1617889c702dead6d75d90bb9d2a25369580327983f"
+  },
+  "all_downloaded_files": 130,
+  "ancestry_limits": {
+    "independence": "Closure components are embargo units, not proven IID. Large connected components are reported, not split.",
+    "internal_holdouts": "Derived from official TRAIN; not official dev/test and not blind policy OOD",
+    "partial_full": "Partial preview and full packet share source ancestry; never claim them independent. Partial fitting before full closure freeze would contaminate future full holdouts.",
+    "pretrained_contamination": "Not audited; no pretrained model opened here"
+  },
+  "batch_api": {
+    "batch_size_max": 512,
+    "call": "validated_batches.iter_batches(manifest_path, batch_size=128, seed=20261011, split=\"TRAIN\")",
+    "feature_view": "validated_batches.input_view(row)",
+    "heldout": "CAL/EVAL streams require allow_heldout=True for evaluation only; never fit weights on those streams.",
+    "order": "Deterministic group/conversation shuffle; USER turns chronological within each conversation.",
+    "state_reset": "Before every row with sampling.state_reset_before_row=true, clear/detach predicted recurrent state and caches; first row of each fresh iterator always resets. Reset metadata is not a feature.",
+    "weight": "sampling.row_group_loss_weight is 1/group_rows; sampling metadata stays outside input."
+  },
+  "batch_reader": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/validated_batches.py",
+    "sha256": "ca4bf082a8c23d30e9e0bc9faec655d5d86b8db213c51a789a965f636e5c8318"
+  },
+  "counts": {
+    "closure_components": 13161,
+    "component_size_histogram": {
+      "1": 12096,
+      "10": 7,
+      "11": 8,
+      "12": 8,
+      "13": 4,
+      "14": 5,
+      "15": 4,
+      "16": 2,
+      "17": 1,
+      "18": 1,
+      "19": 2,
+      "2": 556,
+      "20": 2,
+      "21": 2,
+      "23": 1,
+      "25": 2,
+      "26": 1,
+      "27": 1,
+      "29": 2,
+      "3": 214,
+      "30": 1,
+      "33": 1,
+      "34": 1,
+      "38": 1,
+      "4": 93,
+      "43": 1,
+      "45": 1,
+      "5": 53,
+      "6": 38,
+      "7": 29,
+      "8": 13,
+      "9": 10
+    },
+    "duplicate_feature_hits": {
+      "observed_input": 3013
+    },
+    "largest_component_dialogues": 45,
+    "source_counts": {
+      "SYSTEM_turns": 164982,
+      "USER_turns": 164982,
+      "dialogues": 16142,
+      "turns": 329964
+    },
+    "source_redaction_spans": {
+      "address": 7455,
+      "declared_identity": 3,
+      "number": 156923,
+      "possible_name": 197091
+    },
+    "split_USER_examples": {
+      "CAL": 16072,
+      "EVAL": 16295,
+      "TRAIN": 132615
+    },
+    "split_dialogues": {
+      "CAL": 1614,
+      "EVAL": 1614,
+      "TRAIN": 12914
+    }
+  },
+  "finalizer": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/finalize_handoff.py",
+    "sha256": "2cc46a1e5c3661ff82a2b2e5ea72c0fc6bd96192ea9bedc7f7f4d868008c0413"
+  },
+  "freeze_validation": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/full-v1/freeze-validation.json",
+    "sha256": "a2b81f9a851254e04b3341e78cd65b75b2fff0e8f9e2ef64b76f181336ebe186"
+  },
+  "frozen_collector": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/collect.py",
+    "sha256": "8858b5bc9afb27e0a4d16c095dd39764acd8b5db84e4c0be96f1fb9b50137338"
+  },
+  "frozen_manifest": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/full-v1/manifest.json",
+    "sha256": "7176ce8bf20c7e6adce899a276f7de0c042e0e33eb63999462264ca6c1843513"
+  },
+  "frozen_processor": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/process.py",
+    "sha256": "3cc4fbdc7cc3757b7ab80998f3a3e585b97cb6c3d28e11b33ff46b618224b032"
+  },
+  "frozen_split_plan": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/full-v1/split-plan.json",
+    "sha256": "4e30601875eb6d37d3a885ab969bf32c8e55bf0b9d4a5fc01b36040cf1d3ba41"
+  },
+  "heads_by_service": {
+    "Banks_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "CheckBalance",
+        "TransferMoney"
+      ],
+      "namespace": "sgd::Banks_1",
+      "slot_labels_by_id": [
+        "account_type",
+        "recipient_account_type",
+        "balance",
+        "amount",
+        "recipient_account_name"
+      ]
+    },
+    "Buses_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "FindBus",
+        "BuyBusTicket"
+      ],
+      "namespace": "sgd::Buses_1",
+      "slot_labels_by_id": [
+        "from_location",
+        "to_location",
+        "from_station",
+        "to_station",
+        "leaving_date",
+        "leaving_time",
+        "fare",
+        "travelers",
+        "transfers"
+      ]
+    },
+    "Buses_2": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "FindBus",
+        "BuyBusTicket"
+      ],
+      "namespace": "sgd::Buses_2",
+      "slot_labels_by_id": [
+        "origin",
+        "destination",
+        "origin_station_name",
+        "destination_station_name",
+        "departure_date",
+        "price",
+        "departure_time",
+        "group_size",
+        "fare_type"
+      ]
+    },
+    "Calendar_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "GetEvents",
+        "GetAvailableTime",
+        "AddEvent"
+      ],
+      "namespace": "sgd::Calendar_1",
+      "slot_labels_by_id": [
+        "event_date",
+        "event_time",
+        "event_location",
+        "event_name",
+        "available_start_time",
+        "available_end_time"
+      ]
+    },
+    "Events_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "FindEvents",
+        "BuyEventTickets"
+      ],
+      "namespace": "sgd::Events_1",
+      "slot_labels_by_id": [
+        "category",
+        "subcategory",
+        "event_name",
+        "date",
+        "time",
+        "number_of_seats",
+        "city_of_event",
+        "event_location",
+        "address_of_location"
+      ]
+    },
+    "Events_2": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "FindEvents",
+        "GetEventDates",
+        "BuyEventTickets"
+      ],
+      "namespace": "sgd::Events_2",
+      "slot_labels_by_id": [
+        "event_type",
+        "category",
+        "event_name",
+        "date",
+        "time",
+        "number_of_tickets",
+        "city",
+        "venue",
+        "venue_address"
+      ]
+    },
+    "Flights_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "SearchOnewayFlight",
+        "SearchRoundtripFlights",
+        "ReserveOnewayFlight",
+        "ReserveRoundtripFlights"
+      ],
+      "namespace": "sgd::Flights_1",
+      "slot_labels_by_id": [
+        "passengers",
+        "seating_class",
+        "origin_city",
+        "destination_city",
+        "origin_airport",
+        "destination_airport",
+        "departure_date",
+        "return_date",
+        "number_stops",
+        "outbound_departure_time",
+        "outbound_arrival_time",
+        "inbound_arrival_time",
+        "inbound_departure_time",
+        "price",
+        "refundable",
+        "airlines"
+      ]
+    },
+    "Flights_2": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "SearchOnewayFlight",
+        "SearchRoundtripFlights"
+      ],
+      "namespace": "sgd::Flights_2",
+      "slot_labels_by_id": [
+        "passengers",
+        "seating_class",
+        "origin",
+        "destination",
+        "origin_airport",
+        "destination_airport",
+        "departure_date",
+        "return_date",
+        "number_stops",
+        "outbound_departure_time",
+        "outbound_arrival_time",
+        "inbound_arrival_time",
+        "inbound_departure_time",
+        "fare",
+        "is_redeye",
+        "airlines"
+      ]
+    },
+    "Homes_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "FindApartment",
+        "ScheduleVisit"
+      ],
+      "namespace": "sgd::Homes_1",
+      "slot_labels_by_id": [
+        "area",
+        "address",
+        "property_name",
+        "phone_number",
+        "furnished",
+        "pets_allowed",
+        "rent",
+        "visit_date",
+        "number_of_beds",
+        "number_of_baths"
+      ]
+    },
+    "Hotels_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "ReserveHotel",
+        "SearchHotel"
+      ],
+      "namespace": "sgd::Hotels_1",
+      "slot_labels_by_id": [
+        "destination",
+        "number_of_rooms",
+        "check_in_date",
+        "number_of_days",
+        "star_rating",
+        "hotel_name",
+        "street_address",
+        "phone_number",
+        "price_per_night",
+        "has_wifi"
+      ]
+    },
+    "Hotels_2": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "BookHouse",
+        "SearchHouse"
+      ],
+      "namespace": "sgd::Hotels_2",
+      "slot_labels_by_id": [
+        "where_to",
+        "number_of_adults",
+        "check_in_date",
+        "check_out_date",
+        "rating",
+        "address",
+        "phone_number",
+        "total_price",
+        "has_laundry_service"
+      ]
+    },
+    "Hotels_3": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "ReserveHotel",
+        "SearchHotel"
+      ],
+      "namespace": "sgd::Hotels_3",
+      "slot_labels_by_id": [
+        "location",
+        "number_of_rooms",
+        "check_in_date",
+        "check_out_date",
+        "average_rating",
+        "hotel_name",
+        "street_address",
+        "phone_number",
+        "price",
+        "pets_welcome"
+      ]
+    },
+    "Media_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "FindMovies",
+        "PlayMovie"
+      ],
+      "namespace": "sgd::Media_1",
+      "slot_labels_by_id": [
+        "title",
+        "genre",
+        "subtitles",
+        "directed_by"
+      ]
+    },
+    "Movies_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "BuyMovieTickets",
+        "FindMovies",
+        "GetTimesForMovie"
+      ],
+      "namespace": "sgd::Movies_1",
+      "slot_labels_by_id": [
+        "price",
+        "number_of_tickets",
+        "show_type",
+        "theater_name",
+        "show_time",
+        "show_date",
+        "genre",
+        "street_address",
+        "location",
+        "movie_name"
+      ]
+    },
+    "Music_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "LookupSong",
+        "PlaySong"
+      ],
+      "namespace": "sgd::Music_1",
+      "slot_labels_by_id": [
+        "song_name",
+        "artist",
+        "album",
+        "genre",
+        "year",
+        "playback_device"
+      ]
+    },
+    "Music_2": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "LookupMusic",
+        "PlayMedia"
+      ],
+      "namespace": "sgd::Music_2",
+      "slot_labels_by_id": [
+        "song_name",
+        "artist",
+        "album",
+        "genre",
+        "playback_device"
+      ]
+    },
+    "RentalCars_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "GetCarsAvailable",
+        "ReserveCar"
+      ],
+      "namespace": "sgd::RentalCars_1",
+      "slot_labels_by_id": [
+        "type",
+        "car_name",
+        "pickup_location",
+        "pickup_date",
+        "pickup_time",
+        "pickup_city",
+        "dropoff_date",
+        "total_price"
+      ]
+    },
+    "RentalCars_2": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "GetCarsAvailable",
+        "ReserveCar"
+      ],
+      "namespace": "sgd::RentalCars_2",
+      "slot_labels_by_id": [
+        "car_type",
+        "car_name",
+        "pickup_location",
+        "pickup_date",
+        "pickup_time",
+        "pickup_city",
+        "dropoff_date",
+        "total_price"
+      ]
+    },
+    "Restaurants_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "ReserveRestaurant",
+        "FindRestaurants"
+      ],
+      "namespace": "sgd::Restaurants_1",
+      "slot_labels_by_id": [
+        "restaurant_name",
+        "date",
+        "time",
+        "serves_alcohol",
+        "has_live_music",
+        "phone_number",
+        "street_address",
+        "party_size",
+        "price_range",
+        "city",
+        "cuisine"
+      ]
+    },
+    "RideSharing_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "GetRide"
+      ],
+      "namespace": "sgd::RideSharing_1",
+      "slot_labels_by_id": [
+        "destination",
+        "shared_ride",
+        "ride_fare",
+        "approximate_ride_duration",
+        "number_of_riders"
+      ]
+    },
+    "RideSharing_2": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "GetRide"
+      ],
+      "namespace": "sgd::RideSharing_2",
+      "slot_labels_by_id": [
+        "destination",
+        "ride_type",
+        "ride_fare",
+        "wait_time",
+        "number_of_seats"
+      ]
+    },
+    "Services_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "BookAppointment",
+        "FindProvider"
+      ],
+      "namespace": "sgd::Services_1",
+      "slot_labels_by_id": [
+        "stylist_name",
+        "phone_number",
+        "average_rating",
+        "is_unisex",
+        "street_address",
+        "city",
+        "appointment_date",
+        "appointment_time"
+      ]
+    },
+    "Services_2": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "BookAppointment",
+        "FindProvider"
+      ],
+      "namespace": "sgd::Services_2",
+      "slot_labels_by_id": [
+        "dentist_name",
+        "phone_number",
+        "address",
+        "city",
+        "appointment_date",
+        "appointment_time",
+        "offers_cosmetic_services"
+      ]
+    },
+    "Services_3": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "BookAppointment",
+        "FindProvider"
+      ],
+      "namespace": "sgd::Services_3",
+      "slot_labels_by_id": [
+        "doctor_name",
+        "phone_number",
+        "average_rating",
+        "street_address",
+        "city",
+        "appointment_date",
+        "appointment_time",
+        "type"
+      ]
+    },
+    "Travel_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "FindAttractions"
+      ],
+      "namespace": "sgd::Travel_1",
+      "slot_labels_by_id": [
+        "location",
+        "attraction_name",
+        "category",
+        "phone_number",
+        "free_entry",
+        "good_for_kids"
+      ]
+    },
+    "Weather_1": {
+      "active_intent_labels_by_id": [
+        "NONE",
+        "GetWeather"
+      ],
+      "namespace": "sgd::Weather_1",
+      "slot_labels_by_id": [
+        "precipitation",
+        "humidity",
+        "wind",
+        "temperature",
+        "city",
+        "date"
+      ]
+    }
+  },
+  "input_contract": {
+    "context_earlier_turns": 8,
+    "current_frames_or_state_features": false,
+    "graph": "Only observed turn order/speaker; all-service schema branch is a separately declared protocol. No current-gold frame edges.",
+    "input_fields": [
+      "input.speaker",
+      "input.utterance",
+      "input.earlier_context[].speaker,text"
+    ],
+    "prior_gold_state_features": false,
+    "privacy": "deterministic text-only regex and capitalized-name heuristic; no annotation-span markers. Values masked if not unchanged and visible in sanitized observed window.",
+    "schema_descriptions": "All official TRAIN service schemas made available separately to every example; never select schemas using current gold frames. Current frame service is a target/supervision mask only.",
+    "schema_is_transactional": "publisher metadata only; no bank authority"
+  },
+  "license_and_attribution": {
+    "LICENSE.txt": {
+      "path": "research/customer-benchmark/day2-training-data/sgd/LICENSE.txt",
+      "sha256": "71a43a169b52bb1b39510b65ec5b43b4bbb59196d449a835fe58b50af6a72742"
+    },
+    "NOTICE.txt": {
+      "path": "research/customer-benchmark/day2-training-data/sgd/NOTICE.txt",
+      "sha256": "5df01f478eef5c5a5b6cb6befac1b02849e9aeef3dc3046948ac87b8ab21b216"
+    },
+    "PUBLISHER-README.md": {
+      "path": "research/customer-benchmark/day2-training-data/sgd/PUBLISHER-README.md",
+      "sha256": "e16545f163578037e6b7315b8da243f9f9871f4f071a812ab86b73702f124168"
+    },
+    "design-contract.json": {
+      "path": "research/customer-benchmark/day2-training-data/sgd/design-contract.json",
+      "sha256": "f97bbc128a99048964761453c1ba13f4f66d2373ff4bae09e6bc6d4f14b11ab2"
+    }
+  },
+  "mask_contract": {
+    "active_intent": "Service-local CE IDs from heads_by_service; NONE is an actual publisher label.",
+    "bank_policy_permission_ledger": "All related row/frame masks false; no authority, permission, ledger or real-bank policy gold.",
+    "belief_update": "Per-slot update_mask controls publisher_map_update KEEP/SET; prior publisher state is supervision only, never runtime input.",
+    "frame_head_masks": "targets.frames[].head_masks: active_intent, requested_slots, published_slot_map_presence, publisher_actions supervise only when true.",
+    "publisher_actions": "Actual USER action annotations; canonical_value_target_mask is always false.",
+    "service_supervision_masks": "Per-row publisher target availability only. False is unknown, never a negative service label. Never use to select input schemas.",
+    "slot_vectors": "requested_slots and published_slot_map_presence align to each service-local slot_labels_by_id.",
+    "unknown_DELETE": "Missing frames/state/fields stay unknown. DELETE_mask always false.",
+    "values": "targets.frames[].slot_values and actions[].values use text/null and value_recoverability_mask; hashes are bookkeeping, never features."
+  },
+  "model_fits_by_data_worker": 0,
+  "official_dev_test": "untouched; never downloaded or read by this data pipeline",
+  "over_400MB_reason": "Pinned publisher inventory establishes full requested official TRAIN requires 439402926 bytes; bounded collector ceiling 450000000 bytes.",
+  "partial_preview": {
+    "not_independent_qualification": true,
+    "path": "research/customer-benchmark/day2-training-data/sgd/partial-0008/",
+    "retire_from_fit_queue": true,
+    "used_for_fit_by_data_worker": false
+  },
+  "prior_frozen_packets": "Original BANKING77 v1, three-source v2 and SGD full-v1 bytes not changed for head implementations.",
+  "privacy_recoverability_limits": {
+    "DELETE": "never supervised without independent completeness certificate",
+    "other_source_overlap": "not audited against historical v1/v2 or pretrained corpora; no independent novelty claim",
+    "partial_preview": "shared TRAIN source ancestry; not independent qualification; not used for fitting by this data worker",
+    "privacy": "text-only heuristic redaction loses information; not certified universal anonymity",
+    "value_recoverability": "only unchanged values directly visible in sanitized observed window are supervised; other values remain unknown"
+  },
+  "processed_max_shard_bytes": 19499845,
+  "processed_shards": 37,
+  "processed_total_bytes": 703252507,
+  "raw_file_hashes": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/sources.json",
+    "sha256": "e47d66ac4521bfa98201b6068941d386644aa17410f2c514e04b927518c6d368"
+  },
+  "raw_source_inventory": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/source-inventory.json",
+    "sha256": "6825312f34494923fee656660ff252825ff612bdb41ade3d8226e8102954dc88"
+  },
+  "raw_verified_bytes": 439402926,
+  "redistribution": "Derived packet CC-BY-SA-4.0; preserve LICENSE.txt, NOTICE.txt and publisher attribution/citation with any distribution.",
+  "schema": {
+    "intent_heads": 26,
+    "namespaced_intents_excluding_NONE": 53,
+    "namespaced_slots": 215,
+    "path": "research/customer-benchmark/day2-training-data/sgd/service-schema.json",
+    "services": 26,
+    "sha256": "97b6c21673aa7e5c2d1ceef52aa35170c565223cdcbf33bb24c69739bda04a82"
+  },
+  "source": {
+    "license": "CC-BY-SA-4.0",
+    "official_dev_test": "not_downloaded_or_used",
+    "official_split": "train",
+    "repo": "google-research-datasets/dstc8-schema-guided-dialogue",
+    "revision": "e852981ae34990f4358979625854259302feaa78"
+  },
+  "source_files": 127,
+  "split_shards": {
+    "CAL": [
+      {
+        "bytes": 19495712,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/cal-00001.jsonl",
+        "rows": 4662,
+        "sha256": "fcffd0ef7c8d7148844d9c2339ab47ca732093934d1d44845bcd18f8386a88ef",
+        "split": "CAL"
+      },
+      {
+        "bytes": 19498381,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/cal-00002.jsonl",
+        "rows": 4317,
+        "sha256": "9c766701c3e670118808e74f6a6d37ab64e83a39dfe42d5c1052acf24c895ad9",
+        "split": "CAL"
+      },
+      {
+        "bytes": 19497857,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/cal-00003.jsonl",
+        "rows": 4547,
+        "sha256": "ebc12443701367585c33f27635d7e6052c4ec27cdce006b01ab05db6f3e95f1a",
+        "split": "CAL"
+      },
+      {
+        "bytes": 10440961,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/cal-00004.jsonl",
+        "rows": 2546,
+        "sha256": "41427d7a211e13aab9b6296422813b8f91b6c3f16d37d0d9a170edb88c1eebca",
+        "split": "CAL"
+      }
+    ],
+    "EVAL": [
+      {
+        "bytes": 19498971,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/eval-00001.jsonl",
+        "rows": 4696,
+        "sha256": "1088d52105f48f6c227e22a3cfb2da4ae267f91b0dfd6c29e88ae73416a71b19",
+        "split": "EVAL"
+      },
+      {
+        "bytes": 19498204,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/eval-00002.jsonl",
+        "rows": 4280,
+        "sha256": "2abb978e108430c8ac954536ae6469734712eb3ae5a96da04e76e6228deb9740",
+        "split": "EVAL"
+      },
+      {
+        "bytes": 19498031,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/eval-00003.jsonl",
+        "rows": 4644,
+        "sha256": "61ef9b3becb6735ffa21af5a1e3b8fd3b3f3452dd81967addf3cd7afddfe7a7c",
+        "split": "EVAL"
+      },
+      {
+        "bytes": 11129021,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/eval-00004.jsonl",
+        "rows": 2675,
+        "sha256": "a804e409212b71d819307fa608b0ea5a53e5e9dde552d7c547505db55c7b8af0",
+        "split": "EVAL"
+      }
+    ],
+    "TRAIN": [
+      {
+        "bytes": 19499169,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00001.jsonl",
+        "rows": 5038,
+        "sha256": "4d31d2c63fb6bf8a51c420504e1f5d0cf0c9549609ee93cef5add7b5350ef874",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19497975,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00002.jsonl",
+        "rows": 4949,
+        "sha256": "04f77488886f2de48fd246b602948631300273507bf179434a687f1681b67f1e",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19497457,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00003.jsonl",
+        "rows": 4043,
+        "sha256": "8251a54abed56a71c09655a6620e649a301e0c172af65ff1cc6dd2f904bf6966",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498063,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00004.jsonl",
+        "rows": 4587,
+        "sha256": "e69e607af9edbecf916274e990b4c16d10feda2a87e1202c452f821f12dd7824",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498804,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00005.jsonl",
+        "rows": 4808,
+        "sha256": "032517416a9c7c37b9aa187629b61c70acc68e4da9a5867ebf56ad1a23686daa",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19499699,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00006.jsonl",
+        "rows": 4817,
+        "sha256": "6a231d19c566c91dc917391860201f1756bc9dfd090045d790ba74410feea8fe",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19499039,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00007.jsonl",
+        "rows": 4573,
+        "sha256": "56909e6018ec180fc6373aa8a84375a04eb873df856f673c84eaebc781f86ff5",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19499845,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00008.jsonl",
+        "rows": 4636,
+        "sha256": "1de7a6de53eac018349865acc9fe201dee6890b0e9947faeb326bd1d05c3106d",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19499221,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00009.jsonl",
+        "rows": 4526,
+        "sha256": "9dc7b119ff32d3debac02cc08b9e546b417038278a074ddb6b803c92c06fc0e4",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19499186,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00010.jsonl",
+        "rows": 3908,
+        "sha256": "2ef0eaf98845e906b7552292e1fa992c5ffa26167dee8d4ae08ce2b383a24061",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19499335,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00011.jsonl",
+        "rows": 3856,
+        "sha256": "63f5c4f0dacc27f5b9fee3ec0194548dfcb9f0ca3ce94033fe5ea1513e6ec9ad",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19497848,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00012.jsonl",
+        "rows": 4384,
+        "sha256": "65ea2388a87574ccad8125135bc9be2b02625ac7bdfe651950eaf97dd727d6cf",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498879,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00013.jsonl",
+        "rows": 4790,
+        "sha256": "88f8ebd70542fe4af665ad356571766d09ef9db5e47987c99370f5e51e1d5adc",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19497757,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00014.jsonl",
+        "rows": 4727,
+        "sha256": "9574a417384fb12df9ca180a7a14ae4a2c058afe4f0835b30bfb0feb5323b04d",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498526,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00015.jsonl",
+        "rows": 4164,
+        "sha256": "526ac47ff46ef82989f3dee6491e30a48276124dfda1cb16790ab21b46df12a9",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498010,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00016.jsonl",
+        "rows": 4229,
+        "sha256": "8c6ab8794ac1d711e852e1a1aa2ffb91019e62e842de8afb1e0cf6fc69456f4b",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19496765,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00017.jsonl",
+        "rows": 4614,
+        "sha256": "7d84cca8353c48aa3e362cb0e76fc0c69364d399fc17b0be79123e3f0d32d72d",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19496036,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00018.jsonl",
+        "rows": 4670,
+        "sha256": "9fc1ec0db90a3b835c9c88d997314b471367695290ac7d92b51650b1727b4945",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498119,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00019.jsonl",
+        "rows": 4441,
+        "sha256": "e8f66b6c0f882573283a2f7e87b79c57ff40bf3816ba52750804f27734f007c3",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498942,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00020.jsonl",
+        "rows": 4655,
+        "sha256": "70525290526072867c95f6ce5f1a4789004ef6adbb026370108350c85555c950",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19495811,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00021.jsonl",
+        "rows": 4797,
+        "sha256": "414345154ad990f91c8321f6355f149467d4f792b777dfa0b1bb4dec3d06693f",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498676,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00022.jsonl",
+        "rows": 4615,
+        "sha256": "1c086409e542b0c7f15216c0a485cc70711e9a53acf28b6c6a73f2cd4006e0f6",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19496705,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00023.jsonl",
+        "rows": 4640,
+        "sha256": "83b6031612de3c0e2dae3cc8def6fcdb5be573a096f7c943858385247248ed33",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19499113,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00024.jsonl",
+        "rows": 4617,
+        "sha256": "ba8940f22aeae4eba4d9813203bcf7227f49c985b8638fd76c4347038ac34143",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19498427,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00025.jsonl",
+        "rows": 5081,
+        "sha256": "1ecbf25524205c2557d44d7fb0acb7aaaf751ad4092b6b3d3c3586df1eac4a34",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19497795,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00026.jsonl",
+        "rows": 4613,
+        "sha256": "3ab9485e5893112e9eb356e5a0d85601fedacafcdc5c4cba4cef84a04a55cca9",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19497140,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00027.jsonl",
+        "rows": 4364,
+        "sha256": "eafb6152f420cff182e8239600519c177d130b51e736285fd52d5f0a359ad044",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 19499682,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00028.jsonl",
+        "rows": 4628,
+        "sha256": "c668b61f3a6b16a2653fe5bb0eb163b9859e225f27acf2b6175565b2c6e3283c",
+        "split": "TRAIN"
+      },
+      {
+        "bytes": 18743345,
+        "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00029.jsonl",
+        "rows": 4845,
+        "sha256": "b75e966f51111fc380c44acd59d1f4a44119cd99737cb63bf130dcef474da410",
+        "split": "TRAIN"
+      }
+    ]
+  },
+  "status": "ready_for_authorized_publisher_head_minibatch_fit",
+  "storage": {
+    "derived": "local-runs/customer-benchmark-day2-sgd/full-v1/ (ignored)",
+    "raw": "research/customer-benchmark/day2-training-data/sgd/.cache/ (ignored)"
+  },
+  "underlying_batch_reader": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/batches.py",
+    "sha256": "e4f4772ea049c24145effec0f1dc1831a98b0aeec7f08c9c6f6d2d040c4d8b1c"
+  },
+  "validation": {
+    "actual_TRAIN_batches": {
+      "batch_size": 128,
+      "batches": 2,
+      "conversation_resets": 26,
+      "examples": 256,
+      "fresh_iterator_state_reset": true,
+      "heldout_stream_without_opt_in_rejected": true,
+      "same_seed_order_reproduced": true,
+      "sample_order_sha256": "608f0b52df87293fa706e05c59df6aad269d176a3e9a3880f09d6dca4f84efee"
+    },
+    "frozen_packet_rewritten": false,
+    "full_shard_checks": {
+      "all_shards_max_bytes": 19500000,
+      "bank_policy_permission_ledger_gold": 0,
+      "cross_partition_dialogue_or_closure_overlap": 0,
+      "cross_partition_exact_or_delexicalized_observed_input_overlap": 0,
+      "current_gold_in_input_fields": 0,
+      "duplicate_record_ids": 0,
+      "invented_DELETE_targets": 0,
+      "shard_rows": {
+        "CAL": 16072,
+        "EVAL": 16295,
+        "TRAIN": 132615
+      },
+      "status": "passed",
+      "unknown_state_imputation": 0
+    },
+    "limits": {
+      "DELETE": "never supervised without independent completeness certificate",
+      "other_source_overlap": "not audited against historical v1/v2 or pretrained corpora; no independent novelty claim",
+      "partial_preview": "shared TRAIN source ancestry; not independent qualification; not used for fitting by this data worker",
+      "privacy": "text-only heuristic redaction loses information; not certified universal anonymity",
+      "value_recoverability": "only unchanged values directly visible in sanitized observed window are supervised; other values remain unknown"
+    },
+    "manifest_sha256": "7176ce8bf20c7e6adce899a276f7de0c042e0e33eb63999462264ca6c1843513",
+    "model_evaluation_outcomes_read": 0,
+    "model_fits": 0,
+    "official_dev_test_read": false,
+    "published_active_intent_labels_checked": 175780,
+    "schema_frame_arity_checks": 175780,
+    "source_only_causality": {
+      "actual_primary_USER_cases": 128,
+      "current_and_prior_gold_frames_mutation": "input unchanged",
+      "current_service_selector": "targets only; all-schema input protocol",
+      "future_utterance_mutation": "input unchanged",
+      "gold_span_mutation": "input unchanged"
+    },
+    "status": "passed"
+  },
+  "validator": {
+    "path": "research/customer-benchmark/day2-training-data/sgd/validate.py",
+    "sha256": "ad2b5c60c31a4233d53e5b5a41e7cf0b938e4255d905717e66de040ba3952fd5"
+  }
+}

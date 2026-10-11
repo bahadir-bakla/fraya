@@ -1,0 +1,1597 @@
+{
+  "workflow_id": "41424bc5-f5d0-4a29-9213-044e6d97664a",
+  "agent_id": "d5dd0517-28ec-4c7e-b700-bfbab900a1c8",
+  "updated_at": "2026-10-11T05:43:10.517Z",
+  "workflow": {
+    "nodes": {
+      "end": {
+        "name": "end",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "terminal": {
+          "type": "function",
+          "function": {
+            "name": "bank_call_complete",
+            "handler": "__function__:end_call",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "message_mode": {
+                  "type": "string",
+                  "default": "none"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "node_type": "end_call",
+        "assertions": [],
+        "passthrough": false,
+        "pre_actions": [],
+        "transitions": [],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": false,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": true,
+        "passthrough_default_transition": null,
+        "return_to_previous_on_interrupt": false
+      },
+      "speak": {
+        "name": "speak",
+        "tools": [],
+        "on_enter": {
+          "text": "{{dialogue_line}}",
+          "type": "tts"
+        },
+        "node_type": "conversation",
+        "assertions": [],
+        "passthrough": false,
+        "pre_actions": [],
+        "transitions": [
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "engine"
+          }
+        ],
+        "role_message": "",
+        "task_message": "No tool call is allowed. The entry sentence is authoritative. Wait for the customer reply.",
+        "interruptible": true,
+        "max_node_turns": 60,
+        "response_mapping": [],
+        "extraction_schema": [
+          {
+            "name": "event",
+            "type": "string",
+            "description": "Return ONLY this variable's scalar event string. Do not emit JSON, object wrappers, markdown, raw_speech, admin, labels for other variables, or commentary. The FINAL three characters are END; nothing follows END. Version scalar-v6. Current authoritative phase: {{phase_hint}}. Call calendar: {{now}}; called recipient {{first_name}} {{last_name}}. Use ONLY the latest customer speech, with recent spoken terms for references. Never infer backend identity/success or financial consent from earlier speech.\nGrammar: 1-16 nonempty tagged rows followed by a separate END line; maximum 4000 characters. Row is k=K|c=C followed only by relevant optional tags |p=P|a=A|d=D|v=V|t=T|scope=current|u=U|q=Q|x=X|sub=S|claim=H|pol=L|mode=M. Required k,c; C=1 complete asserted clause, C=0 unfinished. No duplicate/unknown tags or empty values. No escaping: values cannot contain pipe, equals, newline, quotes, brackets, braces or backslash. Copy no full speech into rows. X is an exact primary clause up to 240 characters, only when representable; omit otherwise. K=yes,accept,confirm,answer,proposal,no,vague,too_much,paid,dispute,partial,third,wrong_number,deceased,callback,decline,human,plan,hardship,stop,unknown,question,consent.\nP=exact returned product ID, credit card/personal loan/car loan, credit_card/personal_loan/car_loan, actual displayed label including card ending digits, comma-separated references, or all. Omit only for the currently asked single target or a clear collective first answer. Distinct target decisions/amounts/dates use distinct rows. Explicit collective scope must include every named target. A=finite unsigned decimal with 0-2 fraction digits, full for an explicit reference to spoken full balance, or total:decimal for a stated aggregate. Never copy a total to each product. D=whole ISO YYYY-MM-DD (preferred using bound call calendar), day/month/year day first, today, tomorrow, this/next weekday, weekday, complete day month [year], month day [year], ordinal/word ordinal with month, consistent weekday+day, or complete redundant relative+explicit date. Next weekday means following calendar week. A lone ordinal may refer only to a unique current spoken date with matching day. Vague periods next week/end of month/when my salary comes/later/soon remain vague, never invented dates. Ordinary commas, periods, spaces and hyphens in complete natural dates are allowed. Contradictory dates must not become canonical guesses.\nU=amount/date/both/unknown/answer identifies only unfinished components; required for unfinished component clauses, never on C=1. Omit unfinished values, retain independently complete siblings. Separate amount and date rows for the same target retain both regardless of serialization order. Explicit ordered corrections consolidate final actually asserted facts; conflicting simultaneous facts require clarification. Quoted/hypothetical/negated statements are unknown, never positive actions. Terminal unfinished speech is C=0 for its own clause; earlier ellipsis does not make a later sibling incomplete.\nPhase recipient: current self-identification yes/that is me/speaking/name-only can be yes,answer,confirm C=1, with no V; exclude wrong subject/third party/quoted/hypothetical/negative/unfinished acts. Hello/go ahead alone are unknown. Recipient confirmation only advances to security.\nPhase dob/phone: answer C=1 with V=YYYY-MM-DD DOB with complete explicit supplied year only (nineteen eighty-seven means 1987; normalize hyphens before century grammar; nineteen alone is incomplete) (numbers day then month then year) or exactly four phone digits; preserve supplied answer alongside independent question rows. Never fill missing year/digit from a question. A canonical DOB must agree with all explicit current source components; unsupported or incomplete spoken years are partial/unknown, never guessed. An incomplete answer is partial C=0 U=answer. A refusal or purpose question without an answer is decline. V is security-only except consent below. Callback uses D and T=HH:MM.\nPhase collect/offer: proposal contains each completed A/D; no/too_much/paid/dispute/vague/partial reflect actual scope. Paid/dispute REQUIRE sub=self, claim=current_bank or historical_bank, pol=positive, mode=asserted and X=exact current source claim span. Other subjects use sub=other/unknown; unrelated or uncertain account scope uses claim=unrelated/unknown; negative/uncertain polarity pol=negative/unknown; quoted/hypothetical/uncertain acts mode=quoted/hypothetical/unknown: these are neutral unknown, never paid/dispute. Apply except/excluding/apart from/other than/but not and contradictory named negatives before target expansion; unfinished exclusions are unknown scope. Never include an excluded target in a paid/dispute row. Every resolved target must be supported by its own literal product mention or a genuine collective current bank-products assertion; one product mention cannot authorize all or a sibling product. The literal source span must itself assert the current returned bank product, explicit past-due payment, or a clear I already paid response to the current bank question; diary/purchase/invoice/parcel labels are unrelated even if they say paid. Historical closure/paid-off uses historical_bank and dispute. Paid is current arrears paid; historical product closure/paid-off is dispute. Repeated paid with no additional payment remains paid. No to today without positive terms is no. Agreement to already spoken offers is yes/accept, not final permission; include any changed A/D. No unspoken terms may be inherited.\nPhase confirm: later complete unqualified unchanged agreement is confirm/yes/accept; scope covers exactly current joint readback. Include asserted A/D, especially corrections. Qualified yes, new terms, withdrawal, pause and unfinished correction are never bare confirmation. Affirmative idioms yes no problem/I do not mind are positive by clause meaning; actual negatives block agreement. A correction completion plus yes still needs fresh readback and later consent.\nIndependent question rows use Q=ai/scam/purpose/security/balance/offer/readback/relative/unknown; preserve primary facts. An AI question is not human. Consent rows use V=pause/withdraw/readback and optional P; permission withdrawal is not payment refusal and preserves sibling facts. Incomplete consent C=0 still blocks writing. Human/plan/hardship/stop/third/wrong_number/deceased are primary scoped acts, C=1 only actually complete asserted customer-relevant acts. A polite human/plan question is a request; hypothetical relative/death questions are not reports. Do not negate stop because it says do not contact. Never omit siblings.\nLiteral event value examples (blank lines separate examples; no annotations in values):\nk=yes|c=1\nEND\n\nk=confirm|c=1\nEND\n\nk=answer|c=1\nEND\n\nk=answer|c=1|v=1988-04-17\nEND\n\nk=answer|c=1|v=1234\nEND\n\nk=proposal|c=1|p=credit card|a=100.25|d=tomorrow\nk=no|c=1|p=personal loan\nk=paid|c=1|p=car loan|sub=self|claim=current_bank|pol=positive|mode=asserted|x=I already paid my car loan\nEND\n\nk=accept|c=1|p=all\nEND\n\nk=accept|c=1|p=credit card\nk=accept|c=1|p=personal loan\nEND\n\nk=confirm|c=1|p=all\nEND\n\nk=confirm|c=1|p=credit card\nk=confirm|c=1|p=personal loan\nEND\n\nk=partial|c=0|p=personal loan|u=amount|d=tomorrow\nEND\n\nk=partial|c=0|p=car loan|u=date|a=full\nEND\n\nk=partial|c=0|p=personal loan|u=both\nEND\n\nk=proposal|c=1|p=credit card|a=full\nk=proposal|c=1|p=credit card|d=tomorrow\nEND\n\nk=question|c=1|q=balance|p=credit card\nEND\n\nk=consent|c=1|v=withdraw|p=credit card\nk=no|c=1|p=personal loan\nEND\n\nk=consent|c=0|v=pause|p=credit card\nk=confirm|c=1|p=all\nEND\n\nk=answer|c=1|v=1234\nk=question|c=1|q=security\nEND\n\nk=deceased|c=0|u=answer\nEND\n\nk=human|c=1|x=could you please connect me to a human\nEND\n\nk=callback|c=1|d=tomorrow|t=11:00\nEND\n\nAdditional literal scalar-v6 examples:\nk=answer|c=1|v=1987-04-17\nk=question|c=1|q=security\nk=question|c=1|q=ai\nEND\n\nk=partial|c=0|u=answer\nk=question|c=1|q=security\nEND\n\nk=dispute|c=1|p=personal loan|sub=self|claim=current_bank|pol=positive|mode=asserted|x=This debt is not mine\nEND",
+            "max_retries": 1,
+            "min_confidence": 0.1,
+            "validation_pattern": "\\Ak=[\\s\\S]{1,3990}\\nEND\\Z"
+          },
+          {
+            "name": "raw_speech",
+            "type": "string",
+            "description": "Return ONLY this scalar string: an exact copy of the latest customer speech, never assistant speech, JSON wrapper, event rows or other variable labels. Empty string only when speech is unavailable. This is model-extracted text, not backend authority; never fabricate it.",
+            "min_confidence": 0.1
+          },
+          {
+            "name": "admin",
+            "type": "string",
+            "description": "Return ONLY this scalar string: none, or comma-separated independent legacy administrative question flags ai,scam,purpose,unknown. No spaces, JSON wrappers, event rows, speech copy, explanations or sibling labels. Precise scoped question acts are in the separate event variable. Never replace or erase payment/security facts. Output none when no such question.",
+            "min_confidence": 0.1,
+            "validation_pattern": "^(?:none|(?:ai|scam|purpose|unknown)(?:,(?:ai|scam|purpose|unknown))*)$"
+          }
+        ],
+        "max_turn_transition": "safe_exit",
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": false,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": null,
+        "return_to_previous_on_interrupt": false
+      },
+      "engine": {
+        "name": "engine",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "code",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "function": {
+              "name": "code_exec",
+              "handler": "__function__:code_exec",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "default": "import json,re,datetime\ntry:\n    turn_snapshot=None\n    s=json.loads(vars.get('state','{}'))\n    today=datetime.date.fromisoformat(str(vars['now'])[:10])\n    holidays={'2026-10-26','2026-11-11','2026-11-26','2026-12-25','2027-01-01'}\n    def business(d): return d.weekday()<5 and d.isoformat() not in holidays\n    def forward(d):\n        while not business(d): d+=datetime.timedelta(days=1)\n        return d\n    def after(n):\n        d=today\n        while n:\n            d+=datetime.timedelta(days=1)\n            if business(d): n-=1\n        return d\n    def dateval(t):\n        t=str(t).strip().lower()\n        if any(c in t for c in ('\"','[',']','{','}','|','\\\\')) or not t: raise ValueError('complete date token')\n        if t.endswith('...'): raise ValueError('unfinished date')\n        t=re.sub(r'(\\d)(st|nd|rd|th)\\b',r'\\1',t)\n        t=re.sub(r'\\s+',' ',t.replace(',',' ')).strip().rstrip('.')\n        if not re.fullmatch(r'[a-z0-9 /-]+',t): raise ValueError('date token')\n        if t=='today': return today\n        if t=='tomorrow': return today+datetime.timedelta(days=1)\n        weekdays=['monday','tuesday','wednesday','thursday','friday','saturday','sunday']\n        months=['january','february','march','april','may','june','july','august','september','october','november','december']\n        m=re.match(r'^(?:(next|this) )?('+'|'.join(weekdays)+r')(?: |$)',t)\n        relative=None\n        if m:\n            weekday=weekdays.index(m[2]); mode=m[1]\n            relative=today-datetime.timedelta(days=today.weekday())+datetime.timedelta(days=weekday+(7 if mode=='next' else 0))\n            t=t[m.end():].strip()\n            if not t: return relative\n        explicit=None\n        if re.fullmatch(r'\\d{4}-\\d{2}-\\d{2}',t): explicit=datetime.date.fromisoformat(t)\n        elif re.fullmatch(r'\\d{1,2}[/-]\\d{1,2}[/-]\\d{4}',t):\n            a,b,c=re.split(r'[/-]',t); explicit=datetime.date(int(c),int(b),int(a))\n        else:\n            natural=re.fullmatch(r'(\\d{1,2}) ([a-z]+)(?: (\\d{4}))?',t)\n            if natural and natural[2] in months: explicit=datetime.date(int(natural[3] or today.year),months.index(natural[2])+1,int(natural[1]))\n            if explicit is None:\n                words=re.fullmatch(r'([a-z -]+) ('+'|'.join(months)+r')(?: (\\d{4}))?',t)\n                if words: explicit=datetime.date(int(words[3] or today.year),months.index(words[2])+1,spoken_number(words[1]))\n            if explicit is None:\n                monthfirst=re.fullmatch(r'('+'|'.join(months)+r') ([a-z0-9 -]+?)(?: (\\d{4}))?',t)\n                if monthfirst: explicit=datetime.date(int(monthfirst[3] or today.year),months.index(monthfirst[1])+1,spoken_number(monthfirst[2]))\n            if explicit is None and m and re.fullmatch(r'\\d{1,2}',t):\n                explicit=datetime.date(today.year,today.month,int(t))\n        if m:\n            if explicit is None or explicit.weekday()!=weekday or (mode and explicit!=relative): raise ValueError('inconsistent complete date')\n        if explicit is None and re.fullmatch(r'(?:the )?(?:\\d{1,2}|(?:twenty[ -]|thirty[ -])?(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteenth|nineteenth|twentieth|thirtieth))',t):\n            try:\n                day=spoken_number(re.sub(r'^the ','',t))\n                offers=[p['offer'] for p in s.get('products',[]) if p.get('offer',{}).get('spoken') and p['product_id']==s.get('current')]\n                if len(offers)==1 and datetime.date.fromisoformat(offers[0]['date']).day==day: explicit=datetime.date.fromisoformat(offers[0]['date'])\n                elif 1<=day<=31: raise ValueError('day conflicts with current offer')\n            except ValueError: raise\n        if explicit is None and re.search(r'\\d|monday|tuesday|wednesday|thursday|friday|saturday|sunday',t): raise ValueError('unfinished date')\n        if explicit is None and not re.fullmatch(r'next week|end of (?:the )?month|when my salary comes|later|soon',t): raise ValueError('invalid date expression')\n        return explicit\n    def spoken_number(text):\n        text=str(text).lower().replace('-',' ').replace(',',' ')\n        if text.strip().isdigit(): return int(text.strip())\n        units=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen']\n        tens={'twenty':20,'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90}\n        ordinals={'first':'one','second':'two','third':'three','fourth':'four','fifth':'five','sixth':'six','seventh':'seven','eighth':'eight','ninth':'nine','tenth':'ten','eleventh':'eleven','twelfth':'twelve','thirteenth':'thirteen','fourteenth':'fourteen','fifteenth':'fifteen','sixteenth':'sixteen','seventeenth':'seventeen','eighteenth':'eighteen','nineteenth':'nineteen','twentieth':'twenty','thirtieth':'thirty'}\n        total=0; part=0\n        for token in text.split():\n            token=ordinals.get(token,token)\n            if token=='and': continue\n            if token in units: part+=units.index(token)\n            elif token in tens: part+=tens[token]\n            elif token=='hundred': part*=100\n            elif token=='thousand': total+=part*1000; part=0\n            else: raise ValueError('number words')\n        return total+part\n    def normalize_text(text):\n        text=str(text).lower().replace(\"’\",\"'\").replace(\"‘\",\"'\").replace(\"ʼ\",\"'\")\n        for separator in ('‐','‑','‒','–','—','−'): text=text.replace(separator,'-')\n        return re.sub(r'\\s+',' ',text).strip()\n    def self_answer(text):\n        text=normalize_text(text)\n        # Independent questions cannot supply missing digits, day, month or year.\n        question=re.search(r'(?:\\b(?:and|but)\\s+)?\\b(?:why|what|are you|is this|can you explain|could you explain|would a relative|could my|can my|if my|suppose|hypothetically)\\b',text)\n        if question: text=text[:question.start()].rstrip(' ,;.!?')\n        if any(ch in text for ch in ('\"','“','”','[',']','{','}','...')): return ''\n        if re.search(r\"\\b(?:not|never|if|would|could|his|her|their|mother|father|quoted|diary)\\b\",text): return ''\n        return text.rstrip(' .;,!?')\n    def word_year(text):\n        text=normalize_text(text).replace('-',' ')\n        text=re.sub(r'\\s+',' ',text).strip()\n        if re.fullmatch(r'\\d{4}',text): return int(text)\n        units='zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen'.split()\n        tens={'twenty':20,'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90}\n        def under100(t):\n            z=t.split()\n            if len(z)==1 and z[0] in units: return units.index(z[0])\n            if len(z)==1 and z[0] in tens: return tens[z[0]]\n            if len(z)==2 and z[0] in tens and z[1] in units[1:10]: return tens[z[0]]+units.index(z[1])\n            if len(z)==2 and z[0] in ('oh','zero') and z[1] in units[1:10]: return units.index(z[1])\n            raise ValueError('incomplete or unsupported year operand')\n        m=re.fullmatch(r'(eighteen|nineteen|twenty) (.+)',text)\n        if m and 'thousand' not in m[2]:\n            century={'eighteen':1800,'nineteen':1900,'twenty':2000}[m[1]]\n            suffix=m[2]\n            if suffix=='hundred': return century\n            suffix=re.sub(r'^hundred (?:and )?','',suffix)\n            return century+under100(suffix)\n        m=re.fullmatch(r'(one|two) thousand(?: (?:and )?(.+))?',text)\n        if m: return (1000 if m[1]=='one' else 2000)+(under100(m[2]) if m[2] else 0)\n        raise ValueError('complete explicit year required')\n    def security_raw(text,phase):\n        text=self_answer(text)\n        if not text: return ''\n        if phase=='phone':\n            text=re.sub(r\"^(?:my (?:phone(?: number)?(?: ends in)?|last four(?: digits)?) (?:is|are) |(?:the )?last four(?: digits)?(?: of (?:my|the) phone(?: number)?)? (?:is|are) |it is |it's |they are |the digits are )\",'',text)\n            digits={'zero':'0','oh':'0','one':'1','two':'2','three':'3','four':'4','five':'5','six':'6','seven':'7','eight':'8','nine':'9'}\n            tokens=text.replace('-',' ').split()\n            if len(tokens)==4 and all(t in digits for t in tokens): return ''.join(digits[t] for t in tokens)\n            return text if re.fullmatch(r'\\d{4}',text) else ''\n        text=re.sub(r\"^(?:my (?:date of birth|birth date|birthday|dob) is |(?:the )?date of birth is |i was born (?:on |in )?|i was born: |it is |it's |the )\",'',text)\n        if re.fullmatch(r'\\d{4}-\\d{2}-\\d{2}',text): return datetime.date.fromisoformat(text).isoformat()\n        if re.fullmatch(r'\\d{1,2}[ ./-]\\d{1,2}[ ./-]\\d{4}',text):\n            day,month,year=re.split(r'[ ./-]',text); return datetime.date(int(year),int(month),int(day)).isoformat()\n        months='january february march april may june july august september october november december'.split()\n        text=text.replace(',',' ')\n        text=re.sub(r'\\bday of (?:the )?(?:month of )?', '',text)\n        text=re.sub(r'\\b(?:in (?:the )?year|in the year|of the year)\\s+', '',text)\n        text=re.sub(r'\\s+',' ',text).strip()\n        for i,month in enumerate(months):\n            if re.search(r'\\b'+month+r'\\b',text):\n                day,year=text.split(month,1)\n                if not day.strip():\n                    m=re.fullmatch(r' ([a-z]+(?:[- ](?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth))?|\\d{1,2}(?:st|nd|rd|th)?) (.+)',year)\n                    if not m: return ''\n                    day,year=m[1],m[2]\n                day=re.sub(r'^(?:the )?','',day.strip()); day=re.sub(r'\\s+of$','',day)\n                day=re.sub(r'(\\d)(st|nd|rd|th)\\b',r'\\1',day)\n                if not re.fullmatch(r'\\d{1,2}|[a-z]+(?:[- ][a-z]+)?',day): return ''\n                return datetime.date(word_year(year.strip()),i+1,spoken_number(day)).isoformat()\n        return ''\n    def recipient_reply(text):\n        text=normalize_text(text)\n        if any(x in text for x in ('\"','“','”','[',']','{','}','...')): return False\n        # Strip only independent trailing questions, across punctuation boundaries.\n        text=re.split(r'(?:[,;!?]|(?<!mr)(?<!ms)(?<!dr)\\.)\\s*(?:and\\s+)?(?=(?:are you|is this|why|what|can you explain|could you explain)\\b)',text,1)[0]\n        text=re.sub(r'\\b(mr|ms|mrs|dr)\\.',r'\\1',text)\n        text=re.sub(r'[.!?]+$','',text).strip()\n        text=re.sub(r'\\s+',' ',text)\n        text=re.sub(r'^(?:hello|hi|good morning|good afternoon)[,; ]*','',text)\n        text=re.sub(r'^(?:yes|speaking)[,; ]+','',text)\n        if text in ('yes',\"that's me\",'that is me','speaking','yes speaking',\"yes, speaking\",'this is me'): return True\n        first=normalize_text(vars.get('first_name',''))\n        last=normalize_text(vars.get('last_name',''))\n        title=normalize_text(vars.get('title','')).rstrip('.')\n        names=set()\n        if first and last: names.add(first+' '+last)\n        if last and title: names.add(title+' '+last)\n        if first: names.add(first)\n        if last: names.add(last)\n        text=re.sub(r'^(?:this is|i am|i\\x27m)\\s+','',text)\n        text=re.sub(r'[,; ]+speaking$','',text)\n        return text in names\n    def minor_units(value):\n        token=str(value)\n        if not re.fullmatch(r'\\d+(?:\\.\\d+)?',token): raise ValueError('API monetary grammar')\n        whole,separator,fraction=token.partition('.')\n        if any(d!='0' for d in fraction[2:]): raise ValueError('monetary precision')\n        return int(whole)*100+int((fraction+'00')[:2])\n    def amountval(token):\n        token=str(token)\n        if not re.fullmatch(r'\\d+(?:\\.\\d{1,2})?',token): raise ValueError('amount grammar')\n        value=float(token)\n        if not 0<=value<float('inf'): raise ValueError('nonfinite amount')\n        return value\n    def asserted(e,text,unfinished):\n        if e['c']!='1': return False\n        acts={'deceased':r\"\\b(?:died|dead|deceased|passed away)\\b\",'wrong_number':r\"\\b(?:wrong number|does not belong|doesn't belong|not (?:his|her|their) number)\\b\",'human':r\"\\b(?:human|person|agent|representative)\\b\",'plan':r\"\\b(?:plan|lower instalments|lower installments|restructur)\\w*\",'hardship':r\"\\b(?:ill|sick|illness|job loss|lost (?:my |the )?job|death in (?:the |my )?family)\\b\",'stop':r\"\\b(?:do not contact|don't contact|stop|do not want to talk|don't want to talk|do not wish to talk|don't wish to talk|leave me alone)\\b\",'third':r\"\\b(?:not me|not (?:him|her)|relative|wife|husband|mother|father|sister|brother|not here|not available)\\b\"}\n        if e['k'] not in acts: return True\n        negatives={'deceased':r\"\\b(?:not dead|not deceased|has not died|hasn't died|did not die|didn't die)\\b\",'wrong_number':r\"\\b(?:not the wrong number|is not a wrong number)\\b\",'human':r\"\\b(?:do not|don't|not) want (?:a )?(?:human|person|agent)\\b\",'plan':r\"\\b(?:do not|don't|not) want (?:a )?(?:new )?(?:plan|lower instalments)\\b\",'hardship':r\"\\b(?:not ill|not sick|did not lose|haven't lost)\\b\",'stop':r\"\\b(?:do not|don't) want to stop\\b\"}\n        # Each act is checked against its own raw clause, including quoted spans.\n        text=text.replace(\"’\", \"'\").replace(\"‘\", \"'\")\n        text=re.sub(r'\\bif (?:you (?:need|want) to know|that helps|you must know)\\s*[,;:]?', '', text)\n        clauses=re.split(r'(?<!\\.)[.!?;](?!\\.)|,\\s*(?:but|and|(?=if\\b))\\s*|\\s+(?:but|and)\\s+(?=if\\b)',text)\n        for clause in clauses:\n            if not re.search(acts[e['k']],clause): continue\n            if re.search(r'[\"“”]|\\b(?:if|hypothetically|suppose|quoted|quoting)\\b',clause): continue\n            if re.search(r'\\b(?:would|could)\\b',clause) and not re.search(r'\\b(?:could|would) (?:you|i|someone) (?:please )?(?:speak|talk|connect|transfer|help|get|arrange|put|offer|lower)',clause): continue\n            if e['k']=='deceased' and re.search(r'\\b(?:my|our|his|her) (?:mother|father|sister|brother|wife|husband|relative|grandmother|grandfather)\\b',clause): continue\n            if re.search(negatives.get(e['k'],r'(?!)'),clause): continue\n            if re.search(r'\\.\\.\\.\\s*$|\\b(?:but|and|for|or|actually|instead|wait|correction|on|next|this|hundred)\\s*$',clause): continue\n            return True\n        return False\n    def decode(text):\n        if not isinstance(text,str) or len(text)>4000: raise ValueError('event bound')\n        if text!=text.strip() or not text.endswith('\\nEND'): raise ValueError('exact terminal')\n        lines=text.splitlines()\n        if len(lines)>17: raise ValueError('row bound')\n        if not lines or lines[-1]!='END': raise ValueError('terminal')\n        out=[]\n        for row in lines[:-1]:\n            d={}\n            for part in row.split('|'):\n                if part.count('=')!=1: raise ValueError('separator')\n                k,v=part.split('=',1)\n                if k not in ('k','p','a','d','c','v','t','scope','u','q','x','sub','claim','pol','mode') or k in d or not v: raise ValueError('tag')\n                if any(x in v for x in ('[',']','{','}','\"','\\\\')): raise ValueError('fragment')\n                d[k]=v\n            if not set(('k','c')).issubset(d) or d['c'] not in ('0','1'): raise ValueError('completion')\n            if d['k'] not in ('yes','accept','confirm','answer','proposal','no','vague','too_much','paid','dispute','partial','third','wrong_number','deceased','callback','decline','human','plan','hardship','stop','unknown','question','consent'): raise ValueError('kind')\n            if 'a' in d and not re.fullmatch(r'\\d+(?:\\.\\d{1,2})?|full|total:\\d+(?:\\.\\d{1,2})?',d['a']): raise ValueError('amount')\n            if 'a' in d and d['a']!='full': amountval(d['a'][6:] if d['a'].startswith('total:') else d['a'])\n            if d.get('u','') not in ('','amount','date','both','unknown','answer'): raise ValueError('component')\n            if 'scope' in d and d['scope']!='current': raise ValueError('scope')\n            if d['c']=='1' and 'u' in d: raise ValueError('complete with unfinished component')\n            # An explicitly unfinished date is a fragment, never an eligible date.\n            # Validate the whole row's syntax first, then its independently complete facts.\n            unfinished_date=d['c']=='0' and d.get('u') in ('date','both','unknown')\n            if 'd' in d and not unfinished_date:\n                try: dateval(d['d'])\n                except Exception: raise ValueError('date for '+d.get('p','current product'))\n            if 'x' in d and len(d['x'])>240: raise ValueError('clause bound')\n            for tag,allowed in (('sub',('self','other','unknown')),('claim',('current_bank','historical_bank','unrelated','unknown')),('pol',('positive','negative','unknown')),('mode',('asserted','quoted','hypothetical','unknown'))):\n                if tag in d and d[tag] not in allowed: raise ValueError('claim qualifier')\n\n            if d['k']=='question' and d.get('q') not in ('ai','scam','purpose','security','balance','offer','readback','relative','unknown'): raise ValueError('question')\n            if d['k']=='consent' and d.get('v') not in ('pause','withdraw','readback'): raise ValueError('consent description')\n            if 'q' in d and d['k']!='question': raise ValueError('question scope')\n            out.append(d)\n        if not out: raise ValueError('empty')\n        return out\n    def resolve(ref):\n        if ref in ('all','everything'): return s['products']\n        refs=str(ref).split(','); out=[]\n        for r in refs:\n            r=r.strip().lower().replace('_',' ')\n            matches=[p for p in s['products'] if r in (p['product_id'].lower().replace('_',' '),p['type'].replace('_',' '),p['label'].lower())]\n            if len(matches)!=1: raise ValueError('reference')\n            if matches[0] not in out: out.append(matches[0])\n        return out\n    def bank_claim(e,raw):\n        if e.get('c')!='1' or e.get('sub')!='self' or e.get('pol')!='positive' or e.get('mode')!='asserted': return False\n        if e.get('claim') not in ('current_bank','historical_bank'): return False\n        if e['k']=='paid' and e.get('claim')!='current_bank': return False\n        span=normalize_text(e.get('x',''))\n        source=normalize_text(raw)\n        if not span or source.count(span)!=1: return False\n        start=source.index(span); end=start+len(span)\n        # Span cannot borrow an assertion from quoted source text or a conditional clause.\n        quoted=False\n        for char in source[:start]:\n            if char in ('\"','“','”'): quoted=not quoted\n        if quoted or any(ch in span for ch in ('\"','“','”')) or (source[:start].rstrip().endswith(\"'\") and source[end:].lstrip().startswith(\"'\")): return False\n        boundary=max(source.rfind(';',0,start),source.rfind('.',0,start),source.rfind('?',0,start))\n        context=source[boundary+1:end]\n        if re.search(r\"\\b(?:if|suppose|hypothetically|quoted|quoting|diary|parcel|invoice|purchase|shopping|receipt label|note says|snippet|label|(?:brother|sister|wife|husband|friend|someone) (?:said|says|wrote))\\b\",context): return False\n        span=re.sub(r\"\\bi've\\b\",'i have',span)\n        refs=resolve(e.get('p','all' if s.get('initial') else s.get('current','')))\n        # Extend to the entire current assertion so a cropped producer span cannot\n        # hide an exclusion. Independent current negative target clauses override it.\n        act=source[start:]\n        act=re.split(r'(?<!\\.)[.!?](?!\\.)',act,1)[0]\n        def mentions(text):\n            return set(p['product_id'] for p in s['products'] if any(re.search(r'\\b'+re.escape(label)+r'\\b',text) for label in (normalize_text(p['label']),p['type'].replace('_',' '))))\n        positive_span=span\n        negative=set()\n        exclusions=list(re.finditer(r\"\\b(?:except(?: for)?|excluding|apart from|other than|but not)\\b\",act))\n        if exclusions:\n            cut=exclusions[0].start()\n            positive_span=act[:cut]\n            for i,marker in enumerate(exclusions):\n                tail=act[marker.end():exclusions[i+1].start() if i+1<len(exclusions) else len(act)].strip(' ,;:')\n                tail=re.split(r';|,?\\s+(?:and|but)\\s+i\\b|,\\s*i\\b',tail,1)[0].strip()\n                # Unknown or unfinished exclusion never expands a collective claim.\n                ids=mentions(tail)\n                if not ids or re.search(r'\\.\\.\\.|\\b(?:and|or|the|my|a|except|excluding)\\s*$',tail): return False\n                remainder=tail\n                for product in s['products']:\n                    for label in sorted((normalize_text(product['label']),product['type'].replace('_',' ')),key=len,reverse=True):\n                        remainder=re.sub(r'\\b'+re.escape(label)+r'\\b',' ',remainder)\n                remainder=re.sub(r'\\b(?:my|the|and|or|also|only)\\b|[,() ]','',remainder)\n                if remainder: return False\n                negative.update(ids)\n        # Scan complete source clauses for contradictory named decisions; quoted\n        # and hypothetical clauses have no authority in either direction.\n        unquoted=re.sub(r'\"[^\"\\n]*\"|“[^”\\n]*”', '',source)\n        clauses=re.split(r';|(?<!\\.)[.!?](?!\\.)|,?\\s+but\\s+|,?\\s+and\\s+(?=(?:i |my |the ))',unquoted)\n        negpattern=r\"\\b(?:did not pay|didn't pay|have not paid|haven't paid|has not been paid|was not paid|is not paid|not paid|never paid|not yet paid|did not dispute|don't dispute|do not dispute|is mine|belongs to me)\\b\"\n        for clause in clauses:\n            if re.search(r'\\b(?:if|suppose|hypothetically|quoted|quoting|said|says|wrote)\\b',clause): continue\n            if re.search(negpattern,clause):\n                ids=mentions(clause)\n                if ids: negative.update(ids)\n                elif clause in act or clause.strip() in span: return False\n            for product in s['products']:\n                for label in (normalize_text(product['label']),product['type'].replace('_',' ')):\n                    if re.search(r'\\bnot (?:my |the )?'+re.escape(label)+r'\\b',clause): negative.add(product['product_id'])\n        if any(p['product_id'] in negative for p in refs): return False\n        if re.search(r\"\\b(?:might|maybe|would|could)\\b\",positive_span): return False\n        named=mentions(positive_span)\n        collective=bool(re.search(r\"\\b(?:all (?:of )?(?:my |the |these |our )?(?:bank )?(?:products|accounts|debts|loans|payments)|all of them|all these payments|everything)\\b\",positive_span))\n        if collective and re.search(r'\\bloans\\b',positive_span) and not re.search(r'\\b(?:products|accounts|debts|payments|everything|all of them)\\b',positive_span):\n            collective=all(p['type'] in ('personal_loan','car_loan') for p in refs)\n        explicit=all(p['product_id'] in named for p in refs)\n        if named and not explicit and not collective: return False\n        current=bool(re.search(r\"\\b(?:arrears|past[- ]due|late payment|this (?:payment|debt|amount|product))\\b\",span)) and len(refs)==1 and refs[0]['product_id']==s.get('current')\n        bare=bool(re.fullmatch(r\"i (?:have |had )?(?:already )?(?:paid|made (?:the |this |that )?payment)(?: already)?[ .!]*\",span)) and len(refs)==1 and (len(s['products'])==1 or refs[0]['product_id']==s.get('current') and not s.get('initial'))\n        current=current or collective\n        if e['k']=='paid':\n            if re.search(r'\\b(?:paid off|closed|used to|years ago|in the past)\\b',span): return False\n            positive=re.search(r\"\\bi (?:have |had )?(?:already )?(?:paid|made (?:the |this |that )?payment)\\b\",positive_span)\n            return bool(positive and (explicit or current or bare))\n        positive=re.search(r\"\\b(?:this (?:debt|product|account) (?:is not|isn't) mine|i (?:never had|did not have|didn't have)|i (?:already |previously )?(?:closed|paid off)|(?:the |my |this )?(?:credit card|personal loan|car loan|account|product) (?:was|is|has been) (?:closed|paid off))\\b\",span)\n        return bool(positive and (explicit or current or (len(refs)==1 and refs[0]['product_id']==s.get('current') and re.search(r\"this (?:debt|product|account) (?:is not|isn't) mine\",span))))\n    def consent_blocked(text):\n        # Remove only complete affirmative idioms, not arbitrary negation.\n        text=re.sub(r\"\\b(?:no problem|no worries|not a problem|no objection|i (?:do not|don't) mind|i have no objection)\\b\",'',text)\n        return bool(re.search(r\"\\b(?:no|not|cannot|can't|don't|won't|wait|instead|actually|change|withdraw|cancel|but|except)\\b\",text))\n    def unfinished_confirmation(text):\n        text=str(text).lower().replace(\"’\",\"'\")\n        return bool(re.search(r'(?:\\.\\.\\.|\\b(?:but|and|for|or|on|next|this|hundred|thousand))\\s*$',text))\n    def accumulate(events):\n        # Immutable row evidence first; one reconciled patch for each resolved scope.\n        out=[]; groups={}; expanded=[]; decisions={}\n        for event in events:\n            if event['k'] in ('human','plan','hardship','stop','third','deceased','wrong_number'):\n                expanded.append(event.copy()); continue\n            targets=resolve(event.get('p','all' if s.get('initial') else s.get('current','')))\n            if event.get('p','all') in ('all','everything') and event['k'] in ('yes','accept','confirm'):\n                if s['phase']=='offer': targets=[p for p in targets if p.get('offer',{}).get('spoken')]\n                elif s['phase']=='confirm': targets=[p for p in targets if p['status']=='agreed']\n            if not targets: raise ValueError('unspoken offer')\n            total=event.get('a','').startswith('total:')\n            if total and (not event.get('d') or minor_units(event['a'][6:])!=sum(minor_units(p['past_due']) for p in targets)):\n                raise ValueError('aggregate allocation')\n            for target in targets:\n                row=event.copy(); row['p']=target['product_id']\n                if total: row['a']='full'\n                if len(targets)>1: row['_collective']=True\n                if row['k'] in ('proposal','partial','vague','yes','accept','confirm','no','decline','paid','dispute','too_much'):\n                    old=decisions.setdefault(row['p'],[])\n                    family='terms' if row['k'] in ('proposal','partial','vague','yes','accept','confirm') else row['k']\n                    if old and family not in old and not set(old+[family]).issubset(set(['terms','no','decline'])) and not set(old+[family]).issubset(set(['paid','no','decline'])): raise ValueError('conflicting decision for '+target['label'])\n                    old.append(family)\n                expanded.append(row)\n        term_targets=set(e.get('p') for e in expanded if e['k'] in ('proposal','partial','vague'))\n        paid_targets=set(e.get('p') for e in expanded if e['k']=='paid')\n        expanded=[e for e in expanded if e['k'] not in ('no','decline') or e.get('p') not in term_targets|paid_targets]\n        for event in expanded:\n            if event['k'] not in ('proposal','partial','vague'):\n                out.append(event.copy()); continue\n            targets=resolve(event['p']); key=event['p']\n            if key not in groups:\n                merged=event.copy(); groups[key]=[merged,[],targets]; out.append(merged)\n            groups[key][1].append(event.copy())\n        for merged,rows,targets in groups.values():\n            needs=set(); facts={'a':[],'d':[]}\n            for row in rows:\n                u=row.get('u','unknown') if row['c']=='0' else ''\n                declared=set(('amount','date') if u in ('both','unknown') else (u,)) if u else set()\n                needs.update(declared)\n                for tag,component in (('a','amount'),('d','date')):\n                    if tag in row and component not in declared: facts[tag].append(row[tag])\n            merged.pop('a',None); merged.pop('d',None); merged.pop('u',None)\n            for tag,component in (('a','amount'),('d','date')):\n                values=facts[tag]\n                if not values: continue\n                equivalent=[]\n                for value in values:\n                    equivalent.append(dateval(value) if tag=='d' else targets[0]['past_due'] if value=='full' else value if value.startswith('total:') else amountval(value))\n                if any(value!=equivalent[0] for value in equivalent[1:]):\n                    raise ValueError('conflicting '+component+' for '+', '.join(p['label'] for p in targets))\n                merged[tag]=values[0]; needs.discard(component)\n            merged['_collective']=any(row.get('_collective') for row in rows)\n            merged['c']='0' if needs else '1'\n            if needs: merged['u']='both' if len(needs)>1 else next(iter(needs))\n            merged['k']='partial' if needs else 'vague' if all(row['k']=='vague' for row in rows) else 'proposal'\n        return out\n    def consent_terms(e):\n        targets=[p for p in s['products'] if p['status']=='agreed'] if e.get('p','all') in ('all','everything') else resolve(e['p'])\n        for p in targets:\n            if 'a' in e:\n                if e['a'].startswith('total:'): return False\n                amount=p['past_due'] if e['a']=='full' else amountval(e['a'])\n                if amount!=p.get('amount'): return False\n            if 'd' in e:\n                dt=dateval(e['d'])\n                if dt is None or dt.isoformat()!=p.get('date'): return False\n        return True\n    def finish(outcome,reason='',text=''):\n        s['outcome']=outcome; s['reason']=reason\n        vars['outcome']=outcome; vars['reason']=reason\n        return 'farewell',(text+' Thank you for your time. Goodbye.').strip()\n    def question():\n        phase=s['phase']\n        if phase=='recipient': return 'Am I speaking with '+str(vars.get('title',''))+' '+str(vars.get('last_name',''))+'?'\n        if phase=='dob': return 'What is your date of birth? Please say the month as a word.'\n        if phase=='phone': return 'What are the last four digits of the phone number on file?'\n        if phase=='callback': return 'When can the customer be reached, today or the next business day between 10:00 and 19:00?'\n        if phase=='human': return 'May I help you first, or do you still want a human?'\n        if phase=='support': return 'I am sorry you are going through this. Would you like me to connect you with customer support?'\n        if phase=='confirm': return 'Please confirm all the payment terms I just read back, or give the correction.'\n        for p in s.get('products',[]):\n            if p.get('pending'):\n                missing=('amount and exact date' if len(p['pending'].get('need',[]))>1 else p['pending']['need'][0]) if p['pending'].get('need') else 'amount' if not p['pending'].get('a') else 'exact date' if not p['pending'].get('d') else 'complete corrected terms'\n                return 'Please finish the '+missing+' for your '+p['label']+'.'\n        return 'Please clarify your latest decision for the named product.'\n    def terms(p): return p['label']+', '+format(p['amount'],'.2f')+' on '+p['date']\n    def offer(p,a,d,prefix=''):\n        p['offer']={'amount':a,'date':d.isoformat(),'spoken':True}; p['status']='open'; s['current']=p['product_id']; s['phase']='offer'\n        return 'speak',prefix+' Can you pay '+format(a,'.2f')+' for your '+p['label']+' on '+d.isoformat()+'?'\n    def advance():\n        for p in s['products']:\n            if p.get('pending'):\n                s['current']=p['product_id']; s['phase']='collect'\n                missing=('amount and exact date' if len(p['pending'].get('need',[]))>1 else p['pending']['need'][0]) if p['pending'].get('need') else 'amount' if not p['pending'].get('a') else 'exact date' if not p['pending'].get('d') else 'complete corrected terms'\n                return 'speak','Please finish the '+missing+' for your '+p['label']+'.'\n        for p in s['products']:\n            if p.get('refusal_pending') and p['status']=='open' and not any(q.get('pending') for q in s['products']):\n                p.pop('refusal_pending',None); return persuade(p)\n        fresh=[p for p in s['products'] if p['status']=='open' and p.get('offer') and not p['offer'].get('spoken')]\n        if len(fresh)>1:\n            s['phase']='offer'; s['current']=fresh[0]['product_id']\n            for p in fresh: p['offer']['spoken']=True\n            return 'speak','Can you pay '+'; '.join(format(p['offer']['amount'],'.2f')+' for your '+p['label']+' on '+p['offer']['date'] for p in fresh)+'?'\n        for p in s['products']:\n            if p['status']=='open':\n                s['current']=p['product_id']\n                if p.get('offer'):\n                    s['phase']='offer'; o=p['offer']; o['spoken']=True; return 'speak','Can you pay '+format(o['amount'],'.2f')+' for your '+p['label']+' on '+o['date']+'?'\n                return persuade(p)\n        agreed=[p for p in s['products'] if p['status']=='agreed']\n        if agreed:\n            s['phase']='confirm'; s['readback']=[(p['product_id'],p['amount'],p['date']) for p in agreed]\n            warning=[]\n            for p in agreed:\n                if p['amount']<p['past_due']:\n                    warning.append('For your '+p['label']+', the rest stays overdue.')\n                    p['warning_spoken']=[p['amount'],p['date']]\n            return 'speak',' '.join(warning)+(' ' if warning else '')+'Please confirm: '+'; '.join(terms(p) for p in agreed)+'. Do you confirm?'\n        return commit_next()\n    def persuade(p):\n        p['refusal_transitions']=p.get('refusal_transitions',0)+1\n        if p['attempts']>=p['limit']:\n            p['status']='refused'; return advance()\n        p['attempts']+=1\n        p['persuasion_offers']=p.get('persuasion_offers',0)+1\n        if p['attempts']==1:\n            d=today+datetime.timedelta(days=4-today.weekday())\n            while not business(d): d-=datetime.timedelta(days=1)\n            if d<=today:\n                d=today-datetime.timedelta(days=today.weekday())+datetime.timedelta(days=11)\n                while not business(d): d-=datetime.timedelta(days=1)\n            d=min(d,datetime.date.fromisoformat(p['deadline']))\n        else: d=datetime.date.fromisoformat(p['deadline'])\n        a=p['floor'] if p.get('too_much') or p['attempts']==2 else p['past_due']\n        return offer(p,a,d,'The rest stays overdue.' if a<p['past_due'] else '')\n    def commit_next():\n        for p in s.get('products',[]):\n            if p['status']=='agreed':\n                token=[p['product_id'],p['amount'],p['date']]\n                if (p['amount']<p['past_due'] and p.get('warning_spoken')!=[p['amount'],p['date']]) or s.get('permission_barrier') or not s.get('verified') or s.get('transfer') or token not in s.get('consent',[]) or any(q.get('pending') for q in s['products']) or p.get('writes',0)>=2 or not p['floor']<=p['amount']<=p['past_due'] or not business(datetime.date.fromisoformat(p['date'])) or not today<=datetime.date.fromisoformat(p['date'])<=datetime.date.fromisoformat(p['deadline']): raise ValueError('write guard')\n                vars['product_id']=p['product_id']; vars['amount']=p['amount']; vars['date']=p['date']; s['writing']=p['product_id']; p['writes']=p.get('writes',0)+1\n                return 'create_promise',''\n        for p in s.get('products',[]):\n            if p['status']!='recorded' and not p.get('noted'):\n                if not s.get('verified') or s.get('transfer') or p['status'] not in ('refused','hardship','dispute','paid','service_error') or p['product_id'] not in [q['product_id'] for q in s['products']]: raise ValueError('note guard')\n                vars['product_id']=p['product_id']; vars['note_reason']=p['status']; s['writing']=p['product_id']; return 'add_note',''\n        recorded=[p for p in s.get('products',[]) if p['status']=='recorded']\n        if recorded:\n            return finish('promise','', 'Your payment '+('promises are' if len(recorded)>1 else 'promise is')+' recorded. You will receive a text message confirming this promise.'+(' Some other products could not be recorded.' if any(p['status']=='service_error' for p in s['products']) else ''))\n        if any(not p.get('noted') for p in s.get('products',[]) if p['status']!='recorded'): raise ValueError('unconfirmed note outcome')\n        nonpaid=[p for p in s.get('products',[]) if p.get('noted') and p['status']!='paid']\n        return finish('no_promise',nonpaid[0]['status']) if nonpaid else finish('paid')\n    route='speak'; line=''; prefix=''\n    fresh_state=not s\n    signal=str(vars.get('signal','user') or 'user')\n    vars['signal']='user'\n    payload=vars.get('api_data','{}')\n    receipt=str(vars.get('api_receipt',''))\n    if signal=='create_promise' and payload in ('{}','',None) and s.get('awaiting')==signal and receipt==str(s.get('awaiting_id','')):\n        observed_failure=int(vars.get('create_promise_failure_count',0) or 0)\n        observed_success=int(vars.get('create_promise_success_count',0) or 0)\n        http_status=str(vars.get('create_promise_response.status_code',vars.get('create_promise_status_code','')))\n        if observed_failure>s.get('dispatch_failure',0) and observed_success==s.get('dispatch_success',0) and http_status=='500':\n            payload=json.dumps(dict(http_status='500',what_to_do_next='Retry the unchanged guarded request once if its policy budget permits.'))\n    vars['api_data']='{}'\n    vars['api_receipt']=''\n    s['invocations']=s.get('invocations',0)+1\n    if s['invocations']>110: raise ValueError('bounded invocations')\n    for key in list(vars):\n        if any(key.startswith(op+'_response') or key==op+'_ok' for op in ('verify_identity','get_account','create_promise','add_note','schedule_callback','transfer_to_agent')):\n            vars[key]=''\n    if signal!='user' and (receipt!=str(s.get('awaiting_id','')) or signal!=s.get('awaiting') or receipt==str(s.get('consumed_receipt',''))):\n        s['stale_receipts']=s.get('stale_receipts',0)+1\n        if s['stale_receipts']>2: raise ValueError('stale completions')\n        signal='stale'\n    elif signal!='user':\n        s['consumed_receipt']=receipt\n        s['awaiting']=''\n        s['awaiting_id']=''\n        s['stale_receipts']=0\n    if fresh_state:\n        s={'phase':'recipient','recipient_asks':1,'declines':0,'stop':0,'human':0,'format':0,'verified':False,'products':[]}\n        line='Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. '+question()\n    elif signal=='stale':\n        s['consent']=[]\n        line=question()\n    elif signal!='user':\n        result_data=json.loads(payload); d=result_data\n        ok=str(d.get('ok','')).lower()=='true'\n        if signal=='verify_identity':\n            if d.get('hint')=='day_month_swapped': line='Please say your birth month as a word.'\n            elif not ok: line=question()\n            elif str(d.get('all_verified','')).lower()=='true': s['verified']=True; route='get_account'\n            elif str(d.get('verified','')).lower()=='true': s['phase']='phone'; line=question()\n            elif int(d.get('wrong_answers_left',0))<=0: route,line=finish('not_verified','failed','Please use the mobile app or a branch.')\n            else: line='That answer did not match. '+question()\n        elif signal=='get_account':\n            if not ok: route,line=finish('no_promise','service_error','I could not load the bank information.')\n            else:\n                products=d.get('products',[])\n                if isinstance(products,str): products=json.loads(products)\n                if not isinstance(products,list) or not 1<=len(products)<=3: raise ValueError('products')\n                for p in products:\n                    p['label']=p['type'].replace('_',' ')+(' ending '+str(p['card_last4']) if p['type']=='credit_card' else '')\n                    p['floor']=float(p['minimum_payment'] if p['type']=='credit_card' else p['instalment_amount']); p['past_due']=float(p['past_due'])\n                    p['limit']=1 if int(p['days_late'])<=7 else 2; p['deadline']=after(12 if p['limit']==1 else 7).isoformat(); p['attempts']=0; p['status']='open'\n                s['products']=products; s['phase']='collect'; s['current']=products[0]['product_id']; s['initial']=True\n                line='I am calling from the collections team about a late payment. '+' '.join('Your '+p['label']+' has '+format(p['past_due'],'.2f')+' past due and is '+str(p['days_late'])+' days late.' for p in products)+' Can you make all these payments today?'\n                for p in products: p['spoken_full']=True\n        elif signal=='create_promise':\n            p=next(p for p in s['products'] if p['product_id']==s['writing'])\n            if ok:\n                p['status']='recorded'; route,line=commit_next()\n            elif 'ok' not in d and str(d.get('http_status',''))!='500':\n                s['consent']=[]; s['unknown_write_outcome']=p['product_id']; route='safe_exit'\n            elif p['writes']<2: route,line=commit_next()\n            else: p['status']='service_error'; route,line=commit_next()\n        elif signal=='add_note':\n            p=next(p for p in s['products'] if p['product_id']==s['writing'])\n            if ok:\n                p['noted']=True; p['note_receipt']=s.get('consumed_receipt'); route,line=commit_next()\n            else:\n                p['noted']=False; p['note_unresolved']=True; s['note_failed']=True; route='safe_exit'\n        elif signal=='schedule_callback': route,line=finish('not_reached','callback' if ok else 'no_callback','The callback is scheduled.' if ok else 'I could not schedule the callback.')\n        elif signal=='transfer_to_agent': route,line=finish('transferred',s['transfer_reason'],'I am connecting you with the requested team.') if ok else finish('promise' if any(p.get('status')=='recorded' for p in s.get('products',[])) else 'no_promise' if s['verified'] else 'not_verified','' if any(p.get('status')=='recorded' for p in s.get('products',[])) else 'service_error' if s['verified'] else 'failed','I could not connect the call. Please contact customer service.')\n    else:\n        s['turns']=s.get('turns',0)+1\n        if s['turns']>70: raise ValueError('bounded conversation')\n        s['permission_barrier']=False\n        raw=str(vars.get('raw_speech','')).strip(); low=raw.lower().replace(\"’\",\"'\").replace(\"‘\",\"'\")\n        admin=str(vars.get('admin',''))\n        raw_admin=[]\n        if re.search(r'\\b(?:are you (?:a |an )?(?:robot|ai|digital|automated)|is (?:this|the caller) (?:a |an )?(?:robot|ai|digital))\\b',low): raw_admin.append('ai')\n        if re.search(r'\\b(?:is this a scam|is this legitimate)\\b',low): raw_admin.append('scam')\n        if re.search(r'\\b(?:why (?:do you|are you|must i) (?:need|ask|asking|answer)|what (?:are|is) (?:these|the) (?:security )?questions for)\\b',low): raw_admin.append('security')\n        if re.search(r'\\b(?:can|could|would|if) (?:my |a )?(?:relative|wife|husband|mother|father)\\b',low): raw_admin.append('relative')\n        if 'security' in raw_admin: prefix+='The security questions protect your account. '\n        if 'relative' in raw_admin: prefix+='Only the customer can answer the security questions; I cannot disclose account information to relatives. '\n        admin=','.join(dict.fromkeys([a for a in admin.split(',') if a and a!='none']+[a for a in raw_admin if a in ('ai','scam')]))\n\n        if 'ai' in admin.split(','): prefix+=\"I am Freya Bank's digital assistant. \"\n        if 'scam' in admin.split(','): prefix+='You can verify this call by phoning Freya Bank customer service. '\n        if 'unknown' in admin.split(','): prefix+='I do not have that information. '\n        if 'purpose' in admin.split(',') and s.get('phase') in ('recipient','dob','phone'): prefix+='I can explain after the security check. '\n        turn_snapshot=json.loads(json.dumps(s))\n        try:\n            events=decode(vars.get('event',''))\n            question_rows=[e for e in events if e['k']=='question']\n            consent_rows=[e for e in events if e['k']=='consent']\n            descriptive_pause=bool(consent_rows)\n            s['permission_barrier']=bool(consent_rows)\n            paused_ids=set()\n            if s.get('verified'):\n                for ce in consent_rows:\n                    paused_ids.update(t['product_id'] for t in resolve(ce.get('p','all')))\n                s['consent']=[t for t in s.get('consent',[]) if t[0] not in paused_ids]\n            for e in question_rows:\n                q=e['q']\n                if q in ('balance','offer','readback') and s.get('phase')=='confirm': descriptive_pause=True\n                if q=='ai' and 'ai' not in admin.split(','): prefix+=\"I am Freya Bank's digital assistant. \"\n                elif q=='scam' and 'scam' not in admin.split(','): prefix+='You can verify this call by phoning Freya Bank customer service. '\n                elif q=='security' and 'security' not in raw_admin: prefix+='The security questions protect your account. '\n                elif q=='relative' and 'relative' not in raw_admin: prefix+='Only the customer can answer the security questions; I cannot disclose account information to relatives. '\n                elif q in ('balance','offer','readback'):\n                    if not s.get('verified'): prefix+='I can explain account information after the security check. '\n                    else:\n                        targets=resolve(e.get('p',s.get('current','all')))\n                        if q=='balance': prefix+=' '.join('Your '+t['label']+' past-due amount is '+format(t['past_due'],'.2f')+'.' for t in targets)+' '\n                        elif q=='readback': descriptive_pause=True\n                        else:\n                            for t in targets:\n                                o=t.get('offer',{})\n                                if o.get('spoken'): prefix+='The current offer for your '+t['label']+' is '+format(o['amount'],'.2f')+' on '+o['date']+'. '\n                                elif t['status']=='agreed': prefix+='The proposed terms are '+terms(t)+'. '\n                                else: prefix+='Please clarify which spoken offer you mean. '\n                elif q=='purpose' and 'purpose' not in admin.split(','): prefix+=('I am calling about the late payments just stated. ' if s.get('verified') else 'I can explain after the security check. ')\n                elif q=='unknown': prefix+='I do not have that information. '\n            events=[e for e in events if e['k'] not in ('question','consent')]\n            if descriptive_pause:\n                events=[e for e in events if e['k'] not in ('yes','accept','confirm') or any(t in e for t in ('a','d','u'))]\n            if not events and s['phase']=='recipient':\n                events=[dict(k='yes' if recipient_reply(raw) else 'unknown',c='1')]\n            if s['phase'] in ('dob','phone') and (not events or all(e['k'] in ('unknown','decline') for e in events)):\n                try: current_answer=security_raw(raw,s['phase'])\n                except Exception: current_answer=''\n                if current_answer: events=[dict(k='answer',c='1',v=current_answer)]\n            if not events and s['phase'] in ('dob','phone'):\n                try: neutral_answer=security_raw(raw,s['phase'])\n                except Exception: neutral_answer=''\n                if neutral_answer: events=[dict(k='answer',c='1',v=neutral_answer)]\n                elif any(e.get('q')=='purpose' and e['c']=='1' for e in question_rows): events=[dict(k='decline',c='1')]\n            if not events:\n                s['consent']=[]\n                if s.get('phase')=='confirm': route,line=advance()\n                else: line=question()\n            if s.get('verified') and not any(e['c']=='0' for e in events):\n                tail_incomplete=bool(re.search(r'(?:\\.\\.\\.|\\b(?:but|and|for|or|on|next|this|hundred|thousand))\\s*$',low))\n                if tail_incomplete:\n                    mentions=[]\n                    for target in s['products']:\n                        for label in (target['label'].lower(),target['type'].replace('_',' ')):\n                            for match in re.finditer(r'\\b'+re.escape(label)+r'\\b',low): mentions.append((match.start(),target['product_id']))\n                    if mentions:\n                        latest=max(position for position,_ in mentions)\n                        ids=set(identifier for position,identifier in mentions if position==latest)\n                        if len(ids)==1:\n                            target_id=next(iter(ids))\n                            component='date' if re.search(r'\\b(?:on|next|this)\\s*(?:\\.\\.\\.)?$',low) else 'amount' if re.search(r'\\b(?:hundred|thousand)\\s*(?:\\.\\.\\.)?$',low) else 'unknown'\n                            events.append(dict(k='partial',c='0',p=target_id,u=component))\n            if s.get('verified'):\n                scoped_events=[]\n                for e in events:\n                    if e['k'] in ('paid','dispute'):\n                        for target in resolve(e.get('p','all' if s.get('initial') else s.get('current',''))):\n                            scoped=e.copy(); scoped['p']=target['product_id']\n                            if not bank_claim(scoped,raw): scoped['k']='unknown'; scoped['_neutral']=True\n                            scoped_events.append(scoped)\n                    else: scoped_events.append(e)\n                events=accumulate(scoped_events)\n            if s.get('staged_rows') and s.get('verified'):\n                addressed=set(e.get('p','') for e in events)\n                held=[e for e in s['staged_rows'] if e.get('p','') not in addressed and 'all' not in addressed]\n                if all(e['k'] in ('proposal','partial','vague') for e in events): events=held+events; s['staged_rows']=[]\n            if s.get('verified'):\n                for e in events:\n                    if e['k'] not in ('human','plan','hardship','stop','third','deceased','wrong_number'):\n                        resolve(e.get('p','all' if s.get('initial') else s.get('current','')))\n        except Exception as extraction_error:\n            s=turn_snapshot\n            events=[]\n            if s.get('verified') and str(extraction_error).startswith('date for '):\n                held=[]\n                text=str(vars.get('event',''))\n                if text.strip().endswith('\\nEND'):\n                    for row in text.strip().splitlines()[:-1]:\n                        try:\n                            candidate=decode(row+'\\nEND')[0]\n                            if candidate['k']=='proposal' and candidate['c']=='1':\n                                resolve(candidate.get('p',s.get('current',''))); held.append(candidate)\n                        except Exception: pass\n                s['staged_rows']=held\n            if s['phase'] in ('dob','phone'):\n                try:\n                    value=security_raw(raw,s['phase'])\n                    if value: events=[{'k':'answer','c':'1','v':value}]\n                except Exception: pass\n            if s['phase']=='recipient' and recipient_reply(raw): events=[{'k':'yes','c':'1'}]\n            if str(extraction_error).startswith('conflicting ') and s.get('verified'):\n                component='amount' if str(extraction_error).startswith('conflicting amount') else 'date'\n                tag='a' if component=='amount' else 'd'\n                for p in s['products']:\n                    if p['label'] in str(extraction_error) and p['status'] not in ('recorded','paid','dispute'):\n                        pending=p.get('pending',{}).copy()\n                        if p.get('amount') is not None: pending.setdefault('a',str(p['amount']))\n                        if p.get('date'): pending.setdefault('d',p['date'])\n                        pending.pop(tag,None); pending['need']=sorted(set(pending.get('need',[]))|set([component]))\n                        p['pending']=pending; p['status']='open'; p.pop('offer',None); p.pop('refusal_pending',None)\n                s['phase']='collect'; s['readback']=[]\n            s['format']+=1\n            s['consent']=[]\n            if s['format']>3:\n                if s.get('verified') and s.get('products') and not s.get('transfer'):\n                    s['readback']=[]; s['consent']=[]; s['permission_barrier']=True\n                    for product in s['products']:\n                        if product['status']!='recorded' and not product.get('noted'):\n                            if product['status'] not in ('paid','dispute','refused','hardship','service_error'): product['status']='service_error'\n                            product.pop('pending',None); product.pop('offer',None)\n                    s['format_exhausted']=True\n                    route,line=commit_next()\n                else: route,line=finish('not_verified' if not s['verified'] else 'no_promise','failed' if not s['verified'] else 'service_error','I could not safely understand the answer. Please use the mobile app or a branch.')\n            elif str(extraction_error)=='aggregate allocation': line='Please allocate that total to each named product, with its exact date.'\n            elif str(extraction_error).startswith('conflicting '): line='Please clarify the '+str(extraction_error)+'.'\n            elif s['phase']=='confirm':\n                # Invalid extraction removes authority, not immutable spoken terms.\n                # Competing correction evidence requires a fresh complete readback.\n                if unfinished_confirmation(raw):\n                    s['permission_barrier']=True\n                    s['confirmation_correction_unresolved']=True\n                    line='Please finish the correction to the amount or date before confirming.'\n                elif consent_blocked(low):\n                    s['permission_barrier']=True\n                    if re.search(r'\\b(?:actually|instead|change|correction|amount|date)\\b',low) and not re.search(r'\\b(?:withdraw|cancel|permission|consent|record|submit|readback)\\b',low):\n                        s['confirmation_correction_unresolved']=True\n                        line='Please give the complete corrected amount and date for the affected product.'\n                    else: route,line=advance()\n                else:\n                    line='Do you confirm all the payment terms I just read back?'\n            elif str(extraction_error).startswith('date for '): line='Please clarify the exact date for '+str(extraction_error)[9:]+'.'\n            elif str(extraction_error).startswith('conflicting '): line='Please clarify the '+str(extraction_error)+'.'\n            else: line=question()\n        if events:\n            s['format']=0; phase=s['phase']; first=events[0]; kinds=[e['k'] for e in events]\n            unfinished=not any(e['c']=='0' for e in events) and bool(re.search(r'(\\.\\.\\.\\s*$|\\b(?:but|and|for|or|actually|instead|wait|correction|on|next|this|hundred)\\s*$)',low))\n            permission_pause=bool(re.search(r\"\\b(?:withdraw (?:my )?(?:consent|permission)|do not (?:record|submit|process)|don't (?:record|submit|process)|hold off|pause (?:the |my )?(?:recording|promise)|wait before (?:recording|submitting)|read (?:it|that|the terms) (?:back |again)|repeat (?:the )?readback)\\b\",low))\n            primary=set(e['k'] for e in events if asserted(e,e.get('x',low).lower().replace(\"’\",\"'\").replace(\"‘\",\"'\"),unfinished))\n            if primary.intersection(('human','plan','hardship','stop','third','deceased','wrong_number')):\n                s['independent_facts']=[e.copy() for e in events if e['k'] in ('proposal','partial','vague','paid','dispute','no')]\n                if s.get('verified') and primary.intersection(('human','plan','stop')):\n                    for fact in s['independent_facts']:\n                        for product in resolve(fact.get('p',s.get('current','all'))):\n                            if product['status']=='recorded': continue\n                            if fact['k'] in ('paid','dispute') and fact['c']=='1':\n                                product['status']=fact['k']; product.pop('pending',None)\n                            elif fact['k'] in ('proposal','partial','vague'):\n                                held=product.get('pending',{}).copy()\n                                unresolved=set(('amount','date') if fact.get('u') in ('both','unknown') else [fact['u']] if fact.get('u') else [])\n                                for tag,component in (('a','amount'),('d','date')):\n                                    if component in unresolved: held.pop(tag,None)\n                                    elif tag in fact: held[tag]=fact[tag]\n                                held['need']=sorted(unresolved|set(component for tag,component in (('a','amount'),('d','date')) if not held.get(tag)))\n                                product['pending']=held; product['status']='open'\n                    s['staged_rows']=[e.copy() for e in s['independent_facts'] if e['k'] in ('proposal','partial','vague')]\n\n            if s.get('confirmation_correction_unresolved') and s.get('verified'):\n                if any(e['k'] in ('proposal','partial') or any(k in e for k in ('a','d','u')) for e in events):\n                    s['confirmation_correction_unresolved']=False\n                else:\n                    s['permission_barrier']=True\n            blocked_primary=any(e['k'] in ('wrong_number','deceased','third','plan','human','hardship','stop') and e['k'] not in primary for e in events)\n            if 'wrong_number' in primary: route,line=finish('not_reached','wrong_number')\n            elif 'deceased' in primary: route,line=finish('not_reached','deceased','I am sorry for your loss.')\n            elif phase=='recipient' and 'third' in primary:\n                s['phase']='callback'; line=question()\n            elif 'plan' in primary and 'hardship' not in primary and any(e['k']=='plan' and e['c']=='1' and not (unfinished and e is events[-1]) for e in events):\n                s['transfer']=True; s['transfer_reason']='restructuring'; vars['queue']='restructuring'; route='transfer_to_agent'\n            elif ('human' in primary and any(e['k']=='human' and e['c']=='1' and not (unfinished and e is events[-1]) for e in events)) or (phase=='human' and first['k']=='no' and first['c']=='1' and not unfinished):\n                s['human']+=1\n                if s['human']>=2 or phase=='human': s['transfer']=True; s['transfer_reason']='human'; vars['queue']='general'; route='transfer_to_agent'\n                else: s['resume']=phase; s['phase']='human'; line=question()\n            elif phase=='human': s['phase']=s.get('resume','recipient'); line=question()\n            elif phase=='support' and any(e['k'] in ('yes','accept','confirm') and e['c']=='1' for e in events) and any(e['k'] in ('no','decline') and e['c']=='1' for e in events):\n                s['consent']=[]; line='Do you want the customer support transfer, or do you decline it?'\n            elif phase=='support' and first['k'] not in ('proposal','answer','partial') and first['c']=='1' and not unfinished:\n                if first['k'] in ('yes','accept','confirm'): s['transfer']=True; s['transfer_reason']='support'; vars['queue']='support'; route='transfer_to_agent'\n                else:\n                    for p in s['products']:\n                        if p['status']=='open': p['status']='hardship'\n                    route,line=advance()\n            elif 'stop' in primary:\n                s['stop']+=1\n                if s['stop']>=2:\n                    if s['verified']:\n                        for p in s['products']:\n                            if p['status'] in ('open','agreed'): p['status']='refused'; p.pop('pending',None)\n                        route,line=commit_next()\n                    else: route,line=finish('not_verified','declined','Please use the mobile app or a branch.')\n                else: line='I understand. '+question()\n            elif blocked_primary:\n                s['consent']=[]; line='Please finish that last statement.'\n            elif phase=='recipient':\n                if first['c']=='0' or unfinished: line='Please finish your answer. '+question()\n                elif first['k'] in ('yes','accept','confirm','answer') and recipient_reply(raw):\n                    s['phase']='dob'; line=question()\n                elif first['k']=='third': s['phase']='callback'; line=question()\n                else:\n                    s['recipient_asks']+=1\n                    if s['recipient_asks']>2: route,line=finish('not_reached','unclear')\n                    else: line=question()\n            elif phase in ('dob','phone'):\n                if first['c']=='0' or unfinished: line='Please finish your '+('date of birth.' if phase=='dob' else 'last four phone digits.')\n                elif first['k'] in ('decline','no') or ('purpose' in admin.split(',') and not first.get('v')):\n                    s['declines']+=1\n                    if s['declines']>=2: route,line=finish('not_verified','declined','Please use the mobile app or a branch.')\n                    else: line='These questions protect your account. '+question()\n                else:\n                    value=first.get('v','')\n                    if raw:\n                        safe_source=self_answer(raw)\n                        if not safe_source: value=''\n                        else:\n                            try: parsed=security_raw(raw,phase)\n                            except Exception: parsed=''\n                            # Canonical extraction is retained for complete neutral source wording.\n                            # It cannot override a missing year/digit, negative or wrong subject.\n                            # A nonempty source must contain a complete supported answer.\n                            # Canonical model values cannot erase source contradictions.\n                            if parsed and (not value or value==parsed): value=parsed\n                            else: value=''\n                    if not value and not first.get('v'):\n                        try: value=security_raw(raw,phase)\n                        except Exception: value=''\n                    try:\n                        if phase=='dob':\n                            if not re.fullmatch(r'\\d{4}-\\d{2}-\\d{2}',value): raise ValueError('complete explicit DOB required')\n                            value=datetime.date.fromisoformat(value).isoformat()\n                        elif not re.fullmatch(r'\\d{4}',value): raise ValueError('phone')\n                        vars['field']='date_of_birth' if phase=='dob' else 'phone_last4'; vars['answer']=value; route='verify_identity'\n                    except Exception: line=question()\n            elif phase=='callback':\n                try:\n                    if first['c']!='1' or unfinished: raise ValueError('unfinished callback')\n                    dt=dateval(first.get('d','')); tm=first.get('t','')\n                    if not dt or not re.fullmatch(r'\\d{2}:\\d{2}',tm): raise ValueError('callback')\n                    when=datetime.datetime.fromisoformat(dt.isoformat()+'T'+tm)\n                    if dt not in (today,after(1)) or not '10:00'<=tm<='19:00' or when<=datetime.datetime.fromisoformat(str(vars['now'])): raise ValueError('window')\n                    vars['date']=dt.isoformat(); vars['time']=tm; route='schedule_callback'\n                except Exception:\n                    s['callback_errors']=s.get('callback_errors',0)+1\n                    if s['callback_errors']>=2: route,line=finish('not_reached','no_callback')\n                    else: line=question()\n            elif s['verified']:\n                if s.get('confirmation_correction_unresolved'):\n                    s['consent']=[]; line='Please finish the correction to the amount or date before confirming.'\n                elif permission_pause and all(e['k'] in ('yes','accept','confirm','no','decline','unknown') and not any(t in e for t in ('a','d','u')) for e in events):\n                    s['consent']=[]\n                    if phase=='confirm': route,line=advance()\n                    else: line=question()\n                elif 'hardship' in primary and not any(e['k']=='proposal' and e['c']=='1' for e in events):\n                    if any(e['c']=='0' for e in events) or unfinished: line='Please finish your answer.'\n                    else: s['phase']='support'; line=question()\n                elif phase=='confirm' and (unfinished or consent_blocked(low)) and all(e['k'] in ('yes','accept','confirm') and not any(t in e for t in ('a','d','u')) for e in events):\n                    s['consent']=[]; route,line=advance()\n                elif phase=='confirm' and not s.get('permission_barrier') and not unfinished and not consent_blocked(low) and all(e['c']=='1' and e['k'] in ('yes','accept','confirm') and consent_terms(e) for e in events):\n                    targets=[]\n                    matching=True\n                    for e in events:\n                        scoped=([p for p in s['products'] if p['status']=='agreed'] if e.get('p','all') in ('all','everything') else resolve(e['p']))\n                        targets+=scoped\n                        for p in scoped:\n                            if 'a' in e and (e['a']=='full' and p['amount']!=p['past_due'] or e['a']!='full' and (e['a'].startswith('total:') or amountval(e['a'])!=p['amount'])): matching=False\n                            if 'd' in e and (dateval(e['d']) is None or dateval(e['d']).isoformat()!=p['date']): matching=False\n                    agreed=[p for p in s['products'] if p['status']=='agreed']\n                    if not matching:\n                        s['consent']=[]\n                        for e in events:\n                            for p in (agreed if e.get('p','all')=='all' else resolve(e['p'])):\n                                if 'a' in e or 'd' in e:\n                                    p['pending']={'a':e.get('a',str(p['amount'])),'d':e.get('d',p['date'])}; p['status']='open'\n                        route,line=advance()\n                    elif set(p['product_id'] for p in targets)!=set(p['product_id'] for p in agreed) or any(p.get('pending') for p in s['products']): line='Please confirm all the terms together, or tell me the correction.'\n                    else: s['consent']=s['readback']; route,line=commit_next()\n                else:\n                    # Resolve every sibling before modifying any target; one bad sibling blocks the whole event.\n                    resolved=[]\n                    for e in events:\n                        ref=e.get('p','all' if s.get('initial') else s.get('current',''))\n                        targets=resolve(ref)\n                        if phase=='confirm' and ref in ('all','everything'): targets=[p for p in targets if p['status']=='agreed']\n                        if phase=='offer' and ref in ('all','everything') and e['k'] in ('yes','accept','confirm'): targets=[p for p in targets if p.get('offer',{}).get('spoken')]\n                        if not targets: raise ValueError('unspoken offer')\n                        resolved.append((e,targets))\n                    s['consent']=[]; warnings=[]\n                    if 'hardship' in primary:\n                        volunteers=set(p['product_id'] for e,ts in resolved if e['k']=='proposal' for p in ts)\n                        for p in s['products']:\n                            if p['status']=='open' and p['product_id'] not in volunteers: p['status']='hardship'\n                        warnings.append('I am sorry you are going through this.')\n                    for e,targets in resolved:\n                        total=e.get('a','').startswith('total:')\n                        if total and minor_units(e['a'][6:])!=sum(minor_units(p['past_due']) for p in targets):\n                            line='Please allocate that total to each named product.'; break\n                        for p in targets:\n                            k=e['k']\n                            if k=='hardship': continue\n                            if p['status']=='recorded': warnings.append('A recorded promise cannot be changed here; use the mobile app.'); continue\n                            if p['status']=='paid' and k in ('paid','no'): continue\n                            if e['c']=='0' or (unfinished and e is events[-1]) or k=='partial':\n                                pending=p.get('pending',{}).copy()\n                                if not pending and p['status']=='agreed': pending={'a':str(p['amount']),'d':p['date']}\n                                u=e.get('u','unknown')\n                                if u=='unknown':\n                                    if re.search(r'\\b(on|next|this)\\s*$',low): u='date'\n                                    elif 'a' in e and 'd' not in e: u='amount'\n                                    elif 'd' in e and 'a' not in e: u='amount'\n                                    else: u='both'\n                                declared=set(['amount','date'] if u in ('both','unknown') else [u])\n                                need=set(pending.get('need',[])) | declared\n                                for tag,component in (('a','amount'),('d','date')):\n                                    if component in declared:\n                                        pending.pop(tag,None)\n                                    elif tag in e:\n                                        # A newly complete sibling supersedes cached facts and old need flags.\n                                        pending[tag]=e[tag]; need.discard(component)\n                                for tag,component in (('a','amount'),('d','date')):\n                                    if not pending.get(tag): need.add(component)\n                                pending['need']=sorted(need); pending['incomplete']=True; p['pending']=pending; p['status']='open'\n                                if any(tag in e and component not in declared for tag,component in (('a','amount'),('d','date'))):\n                                    p.pop('refusal_pending',None); p.pop('offer',None)\n                                continue\n                            if k in ('paid','dispute'):\n                                p['status']=k; p.pop('pending',None)\n                                if k=='paid': warnings.append('Payments can take one business day to appear.')\n                                continue\n                            if e.get('_neutral'):\n                                line='Please clarify whether the current past-due payment for your '+p['label']+' is paid or disputed, or give your payment decision.'\n                                continue\n                            if k in ('no','unknown','decline'):\n                                if p.get('pending'): continue\n                                p.pop('pending',None)\n                                if p.get('offer'): p.pop('offer',None)\n                                p['status']='open'\n                                # Delay offers until every sibling has been processed.\n                                p['refusal_pending']=True; continue\n                            if k=='too_much':\n                                p['too_much']=True\n                                if p.get('floor_offered'): p['refusal_pending']=True\n                                else:\n                                    p['floor_offered']=True; p['offer']={'amount':p['floor'],'date':forward(today).isoformat()}; p['status']='open'; warnings.append('The rest stays overdue.')\n                                continue\n                            o=p.get('offer',{})\n                            if k in ('yes','accept','confirm') and not any(t in e for t in ('a','d')):\n                                if phase=='offer' and o and o.get('spoken'): a=o['amount']; dt=datetime.date.fromisoformat(o['date'])\n                                elif phase=='offer' and o: continue\n                                elif phase=='confirm' and p['status']=='agreed': a=p['amount']; dt=datetime.date.fromisoformat(p['date'])\n                                elif s.get('initial'): a=p['past_due']; dt=today\n                                else: p['refusal_pending']=True; continue\n                            else:\n                                pending=p.get('pending',{}).copy()\n                                if phase=='confirm' and p['status']=='agreed' and any(t in e for t in ('a','d')):\n                                    pending={'a':str(p['amount']),'d':p['date']}\n                                need=set(pending.get('need',[]))\n                                for tag,component in (('a','amount'),('d','date')):\n                                    if tag in e:\n                                        pending[tag]=e[tag]; need.discard(component)\n                                pending['need']=sorted(need)\n                                if need:\n                                    p['pending']=pending; p['status']='open'; continue\n                                pending.pop('incomplete',None)\n                                if not pending.get('a') and p.get('spoken_full') and 'full' in low: pending['a']='full'\n                                if not pending.get('a') and not p.get('pending') and p.get('spoken_full') and k=='proposal' and 'd' in e and re.search(r'\\b(pay|payment)\\b',low): pending['a']='full'\n                                if k=='vague' and not pending.get('a') and p.get('spoken_full'): pending['a']='full'\n                                if not pending.get('a') or not pending.get('d'):\n                                    p['pending']=pending; p['status']='open'; continue\n                                av=pending['a']; a=p['past_due'] if av=='full' or total else amountval(av)\n                                dt=dateval(pending['d'])\n                                if dt is None:\n                                    p['vague']=p.get('vague',0)+1\n                                    if p['vague']<2: pending.pop('d',None); p['pending']=pending; p['status']='open'; continue\n                                    p['offer']={'amount':a,'date':p['deadline']}; p['status']='open'; p.pop('pending',None); continue\n                            p.pop('pending',None)\n                            if dt<today: p['pending']={'a':str(a)}; p['status']='open'; continue\n                            deadline=datetime.date.fromisoformat(p['deadline'])\n                            if a>p['past_due']: p['pending']={'d':dt.isoformat()}; p['status']='open'; continue\n                            if a<p['floor']:\n                                if p.get('floor_offered'):\n                                    p.pop('offer',None); p['status']='open'; p['refusal_pending']=True; continue\n                                p['floor_offered']=True; p['too_much']=True; p['offer']={'amount':p['floor'],'date':min(forward(dt),deadline).isoformat()}; p['status']='open'; warnings.append('I cannot record less than '+format(p['floor'],'.2f')+' for your '+p['label']+'. The rest stays overdue.'); continue\n                            if dt>deadline and not e.get('_collective'):\n                                p['offer']={'amount':a,'date':deadline.isoformat()}; p['status']='open'; warnings.append('The latest date I can record for your '+p['label']+' is '+deadline.isoformat()+'.'); continue\n                            if not business(dt) and dt<=deadline:\n                                p['offer']={'amount':a,'date':min(forward(dt),deadline).isoformat()}; p['status']='open'; continue\n                            dt=min(dt,deadline); p['amount']=a; p['date']=dt.isoformat(); p['status']='agreed'; p.pop('offer',None); p.pop('refusal_pending',None)\n                    s['initial']=False\n                    if not line:\n                        # Pending components have priority over existing counteroffers.\n                        pending=any(p.get('pending') for p in s['products'])\n                        if pending: route,line=advance()\n                        else:\n                            refusal=next((p for p in s['products'] if p['status']=='open' and p.pop('refusal_pending',False)),None)\n                            if refusal: route,line=persuade(refusal)\n                            else: route,line=advance()\n                    line=' '.join(dict.fromkeys(warnings))+' '+line\n    if route not in ('speak','farewell','safe_exit') and prefix:\n        s['admin_pending']=s.get('admin_pending','')+prefix; prefix=''\n    elif line and s.get('admin_pending'):\n        prefix=s.pop('admin_pending')+prefix\n    if route in ('verify_identity','get_account','create_promise','add_note','schedule_callback','transfer_to_agent'):\n        s['request_serial']=s.get('request_serial',0)+1\n        s['awaiting']=route; s['awaiting_id']=str(s['request_serial'])\n        vars['request_id']=s['awaiting_id']\n        s['dispatch_failure']=int(vars.get(route+'_failure_count',0) or 0)\n        s['dispatch_success']=int(vars.get(route+'_success_count',0) or 0)\n    vars['event']=''; vars['raw_speech']=''; vars['admin']=''\n    vars['phase_hint']=s.get('phase','recipient'); vars['route']=route; vars['dialogue_line']=(prefix+line).strip(); vars['state']=json.dumps(s,separators=(',',':'))\nexcept Exception:\n    vars['signal']='user'; vars['api_data']='{}'; vars['api_receipt']=''\n    vars['event']=''; vars['raw_speech']=''; vars['admin']=''\n    try:\n        if isinstance(turn_snapshot,dict): s=turn_snapshot\n        s['consent']=[]; vars['state']=json.dumps(s,separators=(',',':'))\n    except Exception: pass\n    vars['route']='safe_exit'; vars['dialogue_line']='I cannot safely continue the bank service. Please contact customer service. Thank you for your time. Goodbye.'\n"
+                  },
+                  "timeout_ms": {
+                    "type": "number",
+                    "default": 10000
+                  }
+                }
+              },
+              "description": ""
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": 0,
+                  "operator": "greater_than",
+                  "variable": "engine_failure_count"
+                }
+              ]
+            },
+            "description": "engine_failure_count greater_than 0",
+            "target_node": "engine_failure"
+          },
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": "speak",
+                  "operator": "equals",
+                  "variable": "route"
+                }
+              ]
+            },
+            "description": "route equals speak",
+            "target_node": "speak"
+          },
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": "farewell",
+                  "operator": "equals",
+                  "variable": "route"
+                }
+              ]
+            },
+            "description": "route equals farewell",
+            "target_node": "farewell"
+          },
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": "verify_identity",
+                  "operator": "equals",
+                  "variable": "route"
+                }
+              ]
+            },
+            "description": "route equals verify_identity",
+            "target_node": "verify_identity"
+          },
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": "get_account",
+                  "operator": "equals",
+                  "variable": "route"
+                }
+              ]
+            },
+            "description": "route equals get_account",
+            "target_node": "get_account"
+          },
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": "create_promise",
+                  "operator": "equals",
+                  "variable": "route"
+                }
+              ]
+            },
+            "description": "route equals create_promise",
+            "target_node": "create_promise"
+          },
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": "add_note",
+                  "operator": "equals",
+                  "variable": "route"
+                }
+              ]
+            },
+            "description": "route equals add_note",
+            "target_node": "add_note"
+          },
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": "schedule_callback",
+                  "operator": "equals",
+                  "variable": "route"
+                }
+              ]
+            },
+            "description": "route equals schedule_callback",
+            "target_node": "schedule_callback"
+          },
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": "transfer_to_agent",
+                  "operator": "equals",
+                  "variable": "route"
+                }
+              ]
+            },
+            "description": "route equals transfer_to_agent",
+            "target_node": "transfer_to_agent"
+          },
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "safe_exit"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": false,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "safe_exit",
+        "return_to_previous_on_interrupt": false
+      },
+      "add_note": {
+        "name": "add_note",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "api_request",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "config": {
+              "timeoutMs": 10000,
+              "maxRetries": 0
+            },
+            "function": {
+              "name": "add_note",
+              "handler": "__function__:api_call",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/add_note"
+                  },
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "customer_id",
+                      "product_id",
+                      "reason"
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "default": "Customer disposition recorded during this call.",
+                        "description": "text from authoritative guarded call state"
+                      },
+                      "reason": {
+                        "enum": [
+                          "refused",
+                          "hardship",
+                          "dispute",
+                          "paid",
+                          "service_error"
+                        ],
+                        "type": "string",
+                        "default": "{{note_reason}}",
+                        "description": "reason from authoritative guarded call state"
+                      },
+                      "product_id": {
+                        "type": "string",
+                        "default": "{{product_id}}",
+                        "description": "product_id from authoritative guarded call state"
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "default": "{{customer_id}}",
+                        "description": "customer_id from authoritative guarded call state"
+                      }
+                    }
+                  },
+                  "method": {
+                    "type": "string",
+                    "default": "POST"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Type": {
+                        "type": "string",
+                        "default": "application/json"
+                      }
+                    }
+                  },
+                  "connect_retries": {
+                    "type": "number",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "Execute only the preceding deterministic gate for add_note."
+            },
+            "pre_process_code": "try:\n    vars['signal']='add_note'\n    vars['api_data']='{}'\n    vars['api_receipt']=str(vars.get('request_id',''))\nexcept Exception:\n    pass\n",
+            "post_process_code": "import json\ntry:\n    result.pop('header',None)\n    d=result.get('data',{})\n    if not isinstance(d,dict): d={}\n    d['what_to_do_next']='Continue immediately to the guarded next action or spoken question.'\n    vars['api_data']=json.dumps(d)\n    vars['api_receipt']=str(vars.get('request_id',''))\n    vars['signal']='add_note'\nexcept Exception:\n    vars['signal']='add_note'\n    vars['api_data']='{}'\n"
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": 0,
+                  "operator": "greater_than",
+                  "variable": "add_note_failure_count"
+                }
+              ]
+            },
+            "description": "add_note_failure_count greater_than 0",
+            "target_node": "safe_exit"
+          },
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "engine"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "add_note_ok",
+            "description": ""
+          }
+        ],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": true,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "engine",
+        "return_to_previous_on_interrupt": false
+      },
+      "farewell": {
+        "name": "farewell",
+        "tools": [],
+        "on_enter": {
+          "text": "{{dialogue_line}}",
+          "type": "tts"
+        },
+        "node_type": "conversation",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [],
+        "transitions": [
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "close_call"
+          }
+        ],
+        "role_message": "",
+        "task_message": "Speak the computed farewell. No tool call allowed.",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": false,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "close_call",
+        "return_to_previous_on_interrupt": false
+      },
+      "safe_exit": {
+        "name": "safe_exit",
+        "tools": [],
+        "on_enter": {
+          "text": "I cannot safely continue the bank service. Any promise already confirmed as recorded remains in place. Please contact customer service. Thank you for your time. Goodbye.",
+          "type": "tts"
+        },
+        "node_type": "conversation",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [],
+        "transitions": [
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "safe_close"
+          }
+        ],
+        "role_message": "",
+        "task_message": "No tool call allowed. Terminate safely.",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": false,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "safe_close",
+        "return_to_previous_on_interrupt": false
+      },
+      "close_call": {
+        "name": "close_call",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "api_request",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "config": {
+              "timeoutMs": 10000,
+              "maxRetries": 0
+            },
+            "function": {
+              "name": "close_call",
+              "handler": "__function__:api_call",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call"
+                  },
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "customer_id",
+                      "outcome"
+                    ],
+                    "properties": {
+                      "reason": {
+                        "type": "string",
+                        "default": "{{reason}}",
+                        "description": "Required for every outcome except promise and paid. See the table in the brief."
+                      },
+                      "outcome": {
+                        "enum": [
+                          "promise",
+                          "paid",
+                          "transferred",
+                          "no_promise",
+                          "not_verified",
+                          "not_reached"
+                        ],
+                        "type": "string",
+                        "default": "{{outcome}}",
+                        "description": "outcome from authoritative guarded call state"
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "default": "{{customer_id}}",
+                        "description": "customer_id from authoritative guarded call state"
+                      }
+                    }
+                  },
+                  "method": {
+                    "type": "string",
+                    "default": "POST"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Type": {
+                        "type": "string",
+                        "default": "application/json"
+                      }
+                    }
+                  },
+                  "connect_retries": {
+                    "type": "number",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "Execute only the preceding deterministic gate for close_call."
+            },
+            "pre_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    b=config.get('body',{})\n    if vars.get('route')=='safe_exit' or vars.get('safe_mode')=='true':\n        if any(p.get('status')=='recorded' for p in s.get('products',[])): b['outcome']='promise'\n        elif s.get('verified'): b['outcome']='no_promise'; b['reason']='service_error'\n        elif s.get('phase')=='recipient': b['outcome']='not_reached'; b['reason']='unclear'\n        else: b['outcome']='not_verified'; b['reason']='failed'\n    if b.get('outcome') in ('promise','paid'): b.pop('reason',None)\n    config['body']=b\nexcept Exception:\n    config['body']={'customer_id':str(vars.get('customer_id','')),'outcome':'not_verified','reason':'failed'}\n",
+            "post_process_code": "import json\ntry:\n    result.pop('header',None)\n    d=result.get('data',{})\n    if not isinstance(d,dict): d={}\n    d['what_to_do_next']='Continue immediately to the guarded next action or spoken question.'\n    vars['api_data']=json.dumps(d)\n    vars['signal']='close_call'\nexcept Exception:\n    vars['signal']='close_call'\n    vars['api_data']='{}'\n"
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "end"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "close_call_ok",
+            "description": ""
+          }
+        ],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": true,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "end",
+        "return_to_previous_on_interrupt": false
+      },
+      "safe_close": {
+        "name": "safe_close",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "api_request",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "config": {
+              "timeoutMs": 10000,
+              "maxRetries": 0
+            },
+            "function": {
+              "name": "close_call",
+              "handler": "__function__:api_call",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call"
+                  },
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "customer_id",
+                      "outcome"
+                    ],
+                    "properties": {
+                      "reason": {
+                        "type": "string",
+                        "default": "{{reason}}",
+                        "description": "Required for every outcome except promise and paid. See the table in the brief."
+                      },
+                      "outcome": {
+                        "enum": [
+                          "promise",
+                          "paid",
+                          "transferred",
+                          "no_promise",
+                          "not_verified",
+                          "not_reached"
+                        ],
+                        "type": "string",
+                        "default": "{{outcome}}",
+                        "description": "outcome from authoritative guarded call state"
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "default": "{{customer_id}}",
+                        "description": "customer_id from authoritative guarded call state"
+                      }
+                    }
+                  },
+                  "method": {
+                    "type": "string",
+                    "default": "POST"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Type": {
+                        "type": "string",
+                        "default": "application/json"
+                      }
+                    }
+                  },
+                  "connect_retries": {
+                    "type": "number",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "Execute only the preceding deterministic gate for close_call."
+            },
+            "pre_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    b=config.get('body',{})\n    if True:\n        if any(p.get('status')=='recorded' for p in s.get('products',[])): b['outcome']='promise'\n        elif s.get('verified'): b['outcome']='no_promise'; b['reason']='service_error'\n        elif s.get('phase')=='recipient': b['outcome']='not_reached'; b['reason']='unclear'\n        else: b['outcome']='not_verified'; b['reason']='failed'\n    if b.get('outcome') in ('promise','paid'): b.pop('reason',None)\n    config['body']=b\nexcept Exception:\n    config['body']={'customer_id':str(vars.get('customer_id','')),'outcome':'not_verified','reason':'failed'}\n",
+            "post_process_code": "import json\ntry:\n    result.pop('header',None)\n    d=result.get('data',{})\n    if not isinstance(d,dict): d={}\n    d['what_to_do_next']='Continue immediately to the guarded next action or spoken question.'\n    vars['api_data']=json.dumps(d)\n    vars['signal']='close_call'\nexcept Exception:\n    vars['signal']='close_call'\n    vars['api_data']='{}'\n"
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "end"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "close_call_ok",
+            "description": ""
+          }
+        ],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": true,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "end",
+        "return_to_previous_on_interrupt": false
+      },
+      "get_account": {
+        "name": "get_account",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "api_request",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "config": {
+              "timeoutMs": 10000,
+              "maxRetries": 0
+            },
+            "function": {
+              "name": "get_account",
+              "handler": "__function__:api_call",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account"
+                  },
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "customer_id"
+                    ],
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "default": "{{customer_id}}",
+                        "description": "customer_id from authoritative guarded call state"
+                      }
+                    }
+                  },
+                  "method": {
+                    "type": "string",
+                    "default": "POST"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Type": {
+                        "type": "string",
+                        "default": "application/json"
+                      }
+                    }
+                  },
+                  "connect_retries": {
+                    "type": "number",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "Execute only the preceding deterministic gate for get_account."
+            },
+            "pre_process_code": "try:\n    vars['signal']='get_account'\n    vars['api_data']='{}'\n    vars['api_receipt']=str(vars.get('request_id',''))\nexcept Exception:\n    pass\n",
+            "post_process_code": "import json\ntry:\n    result.pop('header',None)\n    d=result.get('data',{})\n    if not isinstance(d,dict): d={}\n    d['what_to_do_next']='Continue immediately to the guarded next action or spoken question.'\n    vars['api_data']=json.dumps(d)\n    vars['api_receipt']=str(vars.get('request_id',''))\n    vars['signal']='get_account'\nexcept Exception:\n    vars['signal']='get_account'\n    vars['api_data']='{}'\n"
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": 0,
+                  "operator": "greater_than",
+                  "variable": "get_account_failure_count"
+                }
+              ]
+            },
+            "description": "get_account_failure_count greater_than 0",
+            "target_node": "safe_exit"
+          },
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "engine"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "get_account_ok",
+            "description": ""
+          }
+        ],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": true,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "engine",
+        "return_to_previous_on_interrupt": false
+      },
+      "create_promise": {
+        "name": "create_promise",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "api_request",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "config": {
+              "timeoutMs": 10000,
+              "maxRetries": 0
+            },
+            "function": {
+              "name": "create_promise",
+              "handler": "__function__:api_call",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise"
+                  },
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "customer_id",
+                      "product_id",
+                      "amount",
+                      "date"
+                    ],
+                    "properties": {
+                      "date": {
+                        "type": "string",
+                        "format": "date",
+                        "default": "{{date}}",
+                        "description": "date from authoritative guarded call state"
+                      },
+                      "amount": {
+                        "type": "number",
+                        "default": "{{amount}}",
+                        "description": "amount from authoritative guarded call state"
+                      },
+                      "product_id": {
+                        "type": "string",
+                        "default": "{{product_id}}",
+                        "description": "product_id from authoritative guarded call state"
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "default": "{{customer_id}}",
+                        "description": "customer_id from authoritative guarded call state"
+                      }
+                    }
+                  },
+                  "method": {
+                    "type": "string",
+                    "default": "POST"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Type": {
+                        "type": "string",
+                        "default": "application/json"
+                      }
+                    }
+                  },
+                  "connect_retries": {
+                    "type": "number",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "Execute only the preceding deterministic gate for create_promise."
+            },
+            "pre_process_code": "try:\n    vars['signal']='create_promise'\n    vars['api_data']='{}'\n    vars['api_receipt']=str(vars.get('request_id',''))\nexcept Exception:\n    pass\n",
+            "post_process_code": "import json\ntry:\n    result.pop('header',None)\n    d=result.get('data',{})\n    if not isinstance(d,dict): d={}\n    d['http_status']=str(result.get('status_code',''))\n    d['what_to_do_next']='Continue immediately to the guarded next action or spoken question.'\n    vars['api_data']=json.dumps(d)\n    vars['api_receipt']=str(vars.get('request_id',''))\n    vars['signal']='create_promise'\nexcept Exception:\n    vars['signal']='create_promise'\n    vars['api_data']='{}'\n"
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "engine"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "create_promise_ok",
+            "description": ""
+          }
+        ],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": true,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "engine",
+        "return_to_previous_on_interrupt": false
+      },
+      "engine_failure": {
+        "name": "engine_failure",
+        "tools": [],
+        "on_enter": {
+          "text": "I cannot safely continue the bank service. Any promise already confirmed as recorded remains in place. Please contact customer service. Thank you for your time. Goodbye.",
+          "type": "tts"
+        },
+        "node_type": "conversation",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [],
+        "transitions": [
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "safe_close"
+          }
+        ],
+        "role_message": "",
+        "task_message": "No tool call allowed. Terminate safely.",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": false,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "safe_close",
+        "return_to_previous_on_interrupt": false
+      },
+      "verify_identity": {
+        "name": "verify_identity",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "api_request",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "config": {
+              "timeoutMs": 10000,
+              "maxRetries": 0
+            },
+            "function": {
+              "name": "verify_identity",
+              "handler": "__function__:api_call",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity"
+                  },
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "customer_id",
+                      "field",
+                      "answer"
+                    ],
+                    "properties": {
+                      "field": {
+                        "enum": [
+                          "date_of_birth",
+                          "phone_last4"
+                        ],
+                        "type": "string",
+                        "default": "{{field}}",
+                        "description": "field from authoritative guarded call state"
+                      },
+                      "answer": {
+                        "type": "string",
+                        "default": "{{answer}}",
+                        "description": "For date_of_birth: the date as YYYY-MM-DD. Callers say dates in words, the agent converts. An unreadable value is rejected with ok=false and is not counted as a wrong answer. For phone_last4: four digits."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "default": "{{customer_id}}",
+                        "description": "customer_id from authoritative guarded call state"
+                      }
+                    }
+                  },
+                  "method": {
+                    "type": "string",
+                    "default": "POST"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Type": {
+                        "type": "string",
+                        "default": "application/json"
+                      }
+                    }
+                  },
+                  "connect_retries": {
+                    "type": "number",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "Execute only the preceding deterministic gate for verify_identity."
+            },
+            "pre_process_code": "try:\n    vars['signal']='verify_identity'\n    vars['api_data']='{}'\n    vars['api_receipt']=str(vars.get('request_id',''))\nexcept Exception:\n    pass\n",
+            "post_process_code": "import json\ntry:\n    result.pop('header',None)\n    d=result.get('data',{})\n    if not isinstance(d,dict): d={}\n    d['what_to_do_next']='Continue immediately to the guarded next action or spoken question.'\n    vars['api_data']=json.dumps(d)\n    vars['api_receipt']=str(vars.get('request_id',''))\n    vars['signal']='verify_identity'\nexcept Exception:\n    vars['signal']='verify_identity'\n    vars['api_data']='{}'\n"
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": 0,
+                  "operator": "greater_than",
+                  "variable": "verify_identity_failure_count"
+                }
+              ]
+            },
+            "description": "verify_identity_failure_count greater_than 0",
+            "target_node": "safe_exit"
+          },
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "engine"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "verify_identity_ok",
+            "description": ""
+          }
+        ],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": true,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "engine",
+        "return_to_previous_on_interrupt": false
+      },
+      "schedule_callback": {
+        "name": "schedule_callback",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "api_request",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "config": {
+              "timeoutMs": 10000,
+              "maxRetries": 0
+            },
+            "function": {
+              "name": "schedule_callback",
+              "handler": "__function__:api_call",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/schedule_callback"
+                  },
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "customer_id",
+                      "date",
+                      "time"
+                    ],
+                    "properties": {
+                      "date": {
+                        "type": "string",
+                        "format": "date",
+                        "default": "{{date}}",
+                        "description": "date from authoritative guarded call state"
+                      },
+                      "time": {
+                        "type": "string",
+                        "default": "{{time}}",
+                        "description": "HH:MM"
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "default": "{{customer_id}}",
+                        "description": "customer_id from authoritative guarded call state"
+                      }
+                    }
+                  },
+                  "method": {
+                    "type": "string",
+                    "default": "POST"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Type": {
+                        "type": "string",
+                        "default": "application/json"
+                      }
+                    }
+                  },
+                  "connect_retries": {
+                    "type": "number",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "Execute only the preceding deterministic gate for schedule_callback."
+            },
+            "pre_process_code": "try:\n    vars['signal']='schedule_callback'\n    vars['api_data']='{}'\n    vars['api_receipt']=str(vars.get('request_id',''))\nexcept Exception:\n    pass\n",
+            "post_process_code": "import json\ntry:\n    result.pop('header',None)\n    d=result.get('data',{})\n    if not isinstance(d,dict): d={}\n    d['what_to_do_next']='Continue immediately to the guarded next action or spoken question.'\n    vars['api_data']=json.dumps(d)\n    vars['api_receipt']=str(vars.get('request_id',''))\n    vars['signal']='schedule_callback'\nexcept Exception:\n    vars['signal']='schedule_callback'\n    vars['api_data']='{}'\n"
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": 0,
+                  "operator": "greater_than",
+                  "variable": "schedule_callback_failure_count"
+                }
+              ]
+            },
+            "description": "schedule_callback_failure_count greater_than 0",
+            "target_node": "safe_exit"
+          },
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "engine"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "schedule_callback_ok",
+            "description": ""
+          }
+        ],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": true,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "engine",
+        "return_to_previous_on_interrupt": false
+      },
+      "transfer_to_agent": {
+        "name": "transfer_to_agent",
+        "tools": [],
+        "on_enter": {
+          "type": "silent"
+        },
+        "node_type": "api_request",
+        "assertions": [],
+        "passthrough": true,
+        "pre_actions": [
+          {
+            "type": "function",
+            "config": {
+              "timeoutMs": 10000,
+              "maxRetries": 0
+            },
+            "function": {
+              "name": "transfer_to_agent",
+              "handler": "__function__:api_call",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent"
+                  },
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "customer_id",
+                      "queue"
+                    ],
+                    "properties": {
+                      "queue": {
+                        "enum": [
+                          "restructuring",
+                          "general",
+                          "support"
+                        ],
+                        "type": "string",
+                        "default": "{{queue}}",
+                        "description": "queue from authoritative guarded call state"
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "default": "{{customer_id}}",
+                        "description": "customer_id from authoritative guarded call state"
+                      }
+                    }
+                  },
+                  "method": {
+                    "type": "string",
+                    "default": "POST"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Type": {
+                        "type": "string",
+                        "default": "application/json"
+                      }
+                    }
+                  },
+                  "connect_retries": {
+                    "type": "number",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "Execute only the preceding deterministic gate for transfer_to_agent."
+            },
+            "pre_process_code": "try:\n    vars['signal']='transfer_to_agent'\n    vars['api_data']='{}'\n    vars['api_receipt']=str(vars.get('request_id',''))\nexcept Exception:\n    pass\n",
+            "post_process_code": "import json\ntry:\n    result.pop('header',None)\n    d=result.get('data',{})\n    if not isinstance(d,dict): d={}\n    d['what_to_do_next']='Continue immediately to the guarded next action or spoken question.'\n    vars['api_data']=json.dumps(d)\n    vars['api_receipt']=str(vars.get('request_id',''))\n    vars['signal']='transfer_to_agent'\nexcept Exception:\n    vars['signal']='transfer_to_agent'\n    vars['api_data']='{}'\n"
+          }
+        ],
+        "transitions": [
+          {
+            "condition": {
+              "logic": "or",
+              "conditions": [
+                {
+                  "mode": "exact",
+                  "operand": 0,
+                  "operator": "greater_than",
+                  "variable": "transfer_to_agent_failure_count"
+                }
+              ]
+            },
+            "description": "transfer_to_agent_failure_count greater_than 0",
+            "target_node": "safe_exit"
+          },
+          {
+            "condition": {
+              "mode": "exact",
+              "operator": "always"
+            },
+            "description": "always",
+            "target_node": "engine"
+          }
+        ],
+        "role_message": "",
+        "task_message": "",
+        "interruptible": true,
+        "max_node_turns": null,
+        "response_mapping": [
+          {
+            "path": "data.ok",
+            "variable": "transfer_to_agent_ok",
+            "description": ""
+          }
+        ],
+        "extraction_schema": [],
+        "max_turn_transition": null,
+        "truncation_strategy": "keep_all",
+        "suppress_tool_results": true,
+        "truncation_window_size": 10,
+        "on_enter_first_entry_only": false,
+        "disable_inactivity_monitor": false,
+        "passthrough_default_transition": "engine",
+        "return_to_previous_on_interrupt": false
+      }
+    },
+    "agent_config": {
+      "llmConfig": {
+        "model": "experimental-5",
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "end_call",
+              "handler": "__function__:end_call",
+              "parameters": {
+                "type": "object",
+                "properties": {}
+              },
+              "description": "This is used to technically terminate the call after all the customer's questions have been answered and necessary information has been provided.\n- It should only be triggered SILENTLY in the background after the customer-related workflow is complete; never mention this tool or its name to the customer."
+            }
+          }
+        ],
+        "apiKey": null,
+        "baseUrl": null,
+        "provider": "experimental-5",
+        "maxTokens": 1000,
+        "clientType": null,
+        "temperature": 0.7,
+        "firstMessage": "Selam! Sana nasıl yardımcı olabilirim?",
+        "systemPrompt": "You are a helpful assistant. Your role is to help users with their tasks. Always be friendly and professional. You can use `end_call` tool after you say goodbye to customer to hang up if call about to finish.",
+        "firstMessageMode": "assistant-speaks-first",
+        "additionalSettings": {},
+        "disableInterruptionsDuringFirstMessage": true
+      },
+      "sttConfig": {
+        "model": "freya-stt",
+        "apiKey": null,
+        "baseUrl": null,
+        "language": "tr",
+        "provider": "Freya",
+        "confidenceReask": {
+          "enabled": false,
+          "reaskMode": "phrase",
+          "reduction": "min",
+          "threshold": 0.3,
+          "reaskPhrases": null,
+          "disableOnDigitNodes": true,
+          "maxConsecutiveReasks": 2
+        },
+        "additionalSettings": {
+          "diarize": false,
+          "punctuate": true,
+          "streaming": true,
+          "aicEnabled": false,
+          "krispEnabled": false,
+          "smartTurnEnabled": true
+        }
+      },
+      "ttsConfig": {
+        "model": "freya-tts",
+        "apiKey": null,
+        "baseUrl": null,
+        "voiceId": "leyla",
+        "language": "tr",
+        "provider": "Freya",
+        "stopSpeakingPlan": {
+          "voiceSeconds": 0.1,
+          "numberOfWords": 2,
+          "backOffSeconds": 0.4,
+          "interruptionPhrases": [
+            "dur",
+            "bekle",
+            "bir dakika",
+            "bir saniye",
+            "dursana",
+            "bekle bi",
+            "anlamadım",
+            "ne diyon",
+            "ne diyorsun",
+            "ne dedin",
+            "yeter"
+          ],
+          "acknowledgementPhrases": [
+            "hı",
+            "evet",
+            "tamam",
+            "aynen",
+            "okey",
+            "okay",
+            "anladım",
+            "hee",
+            "ee",
+            "eee",
+            "ıı",
+            "ııı",
+            "ha",
+            "hı-hı",
+            "ha-ha",
+            "tabi",
+            "tabii",
+            "peki",
+            "tamamdır",
+            "hı hı",
+            "hım",
+            "hımm",
+            "hıhı",
+            "haha",
+            "he",
+            "hahaha"
+          ]
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 0.5,
+          "backgroundNoisePhrases": [
+            "arka plan sesi",
+            "klavye sesi",
+            "klavye sesleri",
+            "öksürük",
+            "öksürük sesi",
+            "video sesi",
+            "video kaydı",
+            "çılgın ses",
+            "çılgın kahkaha",
+            "gülüş",
+            "ses ses ses",
+            "çık çık çık",
+            "sim",
+            "sim izle"
+          ]
+        },
+        "textSubstitutions": [
+          {
+            "pattern": "@",
+            "replacement": "at"
+          },
+          {
+            "pattern": "\\$",
+            "replacement": "dollars"
+          },
+          {
+            "pattern": "%",
+            "replacement": "percent"
+          },
+          {
+            "pattern": "&",
+            "replacement": "and"
+          },
+          {
+            "pattern": "\\+",
+            "replacement": "plus"
+          },
+          {
+            "pattern": "turkishairlines",
+            "replacement": "turkish airlines",
+            "caseInsensitive": true
+          }
+        ],
+        "additionalSettings": {
+          "speed": 1,
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        },
+        "speechNormalization": {
+          "urls": true,
+          "names": false,
+          "emails": true,
+          "emojis": true,
+          "phoneNumbers": false,
+          "generalNumbers": false,
+          "identityNumbers": false
+        }
+      },
+      "dtmfConfig": {
+        "prefix": "DTMF: ",
+        "enabled": false,
+        "timeout": 2,
+        "terminationDigit": "#"
+      },
+      "syncSource": null,
+      "privacyConfig": {
+        "enableRecording": true,
+        "getRecordingConsent": false,
+        "recordingConsentText": null
+      },
+      "complianceConfig": {
+        "soc2": false,
+        "pciDss": false,
+        "euAiAct": false,
+        "mifidIi": false
+      },
+      "routingLlmConfig": null,
+      "backgroundSoundUrl": null,
+      "piiRedactionConfig": {
+        "enabled": false,
+        "maskIban": true,
+        "maskEmail": true,
+        "maskPhone": true,
+        "customRules": [],
+        "maskNationalId": true,
+        "maskPaymentCard": true
+      },
+      "voicemailDetection": {
+        "enabled": false,
+        "messageMode": "none",
+        "staticMessage": null,
+        "voicemailResponseDelay": 2
+      },
+      "callTimeoutSettings": {
+        "maxRetries": 2,
+        "dynamicWait": null,
+        "checkInMessage": null,
+        "closureMessage": null,
+        "silenceTimeout": 10,
+        "maximumDuration": 600,
+        "maxDurationEndCall": {
+          "llmPrompt": null,
+          "messageMode": "llm",
+          "interruptible": false,
+          "spokenMessage": null,
+          "triggerTimeout": null
+        },
+        "silenceTimeoutPrompt": null
+      },
+      "extractionLlmConfig": null,
+      "postConversationAnalysis": {
+        "analysisModel": null,
+        "summaryPrompt": null,
+        "autoDetectProblems": false,
+        "problemDetectionPrompt": null,
+        "problemDetectionInstructions": null
+      }
+    },
+    "global_nodes": {},
+    "initial_node": "engine",
+    "system_prompt": "You are Freya Bank digital assistant. Speak English. State only verified bank facts. Literal entry speech is authoritative. Do not invent promises, debt or tool success. No unauthorized concessions.",
+    "test_variables": {}
+  }
+}

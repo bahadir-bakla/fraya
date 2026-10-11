@@ -1,0 +1,147 @@
+{
+  "version": "day2.next-SGD-minibatch-contract.v1",
+  "status": "design_only_no_fit_no_evaluation",
+  "designer_fits": 0,
+  "designer_evaluations": 0,
+  "changes_to_ongoing_Hooke_implementation": 0,
+  "current_GPU_USD": 0,
+  "authorization": "Proposed next source-bound CPU plan only. Existing MiniLM/B77 grants do not authorize this new SGD fit. Parent relays to same Hooke after collector freezes full closure. Do not modify ongoing12,084-row implementation or schedule.",
+  "actual_evidence": {
+    "MiniLM_report": "analysis/day2-pretrained-baseline.json",
+    "MiniLM_report_sha256": "8db22980ab96b4904c84246512c53b684e357f341da124770585ee2dedcd0870",
+    "MiniLM_plan_sha256": "2f76ef93a36e629d96442c86250856c9f40bff65809f8cd74a3d3c46766e7c51",
+    "MiniLM_head_sha256": "fb3d2758994ea47c2d7e88bafc2deab552a506dd09a39780fda85f2c6036cd5e",
+    "MiniLM_freeze_sha256": "78b7ca9739ee2bac827865dc0bd2f3920e79ff3c4b104d89692be9db148a542e",
+    "MiniLM": {"wall_seconds":62.625,"classifier_fits":1,"encoder_updates":0,"internal_EVAL_rows":993,"accuracy":0.8982880161127895,"macro_F1":0.8995019226489607,"accepted":885,"threshold":0.64,"accepted_precision":0.9514124293785311,"coverage":0.8912386706948641,"CAL_and_EVAL_native_JSON_label_parity":1.0},
+    "interpretation": "MiniLM exceeds GNN accuracy by11.3797 percentage points on the same exposed internal benchmark. It is an offline lexical teacher/reference, not a <=500KB runtime model or bank permission head. Existing CAL/EVAL were not fitted or reselected by this designer.",
+    "audit": "analysis/day2-opus-training-engine-review.json",
+    "audit_sha256": "44f08fd15faf647aaf93c12ddee355b4a6ac6ed80e393eb725a1d8e28cbaa841",
+    "audit_summary": "Native source review completed178.969s;416invariant/arithmetic/parity checks passed, separately5/7paid-predicate expectations failed. Serialized export-vs-NumPy288checks is distinct from producer full-precision768checks, whose sample covered only2/77classes. No clean authority/deployment claim.",
+    "old_edge_ablation": {"G_only_correct":67,"NoEdges_only_correct":63,"diagnostic_p":0.7925825227940952,"confound":"NoEdges loses whole-turn-node influence. Preserve whole-turn/context/predicted-history information in both next arms."}
+  },
+  "collector_snapshot": {
+    "source_revision": "e852981ae34990f4358979625854259302feaa78",
+    "source_inventory_sha256": "6825312f34494923fee656660ff252825ff612bdb41ade3d8226e8102954dc88",
+    "actual_verified_bytes":439402926,
+    "actual_source_files_completed":130,
+    "collection_status":"complete",
+    "full_processed_manifest_ready_claimed":false,
+    "inspected_preview":"research/customer-benchmark/day2-training-data/sgd/partial-0008/manifest.json",
+    "preview_sha256":"58fc3c309537db4a3cc88907dde31961088721140e0bd976f1feb3d8592d8530",
+    "preview_status":"partial_preview_not_fit_ready_global_closure_pending",
+    "preview_use":"One sanitized TRAIN example inspected for exact field names. No preview CAL/EVAL examples opened. Do not fit preview before global closure; it shares ancestry with full packet.",
+    "schema_path":"research/customer-benchmark/day2-training-data/sgd/service-schema.json",
+    "schema_sha256":"97b6c21673aa7e5c2d1ceef52aa35170c565223cdcbf33bb24c69739bda04a82",
+    "processor_sha256":"3cc4fbdc7cc3757b7ab80998f3a3e585b97cb6c3d28e11b33ff46b618224b032",
+    "observed_schema":{"services":26,"named_intents_excluding_NONE":53,"namespaced_slots":215},
+    "license":"CC-BY-SA-4.0; preserve source/modification notices and license with derived corpus distribution",
+    "official_dev_test":"not downloaded or used",
+    "full_processed_counts":"Unknown here; consume final manifest counts without copying partial counts into full-ready claims."
+  },
+  "NEXT_ONE_experiment": {
+    "name":"SGD1_all-schema_partial-belief_CPU_rollout",
+    "purpose":"Train real publisher intent/requested-slot/state-map-presence/USER-act and supported KEEP/SET hypotheses from complex context. This is partial semantic belief prediction, not complete value-valued DST or policy imitation.",
+    "mandatory_arms":["G_relations","G_equal_information_zero_relations"],
+    "fixed_auxiliary_comparisons":["latest-utterance-only evaluation sensitivity, explicitly reduced information","oracle previous-state inference diagnostic on same frozen weights, explicitly oracle and distribution-shifted","controlled-history comparison using one common causal reference model's predictions for both arms"],
+    "no_arbitrary_auxiliary_floor":"Train observed supported labels after actual corpus/plan freeze. No20-per-class/fold deployment floor blocks auxiliary fitting. Report rare/absent class support; never impute missing targets.",
+    "initialization":"Fresh deterministic SGD-head/encoder initialization; do not transplant77-way teacher labels into SGD schema labels. Preserve all already trained weights and ongoing three-source code."
+  },
+  "field_adapter": {
+    "source_split":"ancestry.split == TRAIN/CAL/EVAL",
+    "group":"ancestry.group_id; ancestry.dialogue_id,source_turn_index for whole-dialogue ordering/bookkeeping only",
+    "input_allowlist":["input.speaker","input.utterance","input.earlier_context[].speaker","input.earlier_context[].text"],
+    "current_source":"USER current input plus up-to8 previous observed USER/SYSTEM turns; actual current gold frames never input",
+    "schema_inputs":"All26 frozen official TRAIN service schemas for EVERY event. Schema descriptions, slot/intent descriptors and declared schema edges are public task specification; never select/filter them from current targets.frames or dialogue services metadata.",
+    "targets":"targets.frames[].service,active_intent_id,requested_slots,published_slot_map_presence,actions,belief_updates,head_masks",
+    "service_mask":"service_supervision_masks[s] AND frame.head_masks[h] affects loss only. False service supervision means unknown, not service-negative. No oracle service routing at prediction.",
+    "act_targets":"Multi-hot actual frame.actions[].act, using TRAIN-discovered publisher action vocabulary; mask frame.head_masks.publisher_actions. Unsupported new act remains unknown. AFFIRM/NEGATE are publisher semantic acts, not financial consent or bank refusal.",
+    "update_target":"belief_updates[j].publisher_map_update in KEEP/SET only when update_mask=true. Current collector DELETE_mask=false always; no DELETE class or inferred deletion. Hashes/values used to establish targets are excluded from feature encoder.",
+    "value_mask":"No slot value prediction in this fast pilot. Even recoverable target values never become current input features. Privacy-sensitive or unrecoverable identity targets remain masked. Values in predicted belief remain UNKNOWN.",
+    "required_invariant":"Replacing or permuting targets,service_supervision_masks,record_id,source indices or slot-value hashes must leave emitted input feature tensors byte-identical. Only loss-target tensors change."
+  },
+  "tensors": {
+    "batch":"32 distinct TRAIN dialogues at a time; unroll up-to4 chronological USER events per dialogue; pad and mask ended dialogues, no turn shuffle. B<=128events, N<=9observed turn nodes,D512,H32.",
+    "X":"float32[B,N,512] normalized signed hash of sanitized lexical features plus USER/SYSTEM/local-age node types; whole current utterance and every earlier context text available in both arms",
+    "node_mask":"bool[B,N]; empty observed text represented by explicit empty node, not silently dropped",
+    "adjacency":"directed observed-order edges only; optional static schema intent-slot required/optional links identically visible to both arms; never target-frame edges",
+    "schema_queries":"Fixed hashed descriptions projected to32d:26services,79service-local intent queries including26NONE,215slot queries. Local schema IDs identify output coordinates, not hidden service routing.",
+    "previous_belief":"Detached predicted per-service intent distributions, requested-slot and presence probabilities and uncertainty flags; initialized unknown for every dialogue. No current/previous gold state in mandatory arms.",
+    "target_intent":"int64[B,26] plus bool[B,26] known mask; each service has its own schema-local softmax",
+    "target_slots":"float32[B,215] requested/presence with separate bool masks; nonexistent/unobserved service labels UNKNOWN",
+    "target_acts":"float32[B,26,A] plus per-frame masks, A derived from actually observed TRAIN published actions",
+    "target_updates":"int64[B,215] binary KEEP/SET plus bool recoverability/consecutive-state mask; no imputed DELETE",
+    "mask_note":"Head and element masks derive from actual annotations for supervision only; they are not input features or inference-time pruning."
+  },
+  "model_math": {
+    "encoder":"h_i=tanh(x_i E+b),E512x32. Base readout c=concat_or_fixed_sum(h_current,mean(h_all_observed),project(predicted_prior)). Base whole-current/whole-context path is present in BOTH arms.",
+    "relations":"m_i=sum_r mean_neighbors(h_j W_r). G adds learned projected relation summary to c; equal-information arm sets only m to0. All lexical nodes, current whole-turn base, schema queries, prior-belief projection, pooling and train schedule remain available. Shape-identical zero-effect matrices retained.",
+    "schema_scoring":"z_h(s,j)=p^T W_h q_(s,j)+b_h+v_h^T features_of_predicted_prior(s,j). Score EVERY service/slot. Intent CE normalizes within each service; requested/presence sigmoid and KEEP/SET binary score are shared query heads. No gold service-gated feature branch.",
+    "routing_limit":"Output all service-conditioned hypotheses with relevance UNKNOWN. Current masks do not provide supervised negative service routing. Do not label conditional intent accuracy as end-to-end service selection or full DST. A future relevance head needs independently justified complete service-set labels; no positive-unlabeled prior guessed here.",
+    "loss":"L=mean_known_service_CE/log(max(2,C_s)) +maskedBCE(requested)/log2 +maskedBCE(presence)/log2 +0.5maskedBCE(actualacts)/log2 +0.25maskedCE(KEEP,SET)/log2 +0.0005||theta||^2. Normalize each head over its own known targets, then equal closure-group mass; report raw components and supports.",
+    "group_weight":"Sample closure groups uniformly, dialogue uniformly within group, chronological USER events as a sequence; exact per-event weights1/(number_groups*dialogues_in_group*USER_events_in_dialogue). Group/dialogue size metadata frozen before training. Avoid long-dialogue dominance.",
+    "rollout":"For each event, predict all schema-local distributions from earlier text and own predicted prior, compute masked loss, then detach and store predicted distributions for next event. Never insert current gold even for an untrained/unobserved service. SYSTEM turns enter observed text history only.",
+    "state_semantics":"Probabilistic publisher-map presence can change as a semantic hypothesis; it cannot delete a bank fact. KEEP/SET predicts an observed map-update label but values stayUNKNOWN. Exact joint slot-value accuracy is inapplicable; do not fabricate it.",
+    "oracle_comparison":"Separate named diagnostic replacing predicted prior with previous known published frame state, never current frame. On absent prior state keepUNKNOWN. Same frozen weights gives sensitivity, not a separately trained oracle upper bound; report distribution-shift caveat."
+  },
+  "streaming_algorithm": [
+    "Require final collector status/frozenmanifest/global closure and exact plan source hashes; no preview promotion.",
+    "TRAIN-only index provides shard/dialogue offsets, group IDs, lengths and ordering. Load at most one<=20MBshard plus batch; no dense all-corpus feature matrix.",
+    "Fixed seed permutes whole closure groups; sequence loader carries own predicted belief per dialogue across minibatches and resets at dialogue/split end.",
+    "Build input tensors from allowlisted observed fields and all frozen schema queries, targets independently; compare annotation-mutation feature invariance before fitting.",
+    "Run two arms with identical minibatch order, initial parameters, epochs and optimizer. Each maintains its own detached predicted prior for main closed-loop metrics.",
+    "Freeze weights/export hashes before CAL. Partition CAL whole closure groups into disjoint temperature-fit and threshold-select; no EVAL-based tuning.",
+    "Score internal EVAL sequentially only after freeze. Report own-history rollout and common causal reference-history ablation separately; oracle prior is separately marked."
+  ],
+  "equal_information_ablation": {
+    "feature_equality":"Both arms receive identical observed texts, roles, local positions, all schema descriptors and base prior-state representation; retain whole-turn direct path so no-edge does not discard source information.",
+    "history_control":"For relation-only conditional comparison, use frozen zero-relations model's causal prior predictions as the common history for both; no gold. Main closed-loop arm scores use own histories and measure combined dynamics, not pure edge effect.",
+    "paired_metrics":"Store per-event/frame prediction error pairs and aggregate disagreements by closure group. Report per-head loss/F1 differences, bootstrap/group sensitivity with dependence limits, no automatic significant-graph claim.",
+    "latest_only":"Remove earlier context and prior in a declared evaluation sensitivity only; this is deliberately lower-information, not the clean relation ablation."
+  },
+  "CPU_one_experiment_limits": {
+    "parent_totalwall_seconds":900,
+    "two_arm_fit_seconds_total":600,
+    "IO_feature_seconds":150,
+    "CAL_EVAL_export_seconds":150,
+    "epochs_each":1,
+    "seed":20261011,
+    "optimizer":"Adam lr0.003,batch32dialogues*4USERunroll,gradient_clip1,L2asabove;2CPUthreads; no hyperparameter search",
+    "attempts_each":1,
+    "automatic_retries":0,
+    "full_TRAIN_pass":"Use every admitted full-packet TRAIN sequence once if budget permits. One epoch is a bounded learning pilot, not convergence. Report exact groups/rows/steps consumed; if timeout before fixed endpoint mark partial/unscored rather than claiming full-corpus results.",
+    "profiling":"First5TRAINbatches are part of actual fit, not hidden extra fits; record step time/RSS and project full pass walltime. If projected deadline fails, stop at cap and report bottleneck, without adaptive data or EVAL changes.",
+    "GPU":false
+  },
+  "minimum_teacher_to_portable": {
+    "separate_trial":"Small subsequent B77 distillation trial; do not inject into ongoing three-source/SGD code or claim it executed. Actual89.83vs78.45 motivates lexical compression, not synthetic policy relabeling.",
+    "teacher_pin":{"model_revision":"1110a243fdf4706b3f48f1d95db1a4f5529b4d41","encoder_weight_sha256":"53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db","head_sha256":"fb3d2758994ea47c2d7e88bafc2deab552a506dd09a39780fda85f2c6036cd5e","runtime_sha256":"355e946677aa0a08b35d3714802b4ba645a0405f7d2f1910d6b5b6f26f37e2db"},
+    "TRAIN_only":"Cache raw uncalibrated77logits for exactly7943 frozen B77 TRAIN source texts/IDs. Targets hash commits encoder/head/tokenizer/preprocessing/TRAIN hash. Do not use CAL-fitted teacher temperature, threshold0.64, CAL/EVAL/OOD logits or acceptance decisions as training supervision. TRAIN raw teacher logits are soft targets only. Threshold0.64 is a decision cutoff, never a logit temperature.",
+    "student":"Portable signed word/bigram/characterhash1024 ->32tanh ->77softmax, separate from SGD heads. Compare same fresh architecture hard-only versus hard+KD; no old-model weight reuse.",
+    "loss":"0.5CE(p_student,y_publisher)+0.5*tau^2 KL(softmax(z_teacher/tau)||softmax(z_student/tau)),tau2; hard-only control has identical schedule and input dimensions. Teacher errors remain soft supervision, not gold.",
+    "schedule":"Fixedseed,90epochs,Adam0.01,batch128,twoCPUthreads; cache<=120s/twofits<=240s/total<=420s in a separate bound plan. Timeout partial, not invented loss.",
+    "measurement":"Freeze both arms before disjoint CAL-fit/CAL-select then reused internal EVAL; report CE,F1,classsupport,teacher agreement,hard errors,latency/package size and teacher-student gap. Current EVAL already exposed, so improvement is diagnostic rather than blind qualification.",
+    "ontology":"B77 teacher supplies only its77source topics. No mapping to SGD intents, slot updates, completed payment, consent or bank outcomes without new reviewed target contract."
+  },
+  "portable_export": {
+    "cap_json_and_stdlib_inference_bytes":500000,
+    "format":"Finite JSON+base64little-endianfloat32 or verified per-columnint8; stdlib math/hashlib/re/struct/base64, no external inference",
+    "architecture_budget":"SGD query-shared512x32encoder plus bounded32x32relation/readout/prior matrices. Keep total trainable runtime coefficients<=60000 (float32base64<=320000bytes); use remaining180000 for actual schema descriptors, taxonomies and inference. Verify actual totalbytes; don't hide schema or tokenizer outside count.",
+    "loading":"Verify exact artifact hash/taxonomy/shapes and finite coefficients, positive finite temperature/valid thresholds; invalid artifact returns explicit unavailable/abstain, not exception-driven permission.",
+    "parity":"Cover every trained service/head/act class, source-valid empty context, padded turns, rare classes, near ties and source threshold flips. Exact labels alone are insufficient: report max logit/probability deviations and changed decisions. Preserve full-precision arrays in freeze for reconstructible future parity.",
+    "live_boundary":"Offline/shadow proposals only. FixedAGENT_LLM+banktools remain live platform authority; no authenticated current ingress proof was invented. Learned beliefs do not mutate policy facts, receipts, component revisions, refusal or consent."
+  },
+  "evaluation_requirements": {
+    "data_splits":"Final global closure-group split plan from officialTRAIN only; preserve all shards/descendants. Do not fit partial preview and call full descendants independent. Officialdev/test remain unopened in this iteration.",
+    "conditional_heads":"Service-local CE/F1 only on actual known supervision; acts/requested/presence each has own mask denominator. Missing frame,state,act field isunknown, not negative. Report service coverage separately; no oracle routed main metric.",
+    "rollout":"Plot/report loss/error by USERturn index and previous-belief error; exact source-map membership metrics only. No full joint goal accuracy without predicted slot values.",
+    "calibration":"Per-head shared temperature on CAL-fit; thresholds on separate CAL-select groups. Calibration and auxiliary empirical precision do not authorize financial acts. Zero support means unavailable, not safe negative.",
+    "qualification":"Old20engineeringbankadmission remains separate. Actualsource auxiliary fits can proceed without it; bank qualification requires independent frozen source-compatible ingress/policy/OOD data after adaptation, not public schema transactional flags.",
+    "controls":"Target/annotation/source-ID mutations do not change input features; dialogue/split reset; multi-service schemas all visible; absent current state stays masked; no target value/DELETE leakage; no secret/DOB restoration."
+  },
+  "optional_cloud_gate": {
+    "now":"CPU first; current baseline62.625seconds and three-model91.703seconds do not establish a GPU bottleneck. Collection/preprocessing is not solved by renting H100.",
+    "evidence_needed":"Measured full-corpus minibatch throughput/RSS and frozen CPU feature/accuracy deficit, a concrete encoder experiment likely to benefit, completed audited single-use adapter and parent reservation. No rental solely because data bytes are large.",
+    "budget":"Aggregate targetUSD30/hardUSD35 remainsUSD0spent; parent-only reservation, oneGPU/job, no endpoints/cron/mincontainers/retries; parent wall/start/stop envelope. Existing audited adapter blockers/grant state must be resolved before any launch. This design performs/authorizes no cloud job."
+  },
+  "handoff":"Same Hooke implements a new isolated SGD pilot after collector full closure freeze and parent exact CPU grant. Keep ongoing3-source implementation unchanged. Designer closes bounded role after these two reports; no fits, unseen label evaluation, downloads, platform or cloud calls."
+}

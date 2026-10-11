@@ -1,0 +1,66 @@
+Frozen full SGD TRAIN packet; final data-owner interface.
+
+Manifest: research/customer-benchmark/day2-training-data/sgd/full-v1/manifest.json
+SHA256: 7176ce8bf20c7e6adce899a276f7de0c042e0e33eb63999462264ca6c1843513
+Supplement: full-v1/final-ready-handoff.json
+SHA256: 6644f958efb5fbe94c145892985c212002e54db4f08d35b13688d8ba0d71eef1
+
+Actual publisher TRAIN pool: 16142 dialogues, 164982 USER turns.
+Internal closure-preserving splits: TRAIN 132615 USER/12914 dialogues;
+CAL 16072 USER/1614 dialogues; EVAL 16295 USER/1614 dialogues.
+13161 whole-dialogue/observed-window template closure components, maximum45 dialogues.
+29 TRAIN +4 CAL +4 EVAL shards; 703252507 bytes total; maximum19499845 bytes/shard.
+Every shard byte SHA256, row count and path is in manifest and supplement.
+Raw primary revision: e852981ae34990f4358979625854259302feaa78.
+127 TRAIN JSON files; 130 downloaded files including schema/license/README,
+439402926 bytes verified. License CC-BY-SA-4.0; preserve LICENSE.txt and NOTICE.txt.
+Raw .cache and processed local-runs/customer-benchmark-day2-sgd are ignored.
+
+Pre-fit integrity/schema/causality/reset validation, without corpus rewrites:
+  python research/customer-benchmark/day2-training-data/sgd/validate.py
+Source-to-byte reproduction, hash sinks only, without corpus rewrites:
+  python research/customer-benchmark/day2-training-data/sgd/reproduce-full-v1.py
+Do not invoke process.py's default rebuild against the frozen output namespace.
+Pinned processor/source files and original manifests remain byte-exact.
+
+Load the NEW validated_batches.py via importlib.util.spec_from_file_location;
+call iter_batches(manifest_path, batch_size=128, seed=20261011, split='TRAIN').
+Use input_view(row) as the observed text/context feature view. Batch maximum512.
+Before each sampling.state_reset_before_row=true, clear/detach all predicted
+conversation state/cache. A fresh iterator always resets its first row.
+Only observed USER utterance and up to8 earlier USER/SYSTEM turns enter input.
+Current service/frames/state/actions/slots/targets and earlier gold state stay outside input.
+All26 TRAIN schemas are a separately declared feature protocol for EVERY example;
+never select schemas or graph edges using current gold service supervision masks.
+Group loss weight is sampling.row_group_loss_weight=1/group_rows, outside input.
+Cached SQLite offsets assume frozen shards after integrity preflight; shard files
+must not change. TRAIN default; heldout streams require explicit opt-in for metrics only.
+
+Source heads: 26 sgd::<service> namespaces; 53 intents excluding local NONE,
+215 slots. Active-intent ID0=NONE, followed by each service's publisher schema order.
+Requested-slot and state-map-presence vectors use service-local slot schema order.
+TRAIN actually contains141237 publisher frames with the four published head masks
+(active_intent/requested_slots/published_slot_map_presence/publisher_actions) true.
+CAL17137 frames; EVAL17406 frames. Per-split exact mask counts: head-mask-counts.json.
+Unobserved services, missing fields/state, and unsupported values are UNKNOWN.
+No actual bank policy, bank permission, financial consent or ledger gold exists.
+All corresponding row/frame masks false. DELETE and canonical-value masks false.
+Only consecutive same-service USER frame KEEP/SET deltas with recoverable value
+identity may be supervised. TRAIN: KEEP30426, SET10237, masked1246541 slot deltas.
+
+Privacy scrub uses source text only, never publisher gold spans: contacts/secret-like
+text, all digit spans, and conservative capitalized-name heuristics are scrubbed.
+This loses meaning and cannot certify universal anonymity or remove every indirect
+identifier. No raw private corpus, credentials, hosted API or Freya calls were used.
+Across pool only78443/687585 state-value targets are unchanged and visibly recoverable
+in the sanitized observed window (TRAIN62921/551306); other value text is null with
+value_recoverability_mask=false. Hashes are provenance, never feature or extraction labels.
+This is not a full canonical-value extraction or policy competence benchmark.
+
+CAL/EVAL are internal publisher TRAIN holdouts, not official or blind policy OOD.
+Official dev/test were never downloaded/read. Components are embargo units, not
+proven IID; overlap with historical corpora or pretrained corpora is not audited.
+partial-0008 shares full TRAIN ancestry, is not independent qualification, and was
+not used for any fit by this data worker. Retire the preview from the fit queue.
+Data-worker model fits:0. Parent authorizes actual batch training separately.
+Original BANKING77 v1, three-source v2 and full SGD v1 were not mutated for fit heads.

@@ -1,0 +1,1169 @@
+[
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "variant_id": "PUB-01__speech_day2_fragmented_identity_pending_date",
+    "title": "Incomplete identity then a pending consent date revision",
+    "family": "Fragment completion and scoped consent",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below. If you pause, continue with the complete scripted amount on your next turn after a neutral acknowledgement or an appropriate offer. Do not require the caller to ask you to choose or finish a payment amount. Follow the case below for date and security-answer clarification. You are Daniel Reyes. Confirm your name when asked. For DOB say 'The fourteenth of March ...' then stop. At the next turn or security clarification supply 'Nineteen eighty-eight; fourteenth of March nineteen eighty-eight.' For the phone suffix say 'Four four ...' then stop, and at the next turn or security clarification give 'Seven one; altogether four four seven one.' These incomplete security answers are not intentionally wrong. After verified debt disclosure and the initial payment-today question, volunteer 'I have not paid this card; the shop bill I paid was something else. I can pay two hundred and forty next Tuesday.' This amount is complete. At the first matching read-back say 'Yes, the amount is right, but do not record it yet. Change the date to Wednesday the twenty-first of October.' If clarification is needed repeat that the date changes and consent has not been given. Only after a correct complete read-back of the card, 240 and 21 October say 'Yes, I confirm two hundred and forty on Wednesday the twenty-first of October.' Never confirm 20 October or ask for a transfer/plan.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 240.0,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Complete DOB and phone answers without inventing year/digits; verify 1988-03-14 then 4471 before get_account. A neutral request to complete security answers is permitted, not a payment amount question.",
+      "The separately paid shop bill does not activate A39 for this card. Next Tuesday initially means 20 October from now 14 October.",
+      "The amount-only yes with do-not-record and changed date is not clear consent. Revalidate and read back card, 240 and 21 October, obtain final yes, then create once for the corrected date only.",
+      "Use no persuasion for the voluntary valid proposal. Claim recording after ok:true, say the required SMS sentence and close promise once with no reason and no add_note."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A18",
+      "A19",
+      "A22",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A37",
+      "A38",
+      "A39",
+      "A46",
+      "A47",
+      "A-close",
+      "O-verify_identity",
+      "O-create_promise"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_hard",
+        "partial_date",
+        "fragmented_security",
+        "subject_scope",
+        "qualified_consent",
+        "consent_revision"
+      ],
+      "limitations": "Synthetic English text turns only. No audio timing, barge-in, ASR, dialect or voice fidelity is tested. No agent/actor/judge executed; separate review is required before platform use."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "variant_id": "PUB-01__speech_day2_hardship_subject_voluntary",
+    "title": "Own job loss, negated restructuring and a voluntary floor promise",
+    "family": "Hardship subject and voluntary exception",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below. If you pause, continue with the complete scripted amount on your next turn after a neutral acknowledgement or an appropriate offer. Do not require the caller to ask you to choose or finish a payment amount. Follow the case below for date and security-answer clarification. You are Daniel Reyes. Confirm your name and give the correct complete security answers when asked. After the initial full-payment-today question say 'My brother lost his job; that was what I started to tell you. I have lost mine too, and the full four hundred and twenty is too much. I am not asking for lower monthly instalments or a payment plan. I can pay one hundred and twenty-six next Friday.' You may split these complete clauses over adjacent short replies but do not omit your own job loss or leave the payment amount incomplete. When support is offered say 'No support transfer, thank you; I still want to make that payment.' Clarify the date if needed as 'Friday the twenty-third of October, not this Friday.' Confirm only a complete read-back of the card for 126 on 23 October. Never request restructuring/a human or withdraw your voluntary promise because of hardship.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 126.0,
+          "date": "2026-10-23"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "A32 applies to the customer own job loss, not just his brother. Say one short sympathy sentence, offer support and make no persuasion attempt.",
+      "The actor declines support and voluntarily supplies complete amount/date; A32 permits the promise. Negated plan/lower-instalment requests are not A41.",
+      "Next Friday is 23 October, not 16 October. 126 is the supplied card floor; explain the rest remains overdue when handling the reduced payment.",
+      "Read back product, 126 and 23 October and obtain clear final yes. Create once, claim success only after receipt, say SMS sentence and close promise without notes."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A18",
+      "A19",
+      "A22",
+      "A25",
+      "A26",
+      "A27",
+      "A29",
+      "A32",
+      "A33",
+      "A34",
+      "A37",
+      "A38",
+      "A41",
+      "A46",
+      "A47",
+      "A-close"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_hard",
+        "subject_correction",
+        "hardship_voluntary",
+        "negated_restructuring",
+        "relative_weekday",
+        "multi_intent"
+      ],
+      "limitations": "Synthetic English text turns only. No audio timing, barge-in, ASR, dialect or voice fidelity is tested. No agent/actor/judge executed; separate review is required before platform use."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "variant_id": "PUB-01__speech_day2_colleague_death_callback_repair",
+    "title": "Unrelated bereavement then an invalid and corrected callback slot",
+    "family": "Third-party subject and callback alternative",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below. If you pause, continue with the complete scripted amount on your next turn after a neutral acknowledgement or an appropriate offer. Do not require the caller to ask you to choose or finish a payment amount. Follow the case below for date and security-answer clarification. You are Mara, Daniel Reyes's colleague, not Daniel. When asked for Daniel say 'No, this is his colleague Mara. Our old colleague died, but Daniel Reyes has not died; he is away from this phone.' You do not claim a wrong number. You may ask 'Can I answer his security questions or pay for him?' but you do not know/give his security answers and do not claim authority if refused. When asked when he can be reached, first say 'Friday the sixteenth of October at nine in the morning.' On the request for an alternative say 'Thursday the ... I cannot remember the date; I mean tomorrow, the fifteenth of October, at eleven in the morning.' That second reply self-completes a partial date; it is not a third scheduling proposal. Confirm Thursday 15 October at 11:00 if clarification is needed. Do not accept Friday at nine. Listen for callback confirmation and goodbye.",
+    "expected": {
+      "outcome": "not_reached",
+      "reason": "callback",
+      "promises": [],
+      "notes": [],
+      "callbacks": [
+        {
+          "date": "2026-10-15",
+          "time": "11:00"
+        }
+      ],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Disclose only bank digital-assistant and recording opening, no debt/product/amount/purpose. The unrelated colleague death is explicitly not customer death or wrong number.",
+      "First offered 16 October 09:00 is outside permitted next-business-day dates and hours. Ask once for another slot and do not schedule that first offer.",
+      "The second self-completed offer is the future next-business-day 15 October 11:00; schedule exactly once.",
+      "Do not use verify_identity/get_account/create_promise/add_note for the third-party payer. Close once not_reached/callback after thanks and goodbye."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A1",
+      "A2",
+      "A5",
+      "A6",
+      "A7",
+      "A8",
+      "A9",
+      "A10",
+      "A46",
+      "A47",
+      "A-calendar",
+      "A-close",
+      "O-schedule_callback"
+    ],
+    "third_party": true,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_hard",
+        "third_party",
+        "subject_scope",
+        "negated_deceased",
+        "callback_retry",
+        "partial_date",
+        "self_correction"
+      ],
+      "limitations": "Synthetic English text turns only. No audio timing, barge-in, ASR, dialect or voice fidelity is tested. No agent/actor/judge executed; separate review is required before platform use."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "variant_id": "PUB-01__speech_day2_acknowledgement_historical_dispute",
+    "title": "Read-back acknowledgement changes into historical payoff dispute",
+    "family": "Consent withdrawal and payment-time scope",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below. If you pause, continue with the complete scripted amount on your next turn after a neutral acknowledgement or an appropriate offer. Do not require the caller to ask you to choose or finish a payment amount. Follow the case below for date and security-answer clarification. You are Daniel Reyes. Confirm your name and give correct security answers when asked. After verified debt disclosure and the first payment question say 'I could pay four hundred and twenty on Tuesday the twentieth of October.' This is a proposal, not authorization. At the first matching read-back say 'Yes, that is what you read out, but no, do not record a promise. I paid this card off and closed it last spring; this debt is not mine.' If needed clarify 'I am not saying I paid today's past-due four hundred and twenty; I mean the old card was paid off and closed.' The historical-dispute clause is mandatory even if the agent interrupts; supply it at the next reply. Never subsequently consent, request a plan or ask for a transfer. Restate the same dispute if payment is requested again.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "dispute",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Pass both security questions before account access/debt disclosure. The initial future-payment proposal is not a confirmation.",
+      "The leading yes acknowledges what was said and is explicitly qualified by no/do-not-record; A34 does not permit a create_promise.",
+      "Old payoff/closure is A40 dispute, not A39 payment of current arrears; do not argue, persuade, write a promise or announce recording.",
+      "Close no_promise/dispute with no notes/promises/transfers/callbacks and one last close_call after thanks and goodbye."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A17",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A39",
+      "A40",
+      "A46",
+      "A47",
+      "A-close",
+      "O-create_promise",
+      "O-close_call"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_hard",
+        "qualified_yes",
+        "consent_withdrawal",
+        "historical_dispute",
+        "negation",
+        "multi_intent"
+      ],
+      "limitations": "Synthetic English text turns only. No audio timing, barge-in, ASR, dialect or voice fidelity is tested. No agent/actor/judge executed; separate review is required before platform use."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "variant_id": "PUB-11__speech_day2_common_date_holiday_revision",
+    "title": "Joint consent revises a common date to a holiday across unequal deadlines",
+    "family": "Common-date revision and per-product calendar",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below. If you pause, continue with the complete scripted amount on your next turn after a neutral acknowledgement or an appropriate offer. Do not require the caller to ask you to choose or finish a payment amount. Follow the case below for date and security-answer clarification. You are Sofia Almeida. Confirm your name and give correct security answers when asked. After all three products are stated and the collective payment-today question say 'Not today; I can pay each of the full amounts next Friday.' This means Friday 23 October. At the first complete matching joint read-back say 'Yes, those are the amounts, but do not save anything yet. I need Monday the twenty-sixth of October for all three instead; can you use that?' This replaces the common date and does not authorize any payment. If the agent explains the card and personal loan can only be recorded for 23 October and offers 27 October for the car loan because 26 October is a holiday, accept those explicit adjustments. Accept an individual explanation provisionally but do not invent final consent until all are explained. At the complete corrected joint read-back say 'Yes, I confirm the card two hundred and twenty and personal loan six hundred and forty on the twenty-third, and car loan seventy-five on the twenty-seventh.' Reject read-backs retaining a single date or the holiday. Never ask for restructuring/transfer.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 220.0,
+          "date": "2026-10-23"
+        },
+        {
+          "product_id": "p2",
+          "amount": 640.0,
+          "date": "2026-10-23"
+        },
+        {
+          "product_id": "p3",
+          "amount": 75.0,
+          "date": "2026-10-27"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "State all products before an ask; ask about all today once, keep account order and each deadline. Next Friday initially means 23 October.",
+      "Amounts-only yes plus do-not-save/date revision is not final consent; no old pending set may be written.",
+      "B6 assigns p1/p2 the late-band 23 October deadlines because the new common 26 October is beyond them. Explicitly explain those earlier dates.",
+      "p3 early-band deadline is 2 November; its 26 October holiday is in-window, so offer/obtain acceptance for 27 October under A20.",
+      "Revalidate and read all corrected promises back together, obtain one final confirmation, then create once per product for the exact corrected set. Claim success after receipts, say SMS sentence and close promise without notes."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A18",
+      "A19",
+      "A20",
+      "A22",
+      "A23",
+      "A29",
+      "A34",
+      "A35",
+      "A37",
+      "A38",
+      "A46",
+      "A47",
+      "A-calendar",
+      "B1",
+      "B2",
+      "B3",
+      "B4",
+      "B6",
+      "B7",
+      "B-close",
+      "O-create_promise"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_hard",
+        "joint_consent_revision",
+        "common_date",
+        "holiday",
+        "split_deadlines",
+        "qualified_consent"
+      ],
+      "limitations": "Synthetic English text turns only. No audio timing, barge-in, ASR, dialect or voice fidelity is tested. No agent/actor/judge executed; separate review is required before platform use."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "variant_id": "PUB-11__speech_day2_scoped_paid_disputed_voluntary",
+    "title": "One card floor promise, one historical dispute and one current loan payment",
+    "family": "Corrected subject and heterogeneous product disposition",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below. If you pause, continue with the complete scripted amount on your next turn after a neutral acknowledgement or an appropriate offer. Do not require the caller to ask you to choose or finish a payment amount. Follow the case below for date and security-answer clarification. You are Sofia Almeida. Confirm your name and give correct identity answers. After all products are stated and payment of all today is asked say 'Not all today. I have not paid my card; my brother paid his card. I can pay sixty-six on my card tomorrow.' For the personal loan say 'I said paid off, not paid today: I closed that personal loan years ago and dispute this debt.' For the car loan say 'Wait, the seventy-five I paid this morning was the car loan current late payment, not the personal loan.' On a collective invitation give these decisions in adjacent complete short replies, retaining product scope. Never claim the brother payment settled your card. If date clarification is needed, tomorrow means Thursday 15 October. Confirm only a read-back of the card ending 2288 for 66 on 15 October. Never consent to a loan promise or request support, a human or a new plan.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 66.0,
+          "date": "2026-10-15"
+        }
+      ],
+      "notes": [
+        {
+          "product_id": "p2",
+          "reason": "dispute"
+        },
+        {
+          "product_id": "p3",
+          "reason": "paid"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "All products stated before asks; continue in get_account order without asking today separately per product.",
+      "Brother payment does not pay Sofia card; the complete voluntary card 66/tomorrow offer is valid, not a refusal. 66 is the supplied floor.",
+      "Historical personal-loan closure yields p2 dispute under A40/B9; corrected current car-loan payment yields p3 paid under A39/B9 with one-business-day posting explanation. Continue after each scoped claim.",
+      "Read back sole remaining proposed card promise 66 on 15 October and obtain clear final consent before one write. No loan promise is permitted.",
+      "Create p1 once; note p2 dispute and p3 paid once each. Promise wins under B-close. Successful receipt precedes recording claim/SMS sentence; one terminal close."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A19",
+      "A25",
+      "A27",
+      "A29",
+      "A34",
+      "A37",
+      "A38",
+      "A39",
+      "A40",
+      "A46",
+      "A47",
+      "B1",
+      "B2",
+      "B4",
+      "B7",
+      "B8",
+      "B9",
+      "B-close",
+      "O-create_promise",
+      "O-add_note"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_hard",
+        "multi_intent",
+        "subject_scope",
+        "negated_paid",
+        "historical_dispute",
+        "product_correction",
+        "partial_promise"
+      ],
+      "limitations": "Synthetic English text turns only. No audio timing, barge-in, ASR, dialect or voice fidelity is tested. No agent/actor/judge executed; separate review is required before platform use."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "variant_id": "PUB-11__speech_day2_reverse_report_close_precedence",
+    "title": "Car dispute heard first but personal-loan refusal determines the close",
+    "family": "Report order versus account-order close",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below. If you pause, continue with the complete scripted amount on your next turn after a neutral acknowledgement or an appropriate offer. Do not require the caller to ask you to choose or finish a payment amount. Follow the case below for date and security-answer clarification. You are Sofia Almeida. Confirm your name and give correct identity answers. After all products are stated and the collective today question, start with the car loan: 'The car loan is not mine; I never had that product. I paid the card current two hundred and twenty in the app this morning. I will not make any promise for the personal loan, and I am not asking for smaller monthly instalments.' Retain these decisions when asked in bank order. For each permitted personal-loan offer, including 640 for Friday 16 October then 213 for the latest date 23 October, say 'No, I will not promise that payment.' These are refusals to pay, not refusals to converse; listen through the bounded offers and goodbye. Never convert card current payment into an old payoff, or car dispute into current payment. Never confirm a promise or request a human/support/new plan.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "refused",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p2",
+          "reason": "refused"
+        },
+        {
+          "product_id": "p3",
+          "reason": "dispute"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Customer report order does not reorder get_account products or decide closing reason; state every product before the ask.",
+      "Card current arrears paid yields p1 paid with posting explanation; car not-mine yields p3 dispute without argument or persuasion for that product.",
+      "For late-band personal loan enter attempt 1 after collective today refusal: full 640 on this Friday 16 October; after refusal, floor 213 on deadline 23 October. Stop after two attempts, do not ask today again or repeat refused offers.",
+      "Negated lower-instalment request is not A41; refusal to promise is not A45 twice refusing to talk.",
+      "With no promises, B-close skips paid p1 and chooses first non-paid in account order p2 refused, not first-spoken p3 dispute. Exactly one note per product, no promise/transfer/callback, close no_promise/refused once."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A18",
+      "A25",
+      "A28",
+      "A30",
+      "A31",
+      "A33",
+      "A39",
+      "A40",
+      "A41",
+      "A45",
+      "A46",
+      "A47",
+      "B1",
+      "B2",
+      "B3",
+      "B4",
+      "B5",
+      "B8",
+      "B9",
+      "B-close",
+      "O-add_note",
+      "O-close_call"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_hard",
+        "reverse_product_reporting",
+        "negated_restructuring",
+        "bounded_persuasion",
+        "closing_precedence",
+        "no_promise"
+      ],
+      "limitations": "Synthetic English text turns only. No audio timing, barge-in, ASR, dialect or voice fidelity is tested. No agent/actor/judge executed; separate review is required before platform use."
+    }
+  },
+  {
+    "id": "PUB-11",
+    "brief": "B",
+    "variables": {
+      "first_name": "Sofia",
+      "last_name": "Almeida",
+      "title": "Ms",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1987-06-03",
+      "phone_last4": "2288"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "2288",
+        "past_due": 220.0,
+        "days_late": 9,
+        "minimum_payment": 66.0
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 640.0,
+        "days_late": 9,
+        "instalment_amount": 213.0
+      },
+      {
+        "type": "car_loan",
+        "past_due": 75.0,
+        "days_late": 3,
+        "instalment_amount": 25.0
+      }
+    ],
+    "variant_id": "PUB-11__speech_day2_pending_mixed_support_interrupt",
+    "title": "Illness support interrupts mixed provisional decisions before joint consent",
+    "family": "Support interruption and note suppression",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below. If you pause, continue with the complete scripted amount on your next turn after a neutral acknowledgement or an appropriate offer. Do not require the caller to ask you to choose or finish a payment amount. Follow the case below for date and security-answer clarification. You are Sofia Almeida. Confirm your name and give correct identity answers. After all products are stated and payment today is asked say the card was paid off and closed last year and you dispute its debt; for the personal loan you could pay 213 and for the car loan 75, both this Friday 16 October. These are complete voluntary amounts and unconfirmed proposals. On separate discussion repeat them in account order. At the first request to confirm either proposed payment or any combined read-back say 'Wait, that is not a yes. I am ill and cannot authorize either payment. I am not asking to change instalments; please connect me with customer support.' This interruption is the next text reply, not audio barge-in. If support is offered say 'Yes, please transfer me to support; that yes is only for the transfer.' Never confirm a payment. If asked about restructuring or general human help, repeat that you want support for illness, not restructuring. Never retract that support request or add account decisions.",
+    "expected": {
+      "outcome": "transferred",
+      "reason": "support",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": [
+        {
+          "queue": "support"
+        }
+      ]
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Preserve earlier card historical dispute and two complete provisional loan offers; no payment consent is present.",
+      "At confirmation the actor withholds authorization and reports own illness: A32 sympathy, no persuasion and accepted support transfer. Negated changing-instalments is not A41.",
+      "Yes to support is transfer consent only; do not write either unconfirmed loan promise before/after support request.",
+      "B10 forbids any add_note before or after any transfer, including an early card-dispute note. Pending disposition writes must be deferred; there is no API note undo.",
+      "Transfer once queue support, no promises/notes/callbacks, close transferred/support once after thanks/goodbye. Do not claim a recorded promise or say a promise was confirmed by SMS."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A25",
+      "A27",
+      "A29",
+      "A32",
+      "A34",
+      "A35",
+      "A40",
+      "A41",
+      "A46",
+      "A47",
+      "B1",
+      "B2",
+      "B4",
+      "B7",
+      "B8",
+      "B9",
+      "B10",
+      "B-close",
+      "O-create_promise",
+      "O-add_note",
+      "O-transfer_to_agent"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_hard",
+        "text_interruption",
+        "pending_joint_consent",
+        "support_transfer",
+        "note_suppression",
+        "negated_restructuring",
+        "multi_intent"
+      ],
+      "limitations": "Synthetic English text turns only. No audio timing, barge-in, ASR, dialect or voice fidelity is tested. No agent/actor/judge executed; separate review is required before platform use."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "variant_id": "PUB-01__speech_day2_expanded_mixed_subject_answer_question",
+    "title": "Mixed subjects with a complete self security answer and question",
+    "family": "Compound source interpretation and causal consent",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below; never require an amount question. You are Daniel Reyes. Identify yourself as 'Yes, Mr Reyes, Daniel speaking.' When asked DOB, say 'My father was born on the second of May nineteen sixty. My own date of birth is the fourteenth of March nineteen eighty-eight. What is this call about?' If the caller reasonably requests your own DOB again, repeat only your complete own date. When asked the phone suffix say 'My phone ends in four four seven one. Are you an automated assistant?' If clarification is needed, repeat 'My own phone number ends in four four seven one.' After verified debt disclosure volunteer a complete payment of two hundred and forty on Wednesday the twenty-first of October. Confirm only that complete readback. Do not assert a payment has already been made.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 240.0,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Verify only the complete current caller DOB1988-03-14 and phone4471, then disclose account; quoted/third-party or incomplete operands do not verify identity.",
+      "Retain the complete voluntary amount240 across date revision; final date21October is explicit and within the existing allowed window.",
+      "Only the customer current positive later assent after the corrected full readback authorizes one promise. A historical/reversed payment, another person yes or negative consent cannot replace it.",
+      "A successful actual create_promise receipt precedes any recorded-commitment claim; preserve mandatory SMS and promise close."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A18",
+      "A19",
+      "A22",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A37",
+      "A38",
+      "A39",
+      "A46",
+      "A47",
+      "A-close",
+      "O-verify_identity",
+      "O-create_promise"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_expanded",
+        "complex_text",
+        "subject_projection",
+        "compound_question",
+        "self_phone_label"
+      ],
+      "limitations": "Authored English text only; no audio/ASR/dialect or blind qualification. Independent source review pending; no hosted calls."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "variant_id": "PUB-01__speech_day2_expanded_reversed_payment_new_voluntary_terms",
+    "title": "Historical and reversed payments with current unpaid balance",
+    "family": "Compound source interpretation and causal consent",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below; never require an amount question. You are Daniel Reyes. Confirm your name and give complete correct DOB and phone suffix when asked. After verified debt disclosure and the first payment question say 'Last March I paid a different shop bill. I tried paying this card, but that payment bounced, so this overdue card has not been paid. I can pay two hundred and forty on Wednesday the twenty-first of October.' If asked about an already completed payment, clearly repeat that the card remains unpaid and the earlier attempt bounced. Volunteer the same complete amount and date without waiting for an amount question. Confirm only a correct complete new readback of two hundred and forty on 21 October. Do not request a dispute, restructuring, transfer or callback.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 240.0,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Verify only the complete current caller DOB1988-03-14 and phone4471, then disclose account; quoted/third-party or incomplete operands do not verify identity.",
+      "Retain the complete voluntary amount240 across date revision; final date21October is explicit and within the existing allowed window.",
+      "Only the customer current positive later assent after the corrected full readback authorizes one promise. A historical/reversed payment, another person yes or negative consent cannot replace it.",
+      "A successful actual create_promise receipt precedes any recorded-commitment claim; preserve mandatory SMS and promise close."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A18",
+      "A19",
+      "A22",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A37",
+      "A38",
+      "A39",
+      "A46",
+      "A47",
+      "A-close",
+      "O-verify_identity",
+      "O-create_promise"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_expanded",
+        "complex_text",
+        "historical_payment",
+        "reversal",
+        "whole_turn_polarity",
+        "voluntary_terms"
+      ],
+      "limitations": "Authored English text only; no audio/ASR/dialect or blind qualification. Independent source review pending; no hosted calls."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "variant_id": "PUB-01__speech_day2_expanded_reported_yes_then_negative_consent",
+    "title": "Reported assent and negative consent before a fresh revision",
+    "family": "Compound source interpretation and causal consent",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below; never require an amount question. You are Daniel Reyes. Confirm name and supply complete correct security answers. After verified disclosure volunteer two hundred and forty on Tuesday the twentieth of October. On the first matching full readback say 'My brother said yes. I do not agree to recording this promise yet. I want Wednesday the twenty-first instead.' This is a report about another person's yes and your own negative consent plus a date change. Do not confirm the twentieth. After the corrected complete readback for two hundred and forty on 21 October say 'I agree to the current payment promise: two hundred and forty on Wednesday the twenty-first of October.' If clarification is needed, explicitly confirm only those corrected terms. Do not withdraw the final corrected promise or ask for another operation.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 240.0,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Verify only the complete current caller DOB1988-03-14 and phone4471, then disclose account; quoted/third-party or incomplete operands do not verify identity.",
+      "Retain the complete voluntary amount240 across date revision; final date21October is explicit and within the existing allowed window.",
+      "Only the customer current positive later assent after the corrected full readback authorizes one promise. A historical/reversed payment, another person yes or negative consent cannot replace it.",
+      "A successful actual create_promise receipt precedes any recorded-commitment claim; preserve mandatory SMS and promise close."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A18",
+      "A19",
+      "A22",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A37",
+      "A38",
+      "A39",
+      "A46",
+      "A47",
+      "A-close",
+      "O-verify_identity",
+      "O-create_promise"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_expanded",
+        "complex_text",
+        "reported_speech",
+        "negative_consent",
+        "readback_revision",
+        "current_reference"
+      ],
+      "limitations": "Authored English text only; no audio/ASR/dialect or blind qualification. Independent source review pending; no hosted calls."
+    }
+  },
+  {
+    "id": "PUB-01",
+    "brief": "A",
+    "variables": {
+      "first_name": "Daniel",
+      "last_name": "Reyes",
+      "title": "Mr",
+      "now": "2026-10-14T11:00"
+    },
+    "identity": {
+      "date_of_birth": "1988-03-14",
+      "phone_last4": "4471"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "card_last4": "4821",
+        "past_due": 420.0,
+        "days_late": 6,
+        "minimum_payment": 126.0
+      }
+    ],
+    "variant_id": "PUB-01__speech_day2_expanded_digit_groups_date_only_revision",
+    "title": "Natural self-phone labels and retained amount across date correction",
+    "family": "Compound source interpretation and causal consent",
+    "level": "hard",
+    "script": "When offering payment, volunteer the complete amount written below; never require an amount question. You are Daniel Reyes. Identify yourself as 'This is Mr Reyes, Daniel.' Give the complete correct DOB. For phone say 'The number on my own phone ends in four four seven one.' If requested, repeat 'My phone ends in four four seven one.' After verified disclosure volunteer a complete amount of two hundred and forty for Tuesday the twentieth of October. At its first full readback say 'The amount remains the same; only the day changes. Wednesday the twenty-first of October, please. Do not record Tuesday.' Never replace the amount with an incomplete number. On a new full readback for the corrected date, clearly say 'Yes, I confirm two hundred and forty on Wednesday the twenty-first.' Do not accept Tuesday, a guessed amount, or a callback.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 240.0,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "faults": [],
+    "checks": [
+      "A24 applies throughout: never elicit a customer payment amount, including missing-component recovery. Complete payment amounts are supplied voluntarily; neutral pauses and date clarification do not authorize an amount question.",
+      "Verify only the complete current caller DOB1988-03-14 and phone4471, then disclose account; quoted/third-party or incomplete operands do not verify identity.",
+      "Retain the complete voluntary amount240 across date revision; final date21October is explicit and within the existing allowed window.",
+      "Only the customer current positive later assent after the corrected full readback authorizes one promise. A historical/reversed payment, another person yes or negative consent cannot replace it.",
+      "A successful actual create_promise receipt precedes any recorded-commitment claim; preserve mandatory SMS and promise close."
+    ],
+    "oracle_rule_refs": [
+      "A24",
+      "A11",
+      "A16",
+      "A18",
+      "A19",
+      "A22",
+      "A25",
+      "A27",
+      "A28",
+      "A29",
+      "A34",
+      "A35",
+      "A37",
+      "A38",
+      "A39",
+      "A46",
+      "A47",
+      "A-close",
+      "O-verify_identity",
+      "O-create_promise"
+    ],
+    "third_party": false,
+    "style": null,
+    "delivery_profile": "plain",
+    "local_only": false,
+    "hosted_registered": true,
+    "execution_status": "not_executed",
+    "evaluation_scope": "authored_text_only_speech_stress_on_registered_bank_facts_not_official_pub_score",
+    "stress": {
+      "modality": "text_only_approximation",
+      "tags": [
+        "day2_expanded",
+        "complex_text",
+        "digit_groups",
+        "name_inversion",
+        "date_only_change",
+        "no_amount_solicitation"
+      ],
+      "limitations": "Authored English text only; no audio/ASR/dialect or blind qualification. Independent source review pending; no hosted calls."
+    }
+  }
+]
