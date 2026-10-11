@@ -61,11 +61,13 @@ def child_env(environment):
 
 
 def python_executable(explicit=None):
+    # Resolving a venv executable symlink selects the base installation instead
+    # and loses its installed packages, including in isolated (-I) children.
     if explicit:
-        return str(Path(explicit).resolve())
+        return str(Path(explicit).absolute())
     configured = os.environ.get('MINILM_PYTHON')
     if configured:
-        return str(Path(configured).resolve())
+        return str(Path(configured).absolute())
     # A kit venv is stdlib-only; prefer its base installation for optional ML.
     base = getattr(sys, '_base_executable', None)
     return str(base or shutil.which('python3') or shutil.which('python') or sys.executable)
