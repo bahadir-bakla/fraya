@@ -4,6 +4,7 @@ No business constants or phone workflow are supplied by this adapter. The API
 server replacement is deployment configuration; all policy comes from evidence.
 """
 import argparse
+import datetime
 import hashlib
 import json
 from pathlib import Path
@@ -39,15 +40,30 @@ def expand_references(value, document, active=()):
     return {key: expand_references(item, document, active) for key, item in value.items()}
 
 
-def prepare(folder, api_path, mock_url, output):
+def prepare(folder, api_path, mock_url, output, deployment_proof=None):
     folder = Path(folder).resolve()
     origin = mock_url.rstrip('/')
     url = urlparse(origin)
     if url.scheme != 'https' or not url.netloc or url.username or url.password or url.query or url.fragment:
         raise ValueError('A public HTTPS mock origin is required')
-    with urlopen(origin + '/health', timeout=20) as response:
-        if response.status != 200:
-            raise ValueError('Mock health failed before builder launch')
+    receipt = None
+    if deployment_proof:
+        receipt = json.loads(Path(deployment_proof).read_text(encoding='utf-8-sig'))
+        when = datetime.datetime.fromisoformat(receipt['deployed_at_utc'].replace('Z', '+00:00'))
+        age = (datetime.datetime.now(datetime.timezone.utc) - when).total_seconds()
+        if (receipt.get('mock_url', '').rstrip('/') != origin or receipt.get('status') != 'deployed'
+                or not receipt.get('version_id') or not receipt.get('deployment_id') or not 0 <= age <= 1800):
+            raise ValueError('A matching recent actual deployment receipt is required')
+    health = 'reachable'
+    try:
+        with urlopen(origin + '/health', timeout=20) as response:
+            if response.status != 200:
+                raise ValueError('Mock health failed before builder launch')
+    except OSError:
+        if receipt is None:
+            raise
+        health = 'unreachable; build allowed by actual deployment receipt, platform tests require reachability'
+        print(health, file=sys.stderr, flush=True)
     output.mkdir(parents=True, exist_ok=True)
     docs = [p for p in folder.rglob('*') if p.is_file() and p.suffix.lower() in {'.md', '.txt', '.pdf'}
             and ('sources' in p.relative_to(folder).parts or p.parent == folder)]
@@ -80,7 +96,8 @@ def prepare(folder, api_path, mock_url, output):
     manifest = {'case_folder': str(folder), 'mock_url': origin, 'documents': records,
                 'source_api_sha256': digest(Path(api_path).read_bytes()),
                 'prepared_api_sha256': digest(prepared_api.read_bytes()),
-                'configuration_change': 'servers; local references expanded losslessly', 'manual_workflow_edits': False}
+                'configuration_change': 'servers; local references expanded losslessly', 'manual_workflow_edits': False,
+                'mock_health': health, 'deployment_receipt': receipt}
     (output / 'source-manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     return paths, prepared_api
 
@@ -93,12 +110,13 @@ def main():
     parser.add_argument('--slot', default='final-case')
     parser.add_argument('--minutes', type=float, default=25)
     parser.add_argument('--prepare-only', action='store_true')
+    parser.add_argument('--deployment-proof', help='Actual recent deployment receipt permits generation during DNS/TLS propagation; never permits unreachable platform testing')
     args, extra = parser.parse_known_args()
     if not re.fullmatch(r'[A-Za-z0-9_-]+', args.slot):
         parser.error('Invalid slot')
     root = Path(__file__).resolve().parent
     sources, api = prepare(args.case_folder, args.tool_api, args.mock_url,
-                           root / '.state' / 'case-inputs' / args.slot)
+                           root / '.state' / 'case-inputs' / args.slot, args.deployment_proof)
     command = [sys.executable, '-X', 'utf8', '-B', str(root / 'builder.py'), *sources,
                '--tool-api', str(api), '--slot', args.slot, '--minutes', str(args.minutes),
                '--skip-tests', *extra]
