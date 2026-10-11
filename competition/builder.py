@@ -4,7 +4,8 @@ from validation import validate,validate_coverage
 from transcripts import compact_messages
 from semantic_assist import PROMPT_NOTICE, child_env, python_executable, validate_result
 from dialogue_assist import NOTICE as DIALOGUE_NOTICE, PINS as DIALOGUE_PINS, validate_result as validate_dialogue_result
-from finetuned_assist import NOTICE as FINETUNED_NOTICE, copy_runtime as copy_finetuned_runtime, prepare_request as finetuned_request, validate_result as validate_finetuned_result, child_environment as finetuned_environment
+from finetuned_assist import NOTICE as FINETUNED_NOTICE, copy_runtime as copy_finetuned_runtime, prepare_request as finetuned_request, validate_result as validate_finetuned_result, child_environment as finetuned_environment, read_json as read_finetuned_json
+from finetuned_context_audit import NOTICE as CONTEXT_NOTICE, validate_audit
 
 ROOT=pathlib.Path(__file__).resolve().parent
 KIT=ROOT.parent/'build-the-builder 2'
@@ -130,7 +131,7 @@ class Run:
     def elapsed(self):return max(time.monotonic()-self.start,time.time()-datetime.datetime.fromisoformat(self.status['started']).timestamp())
     def prepare(self):
         source=self.path/('builder-source-resume' if self.args.resume_run else 'builder-source');source.mkdir(exist_ok=True)
-        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py')
+        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py','finetuned_context_audit.py')
         for name in source_names:
             shutil.copyfile(ROOT/name,source/name)
         self.event('builder_source',sha256={name:hashlib.sha256((source/name).read_bytes()).hexdigest() for name in source_names})
@@ -310,25 +311,29 @@ class Run:
         return lines
     def prepare_finetuned_assist(self):
         self.finetuned_ready=False
+        self.finetuned_context_ready=False;self.finetuned_context_status=None
         output=self.work/'finetuned-evidence.json';output.unlink(missing_ok=True)
+        audit_output=self.work/'finetuned-context-evidence.json';audit_output.unlink(missing_ok=True)
         mode=getattr(self.args,'finetuned_assist','auto')
         if mode=='off' or getattr(self.args,'semantic_assist','auto')=='off':return
         calls=self.work/'failed-calls.json'
         if not calls.exists():calls=self.work/'previous-failed-calls.json'
         if not calls.exists():return
         try:
-            if self.remaining()<125:raise TimeoutError('Insufficient fine-tuned diagnostic budget')
             repo=ROOT.parent;base=repo/'integrations/learned-dialogue'
             version=getattr(self.args,'finetuned_version','auto')
             if version=='auto':
                 newest=base/'minilm_ft_v2/release.json'
                 version='v2' if newest.exists() and json.loads(newest.read_text(encoding='utf8')).get('default_enabled') is True else 'v1'
+            if version=='v2':self.finetuned_context_status='UNAVAILABLE'
+            if self.remaining()<125:raise TimeoutError('Insufficient fine-tuned diagnostic budget')
             release=base/f'minilm_ft_{version}/release.json'
             default=release.parent/'model'
             model=pathlib.Path(getattr(self.args,'finetuned_model',None) or default).resolve()
             # The release pin is created only after actual training/evaluation/export checks.
             if not release.exists():
                 if mode=='required':raise ValueError('Fine-tuned release unavailable')
+                if version=='v2':self.event('finetuned_context_audit',status='UNAVAILABLE',reason='Fine-tuned release unavailable',bank_authority=False)
                 return
             pin=json.loads(release.read_text(encoding='utf8'))
             runtime_source=base/'minilm_ft_v2/runtime' if version=='v2' else base
@@ -339,14 +344,33 @@ class Run:
             else:copy_finetuned_runtime(runtime_source,runtime,pin['runtime_sha256'])
             seconds=min(60,self.remaining()-120)
             request=finetuned_request(calls=calls,model_directory=model,manifest_sha256=pin['manifest_sha256'],runtime_directory=runtime,runtime_sha256=pin['runtime_sha256'],seconds=seconds,mode=mode)
-            if request is None:return
+            if request is None:
+                if version=='v2':self.event('finetuned_context_audit',status='UNAVAILABLE',reason='Fine-tuned request unavailable',bank_authority=False)
+                return
             write_json(self.path/'finetuned-request.json',request)
-            command=[python_executable(getattr(self.args,'semantic_python',None)),'-I','-B',str(self.builder_source/'finetuned_assist.py'),'--request',str(self.path/'finetuned-request.json'),'--output',str(output)]
+            script='finetuned_context_audit.py' if version=='v2' else 'finetuned_assist.py'
+            command=[python_executable(getattr(self.args,'semantic_python',None)),'-I','-B',str(self.builder_source/script),'--request',str(self.path/'finetuned-request.json'),'--output',str(output)]
+            if version=='v2':command+=['--audit-output',str(audit_output)]
             self.child(command,timeout=seconds,env=finetuned_environment(os.environ),log_name='finetuned-assist.log',purpose='Actual fine-tuned MiniLM observed semantic proposals')
-            result=json.loads(output.read_text(encoding='utf8'));validate_finetuned_result(result,request)
+            result=read_finetuned_json(output) if version=='v2' else json.loads(output.read_text(encoding='utf8'))
+            validate_finetuned_result(result,request)
             self.finetuned_hash=hashlib.sha256(output.read_bytes()).hexdigest();self.finetuned_ready=True
             self.event('finetuned_assist',status='ready',version=version,turns=len(result['rows']),manifest_sha256=pin['manifest_sha256'],bank_authority=False,artifact_sha256=self.finetuned_hash)
+            if version=='v2':
+                # FULL is strictly validated before any audit can become prompt evidence.
+                try:
+                    audit=read_finetuned_json(audit_output);validate_audit(audit,request,result)
+                    self.finetuned_context_hash=hashlib.sha256(audit_output.read_bytes()).hexdigest()
+                    self.finetuned_context_status=audit['status'];self.finetuned_context_ready=True
+                    self.event('finetuned_context_audit',status=audit['status'],reason=audit['reason'],turns=len(audit['rows']),bank_authority=False,artifact_sha256=self.finetuned_context_hash)
+                except (OSError,ValueError,KeyError,TypeError,RuntimeError,TimeoutError) as error:
+                    self.finetuned_context_ready=False;self.finetuned_context_status='UNAVAILABLE'
+                    audit_output.unlink(missing_ok=True)
+                    self.event('finetuned_context_audit',status='UNAVAILABLE',error_type=type(error).__name__,bank_authority=False)
         except (OSError,ValueError,KeyError,RuntimeError,TimeoutError) as error:
+            self.finetuned_ready=False;self.finetuned_context_ready=False
+            audit_output.unlink(missing_ok=True)
+            if self.finetuned_context_status is not None:self.event('finetuned_context_audit',status='UNAVAILABLE',error_type=type(error).__name__,bank_authority=False)
             output.unlink(missing_ok=True);self.event('finetuned_assist',status='unavailable',error_type=type(error).__name__)
             if mode=='required':raise RuntimeError('Required fine-tuned semantic model unavailable') from None
     def model(self,round_number):
@@ -367,6 +391,9 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
         if getattr(self,'semantic_ready',False):prompt+='\n'+PROMPT_NOTICE
         if getattr(self,'dialogue_ready',False):prompt+='\n'+DIALOGUE_NOTICE
         if getattr(self,'finetuned_ready',False):prompt+='\nRead finetuned-evidence.json for the pinned observed-turn hypotheses, matching each call/message index to the failed calls. '+FINETUNED_NOTICE
+        if getattr(self,'finetuned_ready',False) and getattr(self,'finetuned_context_status',None) is not None:
+            if self.finetuned_context_ready:prompt+='\n'+CONTEXT_NOTICE
+            if self.finetuned_context_status=='UNAVAILABLE':prompt+='\nContext audit UNAVAILABLE: no context agreement was established; do not treat FULL hypotheses as agreed proposals.'
         (self.path/f'prompt-{round_number}.txt').write_text(prompt)
         profile=model_permissions(os.environ)
         command=['codex','exec','--ignore-user-config','--skip-git-repo-check','--ephemeral','--config','default_permissions='+profile,'--config','approval_policy=never','--json','--color','never','--output-schema',str(self.path/'response.schema.json'),'--output-last-message',str(self.path/f'answer-{round_number}.json')]
@@ -392,6 +419,8 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             raise ValueError('Model changed the pinned dialogue hypotheses')
         if getattr(self,'finetuned_ready',False) and hashlib.sha256((self.work/'finetuned-evidence.json').read_bytes()).hexdigest()!=self.finetuned_hash:
             raise ValueError('Model changed the pinned fine-tuned hypotheses')
+        if getattr(self,'finetuned_context_ready',False) and hashlib.sha256((self.work/'finetuned-context-evidence.json').read_bytes()).hexdigest()!=self.finetuned_context_hash:
+            raise ValueError('Model changed the pinned context audit')
         if any(hashlib.sha256((self.work/s['path']).read_bytes()).hexdigest()!=s['sha256'] for s in self.sources):
             raise ValueError('Model changed original brief evidence')
         if hasattr(self,'api_sha256') and hashlib.sha256((self.work/'inputs/openapi.json').read_bytes()).hexdigest()!=self.api_sha256:

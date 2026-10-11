@@ -1,0 +1,35 @@
+Local context audit review — 2026-10-11
+
+Verdict: the context module and builder evidence gates satisfy the reviewed source contracts. Two reproduced packaging/provenance blockers remain. No source code was edited. Work was local, with no Freya/network/GPU/model inference/training/git mutations.
+
+Fresh probes were authored first, before reading source, existing failures or workflow outputs. The 24-row pack contains 12 true, 9 false and 3 null recipient-identity labels, with English/Turkish names, Unicode, apostrophes, hyphens, given/family/full/title answers, third-party speech, negation, quotation and no-answer collisions. Labels concern recipient self-identification, not DOB verification. This is a source-reviewed synthetic diagnostic, not blind human qualification.
+
+Parent-reported fresh execution: A10 11/21 known correct, new V2 14/21; V2 false self-selection on 7/9 negative probes. VERIFIED reportedly false for all, so no bank-bypass claim. These results came from the steering message and were not independently inspected here. Three deterministic repetitions are not independent qualification samples. Parent owns generic builder-guide repair of the suspected any-name versus fullmatch fallback; no frozen release or candidate patch was made.
+
+P1 PKG-01 — Invalid audit/provenance accepted during packaging
+competition/package_submission.py:60,71,74
+The packager recursively archives run files and hashes their current bytes without validating request/FULL/audit or comparing recorded builder evidence hashes. A disposable synthetic completed/published run with an export was accepted even with audit source indices 999/999, bank_authority=true, financial_authorization=APPROVED, empty FULL/request objects and a conflicting zero trace hash. The archive's fresh hash matched the invalid audit. This is a submission provenance blocker; validate_audit itself would reject the artifact. Cicero should validate companions against archived sources and recorded hashes before collecting bytes, handle path relocation without changing original request provenance, and preserve explicit classic/unavailable behavior.
+
+P2 PKG-02 — Windows manifest paths do not match ZIP names
+competition/package_submission.py:53,60,70,76
+str(relative_to(...)) produces backslashes in nested manifest paths; ZIP entries normalize them to forward slashes. Reproduction produced manifest path competition/runs/synthetic/work\finetuned-context-evidence.json and ZIP path competition/runs/synthetic/work/finetuned-context-evidence.json. Two manifest entries were absent verbatim from the fixture archive. Cicero should use .as_posix() consistently and verify each manifest path/digest against the exact archive entry. This is a pre-existing generic packaging issue affecting audit reviewability.
+
+Source contracts checked
+- Exact frozen V2 manifest, all seven model files, runtime modules, architecture and thresholds verified locally without loading a model. Manifest pin: 7eca3b016b47ec20f1b1fd9e207c71a0c72ece9bf91f4e2c28ecd411dcb59189.
+- validate_audit reconstructs the full envelope from validated FULL and original observed source rows. It binds complete FULL digest, current/prior inputs, effective intervention inputs, ordered indices, skips, heads, limits, states and authority. Hashes establish integrity, not authentic speech/model computation.
+- Missing/failed NO_CONTEXT discards all partial heads. Enabled prior-present heads become UNAVAILABLE, no-prior rows NOT_APPLICABLE, disabled heads DISABLED. False disagreement booleans alone are not agreement. The builder emits explicit no-agreement guidance.
+- FULL uses no_context=False; the paired arm uses True only for prior-present rows, with no_tail=False in both. Frozen runtime zeroes prior features while retaining current mean/tail. One CPU model, two threads, one shared <=60-second deadline, plus parent wall/monotonic deadline and owned-process-tree cleanup.
+- current_affirm/current_withdraw remain disabled at 1.01. Bank authority remains false and financial authorization UNKNOWN. Agreed selection remains a hypothesis; agreed nonselection is not denial.
+- Builder validates FULL before companion audit, keeps FULL if the companion is invalid/unavailable, and pins both artifact files before and after the model call. Classic/off and V1 branches retain reviewed behavior and schema. No historical Git comparison or actual legacy inference was performed.
+
+Validation
+66 unique existing tests passed: 58 test_finetuned*.py tests (8.375 seconds) and 8 test_budget.py tests (1.703 seconds). The initial 28 context-audit tests also passed (6.562 seconds) and are included in the 58 count. All subprocess runners had a 55-second cap; inference was mocked. Four additional mocked builder integration cases passed: AVAILABLE, UNAVAILABLE, invalid companion audit and OFF. Artifact tampering was rejected. Both packaging issues were reproduced in disposable local fixture archives. Probe schema/count/unique IDs/null labels were verified. Python bytecode writes were disabled.
+
+Availability limitation: a parent hard timeout during NO_CONTEXT/final validation discards paired evidence, including FULL. This fails closed and loses diagnostic availability; it does not create agreement. Real model timing/parity, candidate workflow behavior and public-kernel qualification remain outside this source review.
+
+Reviewed source SHA256 values and detailed reproducible findings are in the sibling JSON report. Probe SHA256: 448ec29e2260eedf1ebd565d09192267f531dd1758ca9a443d19a24937186b27.
+
+Changed persistent paths only:
+analysis/local-recipient-fresh-probes-20261011.json
+analysis/local-context-audit-review-20261011.json
+analysis/local-context-audit-review-20261011.txt

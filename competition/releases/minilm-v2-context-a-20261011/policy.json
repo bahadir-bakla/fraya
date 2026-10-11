@@ -1,0 +1,728 @@
+{
+  "sources": [
+    {
+      "path": "BUILD_INSTRUCTIONS.md",
+      "sha256": "73fee52931e66ef5c7ca7754b26d5f1dedb1a4a38d674e9e34c449e2d15811ce",
+      "role": "platform or builder contract"
+    },
+    {
+      "path": "inputs\\01-brief-a.md",
+      "sha256": "c989bc4484c9643b0e79646c3091fe29b1792fce9972efd571815ce38fbb7573",
+      "role": "sole authoritative bank evidence"
+    },
+    {
+      "path": "inputs\\base-agent.json",
+      "sha256": "77cfff8570fe762b7cb98f6adb662a2bce653a33366264cce7ff0f51063049e9",
+      "role": "platform or builder contract"
+    },
+    {
+      "path": "inputs\\openapi.json",
+      "sha256": "fa5ef2aec75e41c7f0be454cde1f6ffd69c5a4735ebe364ee065b13090b74d02",
+      "role": "platform or builder contract"
+    },
+    {
+      "path": "inputs\\tools-and-code.md",
+      "sha256": "c094579c4b2169427252a8cf4a32ff8bd2e0e837ff12e56ad4d5f8183980d837",
+      "role": "platform or builder contract"
+    },
+    {
+      "path": "inputs\\workflow-format.md",
+      "sha256": "b5236915838b6b88196d4d1e194adc21eb45137ffe83828239213f0448c47db9",
+      "role": "platform or builder contract"
+    },
+    {
+      "path": "semantic-evidence.json",
+      "sha256": "36fed61331b4ff02d8c8c801f5294bc18a25e839b5f2fcf365c3a64a1a7f6573",
+      "role": "navigation/observed-language evidence only; bank_authority=false"
+    },
+    {
+      "path": "semantic-evidence.txt",
+      "sha256": "0555d887782898bf9ae4e3250eeed60e1aed980767bb305c67f430513a9fa365",
+      "role": "navigation/observed-language evidence only; bank_authority=false"
+    },
+    {
+      "path": "finetuned-evidence.json",
+      "sha256": "8c50a5166e18a5f7337538b11e0ba73f59442dedde416a90fc5a5ea43f597d6e",
+      "role": "navigation/observed-language evidence only; bank_authority=false"
+    },
+    {
+      "path": "finetuned-context-evidence.json",
+      "sha256": "70e63208fbdee18b09058af13ca43000b73c51d44a655f094aefe3cf09d54c2c",
+      "role": "navigation/observed-language evidence only; bank_authority=false"
+    },
+    {
+      "path": "previous-failed-calls.json",
+      "sha256": "b7cff0f88b2377b2acf277907f469468e90cef8cbb4732c91cfd1561f3e7b1af",
+      "role": "navigation/observed-language evidence only; bank_authority=false"
+    }
+  ],
+  "extracted_rules": [
+    {
+      "rule_id": "A1",
+      "source": "inputs/01-brief-a.md",
+      "text": "1. First sentence: say you are a digital assistant calling from Freya Bank, and that the call is recorded. Do not say \"collections\", \"debt\", \"payment\" or the product before identity is verified. This applies to everyone, including relatives."
+    },
+    {
+      "rule_id": "A2",
+      "source": "inputs/01-brief-a.md",
+      "text": "2. Ask \"Am I speaking with {title} {last_name}?\"."
+    },
+    {
+      "rule_id": "A3",
+      "source": "inputs/01-brief-a.md",
+      "text": "3. Only \"yes\", \"that's me\", \"speaking\" or the customer's own name counts as confirmation. \"Hello\", \"go ahead\" and \"who is this\" do not. Ask once more. If it is still unclear after the second ask, close as `not_reached` / `unclear`. Answer a question from the customer first (rules 4 and 43). The ask that follows is the second ask."
+    },
+    {
+      "rule_id": "A4",
+      "source": "inputs/01-brief-a.md",
+      "text": "4. If the customer asks whether you are a robot or an AI, say that you are Freya Bank's digital assistant and continue."
+    },
+    {
+      "rule_id": "A5",
+      "source": "inputs/01-brief-a.md",
+      "text": "5. Do not say why you are calling. Say nothing beyond the opening sentence of rule 1. Ask when the customer can be reached."
+    },
+    {
+      "rule_id": "A6",
+      "source": "inputs/01-brief-a.md",
+      "text": "6. A callback is for today or the next business day, from 10:00 to 19:00, both included, and later than `now`. Call `schedule_callback` with the date and the time, then close as `not_reached` / `callback`."
+    },
+    {
+      "rule_id": "A7",
+      "source": "inputs/01-brief-a.md",
+      "text": "7. If the person offers a day or a time outside that window, ask once for another time. If that is also outside it, do not schedule. Close as `not_reached` / `no_callback`."
+    },
+    {
+      "rule_id": "A8",
+      "source": "inputs/01-brief-a.md",
+      "text": "8. If the person says the number does not belong to the customer, close as `not_reached` / `wrong_number`."
+    },
+    {
+      "rule_id": "A9",
+      "source": "inputs/01-brief-a.md",
+      "text": "9. If the person says the customer has died, say \"I am sorry for your loss.\", ask nothing else, and close as `not_reached` / `deceased`."
+    },
+    {
+      "rule_id": "A10",
+      "source": "inputs/01-brief-a.md",
+      "text": "10. A relative may not answer the security questions and may not be told anything about the account, even if they offer to pay."
+    },
+    {
+      "rule_id": "A11",
+      "source": "inputs/01-brief-a.md",
+      "text": "11. Ask two security questions, one at a time: first the date of birth, then the last four digits of the phone number on file. Call `verify_identity` with the answer. Send a date of birth as `YYYY-MM-DD`, whatever way the customer said it. The service rejects anything it cannot read as a date. Read a date given only as numbers as day, then month, then year."
+    },
+    {
+      "rule_id": "A12",
+      "source": "inputs/01-brief-a.md",
+      "text": "12. A wrong answer may be asked again. Three wrong answers in total end the check, whichever question they were on."
+    },
+    {
+      "rule_id": "A13",
+      "source": "inputs/01-brief-a.md",
+      "text": "13. If the customer gives day and month the other way round, `verify_identity` returns `hint: \"day_month_swapped\"`. Ask them to say the month as a word. That retry does not count as a wrong answer."
+    },
+    {
+      "rule_id": "A14",
+      "source": "inputs/01-brief-a.md",
+      "text": "14. After three wrong answers, do not state the debt. Tell the customer to use the mobile app or a branch. Close as `not_verified` / `failed`."
+    },
+    {
+      "rule_id": "A15",
+      "source": "inputs/01-brief-a.md",
+      "text": "15. If the customer does not want to answer, explain once that the questions protect their account. If they still decline, close as `not_verified` / `declined`. Asking what the call is about instead of answering counts as declining. A second refusal or a second such question closes the call."
+    },
+    {
+      "rule_id": "A16",
+      "source": "inputs/01-brief-a.md",
+      "text": "16. After both questions pass, call `get_account`."
+    },
+    {
+      "rule_id": "A17",
+      "source": "inputs/01-brief-a.md",
+      "text": "17. Say that you are calling from the collections team about a late payment. Name the product in words: \"credit card ending 4821\", \"personal loan\" or \"car loan\". State the past-due amount and how many days late it is."
+    },
+    {
+      "rule_id": "A18",
+      "source": "inputs/01-brief-a.md",
+      "text": "18. The **deadline** depends on how late the customer is.\n\n| `days_late` | Band | Deadline | Persuasion attempts |\n|---|---|---|---|\n| 1 to 7 | early | the 12th business day after today | 1 |\n| 8 to 45 | late | the 7th business day after today | 2 |"
+    },
+    {
+      "rule_id": "A19",
+      "source": "inputs/01-brief-a.md",
+      "text": "19. A promise date must be today or later, a business day, and not after the deadline."
+    },
+    {
+      "rule_id": "A20",
+      "source": "inputs/01-brief-a.md",
+      "text": "20. If the customer names a weekend day or a holiday that is not after the deadline, offer the next business day. If the named day is after the deadline, rule 23 applies."
+    },
+    {
+      "rule_id": "A21",
+      "source": "inputs/01-brief-a.md",
+      "text": "21. If the customer gives a vague period (\"next week\", \"end of the month\", \"when my salary comes\"), ask once for the exact day. If they still give none, propose the deadline."
+    },
+    {
+      "rule_id": "A22",
+      "source": "inputs/01-brief-a.md",
+      "text": "22. \"Next <weekday>\" means that weekday in the following calendar week. \"This <weekday>\" means the one in the current week. So \"next Friday\" said on a Friday is the Friday of the following week."
+    },
+    {
+      "rule_id": "A23",
+      "source": "inputs/01-brief-a.md",
+      "text": "23. If the customer asks for a date after the deadline, say the latest date you can record is the deadline and offer it. If the customer refuses the deadline, treat it as a flat refusal (rule 30)."
+    },
+    {
+      "rule_id": "A24",
+      "source": "inputs/01-brief-a.md",
+      "text": "24. Ask for the full past-due amount first. Never ask \"how much can you pay?\". The agent proposes every amount."
+    },
+    {
+      "rule_id": "A25",
+      "source": "inputs/01-brief-a.md",
+      "text": "25. The **floor** is `minimum_payment` for a credit card and `instalment_amount` for a personal loan or a car loan."
+    },
+    {
+      "rule_id": "A26",
+      "source": "inputs/01-brief-a.md",
+      "text": "26. If the customer says the full amount is too much, offer the floor, once. Say that the rest stays overdue. If the customer refuses the floor, treat it as a flat refusal (rule 30). Attempt 2 may name the floor again, on the deadline."
+    },
+    {
+      "rule_id": "A27",
+      "source": "inputs/01-brief-a.md",
+      "text": "27. If the customer proposes an amount from the floor up to the full amount, both included, accept it. Below the floor, say it cannot be recorded and offer the floor once. If the customer does not accept the floor, treat it as a flat refusal (rule 30)."
+    },
+    {
+      "rule_id": "A28",
+      "source": "inputs/01-brief-a.md",
+      "text": "28. First ask: \"Can you make this payment today?\"."
+    },
+    {
+      "rule_id": "A29",
+      "source": "inputs/01-brief-a.md",
+      "text": "29. A date or an amount the customer proposes is never a refusal. Handle it with sections 7 and 8."
+    },
+    {
+      "rule_id": "A30",
+      "source": "inputs/01-brief-a.md",
+      "text": "30. A flat refusal or a non-answer uses one persuasion attempt. A no to paying today with no date and no amount is a flat refusal. Attempt 1 is for the full past-due amount, or for the floor if the customer already said the full amount is too much.\n    - Attempt 1: propose the last business day of this week. If today is that day, propose the last business day of next week.\n    - Attempt 2, late band only: propose the floor amount on the deadline."
+    },
+    {
+      "rule_id": "A31",
+      "source": "inputs/01-brief-a.md",
+      "text": "31. When the attempts are used up, stop. Do not repeat an offer the customer already refused. Close as `no_promise` / `refused`."
+    },
+    {
+      "rule_id": "A32",
+      "source": "inputs/01-brief-a.md",
+      "text": "32. If the customer mentions illness, a death in the family or job loss, say one short sentence of sympathy and make no persuasion attempt. Offer to connect them with the customer support team. If they accept, call `transfer_to_agent` with queue `support` and close as `transferred` / `support`. If they decline, close as `no_promise` / `hardship`. This rule comes before rules 30 and 41. If the customer still names a date or an amount themselves, record the promise under sections 7 and 8."
+    },
+    {
+      "rule_id": "A33",
+      "source": "inputs/01-brief-a.md",
+      "text": "33. Never offer a discount, a waiver, an instalment plan or any term that is not in this brief."
+    },
+    {
+      "rule_id": "A34",
+      "source": "inputs/01-brief-a.md",
+      "text": "34. Read the product, the amount and the date back and ask \"Do you confirm?\". Call `create_promise` only after a clear yes."
+    },
+    {
+      "rule_id": "A35",
+      "source": "inputs/01-brief-a.md",
+      "text": "35. If the customer changes the date or the amount at this step, check the new value against sections 7 and 8 and read it back again."
+    },
+    {
+      "rule_id": "A36",
+      "source": "inputs/01-brief-a.md",
+      "text": "36. One promise per product. A recorded promise cannot be changed or cancelled in the same call. If the customer asks, say they can change it in the mobile app."
+    },
+    {
+      "rule_id": "A37",
+      "source": "inputs/01-brief-a.md",
+      "text": "37. Say the promise is recorded only after `create_promise` returns `ok: true`. If it fails, try once more. If it fails again, say you could not record it and close as `no_promise` / `service_error`."
+    },
+    {
+      "rule_id": "A38",
+      "source": "inputs/01-brief-a.md",
+      "text": "38. After a recorded promise, say this sentence: \"You will receive a text message confirming this promise.\""
+    },
+    {
+      "rule_id": "A39",
+      "source": "inputs/01-brief-a.md",
+      "text": "39. \"I already paid\": say that payments can take one business day to appear, take no promise, and close as `paid`."
+    },
+    {
+      "rule_id": "A40",
+      "source": "inputs/01-brief-a.md",
+      "text": "40. \"This debt is not mine\" or \"I never had this product\": do not argue and do not take a promise. Close as `no_promise` / `dispute`. A claim that the product was closed or paid off in the past is a dispute. Rule 39 covers only a payment of this past-due amount."
+    },
+    {
+      "rule_id": "A41",
+      "source": "inputs/01-brief-a.md",
+      "text": "41. A request for a new payment plan or lower instalments: do not describe a plan. Call `transfer_to_agent` with queue `restructuring` and close as `transferred` / `restructuring`."
+    },
+    {
+      "rule_id": "A42",
+      "source": "inputs/01-brief-a.md",
+      "text": "42. A request for a human: ask once whether you can help first. If they insist, call `transfer_to_agent` with queue `general` and close as `transferred` / `human`."
+    },
+    {
+      "rule_id": "A43",
+      "source": "inputs/01-brief-a.md",
+      "text": "43. \"Is this a scam?\": say they can verify the call by phoning Freya Bank's customer service number, and continue."
+    },
+    {
+      "rule_id": "A44",
+      "source": "inputs/01-brief-a.md",
+      "text": "44. A question you cannot answer from the tools: say you do not have that information. Do not invent figures, dates or reasons."
+    },
+    {
+      "rule_id": "A45",
+      "source": "inputs/01-brief-a.md",
+      "text": "45. If the customer says twice that they do not want to talk, close as `no_promise` / `refused`. Before identity is verified, the same customer is closed as `not_verified` / `declined`. Rule 42 applies before and after verification."
+    },
+    {
+      "rule_id": "A46",
+      "source": "inputs/01-brief-a.md",
+      "text": "46. Every call ends with exactly one `close_call`, with an outcome and, where the table lists one, a reason. It is the last tool call.\n\n| Outcome | Reason | When |\n|---|---|---|\n| `promise` | none | at least one promise was recorded |\n| `paid` | none | rule 39 |\n| `transferred` | `restructuring`, `human`, `support` | rules 41, 42, 32 |\n| `no_promise` | `refused`, `hardship`, `dispute`, `service_error` | rules 31 and 45, 32, 40, 37 |\n| `not_verified` | `failed`, `declined` | rules 14, 15 |\n| `not_reached` | `callback`, `no_callback`, `wrong_number`, `deceased`, `unclear` | rules 6, 7, 8, 9, 3 |\n\nIf a transfer follows a recorded promise, close as `transferred` with that transfer's reason.\n\nBrief A never uses `add_note`."
+    },
+    {
+      "rule_id": "A47",
+      "source": "inputs/01-brief-a.md",
+      "text": "47. Thank the customer and say goodbye before `close_call`."
+    }
+  ],
+  "unresolved_conflicts": [
+    {
+      "rule": "Bounded format/security retries",
+      "resolution": "Parser clarification cap 3 and transport progress cap are conservative builder safety choices; no parser error increments bank wrong-answer count.",
+      "status": "interpretation"
+    },
+    {
+      "rule": "Brief A single product",
+      "resolution": "Reject multiple returned products; multi-product evidence requirements are inapplicable to this brief.",
+      "status": "scoped"
+    }
+  ],
+  "policy": {
+    "language": "English",
+    "product_count": 1,
+    "security_order": [
+      "date_of_birth",
+      "phone_last4"
+    ],
+    "wrong_answer_limit": 3,
+    "decline_limit": 2,
+    "recipient_ask_limit": 2,
+    "callback_invalid_limit": 2,
+    "callback_hours": [
+      "10:00",
+      "19:00"
+    ],
+    "callback_days": [
+      "today",
+      "next business day"
+    ],
+    "callback_strictly_future": true,
+    "holidays": [
+      "2026-10-26",
+      "2026-11-11",
+      "2026-11-26",
+      "2026-12-25",
+      "2027-01-01"
+    ],
+    "business_weekdays": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "bands": [
+      {
+        "days_late": [
+          1,
+          7
+        ],
+        "business_days_after_today": 12,
+        "attempts": 1
+      },
+      {
+        "days_late": [
+          8,
+          45
+        ],
+        "business_days_after_today": 7,
+        "attempts": 2
+      }
+    ],
+    "floors": {
+      "credit_card": "minimum_payment",
+      "personal_loan": "instalment_amount",
+      "car_loan": "instalment_amount"
+    },
+    "promise_range": "floor <= amount <= past_due",
+    "partial_warning": "The rest stays overdue.",
+    "separate_consent": true,
+    "promise_total_calls_limit": 2,
+    "one_promise_per_product": true,
+    "add_note": false,
+    "exception_priority": [
+      "complete primary third-party/deceased/wrong-number and human/stop intents",
+      "hardship before persuasion and restructuring",
+      "restructuring before payment fragment guards",
+      "unfinished payment/security components prevent submission",
+      "current-arrears paid / historical dispute",
+      "validated proposals",
+      "policy-bounded flat refusal"
+    ],
+    "closing": "farewell then exactly one close_call then silent end",
+    "outcomes": {
+      "promise": [],
+      "paid": [],
+      "transferred": [
+        "restructuring",
+        "human",
+        "support"
+      ],
+      "no_promise": [
+        "refused",
+        "hardship",
+        "dispute",
+        "service_error"
+      ],
+      "not_verified": [
+        "failed",
+        "declined"
+      ],
+      "not_reached": [
+        "callback",
+        "no_callback",
+        "wrong_number",
+        "deceased",
+        "unclear"
+      ]
+    },
+    "transfers": {
+      "support": "hardship acceptance",
+      "restructuring": "new plan or lower instalments",
+      "general": "human insists after one help offer"
+    },
+    "calendar_semantics": {
+      "clock": "call now only",
+      "next_weekday": "following calendar week",
+      "this_weekday": "current calendar week",
+      "payment_days": "today through inclusive band deadline, business days only",
+      "vague": "one exact-day clarification, then deadline offer",
+      "nonbusiness": "next business day offer when requested day not after deadline",
+      "late_request": "deadline offer; refusal follows flat-refusal policy"
+    },
+    "recipient_confirmation": "Current present self act with any matching dynamic name component or affirmative/speaking; explicit other-person acts excluded; verification remains false.",
+    "security_clarification_budget": 3,
+    "security_concurrent_acts": {
+      "complete_answer": "Retain validated current requested self-answer, answer independent questions then compare with verify_identity.",
+      "purpose_only": "A15 decline; no bank comparison.",
+      "balance_before_verified": "Neutral privacy explanation; no debt disclosure.",
+      "wrong_answer": "Only completed ok:true bank verified:false comparison increments wrong counter.",
+      "unknown_question": "Answer no information or neutral privacy clarification while retaining complete current requested self-answer; independent question numbers cannot complete it."
+    },
+    "operation_lifetime": {
+      "operations": [
+        "verify_identity",
+        "get_account"
+      ],
+      "snapshot": [
+        "operation",
+        "customer_id",
+        "request body",
+        "security phase",
+        "local sequence token",
+        "documented node success_count and failure_count baseline"
+      ],
+      "fresh_receipt": "Matching dispatched operation and actual pre-hook body, completed current post-hook token, exactly one new success and unchanged failure count, HTTP 200; then API ok and verified/all_verified/products semantics. No mandatory response echo fields.",
+      "clear": "old mapped/flattened ok, verified, all_verified, products and status plus bank_result before attempt; explicit sentinel after consumption",
+      "runtime_counters": "Only documented <nodeId>_success_count and <nodeId>_failure_count. Local sequence is controller state, not a platform request counter."
+    }
+  },
+  "repair": {
+    "scope": "Minimal repair of supplied practice graph; actual positive speech is language evidence, not failure verdict. PUB06 forbidden amount clarification and repeated overdue wording addressed locally.",
+    "hosted_validation": "unobserved",
+    "changes": [
+      "neutral amount-fragment continuation, no amount elicitation",
+      "warning tracked by accepted amount",
+      "simple opening and security scalar extractors",
+      "dynamic permissive recipient parsing",
+      "split security retention",
+      "current confirmation and paid source guards"
+    ]
+  },
+  "producer_consumer_contract": {
+    "version": "phase-primitives-plus-tagged-v9",
+    "early_fields": [
+      "recipient_act",
+      "security_value",
+      "raw",
+      "admin"
+    ],
+    "financial_contract": {
+      "version": "tagged-primary-v8",
+      "description": "Tagged-primary-v8. Emit this scalar string for EVERY latest reply, including unknown. Current phase {{phase}}, calendar {{now}}, called person {{first_name}} {{last_name}}. Current speech only, no cached facts. Output tagged rows only, no JSON or sibling fields.\nGrammar: k=KIND;c=0_OR_1;optional KEY=VALUE;END. Multiple rows separated by one actual newline, no trailing newline. Required k,c. Keys: p product ID/type/label; a complete positive decimal, at most two fractional digits; d complete verbatim date; v complete requested security answer; t HH:MM; u unfinished component amount/date/both/unknown. No empty, duplicate or unknown keys. Value alphabet: ASCII letters/digits/spaces/underscore/comma/period/slash/colon/hyphen. No escaping; unrepresentable input is unknown. c=1 is complete current positive assertion, excluding quoted/hypothetical/negated/third-party facts. c=0 is unfinished; payment corrections require u, retaining only independently completed a/d. Complete rows omit u.\nDate grammar: ISO, day/month/year, today/tomorrow, this/next weekday, month words/ordinals with optional year, weekday plus ordinal, or day-only ordinal referring to the current offer. Preserve wording. Next weekday means following calendar week; this means current week. Numeric DOB means day/month/year; year mandatory.\nLiteral examples and complete kind set:\nk=recipient;c=1;END\nk=third_party;c=1;END\nk=wrong_number;c=1;END\nk=deceased;c=1;END\nk=security;c=1;v=14 October 1980;END\nk=security;c=1;v=0123;END\nk=decline;c=1;END\nk=purpose;c=1;END\nk=agree;c=1;END\nk=confirm;c=1;END\nk=proposal;c=1;a=120;d=next Friday;END\nk=refuse;c=1;END\nk=too_much;c=1;END\nk=vague;c=1;END\nk=paid;c=1;END\nk=dispute;c=1;END\nk=hardship;c=1;END\nk=plan;c=1;END\nk=human;c=1;END\nk=stop;c=1;END\nk=callback;c=1;d=tomorrow;t=15:00;END\nk=unknown;c=1;END\nk=question;c=1;END\nk=change;c=0;u=date;a=120;END\nk=proposal;c=1;a=120;END\nk=proposal;c=1;d=November second;END\nk=proposal;c=0;u=amount;d=this Friday;END\nk=security;c=0;END\nRecipient: yes/thats me/speaking/current own name, including greetings/title, is recipient only; generic confirm valid here. Hello alone unknown. Security: v canonical YYYY-MM-DD for DOB, exactly four digits for phone. Preserve leading zero. Introductory words excluded. Explicit phone groups concatenate losslessly: fifteen zero two -> 1502; twenty one zero three -> 2103. Never pad digits or year. Complete self-answer plus any independent question/neutral aside stays security. Missing year/digits is c=0. Questions cannot supply operands; unresolved alternatives require clarification.\nOffer yes -> agree to spoken offer, never write consent. Readback yes -> fresh confirm for current terms only. Changed amount/date -> proposal; qualified/withdrawn permission -> change, never confirm. Yes no problem is affirmative. Amount/date alone -> proposal, never refusal. Vague period -> vague. Current arrears already paid -> paid; historical closed/paid off -> dispute. Hardship outranks plan/refusal, retaining voluntary a/d. Lower instalments/new plan -> plan; actual human request -> human; AI enquiry -> question. Relative offering payment -> third_party. Support-phase no -> decline. Independent questions do not erase primary facts. Separate complete amount/date rows may complete one target; never copy old terms as new facts. Raw source is mandatory for security agreement; no financial permission from raw.\n",
+      "kinds": [
+        "agree",
+        "callback",
+        "change",
+        "confirm",
+        "deceased",
+        "decline",
+        "dispute",
+        "hardship",
+        "human",
+        "paid",
+        "plan",
+        "proposal",
+        "purpose",
+        "question",
+        "recipient",
+        "refuse",
+        "security",
+        "stop",
+        "third_party",
+        "too_much",
+        "unknown",
+        "vague",
+        "wrong_number"
+      ],
+      "keys": [
+        "k",
+        "c",
+        "p",
+        "a",
+        "d",
+        "v",
+        "t",
+        "u"
+      ],
+      "examples": [
+        "k=recipient;c=1;END",
+        "k=third_party;c=1;END",
+        "k=wrong_number;c=1;END",
+        "k=deceased;c=1;END",
+        "k=security;c=1;v=14 October 1980;END",
+        "k=security;c=1;v=0123;END",
+        "k=decline;c=1;END",
+        "k=purpose;c=1;END",
+        "k=agree;c=1;END",
+        "k=confirm;c=1;END",
+        "k=proposal;c=1;a=120;d=next Friday;END",
+        "k=refuse;c=1;END",
+        "k=too_much;c=1;END",
+        "k=vague;c=1;END",
+        "k=paid;c=1;END",
+        "k=dispute;c=1;END",
+        "k=hardship;c=1;END",
+        "k=plan;c=1;END",
+        "k=human;c=1;END",
+        "k=stop;c=1;END",
+        "k=callback;c=1;d=tomorrow;t=15:00;END",
+        "k=unknown;c=1;END",
+        "k=question;c=1;END",
+        "k=change;c=0;u=date;a=120;END",
+        "k=proposal;c=1;a=120;END",
+        "k=proposal;c=1;d=November second;END",
+        "k=proposal;c=0;u=amount;d=this Friday;END",
+        "k=security;c=0;END"
+      ],
+      "financial_raw_fallback": false,
+      "validation_retries": 1,
+      "hosted_observations": "No fresh hosted extraction observed: network prohibited. Supplied feedback identifies concurrent question/answer failure; local persistent-store checks are conditional evidence only.",
+      "administrative_tokens": [
+        "none",
+        "ai",
+        "scam",
+        "purpose",
+        "balance",
+        "security_purpose",
+        "relative_policy",
+        "other"
+      ],
+      "raw_security_contract": {
+        "required": true,
+        "scope": "current requested complete self-answer span, independently separated from questions by structural clause boundaries",
+        "authority": "candidate only; actual current verify_identity response is sole verification authority",
+        "exclusions": [
+          "missing source",
+          "incomplete year/digits",
+          "quoted/hypothetical/negated/wrong-subject answers",
+          "canonical-source conflict",
+          "question operands"
+        ],
+        "phone_groups": "Explicit single digits or 10..99 groups concatenate without padding; exactly four digits required; independent question operands excluded."
+      }
+    },
+    "literal_examples": [
+      "k=recipient;c=1;END",
+      "k=third_party;c=1;END",
+      "k=wrong_number;c=1;END",
+      "k=deceased;c=1;END",
+      "k=security;c=1;v=14 October 1980;END",
+      "k=security;c=1;v=0123;END",
+      "k=decline;c=1;END",
+      "k=purpose;c=1;END",
+      "k=agree;c=1;END",
+      "k=confirm;c=1;END",
+      "k=proposal;c=1;a=120;d=next Friday;END",
+      "k=refuse;c=1;END",
+      "k=too_much;c=1;END",
+      "k=vague;c=1;END",
+      "k=paid;c=1;END",
+      "k=dispute;c=1;END",
+      "k=hardship;c=1;END",
+      "k=plan;c=1;END",
+      "k=human;c=1;END",
+      "k=stop;c=1;END",
+      "k=callback;c=1;d=tomorrow;t=15:00;END",
+      "k=unknown;c=1;END",
+      "k=question;c=1;END",
+      "k=change;c=0;u=date;a=120;END",
+      "k=proposal;c=1;a=120;END",
+      "k=proposal;c=1;d=November second;END",
+      "k=proposal;c=0;u=amount;d=this Friday;END",
+      "k=security;c=0;END"
+    ]
+  },
+  "repair_scope": {
+    "actual_extractor": "Supplied historical observations only; current published extractor unobserved",
+    "controller": "Local persistent-state checks",
+    "bank_receipts": "Synthetic local response controls only",
+    "hosted_behavior": "Unobserved"
+  },
+  "observed_language_audit": [
+    {
+      "call_index": 0,
+      "message_index": 6,
+      "source_role": "user",
+      "utterance_sha256": "9234b81d5e8b86e4790b8481a507b92295f808bda40bd69404877296af637183",
+      "context_flips": [],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 0,
+      "message_index": 17,
+      "source_role": "user",
+      "utterance_sha256": "37943741843c286492e33544b25a361f3fb50fdef161df563763ed97648fb3c2",
+      "context_flips": [],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 0,
+      "message_index": 36,
+      "source_role": "user",
+      "utterance_sha256": "31c565ee469f317ae373bbbb6e69e1a713d23e45b287257f511e3790eda4553b",
+      "context_flips": [
+        "correction"
+      ],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 0,
+      "message_index": 63,
+      "source_role": "user",
+      "utterance_sha256": "9a6cc4df4639476e44fc3b4895c116ab730efcc13edd614fb3d7e5c4209eb37c",
+      "context_flips": [
+        "correction"
+      ],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 0,
+      "message_index": 74,
+      "source_role": "user",
+      "utterance_sha256": "fcfbf87df9cdd776fa818156870ac21708ddc3614f251ccd0df5083cc82ea8d5",
+      "context_flips": [],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 0,
+      "message_index": 85,
+      "source_role": "user",
+      "utterance_sha256": "7a711c3cd900f83e62fc1d70def71fc0228c1662856d5331c30ebdcc9dbab991",
+      "context_flips": [
+        "proposal",
+        "correction"
+      ],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 1,
+      "message_index": 6,
+      "source_role": "user",
+      "utterance_sha256": "58210c04fee3f965c795a59f3b28e477fead4c48ae362a9efc8fd59b29cbe4a6",
+      "context_flips": [
+        "reported_third_party"
+      ],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 1,
+      "message_index": 17,
+      "source_role": "user",
+      "utterance_sha256": "b35703eddbb157190c32e6f6c21cee621bcb2b8b0e56ab4dc76702a4958365db",
+      "context_flips": [
+        "correction"
+      ],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 1,
+      "message_index": 36,
+      "source_role": "user",
+      "utterance_sha256": "9f5cd83e99cdbe4944b5e8b59c60ad1d9b3bc3b5091ec31c054c9f65ea51975b",
+      "context_flips": [],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 1,
+      "message_index": 63,
+      "source_role": "user",
+      "utterance_sha256": "02952a4306f4ef7bb8cd43efa828b92e06c3e9d05b097dd3a8d50b3a85477572",
+      "context_flips": [],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 1,
+      "message_index": 74,
+      "source_role": "user",
+      "utterance_sha256": "ef58450b2eb0aab68a13441d0b052ff293b9f1c367071596949bd6e7e87700a2",
+      "context_flips": [
+        "correction"
+      ],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 1,
+      "message_index": 85,
+      "source_role": "user",
+      "utterance_sha256": "c7023c3bdc70096a9c6d4d4a7d030af30f86a3d30b21667a8e4cee8c00714ab3",
+      "context_flips": [
+        "proposal"
+      ],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    },
+    {
+      "call_index": 1,
+      "message_index": 96,
+      "source_role": "user",
+      "utterance_sha256": "7a711c3cd900f83e62fc1d70def71fc0228c1662856d5331c30ebdcc9dbab991",
+      "context_flips": [
+        "proposal"
+      ],
+      "interpretation": "Language hypothesis only; resolve current utterance against preceding spoken question. No bank authority; UNKNOWN authorization."
+    }
+  ],
+  "local_validation": {
+    "check_count": 122,
+    "artifact": "local-checks.json",
+    "hosted": "unobserved"
+  }
+}

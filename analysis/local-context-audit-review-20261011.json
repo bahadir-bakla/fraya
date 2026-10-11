@@ -1,0 +1,108 @@
+{
+  "schema": "local.context_audit.source_review.v1",
+  "date": "2026-10-11",
+  "scope": "Independent local source audit of frozen V2 context diagnostic and builder/submission integration; source code unchanged.",
+  "verdict": "Context module and builder gates passed reviewed contracts; two reproduced submission-provenance blockers remain.",
+  "constraints": {
+    "network_calls": 0,
+    "freya_calls": 0,
+    "gpu_use": false,
+    "model_loading_or_inference": false,
+    "training": false,
+    "git_mutations": false,
+    "persistent_writes": [
+      "analysis/local-recipient-fresh-probes-20261011.json",
+      "analysis/local-context-audit-review-20261011.json",
+      "analysis/local-context-audit-review-20261011.txt"
+    ],
+    "temporary_fixture_policy": "Only disposable local synthetic test directories; cleaned by TemporaryDirectory. Python bytecode disabled."
+  },
+  "fresh_probe_pack": {
+    "path": "analysis/local-recipient-fresh-probes-20261011.json",
+    "sha256": "448ec29e2260eedf1ebd565d09192267f531dd1758ca9a443d19a24937186b27",
+    "count": 24,
+    "expected_self_true": 12,
+    "expected_self_false": 9,
+    "expected_self_null": 3,
+    "authorship_order": "Authored before reading audit source, existing failed cases, workflow outputs, or parent results. Only path discovery and applicable-instruction checks preceded authorship.",
+    "qualification": "Source-reviewed synthetic diagnostic; not blind human qualification, a held-out benchmark, or evidence of DOB verification.",
+    "label_semantics": "Semantic identification of the called person only. Explicit identity with DOB refusal remains true. Ambiguous clarification, generic title, and unattributed isolated quotation remain null.",
+    "coverage": ["English and Turkish names", "Unicode", "straight and curly apostrophes", "hyphens", "given-name answers", "family-name answers", "full-name answers", "title plus family/full-name answers", "ambiguous title-only answer", "third parties", "explicit negation", "attributed quoted self-identification", "no-answer name collision", "shared family name"],
+    "parent_reported_execution": {
+      "source": "User steering message; result file not independently inspected in this review",
+      "result_path": "analysis/local-recipient-fresh-results-20261011.json",
+      "method": "Unknown-extraction raw-recipient fallback, three deterministic repetitions",
+      "A10_known_correct": "11/21",
+      "new_V2_known_correct": "14/21",
+      "V2_false_self_selection": "7/9 negative probes",
+      "verified": "Parent reports VERIFIED false for all",
+      "bank_bypass_claim": false,
+      "interpretation": "Recipient semantic qualification remains blocked by false self-selection. Deterministic repetitions are not independent qualification samples. Suspected generic fallback uses any-name match versus baseline fullmatch; not independently source-verified here. Parent owns generic builder-guide repair."
+    }
+  },
+  "reviewed_source_sha256": {
+    "competition/finetuned_context_audit.py": "137cf16031ec4ac1d47ecf8e3cba4fc481cc9555ad2a07c1a935f8c57de0b4f8",
+    "competition/builder.py": "8e3bed11c50d3f0e6a95301678e128181eb7f5b37c3011ed2da4ec8a2c8a903c",
+    "competition/package_submission.py": "c9666334b768dee3b353f9cd57e9802d86bdd8069782845809f055d907c5fd89",
+    "competition/finetuned_assist.py": "2b035b04f63f45e0b3186088193fd15149661eeef29a99802aa734a7f2a70f34",
+    "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_core.py": "3b90bfb29389732c730cde4035bb881880ab53e21d9c2ab6915ead51469e4423",
+    "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_eval.py": "e13e4b2bc5262a436b092a38dd5df35cc4f99e29be1dbdd6fcce89948f318c94"
+  },
+  "frozen_release_verification": {
+    "status": "PASS",
+    "method": "Read-only verify_v2: complete manifest/model file inventory and exact runtime/architecture/threshold pins. No calls parsed, model loaded, or inference performed.",
+    "model_file_count": 7,
+    "manifest_sha256": "7eca3b016b47ec20f1b1fd9e207c71a0c72ece9bf91f4e2c28ecd411dcb59189",
+    "architecture_sha256": "5a124a14f26ef960a5533f352b2d50f0078724aa5f5a4ddfdd090424465ef230",
+    "seconds": 0.062
+  },
+  "contract_review": [
+    {"topic":"Complete hashes and source-row binding","status":"PASS in module/builder","evidence":"validate_audit revalidates FULL, exact V2 files/runtime, source call bytes and observed adjacency; reconstructs entire envelope and compares canonical digest. Covers complete FULL digest, original/current/prior input digests, effective intervention inputs, exact ordered indices, skip records, heads, states, limits and authority. Extra/missing/reordered/foreign rows and substitutions are rejected. Builder records artifact byte hashes and checks them around the model call.","locations":["competition/finetuned_context_audit.py:54","competition/finetuned_context_audit.py:135","competition/finetuned_context_audit.py:153","competition/builder.py:355","competition/builder.py:405","competition/builder.py:415"]},
+    {"topic":"Optional unavailable cannot become agreement","status":"PASS","evidence":"UNAVAILABLE rejects all retained partial NO_CONTEXT heads, known reasons only. Prior-present enabled heads become UNAVAILABLE; no-prior rows become NOT_APPLICABLE; disabled heads remain DISABLED. Builder accepts a validated unavailable envelope but explicitly says no agreement was established. Invalid companion audit is deleted while validated FULL stays ready.","locations":["competition/finetuned_context_audit.py:82","competition/finetuned_context_audit.py:92","competition/finetuned_context_audit.py:153","competition/builder.py:359","competition/builder.py:394"]},
+    {"topic":"Shared budget and actual FULL versus NO_CONTEXT","status":"PASS with availability limitation","evidence":"One CPU model, two threads, same <=60-second monotonic deadline from before startup. FULL uses no_context=False; NO_CONTEXT uses True only on prior-present rows; no_tail=False in both. Frozen runtime zeros only prior features and retains current mean/tail. Parent child bounds monotonic and wall time and kills owned process tree. Finite input limits reject overflow without partial results.","locations":["competition/finetuned_context_audit.py:195","competition/finetuned_context_audit.py:227","competition/builder.py:250","competition/builder.py:345","integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_core.py:76"]},
+    {"topic":"Disabled consent heads and bank authority","status":"PASS","evidence":"current_affirm/current_withdraw thresholds fixed at 1.01; DISABLED regardless of raw probability shifts. Exact authority is false and financial authorization UNKNOWN in FULL, audit and notices. Agreement is only a proposal; negative selection is not semantic denial. No identity/consent/bank-action qualification is asserted."},
+    {"topic":"Classic and V1 preservation","status":"PASS for reviewed branch/contracts","evidence":"Off branches return before file/model work; V1 still invokes finetuned_assist.py without audit arguments and retains existing FULL schema. Missing releases package as an empty optional list. Legacy one-turn adjacency and explicit V2 two-turn adjacency pass tests. Audit import is stdlib-only. No Git historical comparison or real legacy model execution was performed."}
+  ],
+  "blockers": [
+    {
+      "id": "PKG-01",
+      "priority": "P1",
+      "classification": "Submission provenance blocker; not a bank bypass or a defect in validate_audit",
+      "title": "Packager accepts invalid audit and stale trace bindings",
+      "locations": ["competition/package_submission.py:60", "competition/package_submission.py:71", "competition/package_submission.py:74"],
+      "trigger": "A run satisfies published/completed/export prerequisites but its stored context audit has foreign source indices, claimed bank authority, and invalid/missing FULL/request bindings; trace artifact hash differs from audit bytes.",
+      "reproduction": "Disposable synthetic run, real package.main, patched ROOT/KIT/argv only, no model releases or network. Foreign row 999/999, bank_authority=true, financial_authorization=APPROVED, FULL/request empty objects, trace artifact_sha256 zeroes. Packaging succeeded and archive hashed the invalid audit anew.",
+      "observed": {"packaging_accepts_invalid_audit":true,"fresh_archive_hash_matches_invalid_bytes":true,"trace_hash_mismatch_ignored":true},
+      "impact": "A fresh archive checksum proves packaged bytes only; it does not preserve the builder's previously validated source/FULL/audit relationship. A post-run damaged or replaced audit can enter a reviewable submission without rejection.",
+      "suggested_owner_action": "Cicero: before collecting payload bytes, validate stored request/FULL/audit for every selected/provenance run containing audit evidence, bind actual archived calls/model/runtime and compare recorded builder artifact hashes. Resolve relocated request paths explicitly while retaining original request digest/provenance. Fail on invalid companions; retain explicit unavailable/no-audit classic behavior."
+    },
+    {
+      "id": "PKG-02",
+      "priority": "P2",
+      "classification": "Windows archive manifest binding blocker; pre-existing generic packaging path issue",
+      "title": "Manifest paths differ from ZIP entry names on Windows",
+      "locations": ["competition/package_submission.py:53", "competition/package_submission.py:60", "competition/package_submission.py:70", "competition/package_submission.py:76"],
+      "trigger": "str(relative_to(...)) emits backslashes for nested paths; ZipInfo normalizes those separators to forward slashes while manifest retains the original string.",
+      "reproduction": "Same synthetic packaging fixture: manifest path competition/runs/synthetic/work\\finetuned-context-evidence.json; ZIP path competition/runs/synthetic/work/finetuned-context-evidence.json. Two manifest paths were absent verbatim from archive.namelist().",
+      "impact": "A verifier using manifest path exactly cannot locate the audit or FULL evidence to check their hashes.",
+      "suggested_owner_action": "Cicero: use relative_to(...).as_posix() consistently for every archive path; assert each manifest path exists exactly once in the ZIP and its digest matches."
+    }
+  ],
+  "nonblocking_limitations": [
+    "A parent hard timeout during NO_CONTEXT or final validation discards the paired output, including FULL; optional mode falls back unavailable. This loses diagnostic availability but supplies no false agreement. Source-derived, not reproduced with real inference.",
+    "Canonical hashes are integrity bindings, not proof of raw speech or authentic model computation. Internally consistent fabricated logits cannot be disproved by this envelope alone; module documents this boundary.",
+    "No candidate workflows, real failed-call artifacts, existing workflow outputs, live Freya data, or parent's new result file were read. Actual public-kernel comparison and candidate packaging remain parent-owned."
+  ],
+  "validation": {
+    "subprocess_timeout_seconds": 55,
+    "unique_existing_tests_passed": 66,
+    "runs": [
+      {"pattern":"test_finetuned_context_audit.py","tests":28,"status":"PASS","seconds":6.562},
+      {"pattern":"test_finetuned*.py","tests":58,"status":"PASS","seconds":8.375,"includes_previous_28":true},
+      {"pattern":"test_budget.py","tests":8,"status":"PASS","seconds":1.703}
+    ],
+    "additional_mocked_builder_cases": ["AVAILABLE retains FULL and validated audit", "UNAVAILABLE retains FULL with explicit no-agreement status", "INVALID_AUDIT retains FULL and removes companion", "OFF performs no inference"],
+    "additional_integrity_checks": "Modified available/unavailable audit bytes rejected by builder.check_pinned_evidence; local release pins verified; probe schema/count/IDs/nullable booleans verified.",
+    "packaging_adversarial_checks": "Both PKG-01 and PKG-02 reproduced with disposable synthetic fixtures; no real submission generated."
+  }
+}

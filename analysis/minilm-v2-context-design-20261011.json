@@ -1,0 +1,245 @@
+{
+  "schema": "minilm-v2-context-disagreement.design.20261011",
+  "created_utc": "2026-10-11T13:59:23.146838+00:00",
+  "status": "IMPLEMENTABLE_OFFLINE_AUDIT_NO_NEW_MODEL_OR_PROMOTION",
+  "scope": {
+    "writes": [
+      "analysis/minilm-v2-context-design-20261011.json",
+      "analysis/minilm-v2-context-design-20261011.txt"
+    ],
+    "model_inference_executed": false,
+    "training_executed": false,
+    "GPU_or_cloud_calls": 0,
+    "Freya_calls": 0,
+    "credentials_opened": false,
+    "EVAL_case_text_or_labels_opened": false,
+    "read_sources": "requested triage aggregates, pinned release/manifest/architecture/core/eval/adapter/builder only"
+  },
+  "source_sha256": {
+    "analysis/local-minilm96-triage-20261011.json": "b79c257b82974941939c6903658026584acf48fe1537df6feb533adfc583b602",
+    "integrations/learned-dialogue/minilm_ft_v2/release.json": "4ca894cc862699ce3f69e982ae9be7e0e2d4636fee2eabbf3127d9d162fa8486",
+    "integrations/learned-dialogue/minilm_ft_v2/model/manifest.json": "7eca3b016b47ec20f1b1fd9e207c71a0c72ece9bf91f4e2c28ecd411dcb59189",
+    "integrations/learned-dialogue/minilm_ft_v2/model/architecture.json": "5a124a14f26ef960a5533f352b2d50f0078724aa5f5a4ddfdd090424465ef230",
+    "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_core.py": "3b90bfb29389732c730cde4035bb881880ab53e21d9c2ab6915ead51469e4423",
+    "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_eval.py": "e13e4b2bc5262a436b092a38dd5df35cc4f99e29be1dbdd6fcce89948f318c94",
+    "competition/finetuned_assist.py": "2b035b04f63f45e0b3186088193fd15149661eeef29a99802aa734a7f2a70f34",
+    "competition/builder.py": "7386819cb3e04f0fae8930e8bead2559d4a482cdc10410cb406ccb356aa17729"
+  },
+  "actual_connection": {
+    "builder_source": "competition/builder.py:311-350",
+    "explicit_v2_path": true,
+    "auto_currently_chooses": "v1",
+    "reason": "v2 release default_enabled=false;builder auto checks it atline325",
+    "v2_in_voice_runtime": false,
+    "hosted_evaluated": false,
+    "current_status": "Offline builder repair evidence path exists. Parent paired classic/V2 builder run is pending here; no output improvement observed by this designer. Classic conditional-extraction39/39 was user-reported local bank replay, not actual fixedLLM/voice/provider performance."
+  },
+  "exposed96": {
+    "cases": 96,
+    "authored_groups": 24,
+    "repeats": 3,
+    "raw_joint_by_arm": {
+      "v1": {
+        "correct": 17,
+        "denominator": 96
+      },
+      "v2": {
+        "correct": 20,
+        "denominator": 96
+      },
+      "v2_no_tail_diagnostic": {
+        "correct": 14,
+        "denominator": 96
+      },
+      "v2_no_context_diagnostic": {
+        "correct": 28,
+        "denominator": 96
+      }
+    },
+    "V2_raw_macro_F1_from_triage_heads": 0.4574279491617642,
+    "V2_no_context_raw_macro_F1": 0.5287357863577825,
+    "V1_raw_macro_F1": "0.3244 user-reported aggregate",
+    "no_tail_raw_macro_F1": "0.3202 user-reported aggregate",
+    "interpretation": "V2+3raw joint cases overV1; context-off+8overV2 is diagnostic, not permission to select that arm.96is now exposed.3repeats are stability repeats of96, not288independent examples;24authored families are not established independent/IID population units. No new qualification or financial pass rate.",
+    "audit_disagreement_counts": "NOT COMPUTED; paired per-head frozen threshold flags required from parent runner, not available in triage aggregate",
+    "source_act_quality": "All4aux heads have0known labels here; do not pool them into empirical accuracy/precision."
+  },
+  "threshold_contract": {
+    "label_order": [
+      "proposal",
+      "dispute",
+      "correction",
+      "current_affirm",
+      "current_withdraw",
+      "uncertain",
+      "reported_third_party",
+      "AFFIRM",
+      "NEGATE",
+      "INFORM",
+      "REQUEST"
+    ],
+    "thresholds": [
+      0.5,
+      0.5,
+      0.5,
+      1.01,
+      1.01,
+      0.99,
+      0.8,
+      0.5,
+      0.7,
+      0.5,
+      0.6
+    ],
+    "threshold_source": "unchanged pinned model/manifest.json",
+    "disabled": [
+      "current_affirm",
+      "current_withdraw"
+    ],
+    "raw_point5": "diagnostic only; does not enable disabled heads or change builder selections",
+    "domain_head_semantics": "current_affirm includes administrative assent. Nothing here identifies valid bank permission, target/date/amount completion or offer/component freshness."
+  },
+  "minimal_algorithm": [
+    "Validate original request, pinnedV2architecture/model/runtime and original call digest using current adapter. Reconstruct exact observed rows and skipped entries. Require2turn contract; no gold/state/case labels or policy/system payload in observed input.",
+    "Load frozen model once onCPU,inference_mode,encoder.eval/head.eval; use one common startup+botharms deadline. Compute FULL logits for every observed row with existing behavior; preserve the original FULL evidence artifact unchanged.",
+    "For rows with nonempty validated prior, compute NO_CONTEXT via frozen Model.predict(original_rows,no_context=True,no_tail=False,same_deadline). Do not delete current tokens or zero the tail. No prior:skip second inference and markNOT_APPLICABLE; no fake tested agreement.",
+    "For each enabled headj, pF=sigmoid(zF),p0=sigmoid(z0),sF=(pF>=tau_j),s0=(p0>=tau_j). If unequal, audit stateUNRESOLVED. If equalpositive,AGREED_SELECTED_PROPOSAL. If equalnegative,AGREED_NOT_SELECTED, not evidence of semantic absence. tau>1:DISABLED regardless raw scores.",
+    "Row statusUNRESOLVED if any enabled head flips; also record domain_disagreement and aux_disagreement separately. Conflicting source-act heads do not erase agreeing domain heads; conflicting domain heads do not select the opposite arm or automatically replace primary intent. Builder examines the exact source utterance/context and records unresolved scope/clarification hypotheses.",
+    "Emit a separate audit envelope: both actual logits/probabilities/selections,headstates,source bindings and limit/status. No winner,maxprobability,averaged ensemble,newthreshold or label-conditioned gate. Validate and atomically write all required rows or mark auditUNAVAILABLE; incomplete second arm is neverAGREED."
+  ],
+  "audit_envelope": {
+    "schema": "minilm.context_disagreement.audit.v1",
+    "top_level": [
+      "schema",
+      "request_sha256",
+      "source_calls_sha256",
+      "base_full_evidence_sha256",
+      "manifest_sha256",
+      "runtime_sha256",
+      "architecture_sha256",
+      "labels",
+      "thresholds",
+      "intervention",
+      "limits",
+      "status",
+      "rows",
+      "skipped",
+      "bank_authority",
+      "financial_authorization"
+    ],
+    "intervention": {
+      "name": "zero_prior_context_only",
+      "retain_current_and_tail": true,
+      "no_label_access": true
+    },
+    "row_keys": [
+      "call_index",
+      "message_index",
+      "original_input_sha256",
+      "effective_no_context_input_sha256",
+      "prior_present",
+      "full_heads",
+      "no_context_heads",
+      "audit_heads",
+      "domain_disagreement",
+      "aux_disagreement",
+      "status"
+    ],
+    "effective_no_context_digest": "Canonical JSON of current_utterance unchanged and previous_utterances=[]; preserve original-input digest too. This intervention is not presented as actual observed zero-context speech.",
+    "no_prior": "no_context_heads=null,effective_no_context_input_sha256=null,statusNOT_APPLICABLE",
+    "no_authority": {
+      "bank_authority": false,
+      "financial_authorization": "UNKNOWN"
+    },
+    "compatibility": "Existing validate_result has exact keys; keep current full evidence schema untouched. New envelope gets a separate strict validator; do not append audit fields to old rows silently."
+  },
+  "validation_invariants": [
+    "Strict exact keys/types,unique call/message indices,full original row order/skips and11label order. Booleans are strict; finite logits/probabilities,range[0,1],sigmoid and threshold selections recomputed by validator.",
+    "Full heads equal already-validated full evidence,not self-reported substitutions. Manifest thresholds exactly unchanged,including1.01 disabled sentinels. Pinnedarchitecture version2/features/width1152/stride32/window256; no v1 fallback or alternate weights between arms.",
+    "Recompute original and effective intervention digests from call-source snapshot; reconstruct prior through observed_turns(context_turns=2). Call boundary/tool/system/invalid message resets stay exactly current source behavior.",
+    "Verify call/model/runtime/request hashes before and after both arms; parent supplies reviewed expected pins. Writable self-derived hashes alone are not approval or cryptographic raw-speech authentication.",
+    "Every prior-present row has both11finite logit rows or auditUNAVAILABLE. No stale cached current/context from other models,requests,calls or intervention modes. Model/mode/effective input digests key any cache.",
+    "Audit state derivation is deterministic and contains no goldmask,label,expectedaction,scorer,identityprofile or bankoutcome input. ALL agreement may still be wrong; NOT_SELECTED is not semanticnegative and DISABLED is not negative."
+  ],
+  "limits": {
+    "unchanged_adapter_max_calls": 512,
+    "max_observed_rows": 512,
+    "max_messages": 20000,
+    "max_current_or_prior_codepoints": 16384,
+    "max_prior_turns": 2,
+    "aggregate_observed_codepoints": 2000000,
+    "cpu_threads": 2,
+    "single_shared_default_child_wall_seconds": 60,
+    "source_builder_condition": "remaining>=125;childseconds=min(60,remaining-120),shared byload+botharms+validation. Do not run two independent60s allowances.",
+    "source_predict_limitation": "deadline checked per rowbatch,not during every48window chunk; parent hard-kills child atwall limit. No assertion that Python deadline alone interrupts a long forward.",
+    "memory": "Use48window encoderchunks already present; model/inputs bounded but no8GBCPU guarantee inferred. Small row batches ifneeded, no clipping.",
+    "failure": "Auto mode recordsaudit unavailable and leavesclassic/full evidence behavior explicit; required mode fails clearly. A timeout cannot produce successful agreement. Parent handles child cleanup; no background endpoint."
+  },
+  "diagnostic_metric_contract": {
+    "notation": "m_ij=diagnostic known mask,A_j=(tau_j<=1),P_i=validated prior-present,B_ij=both arms available,d_ij=A_j*P_i*(sF_ij xor s0_ij). Labels are runner-only,never audit inputs.",
+    "context_disagreement_coverage": "sum_i1[P_i and botharms and anyenabled domainflip]/sum_i1[P_i and botharms]; unavailablefraction and no-prior fraction reported separately. Also give all11andaux-only flips; known-label headcoverage uses sum m*P*A denominators. No threshold from these fractions.",
+    "error_capture_precision": "With eF_ij=1[sF_ij!=y_ij],context-flag precision_j=sum m*P*A*d*eF / sum m*P*A*d. This measures how often a flag catches a FULL-arm label error,not permission precision. Flag-error recall_j=sum m*P*A*d*eF / sum m*P*A*eF. Zero denominator=null.",
+    "positive_proposal_precision": "Consensus candidate c_ij=A_j*P_i*B_ij*sF_ij*s0_ij. Precision_j=sum m*c*y / sum m*c; recall_j=sum m*c*y / sum m*P*A*y. Positive coverage=sum m*c/sum m*P*A. No auxiliary denominator when known=0; disabled affirmative/withdrawal precision=null,not100%.",
+    "row_joint_and_errors": "Runtimeagreement does not use labels. For diagnostics,accepted_i=priorpresent+botharms+no enabledDOMAINflip. Coverage over prior-present rows with any enabledknown domainhead; selective error counts any disagreement with labels on those enabledknown heads. Separately report all7known-head joint correctness including disabled-head missed positives, and complete-task coverage. Do not hide lost affirm/withdraw recall by presenting active-head risk as full-task success.",
+    "raw_comparison": "Keep original0.5macroF1/joint for V1,V2,no-context,no-tail separate from pinnedthreshold selections and newaudit-retained coverage. No claim that consensus improves F1 before runner computes actual pairs.",
+    "grouping": "Unique96/24families; group-macro errors/flags and all3repeat consistency. Repeats not multiplied into support. No IIDconfidence/safety bound from this author cohort. Fresh source/family qualification afterfreeze needed for claims.",
+    "missing_now": "Aggregate triage cannot determine flags,retained precision/coverage,errorcapture or improvement from the proposed audit. Parent comparisonrunner must compute them; all remainUNEXECUTED here."
+  },
+  "cheap_linear_alternative": {
+    "formula": "Current source islinear: zF=Wg*g+Wt*t+Wc*c+b; z0=Wg*g+Wt*t+b. Compute both from ONE frozen encode output beforehead if parent wants to save time; no secondencoder required.",
+    "restriction": "An implementation optimization,not already in adapter. Preserve FULL logits; validate against actual no_context=True on bounded observedTRAIN/control inputs for per-head logits and selectionparity. Logit subtraction is valid; probability subtraction is not. Near-threshold parityfailure isUNRESOLVED,not a tolerance-based selection flip. Architecture change to nonlinearhead invalidates this exact formula."
+  },
+  "tests_required": [
+    "Full/no-context equalpositive,equalnegative andopposite threshold selections; threshold equality uses>=; disabled1.01 staysdisabled despite raw flip; no prior skipsaudit.",
+    "AUX-only flip marksaux ambiguity without blanking agreeingdomain scores; domain flip cannot promoteopposite arm; unknown masks/gold never available to runtime.",
+    "Altered call digest/model/runtime/architecture/threshold,labelorder,rowindex/inputdigest ornonfinite score isrejected. Duplicate/truncated auditrows rejected; failed secondarmcannot markAGREED.",
+    "Two-turn ownUSER+ASSISTANT context and event/callreset parity with producer; intervention retains current+tail exactly. Repeated eval batch sizes/order have measured parity; no dropout duringinference.",
+    "Single60sshared startup+botharms budget; simulated expiration afterFULL,beforeNO_CONTEXT,orbeforepostvalidation yieldsUNAVAILABLEandcleanup. Offmode launchesnothing.",
+    "Optionallinear-optimization parity vsactualfrozenno_context onboundedTRAINcontrols,not96-driven formula/threshold selection."
+  ],
+  "next_training_after_current_comparison": {
+    "one_minimal_data_objective": "Build TRAIN-only matched own-speaker/quoted/admin/current-repair context families. Keep exact current held fixed while genuine observed prior changes only where labels actually need context; build context-independent matched controls too. Fix ancestryunion before split; never recopy96failed examples as fresh roots.",
+    "loss_mask": "If a TRAINannotated head is context-independent, optionaladditionalno-context BCE/consistency uses m_known*m_context_independent; context-dependent ellipticalyes heads have thatmask0. Never keep context-dependent labels during arbitrarycontextdropout. SourceAFFIRM remains sourceact; no finance mapping.",
+    "one_model_alternative": "Only afterTRAINcontrast diagnostics,compare same1152linearhead with smallzero-initializedcontext interaction/residual adapter; sameencoder,inputs,source schedule,masks andbudget. Select onTRAIN-dev/CALonly,notthese96. Do not alter frozenV2 orredirectparentcurrentcomparison.",
+    "calibration_and_qualification": "Newroot/source-disjoint CAL-fitseparatefromthresholdselection whereavailable; freezeselectedweights/thresholds/auditpolicy thenfreshauthor/sourceevaluation. ExistingCAL and96exposure disclosed. Engineering fits need no invented20/humangold gate; bankauthority staysdeterministic evenif futureauxscoresimprove."
+  },
+  "actual_spec_execution": {
+    "stdlib_state_assertions_passed": 6,
+    "linear_logit_identity_assertions_passed": 1,
+    "reference_only": true,
+    "candidate_model_or_audit_execution": false,
+    "checks": [
+      {
+        "name": "flip",
+        "expected": "UNRESOLVED",
+        "passed": true
+      },
+      {
+        "name": "both_positive",
+        "expected": "AGREED_SELECTED_PROPOSAL",
+        "passed": true
+      },
+      {
+        "name": "both_negative",
+        "expected": "AGREED_NOT_SELECTED",
+        "passed": true
+      },
+      {
+        "name": "disabled",
+        "expected": "DISABLED",
+        "passed": true
+      },
+      {
+        "name": "missing_prior",
+        "expected": "NOT_APPLICABLE",
+        "passed": true
+      },
+      {
+        "name": "threshold_equality",
+        "expected": "UNRESOLVED",
+        "passed": true
+      }
+    ]
+  },
+  "handoff": "Parent implements optionalseparateaudit artifact in comparisonrunner/builder. Do not default-promoteV2orchoosecontextofffrom96scores. No model/data/code changes bydesigner."
+}

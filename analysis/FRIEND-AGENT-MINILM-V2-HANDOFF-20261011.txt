@@ -72,13 +72,16 @@ tum MiniLM yardimcilarini kapatir; historical yedegi uzerine yazma.
 Public A icin CLI sablonlari; <...> yerlerini kendi mevcut yollarinla degistir.
 Her komut ayri YENI en cok30dk onarim butcesi kullanir, eski timeout'u resetlemez.
 K0:
-python competition/builder.py competition-v3/build-the-builder/briefs/brief-a.md --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-classic --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist off --semantic-python <TORCH_PYTHON>
+python competition/builder.py "build-the-builder 2/briefs/brief-a.md" --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-classic --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist off --semantic-python <TORCH_PYTHON>
 K1:
-python competition/builder.py competition-v3/build-the-builder/briefs/brief-a.md --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-v1 --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist required --finetuned-version v1 --semantic-python <TORCH_PYTHON>
+python competition/builder.py "build-the-builder 2/briefs/brief-a.md" --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-v1 --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist required --finetuned-version v1 --semantic-python <TORCH_PYTHON>
 K2:
-python competition/builder.py competition-v3/build-the-builder/briefs/brief-a.md --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-v2 --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist required --finetuned-version v2 --semantic-python <TORCH_PYTHON>
+python competition/builder.py "build-the-builder 2/briefs/brief-a.md" --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-v2 --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist required --finetuned-version v2 --semantic-python <TORCH_PYTHON>
 Public B icin brief-b.md, STOPPED_PUBLIC_B_RUN ve ayri compare-b-* slotlarini
-kullan. Seed public kapsaminda ve failed-call kaniti mevcut olmali. Required
+kullan. Practice seed'in brief/OpenAPI BYTE'lariyla birebir ayni aktif kit
+yollarini kullan: ZIP kopyasi ayni metnin LF surumuyse eski CRLF seed'le repair
+kontrolunden gecmez. Orijinal ZIP veya seed'i donusturme/degistirme.
+Seed public kapsaminda ve failed-call kaniti mevcut olmali. Required
 bayragi kanit dosyasi yokken modeli cagirtmaz: K1/K2 logunda finetuned_assist
 status=ready, dogru version, manifest hash ve gozlenen turn sayisini dogrula.
 Belge retrieval pin/hazirlik durumu kollarda farkliysa olcum kontrollu degildir.
@@ -136,3 +139,85 @@ Sirlar/raw keyli export/log/corpus Git'e girmesin; kaynak kontrollere ek olarak
 credential taramasi ve orijinal16 ZIP byte karsilastirmasindan sonra nonforce
 commit/push yap. Bu gorev yeni cloud kiralamasi gerektirmiyor; toplam35USD
 siniri degismez, mevcut yerel model agirliklarini kullan.
+
+YENI LOKAL TESLIM / 11 EKIM 17:15 ISTANBUL
+Yerel frozen V1/V2 ayni96 probda ucer tekrar, toplam576 tahmin calisti.
+V1 yine17/96, V2 yine20/96 raw joint; no-context tani28/96. Eski etiketleri
+yeniden egitme veya en iyi arm'i vaka bazinda secme. Bu96 banka fixture'i degil.
+Orijinal public13 icin A10/B14 kernel, yeni Bank ile3 kez replay:39/39 ledger.
+Yeni V2 destekli A adayi otomatik uretildi:20261011-165857-6ce127. Gercek
+kayitlardan13USER inference ready, local sema/coverage gecti, unpublished.
+Paylasilan birebir aday: competition/releases/minilm-v2-local-a-20261011/.
+workflow.json/policy.json/coverage.json ve release.json burada; bank key yok.
+Bu aday yeni context-audit eklenmeden once uretildi; sonradan elle patch yok.
+A public10 x3:30/30 ledger. Her iki kolda B14 ayni kontrol:9/9. V2'ye ozgu
+bank avantajini bu yerel test gostermedi. Dogru authored extractor olaylariyla
+kosuldu; Freya extraction/conversation judge/ASR calismadi. Local tekrarlar
+deterministik; uc bagimsiz platform tekrari yerine gecmez.
+Klasik yeni onarim20261011-165856-0a0c57 model360s timeout FAILED kaldi.
+Biraktigi kaynak snapshot sema/coverage ve kernel39/39 tanisini gecti ama
+tamamlanmis yeni klasik release diye kullanma. A10/B14 klasik yedek korundu.
+Iki ilk preflight brief CRLF/LF uyumsuzlugu ve ilk replay driver eksik bare
+equals destek hatasi raporlarda korunuyor; son r2 raporlari dogru tanidir.
+
+Builder V2 artik FULL + ayni frozen modelin NO_CONTEXT sonucunu ortak60s CPU
+child butcesinde karsilastirir. Secim farki UNRESOLVED; yoklugu ret/onay sayma.
+Devre disi iki izin head'i DISABLED kalir. Audit yoksa UNAVAILABLE, anlasma yok.
+Gercek yeni builder diagnostic smoke13USER ready ve8domain disagreement buldu.
+Yeni audit96'da41domain farki isaretledi; geriye kalan55satirin31'inde hala
+aktif etiket hatasi var. Bu bir error-discovery yardimcisi; otomatik dogru
+anlama, yeni egitim veya release terfisi degil.119competition test gecti.
+Raporlar: analysis/local-minilm96-20261011.json,
+analysis/local-builder-kernel-comparison-20261011-r2.json,
+analysis/local-v2-context-builder-smoke-20261011.json,
+analysis/minilm-v2-context-implementation-20261011.json.
+scripts/run_local_builder_pair.py ve smoke script'i Git'e girmeyen orijinal
+yerel seed/kayit dosyalarini ister; clone tek basina o raw kayitlari saglamaz.
+Public kernel runner ve paylasilan aday ise repo kaynaklariyla tekrar edilebilir.
+Yeni candidate'i kendi kuyruğunda source validate/publish/export ile sabitle;
+uc platform tekrari ve yeni zor vakalarin actual skorlarini paylas. Yeni
+context audit'i kullanmak icin guncel builder'dan ayri otomatik aday uret.
+
+DIKKAT: yukaridaki ilk V2 adayi yeni24recipient tanisinda raw isim substring
+hatalari verdi.12olumlu/9olumsuz/3belirsiz vakada14/21dogru,7/9olumsuz yanlis
+muhatap secildi. A10 11/21dogru fakat0/9yanlis olumlu;12olumlunun2'sini tanidi.
+Hepsi verified=false kaldi, banka bypass kaniti yok. Candidate release.json
+BLOCKED olarak isaretlendi; public ledger39/39 bu acigi gizlememeli.
+Yeni24 sozleri/beklentileri aday ciktilari gorulmeden ayri worker tarafindan
+uretildi; sentetik, insan altin etiketi degil. Sonraki repair icin goruldu.
+Guncel rehber isim gecmesine degil guncel ozneye/soze/alinti sinirina bagli
+onarim ister. Yeni autoV2+context kosusu20261011-171811-ad4508 basladi;
+tamamlanma/yeniden test sonucu ayri latest raporda bulunacak. Eski adayi
+sessizce degistirmedik. NativeOpus kota engeli sebebiyle bu turda calismadi;
+bagimsiz kaynak incelemesi Codex fallback. Ek cloud maliyeti0.
+
+Clone'dan paylasilan ilk adayin local ledger tanisini tekrar etmek:
+python scripts/compare_local_candidate_kernels.py --shared-release competition/releases/minilm-v2-local-a-20261011 --output analysis/friend-local-v2-kernel.json
+Yeni recipient tanisi:
+python scripts/run_local_recipient_probes.py --probes analysis/local-recipient-fresh-probes-20261011.json --output analysis/friend-local-recipient.json
+Iki runner da output varsa uzerine yazmaz. Sonuclar sadece kaynak kernel
+ve authored/UNKNOWN extractor girdileri icin gecerlidir; hosted skor degil.
+
+EN SON TESLIM / 17:27 ISTANBUL: PENDING ONARIM TAMAMLANDI
+20261011-171811-ad4508 otomatik V2+context adayi331s'de lokal tamamlandi.
+Yeni reviewable kaynak: competition/releases/minilm-v2-context-a-20261011/.
+Workflow/policy/coverage byte'lari aynen generator ciktisi, elle patch yok.
+Bu aday13gercekUSER satirinda FULL veNO_CONTEXT karsilastirmasini kullandi.
+Local original public A30/30ledger, B14control9/9. Klasik kontrol39/39.
+Yeni24recipient raw-fallback tanisinda17/21known dogru, oncekiV2A14/21.
+Onceki7/9yanlis muhatap secimi0/9'a indi; olumlular8/12. Dortpozitif kaldı:
+fresh24-05 unvanin localealiasi,07courtesy,09/10selfcevabi+DOBrefusalayrimi.
+Bu sozleri hardcode etme: dinamiktitlealiasnormalizasyonu, soz/ozne/negation
+clauseprojection, bagimsiz DOBretactini muhatapretinden ayirma gerekiyor.
+Negatif9reddi ve quote/thirdparty/noanswer/differentgiven guardlarini koru.
+Kazanimi sadeceMiniLM fine-tune'a atfetme; generic source guide ve generator
+kodu da degisti. Bu24 artik gorulmus regresyon, yeni bagimsiz holdout degil.
+133competition test gecti; package originalFULL/audit/request/tracehash
+baglarini validate eder veWindowsZIPmanifestpath eslesmesini kontrol eder.
+Originalsourcepaths tasindiysa package deny verir, request'i uydurma/yeniyazma.
+Yerel sonrapor: analysis/LOCAL-V2-CLASSIC-LATEST-20261011.json/.txt.
+Yeniadayi clone'dan kostur:
+python scripts/compare_local_candidate_kernels.py --shared-release competition/releases/minilm-v2-context-a-20261011 --output analysis/friend-local-context-v2-kernel.json
+python scripts/run_local_recipient_probes.py --candidate-workflow competition/releases/minilm-v2-context-a-20261011/workflow.json --probes analysis/local-recipient-fresh-probes-20261011.json --output analysis/friend-local-context-v2-recipient.json
+Simdi sourceaudit + kendiFreya kuyrugunda publish/export pin + ucbagimsiz
+public/zorcalltekrari. Sonuclar gelmeden hosted terfi yok; klasikA10/B14 yedek.

@@ -1,0 +1,1853 @@
+{
+  "schema": "minilm.context_disagreement.audit.v1",
+  "request_sha256": "dab9245ab8e86f9b5bcb5c4efb89c54b49f2997f48e745ce64d1043c9a2e061e",
+  "source_calls_sha256": "b7cff0f88b2377b2acf277907f469468e90cef8cbb4732c91cfd1561f3e7b1af",
+  "base_full_evidence_sha256": "56195e5ec91931d1275d20eab9eb1ba771f1bd2c30e5365afa99ee88762b37f2",
+  "manifest_sha256": "7eca3b016b47ec20f1b1fd9e207c71a0c72ece9bf91f4e2c28ecd411dcb59189",
+  "runtime_sha256": {
+    "minilm_ft_core.py": "3b90bfb29389732c730cde4035bb881880ab53e21d9c2ab6915ead51469e4423",
+    "minilm_ft_eval.py": "e13e4b2bc5262a436b092a38dd5df35cc4f99e29be1dbdd6fcce89948f318c94"
+  },
+  "architecture_sha256": "5a124a14f26ef960a5533f352b2d50f0078724aa5f5a4ddfdd090424465ef230",
+  "model_files_sha256": {
+    "architecture.json": "5a124a14f26ef960a5533f352b2d50f0078724aa5f5a4ddfdd090424465ef230",
+    "head.safetensors": "6845f952ffd93fa76760b433eb20e69a8f847cb97193bb8f153a55573965cd76",
+    "training.json": "d369d6da0a8ab7d60bfa268d1355608ced634499f877cab35b5277bbb5041a2c",
+    "encoder/config.json": "756f2669d13542aa3410fc8055ebc7d3428a14f5b77e5cbce63dc0c796eceb01",
+    "encoder/model.safetensors": "be2973c90f0607152b15a47cd950f7aaa188778d8c5a28821d70459abd406e78",
+    "encoder/tokenizer.json": "da1d611db795c33066ce1e643096c44d96c8ef752119b822e36d4d35a3d4da3d",
+    "encoder/tokenizer_config.json": "c4e4bb890c3b0305c67cc58c71b36e83fb4cc9ce1b555b6ddede931d06ae6959"
+  },
+  "observed_inputs_sha256": "6b019ad479984f002b8c437a3dd9766bb33231c55574e9fbf26dea7a6cb854d6",
+  "effective_no_context_inputs_sha256": "72e4fcf377437cd8759705c9c5779fc0d8df0e2cab8df5c11971407815a397bf",
+  "labels": [
+    "proposal",
+    "dispute",
+    "correction",
+    "current_affirm",
+    "current_withdraw",
+    "uncertain",
+    "reported_third_party",
+    "AFFIRM",
+    "NEGATE",
+    "INFORM",
+    "REQUEST"
+  ],
+  "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    1.01,
+    1.01,
+    0.99,
+    0.8,
+    0.5,
+    0.7,
+    0.5,
+    0.6
+  ],
+  "intervention": {
+    "name": "zero_prior_context_only",
+    "retain_current_and_tail": true,
+    "no_label_access": true
+  },
+  "limits": {
+    "shared_child_seconds": 60,
+    "cpu_threads": 2,
+    "parent_hard_wall_required": true,
+    "max_observed_rows": 512,
+    "max_messages": 20000,
+    "max_text_codepoints": 16384,
+    "max_prior_turns": 2,
+    "aggregate_observed_codepoints": 2000000
+  },
+  "status": "AVAILABLE",
+  "reason": null,
+  "rows": [
+    {
+      "call_index": 0,
+      "message_index": 6,
+      "original_input_sha256": "a7eef2353af7521174f9ac5b8545e572a0fa6550a45438e8f013f06484742933",
+      "effective_no_context_input_sha256": "8447a4f8e98e84b3b8765c55ee075f9db1378f978c78a1fe783751e75fb95b06",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": -9.252208709716797,
+          "probability": 9.589040773247054e-05,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -8.590585708618164,
+          "probability": 0.0001858126706970629,
+          "selected": false
+        },
+        "correction": {
+          "logit": -3.266181468963623,
+          "probability": 0.03674976243100004,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 9.02903938293457,
+          "probability": 0.9998801367745731,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -11.2501220703125,
+          "probability": 1.300554079979485e-05,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -13.127928733825684,
+          "probability": 1.988896247254142e-06,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -5.843163967132568,
+          "probability": 0.002891270006030003,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 6.840482234954834,
+          "probability": 0.9989315553122825,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -6.885336399078369,
+          "probability": 0.0010216272818539878,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -4.439525604248047,
+          "probability": 0.011663884045413986,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -1.2603387832641602,
+          "probability": 0.22091557808084353,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -6.257437705993652,
+          "probability": 0.0019124846436285525,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -4.764521598815918,
+          "probability": 0.008454872165317769,
+          "selected": false
+        },
+        "correction": {
+          "logit": -2.885883092880249,
+          "probability": 0.052855840459494256,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 10.980201721191406,
+          "probability": 0.9999829646294822,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -4.2558159828186035,
+          "probability": 0.013983211045854087,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -6.050329685211182,
+          "probability": 0.0023515419985235173,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -2.679560661315918,
+          "probability": 0.06419026237145517,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 3.541243553161621,
+          "probability": 0.9718387657923805,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -8.835022926330566,
+          "probability": 0.00014552415650021512,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -3.1221320629119873,
+          "probability": 0.04220350464011955,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -3.389763355255127,
+          "probability": 0.032616921346269034,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_NOT_SELECTED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "AGREED_NOT_SELECTED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_SELECTED_PROPOSAL",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_NOT_SELECTED",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": false,
+      "aux_disagreement": false,
+      "status": "AGREED"
+    },
+    {
+      "call_index": 0,
+      "message_index": 17,
+      "original_input_sha256": "a2719e1351b1ca871272fb4817a3444ab0c8100e220025813a335709b8e29366",
+      "effective_no_context_input_sha256": "adfdd257ed0c2f089d008596dea1efc97f3188d2940603e3e80fd10ebd233c77",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": -2.8427681922912598,
+          "probability": 0.05505634467243793,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -6.456202507019043,
+          "probability": 0.001568285924308627,
+          "selected": false
+        },
+        "correction": {
+          "logit": 0.4948526620864868,
+          "probability": 0.621248927391298,
+          "selected": true
+        },
+        "current_affirm": {
+          "logit": -5.814810752868652,
+          "probability": 0.0029741727162537193,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -9.070610046386719,
+          "probability": 0.00011498314148391616,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -0.3139392137527466,
+          "probability": 0.4221535138416799,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -9.84860897064209,
+          "probability": 5.2817827094927214e-05,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -8.831632614135742,
+          "probability": 0.000146018293948052,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -8.26715087890625,
+          "probability": 0.00025675001213690463,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 11.87671184539795,
+          "probability": 0.999993049651778,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -9.611145973205566,
+          "probability": 6.697353952864577e-05,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -2.8883488178253174,
+          "probability": 0.052732537097952614,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -4.896478176116943,
+          "probability": 0.007417425515867211,
+          "selected": false
+        },
+        "correction": {
+          "logit": 2.3915021419525146,
+          "probability": 0.9161769997958161,
+          "selected": true
+        },
+        "current_affirm": {
+          "logit": -5.905513286590576,
+          "probability": 0.002716980935746446,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -4.101078033447266,
+          "probability": 0.01628522025412784,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -6.200530529022217,
+          "probability": 0.002024248357238481,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -6.466420650482178,
+          "probability": 0.0015523672982909566,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -6.558774471282959,
+          "probability": 0.0014156151754616429,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -2.7314162254333496,
+          "probability": 0.061144812259564765,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 6.279208183288574,
+          "probability": 0.9981286240423489,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -7.5919365882873535,
+          "probability": 0.0005042486975082815,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_NOT_SELECTED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "AGREED_SELECTED_PROPOSAL",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_NOT_SELECTED",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_SELECTED_PROPOSAL",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": false,
+      "aux_disagreement": false,
+      "status": "AGREED"
+    },
+    {
+      "call_index": 0,
+      "message_index": 36,
+      "original_input_sha256": "8a9c2a8542b5ad8d00fb95c693b5778ca4e819585707cb11cf73198ac4089b0e",
+      "effective_no_context_input_sha256": "1369a382208bcdfe3be4866b44f9954d6dc33d760793edfae0d98795ed581fe6",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": -1.2612159252166748,
+          "probability": 0.22076464848233354,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -9.967475891113281,
+          "probability": 4.6898597321784e-05,
+          "selected": false
+        },
+        "correction": {
+          "logit": -0.26952654123306274,
+          "probability": 0.43302333216176,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": -9.219221115112305,
+          "probability": 9.910603443923117e-05,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -6.674134731292725,
+          "probability": 0.0012615715172467111,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -2.995225429534912,
+          "probability": 0.04764203901348787,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -9.514139175415039,
+          "probability": 7.379548746961091e-05,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -7.264637470245361,
+          "probability": 0.0006993654875121928,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -7.446206092834473,
+          "probability": 0.0005833112869006746,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 9.970660209655762,
+          "probability": 0.9999532504982598,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -8.515968322753906,
+          "probability": 0.00020020503374229288,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -1.3018827438354492,
+          "probability": 0.2138483247757164,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -5.652962684631348,
+          "probability": 0.0034948540634955434,
+          "selected": false
+        },
+        "correction": {
+          "logit": 0.22548127174377441,
+          "probability": 0.5561326952585289,
+          "selected": true
+        },
+        "current_affirm": {
+          "logit": -9.113065719604492,
+          "probability": 0.00011020415807982259,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -3.0550665855407715,
+          "probability": 0.04499923785181529,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -2.3561110496520996,
+          "probability": 0.08658125784228134,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -6.56459903717041,
+          "probability": 0.001407405368632689,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -8.41579532623291,
+          "probability": 0.00022129439361068305,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -2.384969711303711,
+          "probability": 0.08432603513840613,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 6.822705268859863,
+          "probability": 0.9989124126192267,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -7.654204845428467,
+          "probability": 0.000473822025813838,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_NOT_SELECTED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "UNRESOLVED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_NOT_SELECTED",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_SELECTED_PROPOSAL",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": true,
+      "aux_disagreement": false,
+      "status": "UNRESOLVED"
+    },
+    {
+      "call_index": 0,
+      "message_index": 63,
+      "original_input_sha256": "8f663f78fe13f2ed00b79e2f304f0ba1ad7d582d3e724f0bb3eb4fcc27718e7a",
+      "effective_no_context_input_sha256": "edd4caaea361f50fc6996fb7b9eeec176e39d9ae4b66505c94e2c5355b8f06c4",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": 5.439363956451416,
+          "probability": 0.995676529316675,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -7.604791641235352,
+          "probability": 0.0004978112462255393,
+          "selected": false
+        },
+        "correction": {
+          "logit": 2.8308849334716797,
+          "probability": 0.9443221482504206,
+          "selected": true
+        },
+        "current_affirm": {
+          "logit": -3.5856969356536865,
+          "probability": 0.026969812139757104,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -7.512397289276123,
+          "probability": 0.0005459717027237608,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -5.885135173797607,
+          "probability": 0.0027727607740566378,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -10.613458633422852,
+          "probability": 2.4582316473901053e-05,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -3.071321487426758,
+          "probability": 0.04430583836207711,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -2.0465502738952637,
+          "probability": 0.11440142127747524,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -2.590324878692627,
+          "probability": 0.06976369636687119,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -7.681002616882324,
+          "probability": 0.00046129905204561465,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": 3.22631573677063,
+          "probability": 0.9618126633887821,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -5.4657745361328125,
+          "probability": 0.004211254549226642,
+          "selected": false
+        },
+        "correction": {
+          "logit": -4.574380397796631,
+          "probability": 0.010207421024696996,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": -0.16701263189315796,
+          "probability": 0.45834362457699435,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -4.07349157333374,
+          "probability": 0.016733103817424842,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -1.5060365200042725,
+          "probability": 0.18152692365023038,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -7.13372802734375,
+          "probability": 0.0007971039595011494,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -5.327217102050781,
+          "probability": 0.004834087424805073,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -4.436939716339111,
+          "probability": 0.011693731416041872,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -0.7772660851478577,
+          "probability": 0.31490940619920554,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -9.558524131774902,
+          "probability": 7.059192998241532e-05,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_SELECTED_PROPOSAL",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "UNRESOLVED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_NOT_SELECTED",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_NOT_SELECTED",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": true,
+      "aux_disagreement": false,
+      "status": "UNRESOLVED"
+    },
+    {
+      "call_index": 0,
+      "message_index": 74,
+      "original_input_sha256": "c4ca351f88dc81e6bceecfd112850dd0512a75c21f384792eb2c1b68c729127d",
+      "effective_no_context_input_sha256": "81b6733acff59d93ea8faec1405b9e3ba12b0b3ade08590de8a0dd1ec82b73e9",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": 20.07756233215332,
+          "probability": 0.9999999980926717,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -6.624119758605957,
+          "probability": 0.0013261877228074638,
+          "selected": false
+        },
+        "correction": {
+          "logit": -2.265747308731079,
+          "probability": 0.09399976282209623,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 2.26955509185791,
+          "probability": 0.906324021537619,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -6.928544521331787,
+          "probability": 0.0009784670287809692,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -4.901601314544678,
+          "probability": 0.0073798019120735305,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -5.685342788696289,
+          "probability": 0.0033838796354163647,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 4.806488990783691,
+          "probability": 0.9918897960350228,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -6.192616939544678,
+          "probability": 0.0020402981660976216,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 2.2670066356658936,
+          "probability": 0.9061074314332489,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -0.7263294458389282,
+          "probability": 0.3260007215095769,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": 13.811479568481445,
+          "probability": 0.9999989959618831,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -4.46624755859375,
+          "probability": 0.011359823556676214,
+          "selected": false
+        },
+        "correction": {
+          "logit": -7.575000762939453,
+          "probability": 0.0005128568731808044,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 4.512341499328613,
+          "probability": 0.9891463567618967,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -3.043030023574829,
+          "probability": 0.04551934290561702,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -4.5608954429626465,
+          "probability": 0.010344566362775654,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -4.487246513366699,
+          "probability": 0.011126392753602388,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 3.46279239654541,
+          "probability": 0.9696103557959379,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -6.093020915985107,
+          "probability": 0.0022534859629134564,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 2.5921478271484375,
+          "probability": 0.930354514269002,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -1.258083701133728,
+          "probability": 0.22130394877787285,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_SELECTED_PROPOSAL",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "AGREED_NOT_SELECTED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_SELECTED_PROPOSAL",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_SELECTED_PROPOSAL",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": false,
+      "aux_disagreement": false,
+      "status": "AGREED"
+    },
+    {
+      "call_index": 0,
+      "message_index": 85,
+      "original_input_sha256": "c114f12134c24a22f45052e0e02773c00e980efd4c71a4d743bee20a2614938c",
+      "effective_no_context_input_sha256": "a8d4595dc1d1e915920595e13e68d1e96b6c7af9e43888bcac3ef175f8562203",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": 2.784553289413452,
+          "probability": 0.9418353828517173,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -8.624025344848633,
+          "probability": 0.00017970300104678717,
+          "selected": false
+        },
+        "correction": {
+          "logit": 0.08248758316040039,
+          "probability": 0.5206102107797768,
+          "selected": true
+        },
+        "current_affirm": {
+          "logit": 12.35764217376709,
+          "probability": 0.9999957032278097,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -5.75123929977417,
+          "probability": 0.003168765824322782,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -4.778608798980713,
+          "probability": 0.008337587784971043,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -5.2703423500061035,
+          "probability": 0.005115546586302937,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 7.555649280548096,
+          "probability": 0.999477127176157,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -10.175320625305176,
+          "probability": 3.809762081234242e-05,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -6.307848930358887,
+          "probability": 0.0018186347062816126,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -6.328125,
+          "probability": 0.0017821963223663927,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -3.860562562942505,
+          "probability": 0.020621932265221986,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -6.574339389801025,
+          "probability": 0.0013937823053132544,
+          "selected": false
+        },
+        "correction": {
+          "logit": -5.256767749786377,
+          "probability": 0.005185099030343983,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 14.047954559326172,
+          "probability": 0.9999992074064958,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -2.088870048522949,
+          "probability": 0.11018330934840086,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -3.978379964828491,
+          "probability": 0.01837208451972837,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -4.294760227203369,
+          "probability": 0.0134562999659143,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 5.014270782470703,
+          "probability": 0.9934013572334575,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -11.169819831848145,
+          "probability": 1.4092977632028356e-05,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -5.304591178894043,
+          "probability": 0.004944162928223168,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -7.176197052001953,
+          "probability": 0.0007639858195202597,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "UNRESOLVED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "UNRESOLVED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_SELECTED_PROPOSAL",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_NOT_SELECTED",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": true,
+      "aux_disagreement": false,
+      "status": "UNRESOLVED"
+    },
+    {
+      "call_index": 1,
+      "message_index": 6,
+      "original_input_sha256": "0566c0713497625193af6d8146fc75c20a9c5f1afa83fe681d4952a637797219",
+      "effective_no_context_input_sha256": "7542c35f9ecfcb9809c5438906bdf5adc1f471c5af76d496d64fb9e36168b3d5",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": -9.042030334472656,
+          "probability": 0.0001183163418088973,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -11.814971923828125,
+          "probability": 7.3929825122587816e-06,
+          "selected": false
+        },
+        "correction": {
+          "logit": -6.095182418823242,
+          "probability": 0.0022486312481335598,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 8.90799617767334,
+          "probability": 0.9998647156192694,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -10.97553825378418,
+          "probability": 1.711499858036048e-05,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -14.1967134475708,
+          "probability": 6.830388274446107e-07,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": 1.9947738647460938,
+          "probability": 0.8802472743886539,
+          "selected": true
+        },
+        "AFFIRM": {
+          "logit": 1.6275912523269653,
+          "probability": 0.835839397242931,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -8.237204551696777,
+          "probability": 0.00026455294947581393,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -4.765026092529297,
+          "probability": 0.008450643847761,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -4.822908401489258,
+          "probability": 0.007979180349778299,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -5.363245487213135,
+          "probability": 0.004663820962791825,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -6.6396284103393555,
+          "probability": 0.0013058056540103584,
+          "selected": false
+        },
+        "correction": {
+          "logit": -3.1524205207824707,
+          "probability": 0.04099600881191925,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 10.253549575805664,
+          "probability": 0.9999647690220648,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -4.59352970123291,
+          "probability": 0.010015754746479354,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -7.161613941192627,
+          "probability": 0.0007752000430461744,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -0.5216175317764282,
+          "probability": 0.37247407851422476,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 1.029003620147705,
+          "probability": 0.7367226812223482,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -9.378955841064453,
+          "probability": 8.447623372392896e-05,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -3.3532660007476807,
+          "probability": 0.03378837743388342,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -6.384531021118164,
+          "probability": 0.001684616969789462,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_NOT_SELECTED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "AGREED_NOT_SELECTED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "UNRESOLVED",
+        "AFFIRM": "AGREED_SELECTED_PROPOSAL",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_NOT_SELECTED",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": true,
+      "aux_disagreement": false,
+      "status": "UNRESOLVED"
+    },
+    {
+      "call_index": 1,
+      "message_index": 17,
+      "original_input_sha256": "81d4ea6cddf514139a13d68d01aa3613231ffd75ee22bf2d1ba95c1924301fd1",
+      "effective_no_context_input_sha256": "5ceb1f3feef7c57506d0d8af111554bd7c0c7c44393002c3302330d9eb8ffd88",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": -2.075580596923828,
+          "probability": 0.11149301192970933,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -8.527231216430664,
+          "probability": 0.00019796324035700278,
+          "selected": false
+        },
+        "correction": {
+          "logit": -0.9682846665382385,
+          "probability": 0.2752225365486769,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": -7.400367736816406,
+          "probability": 0.000610654895057236,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -9.220273971557617,
+          "probability": 9.900175524752628e-05,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": 0.00360262393951416,
+          "probability": 0.5009006550107529,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -10.335824012756348,
+          "probability": 3.244849607584652e-05,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -9.390974998474121,
+          "probability": 8.346706216493732e-05,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -9.204819679260254,
+          "probability": 0.00010054348597313592,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 11.898762702941895,
+          "probability": 0.9999932012344684,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -8.438704490661621,
+          "probability": 0.00021628343800516635,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -2.1211612224578857,
+          "probability": 0.10705701182440193,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -6.967507839202881,
+          "probability": 0.000941111068065053,
+          "selected": false
+        },
+        "correction": {
+          "logit": 0.9283645153045654,
+          "probability": 0.7167433633387617,
+          "selected": true
+        },
+        "current_affirm": {
+          "logit": -7.491069793701172,
+          "probability": 0.0005577344060593718,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -4.250741958618164,
+          "probability": 0.014053342871068079,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -5.882988452911377,
+          "probability": 0.002778702953546866,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -6.9536333084106445,
+          "probability": 0.0009542469992182142,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -7.118117332458496,
+          "probability": 0.0008096347846094748,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -3.6690845489501953,
+          "probability": 0.024865731821340126,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 6.301259994506836,
+          "probability": 0.9981693648709662,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -6.41949462890625,
+          "probability": 0.0016268286346449903,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_NOT_SELECTED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "UNRESOLVED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_NOT_SELECTED",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_SELECTED_PROPOSAL",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": true,
+      "aux_disagreement": false,
+      "status": "UNRESOLVED"
+    },
+    {
+      "call_index": 1,
+      "message_index": 36,
+      "original_input_sha256": "2ec13e36cb851e270df92d8c6ae856d21467c5b0a3d4f0dc4d7bd14c6c5af847",
+      "effective_no_context_input_sha256": "87f9b6388056be8f108e7695a3fcb00601d3db5a7a75fc89963850f55502a377",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": -2.8391740322113037,
+          "probability": 0.055243630672579896,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -10.427506446838379,
+          "probability": 2.960592483849921e-05,
+          "selected": false
+        },
+        "correction": {
+          "logit": -1.1679983139038086,
+          "probability": 0.2372169890035795,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": -11.156488418579102,
+          "probability": 1.4282112171898224e-05,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -7.525893688201904,
+          "probability": 0.0005386564955113146,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -4.59824800491333,
+          "probability": 0.009969078688962105,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -11.436097145080566,
+          "probability": 1.0798450097870874e-05,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -7.032020092010498,
+          "probability": 0.0008823666828083643,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -6.8449530601501465,
+          "probability": 0.0010636835902707062,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 6.954665184020996,
+          "probability": 0.9990467362189752,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -6.830278396606445,
+          "probability": 0.001079390908578937,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -2.879840850830078,
+          "probability": 0.05315914632361959,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -6.112993240356445,
+          "probability": 0.0022090235197378067,
+          "selected": false
+        },
+        "correction": {
+          "logit": -0.6729905009269714,
+          "probability": 0.33782754136363863,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": -11.050331115722656,
+          "probability": 1.5881637386396574e-05,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -3.9068262577056885,
+          "probability": 0.019707991964593136,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -3.9591331481933594,
+          "probability": 0.018722429026406376,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -8.486557006835938,
+          "probability": 0.0002061795415923884,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -8.183178901672363,
+          "probability": 0.00027923462623713745,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -1.7837165594100952,
+          "probability": 0.14384482070584148,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 3.8067100048065186,
+          "probability": 0.9782618800227035,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -5.968514919281006,
+          "probability": 0.002551510631858724,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_NOT_SELECTED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "AGREED_NOT_SELECTED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_NOT_SELECTED",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_SELECTED_PROPOSAL",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": false,
+      "aux_disagreement": false,
+      "status": "AGREED"
+    },
+    {
+      "call_index": 1,
+      "message_index": 63,
+      "original_input_sha256": "d8cd1e335a54369488f6a4cfe76da2aeec776b7901e90a27a70b2e975d08f9e4",
+      "effective_no_context_input_sha256": "a0b899a02c2ccb7d170bf51b8ed8a4514d47f877b34da156ed228369a18d1484",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": 8.4202880859375,
+          "probability": 0.9997796973803248,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -6.396943092346191,
+          "probability": 0.0016638711902125392,
+          "selected": false
+        },
+        "correction": {
+          "logit": -0.2372814416885376,
+          "probability": 0.4409564050537986,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": -19.43750762939453,
+          "probability": 3.6174096519349307e-09,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -4.380009174346924,
+          "probability": 0.012370302654111707,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -8.605207443237305,
+          "probability": 0.00018311602749043458,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -12.98681354522705,
+          "probability": 2.2903272754703628e-06,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -3.695584297180176,
+          "probability": 0.02423120749377963,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": 5.312515735626221,
+          "probability": 0.9950946711046638,
+          "selected": true
+        },
+        "INFORM": {
+          "logit": 0.8441715240478516,
+          "probability": 0.6993430591401966,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -2.618591070175171,
+          "probability": 0.06795147253671936,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": 6.724508285522461,
+          "probability": 0.998800329898983,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -3.978909492492676,
+          "probability": 0.018362537161183357,
+          "selected": false
+        },
+        "correction": {
+          "logit": -6.937710762023926,
+          "probability": 0.0009695478005741102,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": -16.17987823486328,
+          "probability": 9.400871662973607e-08,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -2.659912347793579,
+          "probability": 0.0653806893020614,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -3.971147060394287,
+          "probability": 0.01850298212398075,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -10.406081199645996,
+          "probability": 3.024706366371223e-05,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -5.645615100860596,
+          "probability": 0.003520536630435911,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": 2.325169563293457,
+          "probability": 0.9109402295755461,
+          "selected": true
+        },
+        "INFORM": {
+          "logit": 2.6720974445343018,
+          "probability": 0.9353599623217436,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -4.324440956115723,
+          "probability": 0.013067918638892681,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_SELECTED_PROPOSAL",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "AGREED_NOT_SELECTED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_NOT_SELECTED",
+        "NEGATE": "AGREED_SELECTED_PROPOSAL",
+        "INFORM": "AGREED_SELECTED_PROPOSAL",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": false,
+      "aux_disagreement": false,
+      "status": "AGREED"
+    },
+    {
+      "call_index": 1,
+      "message_index": 74,
+      "original_input_sha256": "9392d99d014e9af403a1b3e5ba869782bd5d04bfb59f4adf07b2bd9932e67e12",
+      "effective_no_context_input_sha256": "07e3854ea48ad9a506d89d8cbc0aa5dcf2d9ee87c6ccf8cb9f302a5a333240b2",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": 4.468428611755371,
+          "probability": 0.9886646452797455,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -6.379294395446777,
+          "probability": 0.0016934468383458807,
+          "selected": false
+        },
+        "correction": {
+          "logit": -1.216750979423523,
+          "probability": 0.2285087231956437,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": -7.353791236877441,
+          "probability": 0.0006397512091987656,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -7.214256763458252,
+          "probability": 0.0007354761023508341,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": 3.096496105194092,
+          "probability": 0.9567479812287923,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -5.883179187774658,
+          "probability": 0.0027781744808396598,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -11.392346382141113,
+          "probability": 1.1281372276485425e-05,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -8.537622451782227,
+          "probability": 0.00019591720955762287,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 15.332365989685059,
+          "probability": 0.9999997805993244,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -10.016633987426758,
+          "probability": 4.4649000441361946e-05,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": 0.8212704658508301,
+          "probability": 0.6945059581752544,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -4.276968002319336,
+          "probability": 0.013694551997144372,
+          "selected": false
+        },
+        "correction": {
+          "logit": 1.974257469177246,
+          "probability": 0.8780676726052908,
+          "selected": true
+        },
+        "current_affirm": {
+          "logit": -6.861496448516846,
+          "probability": 0.001046249675941433,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -2.7782516479492188,
+          "probability": 0.0585107931935402,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -3.622382640838623,
+          "probability": 0.026023615560275996,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -4.964548587799072,
+          "probability": 0.006932703446846075,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": -8.170958518981934,
+          "probability": 0.00028266694508093,
+          "selected": false
+        },
+        "NEGATE": {
+          "logit": -3.0620899200439453,
+          "probability": 0.04469837759515014,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": 10.043437004089355,
+          "probability": 0.9999565317805075,
+          "selected": true
+        },
+        "REQUEST": {
+          "logit": -7.769508361816406,
+          "probability": 0.00042224252994021533,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "AGREED_SELECTED_PROPOSAL",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "UNRESOLVED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_NOT_SELECTED",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_SELECTED_PROPOSAL",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": true,
+      "aux_disagreement": false,
+      "status": "UNRESOLVED"
+    },
+    {
+      "call_index": 1,
+      "message_index": 85,
+      "original_input_sha256": "a0d8b54c8daa992bc1b1b504bac39862b62bf8825fd67a0f662f0f33b0da97d1",
+      "effective_no_context_input_sha256": "6045f145ba8036d0a5dcb230eabe6c58b53b00368b122f0b591782629c11a779",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": 2.6437911987304688,
+          "probability": 0.9336272816515462,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -10.348737716674805,
+          "probability": 3.203217314849807e-05,
+          "selected": false
+        },
+        "correction": {
+          "logit": -0.39227187633514404,
+          "probability": 0.40317051256772746,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 8.90388011932373,
+          "probability": 0.999864157709099,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -5.679553508758545,
+          "probability": 0.0034034598102224882,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -4.787198066711426,
+          "probability": 0.008266870174042847,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -5.173489570617676,
+          "probability": 0.0056328578599115775,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 3.3872528076171875,
+          "probability": 0.9673037701811177,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -11.622733116149902,
+          "probability": 8.959984363048782e-06,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -6.070894241333008,
+          "probability": 0.0023037876946136486,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -7.182683944702148,
+          "probability": 0.0007590497145553172,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -3.032649040222168,
+          "probability": 0.04597250285845063,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -8.13595199584961,
+          "probability": 0.00029273442095066886,
+          "selected": false
+        },
+        "correction": {
+          "logit": -6.1504225730896,
+          "probability": 0.002128042187436098,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 11.329381942749023,
+          "probability": 0.9999879854718027,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -3.117022752761841,
+          "probability": 0.042410518820358574,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -3.2485978603363037,
+          "probability": 0.03737730395571031,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -4.338775634765625,
+          "probability": 0.012884326782421898,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 2.2010512351989746,
+          "probability": 0.9003438724351657,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -11.9137544631958,
+          "probability": 6.697600963620867e-06,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -5.422947883605957,
+          "probability": 0.004394716367803316,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -7.799389839172363,
+          "probability": 0.000409817040636793,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "UNRESOLVED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "AGREED_NOT_SELECTED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_SELECTED_PROPOSAL",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_NOT_SELECTED",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": true,
+      "aux_disagreement": false,
+      "status": "UNRESOLVED"
+    },
+    {
+      "call_index": 1,
+      "message_index": 96,
+      "original_input_sha256": "ab5a71114c5798790492e4d29118ca96d7b4082870d23b4fdd3d48ba5c46cef4",
+      "effective_no_context_input_sha256": "a8d4595dc1d1e915920595e13e68d1e96b6c7af9e43888bcac3ef175f8562203",
+      "prior_present": true,
+      "full_heads": {
+        "proposal": {
+          "logit": 2.220205068588257,
+          "probability": 0.90204931630778,
+          "selected": true
+        },
+        "dispute": {
+          "logit": -9.100037574768066,
+          "probability": 0.0001116491458284016,
+          "selected": false
+        },
+        "correction": {
+          "logit": -1.0614514350891113,
+          "probability": 0.2570321812841688,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 12.232526779174805,
+          "probability": 0.999995130560153,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -5.731356143951416,
+          "probability": 0.0032321957481163763,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -4.856899261474609,
+          "probability": 0.007714576029096655,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -5.1680707931518555,
+          "probability": 0.005663290580986546,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 7.52621603012085,
+          "probability": 0.9994615170145931,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -9.748589515686035,
+          "probability": 5.8373537785716646e-05,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -5.979382514953613,
+          "probability": 0.002524001582812997,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -6.367508888244629,
+          "probability": 0.001713488639643287,
+          "selected": false
+        }
+      },
+      "no_context_heads": {
+        "proposal": {
+          "logit": -3.860562562942505,
+          "probability": 0.020621932265221986,
+          "selected": false
+        },
+        "dispute": {
+          "logit": -6.574339389801025,
+          "probability": 0.0013937823053132544,
+          "selected": false
+        },
+        "correction": {
+          "logit": -5.256767749786377,
+          "probability": 0.005185099030343983,
+          "selected": false
+        },
+        "current_affirm": {
+          "logit": 14.047954559326172,
+          "probability": 0.9999992074064958,
+          "selected": false
+        },
+        "current_withdraw": {
+          "logit": -2.088870048522949,
+          "probability": 0.11018330934840086,
+          "selected": false
+        },
+        "uncertain": {
+          "logit": -3.978379964828491,
+          "probability": 0.01837208451972837,
+          "selected": false
+        },
+        "reported_third_party": {
+          "logit": -4.294760227203369,
+          "probability": 0.0134562999659143,
+          "selected": false
+        },
+        "AFFIRM": {
+          "logit": 5.014270782470703,
+          "probability": 0.9934013572334575,
+          "selected": true
+        },
+        "NEGATE": {
+          "logit": -11.169817924499512,
+          "probability": 1.4093004511896787e-05,
+          "selected": false
+        },
+        "INFORM": {
+          "logit": -5.304592132568359,
+          "probability": 0.00494415823641651,
+          "selected": false
+        },
+        "REQUEST": {
+          "logit": -7.176196098327637,
+          "probability": 0.0007639865475576254,
+          "selected": false
+        }
+      },
+      "audit_heads": {
+        "proposal": "UNRESOLVED",
+        "dispute": "AGREED_NOT_SELECTED",
+        "correction": "AGREED_NOT_SELECTED",
+        "current_affirm": "DISABLED",
+        "current_withdraw": "DISABLED",
+        "uncertain": "AGREED_NOT_SELECTED",
+        "reported_third_party": "AGREED_NOT_SELECTED",
+        "AFFIRM": "AGREED_SELECTED_PROPOSAL",
+        "NEGATE": "AGREED_NOT_SELECTED",
+        "INFORM": "AGREED_NOT_SELECTED",
+        "REQUEST": "AGREED_NOT_SELECTED"
+      },
+      "domain_disagreement": true,
+      "aux_disagreement": false,
+      "status": "UNRESOLVED"
+    }
+  ],
+  "skipped": [],
+  "bank_authority": false,
+  "financial_authorization": "UNKNOWN",
+  "notice": "Read finetuned-context-evidence.json only alongside verified FULL finetuned-evidence.json and original observed call/message rows. Enabled-head context selection flips are UNRESOLVED; inspect the source utterance and prior for scope or clarification hypotheses. Do not choose either arm, average scores, or infer a voice outcome. AGREED_NOT_SELECTED is not semantic absence or denial. DISABLED heads provide no negative evidence. NOT_APPLICABLE is untested because no prior exists. UNAVAILABLE supplies no agreement. Agreement may still be wrong. Bank authority is false and financial authorization remains UNKNOWN."
+}
