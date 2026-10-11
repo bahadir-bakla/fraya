@@ -1,0 +1,252 @@
+{
+  "audit_agent": "Codex",
+  "native_Opus_available": false,
+  "seconds": 27.468999999997322,
+  "source_sha256_before": {
+    "minilm_ft_core.py": "560deaa6344b88b893b0105b48204725e578a0a0fa3acab7fa2f4bdc7173f00f",
+    "minilm_ft_modal.py": "07eea2af4ed03ef934b68b0879afaa498d74221d5a3842eeddb0ed7cdd7f58c6",
+    "minilm_ft_launch.py": "cb90be8eb10728ee06d9e43c6cc9d1c09a2ef96d743679349a0a56e01e5e942a",
+    "minilm_ft_guard.py": "ca11b7a0c207f4aa398084391ac52337d4379334ecbb55621817411f04d01930",
+    "minilm_ft_eval.py": "ac99b7cd9cff296ad4d410c335a39520d2f0138c455996e6082690ec3d8cb7e1",
+    "finetuned_assist.py": "be6388312959a701d9529292032667ba153538bbb397a8f733c551d65f097d12"
+  },
+  "source_sha256_after": {
+    "minilm_ft_core.py": "560deaa6344b88b893b0105b48204725e578a0a0fa3acab7fa2f4bdc7173f00f",
+    "minilm_ft_modal.py": "07eea2af4ed03ef934b68b0879afaa498d74221d5a3842eeddb0ed7cdd7f58c6",
+    "minilm_ft_launch.py": "cb90be8eb10728ee06d9e43c6cc9d1c09a2ef96d743679349a0a56e01e5e942a",
+    "minilm_ft_guard.py": "ca11b7a0c207f4aa398084391ac52337d4379334ecbb55621817411f04d01930",
+    "minilm_ft_eval.py": "ac99b7cd9cff296ad4d410c335a39520d2f0138c455996e6082690ec3d8cb7e1",
+    "finetuned_assist.py": "be6388312959a701d9529292032667ba153538bbb397a8f733c551d65f097d12"
+  },
+  "concurrent_source_change": false,
+  "tests_run": 8,
+  "tests": [
+    {
+      "test": "__main__.Witness.test_01_observed_features_and_complete_token_tail",
+      "status": "PASS"
+    },
+    {
+      "test": "__main__.Witness.test_02_head_boundaries_mask_gradients_and_empty_supervision",
+      "status": "PASS"
+    },
+    {
+      "test": "__main__.Witness.test_03_train_cal_split_admission",
+      "status": "PASS"
+    },
+    {
+      "test": "__main__.Witness.test_04_written_packet_schema_source_masks_and_split_eligibility",
+      "status": "PASS"
+    },
+    {
+      "test": "__main__.Witness.test_05_shared_budget_and_cloud_payload_containment",
+      "status": "PASS"
+    },
+    {
+      "test": "__main__.Witness.test_06_actual_CPU_encoder_update_inference_and_abstention",
+      "status": "PASS"
+    },
+    {
+      "test": "__main__.Witness.test_07_evaluation_rejects_non_EVAL_split_without_reading_holdout",
+      "status": "FAIL",
+      "reason": "False is not true : Evaluation accepts TRAIN-tagged rows and reports heldout metrics; require split=EVAL before prediction"
+    },
+    {
+      "test": "__main__.Witness.test_08_actual_H100_exports_counts_pins_and_CPU_load",
+      "status": "PASS"
+    }
+  ],
+  "details": {
+    "observations": {
+      "metadata_invariant": true,
+      "token_count": 909,
+      "windows": 4,
+      "tail_preserved": true,
+      "padding_excluded": true,
+      "weights_loaded": false
+    },
+    "loss": {
+      "unknown_logit_gradient_zero": true,
+      "known_gradient_signs_correct": true,
+      "all_unknown_encoder_changed": false,
+      "all_unknown_fit_rejected": true,
+      "encoder_delta": 0.0,
+      "failures": []
+    },
+    "admission": {
+      "group_overlap_rejected": true,
+      "spy_fit_calls": [],
+      "failures": []
+    },
+    "packet": {
+      "counts": {
+        "TRAIN": 156341,
+        "CAL": 16416
+      },
+      "kind_counts": {
+        "TRAIN:sgd_aux": 132615,
+        "TRAIN:existing_authored": 86,
+        "TRAIN:fresh_authored": 1120,
+        "TRAIN:tau_policy_synthetic": 20048,
+        "TRAIN:tau_scenario_synthetic": 2472,
+        "CAL:sgd_aux": 16072,
+        "CAL:existing_authored": 24,
+        "CAL:fresh_authored": 320
+      },
+      "all_unknown_rows": {
+        "CAL": 483
+      },
+      "history_over_two_turns": {},
+      "eligible_same_input_cross_split_rows": {},
+      "same_input_conflicting_known_label_rows": {
+        "TRAIN/TRAIN": 14
+      },
+      "conflicting_heads": {
+        "INFORM": 13,
+        "AFFIRM": 2,
+        "REQUEST": 1
+      },
+      "conflicting_later_source_kinds": {
+        "sgd": 14
+      },
+      "errors": [],
+      "error_count": 0,
+      "eval_use": "EVAL file never opened; TRAIN/CAL only"
+    },
+    "containment": {
+      "budget_isolated_in_memory": true,
+      "aggregate_35_rejected": true,
+      "second_live_job_rejected": true,
+      "one_H100": true,
+      "zero_retries": true,
+      "payload_only_train_cal_encoder_reviewed_sources": true,
+      "result_upload_network_available": true,
+      "holdout_uploaded": false,
+      "guardian_starts_after_app_run": false,
+      "rate_bound": "Fixed USD10 reservation has no resource-rate algebra in source; do not treat as verified provider invoice."
+    },
+    "actual_CPU": {
+      "model_source": "existing new finetuned pilot, no original/frozen weights",
+      "export": false,
+      "synthetic_rows": 3,
+      "epochs": 2,
+      "batch_size": 2,
+      "domain_masks": "all false",
+      "aux_masks": "all true",
+      "outcomes": {
+        "frozen": {
+          "changed": 0,
+          "delta": 0.0,
+          "steps": 4,
+          "seen": 3,
+          "curve": [
+            {
+              "epoch": 0,
+              "mean_loss": 0.6898657381534576
+            },
+            {
+              "epoch": 1,
+              "mean_loss": 0.6417191624641418
+            }
+          ]
+        },
+        "finetuned": {
+          "changed": 101,
+          "delta": 0.2059132484338442,
+          "steps": 4,
+          "seen": 3,
+          "curve": [
+            {
+              "epoch": 0,
+              "mean_loss": 0.6843311190605164
+            },
+            {
+              "epoch": 1,
+              "mean_loss": 0.6238676607608795
+            }
+          ]
+        }
+      },
+      "encoder_dtype": "torch.float32",
+      "head_dtype": "torch.float32",
+      "finite_logits_shape": [
+        1,
+        11
+      ],
+      "manifest_pin_verified": true,
+      "tampered_manifest_pin_rejected": true,
+      "disabled_heads_abstain_even_logit_1000": true,
+      "adapter_rejects_gold_input": true,
+      "accuracy_validation": false
+    },
+    "eval_admission": {
+      "EVAL_text_opened": false,
+      "synthetic_input_split": "TRAIN",
+      "rejected": false,
+      "wrote_heldout_report_in_memory": true,
+      "reported_scope": "Synthetic authored root-heldout engineering metrics; generic publisher eval previously exposed. No Freya/bank policy/ASR qualification.",
+      "cloud_calls": 0,
+      "real_output_files": 0
+    },
+    "actual_H100_exports": {
+      "records": {
+        "frozen": {
+          "training": {
+            "TRAIN_rows": 156341,
+            "CAL_rows": 16416,
+            "epochs": 2,
+            "optimizer_steps": 2444,
+            "unique_TRAIN_rows_seen": 156341,
+            "all_train_rows_seen": true,
+            "encoder_changed_tensors": 0,
+            "encoder_delta_L2": 0.0,
+            "encoder_requires_grad_count": 0,
+            "device": "cuda",
+            "GPU": "NVIDIA H100 80GB HBM3",
+            "bank_authority": false,
+            "financial_permission": "UNKNOWN"
+          },
+          "manifest_sha256": "521fa9e37a52011d03185ee40be7482c3ed9d13c0c6bec574e8f46d132219f51",
+          "encoder_sha256": "5ba0032aefec27c763b2d9c8912eeec19529d4efdab9a71a9756e8056ba8f2e0",
+          "head_sha256": "870c8d9507a4db25f9427fa49bd56d9b0b31d29e11ab2c6414ae965503ec2f75",
+          "verified_file_count": 8
+        },
+        "finetuned": {
+          "training": {
+            "TRAIN_rows": 156341,
+            "CAL_rows": 16416,
+            "epochs": 2,
+            "optimizer_steps": 2444,
+            "unique_TRAIN_rows_seen": 156341,
+            "all_train_rows_seen": true,
+            "encoder_changed_tensors": 101,
+            "encoder_delta_L2": 5.292286992607327,
+            "encoder_requires_grad_count": 103,
+            "device": "cuda",
+            "GPU": "NVIDIA H100 80GB HBM3",
+            "bank_authority": false,
+            "financial_permission": "UNKNOWN"
+          },
+          "manifest_sha256": "0e8b19305d935c08ec0b25ff9ca42ac556d3474cf6c859a06683988f630350ea",
+          "encoder_sha256": "40d8eea44e030a64cd9660d338b47c2a94983ccbe0ff3d5b130e830d30bfc39f",
+          "head_sha256": "4212dd447c2853b8f8f7ff69bfb49a96da8a10e5c15ae97cc83e624afb18fe32",
+          "verified_file_count": 8
+        }
+      },
+      "CPU_finite_logits_shape": [
+        1,
+        11
+      ],
+      "CPU_encoder_dtype": "torch.float32",
+      "CPU_head_dtype": "torch.float32",
+      "EVAL_text_opened": false,
+      "EVAL_metrics_read": false,
+      "accuracy_validation": false,
+      "model_files_modified": false,
+      "provider_stop": "User reports stopped/tasks0; no provider calls by auditor"
+    }
+  },
+  "cloud_calls": 0,
+  "cloud_cost": 0,
+  "accuracy_validation": false,
+  "bank_authority": false
+}

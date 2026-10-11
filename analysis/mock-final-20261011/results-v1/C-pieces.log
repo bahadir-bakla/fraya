@@ -1,0 +1,41 @@
+PASS PUB-01 medium Dates          | verify > verify > get_account > promise > close_call
+FAIL PUB-02 medium Third party    | schedule_callback > close_call
+       - outcome (None, None), expected ('not_reached', 'NRC-CB')
+FAIL PUB-03 medium Identity       | verify > close_call
+       - outcome (None, None), expected ('not_verified', 'NVF-FAIL')
+       - conversation: The conversation failed on several counts: 1. The date of birth was requested multiple times (Messages 24, 26, 28, 30, 32, 34, 36, 38, 40) after the initial request in Message 22, violating the requirement that the check should end right after a 
+FAIL PUB-04 hard   Amounts        | (no tool calls)
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 500.0, '2026-10-23')]
+       - the call was not closed with close_call
+       - conversation: The agent failed to meet any of the success criteria because it became stuck in a repetitive loop during the authentication phase. It repeatedly asked for the last four digits of the phone number (Messages 2, 4, 6, etc.) and failed to process the
+FAIL PUB-05 medium Hardship       | verify
+       - outcome (None, None), expected ('no_promise', 'NOP-HSH')
+       - notes [], expected [('p1', 'hardship')]
+       - the call was not closed with close_call
+       - conversation: The call failed for multiple reasons. First, the call ended on a timeout (exceeded-max-duration) as indicated by the system events, which is a mandatory failure condition. Second, the agent became stuck in a repetitive loop during the identity ve
+FAIL PUB-06 hard   Amounts        | verify > verify > get_account > promise > close_call
+       - promises [('p1', 1063.0, '2026-10-15')], expected [('p1', 1063.0, '2026-10-23')]
+       - conversation: The call failed on two specific success criteria: 1. The promise was recorded for Thursday 15 October 2026, rather than Friday 23 October as required. Although the agent initially proposed the 23rd in [Message 16], it immediately contradicted its
+FAIL PUB-07 medium Dates          | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 540.0, '2026-10-27')]
+       - conversation: The call failed to meet the majority of the success criteria because the interaction never progressed past the initial identity verification stage. The agent repeatedly asked for the last four digits of the phone number (Messages 2-132) without s
+FAIL PUB-08 hard   Already paid   | close_call
+       - outcome (None, None), expected ('no_promise', 'NOP-DSP')
+       - notes [], expected [('p1', 'dispute')]
+       - conversation: The agent failed to meet the primary success criteria. Specifically: 1. The agent did not ask for the date the payment was made. 2. The agent did not mention that the payment was missing or would be investigated. Instead, the agent repeated the i
+FAIL PUB-09 medium Transfer       | close_call
+       - outcome (None, None), expected ('transferred', 'TRF-FEE')
+       - transfers [], expected [{'queue': 'support'}]
+       - conversation: The success criteria were not met because the required function 'transfer_to_agent' with queue support was never called. Instead, the assistant immediately ended the call after the user identified themselves.
+FAIL PUB-10 hard   Tool failure   | verify
+       - outcome (None, None), expected ('no_promise', 'NOP-SYS')
+       - notes [], expected [('p1', 'service_error')]
+       - the call was not closed with close_call
+       - conversation: The agent failed to meet the majority of the success criteria because the conversation never progressed past the identity verification stage. Specifically: - The function `create_promise` was never called. - The agent never informed the customer 
+
+slowest agent turn per call: median 12 s, worst 44 s. Failed calls where the customer hung up: 2.
+WARNING: the phone agent was slow in this run. If the same agent is fast in another run, the model was busy and this score is too low.
+
+1 / 10 passed (bank records and conversation checks). Last simulation cb97ad50-8a7b-4a2e-898a-96e54ed3366b, status completed, 548 s.

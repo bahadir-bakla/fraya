@@ -20,7 +20,7 @@ python3 competition/builder.py \
   --slot competition-main
 ```
 
-Çalıştırma, en fazla 30 dakika ve varsayılan en fazla üç üretim/onarım turudur. `--rounds` en fazla altı tur seçebilir; turlar artırılsa da özgün 30 dakikalık bütçe sıfırlanmaz. Süre sınırına test süresi de dahildir. İlk model adımında workflow, kaynaklı politika ve kural kapsamı oluşturulur. Host kodu yapısal doğrulama, gerçek dry-run, `freya.save_workflow` + yayın, resmi `tools/run_cases.py`, hata çağrılarının okunması ve export işlemlerini yürütür. Model alt süreci bankaya erişim anahtarlarını devralmaz. Slot kilidi aynı workflow’un iki süreç tarafından değiştirilmesini engeller. Farklı slot’larda belgeler üretilebilir; Freya’nın workspace kuralı testleri sıraya alır ve aynı anda tek simülasyon çalışır.
+Çalıştırma, en fazla 30 dakika ve varsayılan en fazla üç üretim/onarım turudur; `--skip-tests` ile test koşulmadığında varsayılan altı turdur, böylece kısa turlar 30 dakikalık bütçeyi boşa bırakmaz. `--rounds` en fazla altı tur seçebilir; turlar artırılsa da özgün 30 dakikalık bütçe sıfırlanmaz. Süre sınırına test süresi de dahildir. İlk model adımında workflow, kaynaklı politika ve kural kapsamı oluşturulur. Host kodu yapısal doğrulama, gerçek dry-run, `freya.save_workflow` + yayın, resmi `tools/run_cases.py`, hata çağrılarının okunması ve export işlemlerini yürütür. Model alt süreci bankaya erişim anahtarlarını devralmaz. Slot kilidi aynı workflow’un iki süreç tarafından değiştirilmesini engeller. Farklı slot’larda belgeler üretilebilir; Freya’nın workspace kuralı testleri sıraya alır ve aynı anda tek simülasyon çalışır.
 
 Model alt adımı süreye takılırsa host, toplam bütçe kaldığı sürece aynı çalışma içindeki üretilmiş dosyaları otomatik olarak sonraki onarım adımına taşır. Süre/harness hatasıyla tamamen durmuş bir çalışma da `--resume-run <id>` ile aynı kanıtlar, model ve slot korunarak sürdürülebilir. Süre hem monotonic sayaç hem UTC saatle sınırlanır; bilgisayar uyursa/saat ilerlerse uykuda geçen süre de bütçeye dahil edilir. macOS’ta yalnızca builder süresi boyunca geçici `caffeinate` koruması kullanılır; kalıcı güç ayarı değiştirilmez. Geçen süre sıfırlanmaz; özgün çalışma bütçesi artırılamaz. Devam ettirme ve değişen harness kaynaklarının SHA-256’ları izde tutulur. Üretilen ajanı elle düzenlemek bu mekanizmanın parçası değildir.
 
@@ -111,7 +111,7 @@ bankacılık izni değildir; finansal yetki daima UNKNOWN kalır. İlk üretimde
 ve ses ajanında finansal karar vermek için kullanılmaz. Kaynak konuşma eylemi
 başlıklarının iyi sonucu bu yeni görev başlığına aktarılmış başarı sayılmaz.
 
-Bu oturumdaki veri ve eğitim durumu:
+Önceki sabit encoder / CPU deneylerinin durumu:
 
 | Görev | Gerçekte eğitilen veri | Ölçülen sonuç ve sınırı |
 | --- | --- | --- |
@@ -127,13 +127,81 @@ talimatı ve konuşma etiketi aynı hedef gibi birleştirilmez. TRAIN öğrenme,
 CAL eşik seçme, heldout/EVAL ayrı ölçüm içindir. Bu sonuçlar tek birleşik
 modelin veya Freya ajanının geçme oranı değildir.
 
-MiniLM encoder'ı bu deneylerde sabittir; görev başlıkları eğitilmiştir.
-CPU eğitimleri tamamlanmıştır ve bu oturumda GPU harcaması 0 USD'dir.
-Son yerel MiniLM ve klasik builder üretim denemeleri model süre sınırında
+MiniLM encoder'ı yukarıdaki eski deneylerde sabitti; görev başlıkları eğitilmişti.
+Bu CPU deneylerinde GPU kullanılmadı. Önceki yerel MiniLM ve klasik builder üretim denemeleri model süre sınırında
 başarısız kalmıştır. Kod/bağlantı kontrolleri geçmiş olsa da tamamlanmış
 üretim karşılaştırması ve yeni platform başarısı henüz gösterilmemiştir.
 Kaynak, model, veri ve başarısız koşuların özeti
 `analysis/minilm-builder-integration.json` içindedir.
+
+## Büyük setle gerçek MiniLM fine-tuning
+
+Yeni sürüm `integrations/learned-dialogue/minilm_ft_v1/` altında hazırdır.
+H100 80 GB üzerinde MiniLM'in altı transformer katmanı ve embedding'leri
+gerçekten güncellendi: 156.341 TRAIN örneği, iki epoch, 2.444 optimizer adımı,
+101 değişen encoder tensörü. Aynı veriyle encoder'ı sabit kalan bir karşılaştırma
+kolu da eğitildi. Önceki B77 retrieval encoder'ı ve klasik A10/B14 yedekleri korunur.
+
+| Yeni veri | Satır ve anlamı |
+| --- | --- |
+| TRAIN | 132.615 SGD kaynak eylemi + 23.726 ödeme/itiraz/düzeltme/izin örneği = 156.341 |
+| CAL | 16.416; yalnız eşik seçimi |
+| EVAL | 16.703; ölçüm için ayrı tutuldu, H100'e gönderilmedi |
+| Yeni domain EVAL | 384 örnek / 24 aile; eski 134 satırlık deneyden ayrı |
+
+Domain TRAIN içinde 1.120 yeni yazılmış örnek, 86 eski örnek ve τ TRAIN
+politika/senaryolarından türetilmiş 22.520 sentetik örnek vardır. τ verileri
+gözlenmiş banka konuşması değildir; iki ortak üretim kökü olarak sayılır.
+SGD'nin AFFIRM/NEGATE/INFORM/REQUEST etiketleri ayrı dört yardımcı başlıkta
+öğrenilir ve ödeme iznine çevrilmez. Bilinmeyen etiketler maskelenir.
+
+Yeni 384 örnekte yedi domain başlığının ham macro F1'i sabit encoder ile
+%60,88, fine-tuned encoder ile %83,12; bütün bilinen başlıkları aynı anda doğru
+olan satır oranı %35,16'dan %64,06'ya çıktı. CAL eşikleriyle fine-tuned macro F1
+%80,21'dir. Düzeltme, izin geri çekme ve üçüncü kişi aktarımı hâlâ hata üretir.
+Bunlar sentetik aile ayrımıyla ölçülen model sonuçlarıdır; Freya geçme oranı,
+insan etiketli banka politikası doğruluğu veya gerçek ses/aksan doğrulaması değildir.
+Tam fit/eval, altı katmanın ağırlık değişimi ve sınıf bazlı hata sayıları
+`analysis/minilm-ft-results.json` içindedir.
+
+Sonradan bağımsız bir yazara ürettirilen 32 daha zor örnekte ham macro F1
+%58,61; bütün bilinen başlıkların aynı anda doğruluğu 12/32'dir. Bu paket altı
+Türkçe OOD örneği, birleşik niyetler ve iki uzun son-düzeltme konuşması içerir.
+Model/eşikler bu teste göre değiştirilmedi. `analysis/minilm-ft-adversarial-results.json`
+gerçek yanlış başlıkları saklar; model önerisi her zaman ham sözle karşılaştırılır.
+
+Yeni model builder'ın onarım turunda gerçek `failed-calls.json` kullanıcı
+sözlerini ve önceki asistan sorusunu yerelde işler. `finetuned-evidence.json`
+önerileri model/çalıştırma hash'leriyle üretim prompt'una verilir. İlk üretimde
+hata konuşması yoksa bu yardımcı aşama atlanır. Model 46 MB safetensors encoder
+ve küçük başlıklardan oluşur; ses ajanının içine gömülmez ve yeni bir dış inference
+aracı oluşturmaz. Kimlik, güncel açık izin, ürün/tutar/tarih kapsamı, politika ve
+başarılı banka makbuzu kontrolleri işlem yetkisini belirler.
+
+```sh
+# ML Python: torch, transformers, numpy, safetensors kurulu olmalıdır.
+# Yerelde bulunan önceki public çalışma, onarım kanıtı olarak kullanılır:
+python3 competition/builder.py 'build-the-builder 2/briefs/brief-a.md' \
+  --slot minilm-repair --practice-repair <stopped-or-untested-public-run-id> \
+  --semantic-python /path/to/ml-python --finetuned-assist required --local-only
+
+# Klasik üretimde bütün MiniLM yardımcılarını kapat:
+python3 competition/builder.py 'build-the-builder 2/briefs/brief-a.md' \
+  --slot classic-repair --semantic-assist off --local-only
+```
+
+`--finetuned-assist auto|off|required` ayrı kontrol edilir; `--semantic-assist off`
+üç yardımcıyı da kapatır. Hatalı hash, NaN, yabancı model dosyası veya tutarsız
+seçim çıktısı kabul edilmez. Gerçek CPU inference ve builder alt süreç bağlantısı
+`analysis/minilm-ft-builder-smoke.json` ile raporlanır. Paketleyici yeni release,
+model ve runtime hash'lerini doğrulayıp isteğe bağlı modeli pakete ekler.
+Freya workspace kuyruğu arkadaşın tarafından kullanıldığı için bu yeni sürümle
+platform koşusu yapılmadı; hosted karşılaştırma ayrıca gereklidir.
+
+H100 işi sona erdi. Üç sınırlı başlatma için toplam ihtiyatlı muhasebe üst zarfı
+30 USD, kullanıcı bütçesi 35 USD'dir; 30 USD gerçek fatura olarak sunulmaz.
+İlk başlatma disk ayarı, ikinci sonuç aktarımı hatasıyla sonlandı; üçüncü
+koşunun eğitim dosyaları başarıyla alındı. Gerçek fatura henüz doğrulanmadı.
 
 ## Yerel konsol
 

@@ -1,0 +1,126 @@
+Completed offline builder adapter sidecar
+
+Owned new files only:
+  competition/finetuned_assist.py
+  competition/tests/test_finetuned_assist.py
+  analysis/minilm-ft-builder-adapter.json
+  analysis/minilm-ft-builder-adapter.txt
+
+No builder, runtime core/evaluator, dataset, trained model, prior helper, Git,
+cloud, API or merge file was changed. Default model manifest was absent at the
+completion check. No real encoder/model inference or training was performed.
+The 22 stdlib tests use synthetic artifact fixtures and mocked raw logits;
+these are contract tests, not model accuracy or authentication evidence.
+
+Parent host integration:
+  from finetuned_assist import (copy_runtime, prepare_request, validate_result,
+                                child_environment, read_json)
+
+  # These pins come from the parent's reviewed source freeze, not arbitrary
+  # writable files discovered by the child.
+  runtime_pins = {
+    'minilm_ft_core.py':
+      '4c1178484f29126fd7d11faa5ae01aceeaaa1831c9f266ffafd0d09d25a19454',
+    'minilm_ft_eval.py':
+      'ac99b7cd9cff296ad4d410c335a39520d2f0138c455996e6082690ec3d8cb7e1'
+  }
+  # Core hash above is the latest observed parent revision. The initial read
+  # was 6c523df2045faf9ecb727f9a6b5547182168b7bd92e73851006f2b96ca18ecb5.
+  # Parent changed its source during this task; current observed_text, DOMAIN,
+  # AUX and Model.predict contracts were rechecked and remain compatible.
+  # Any later source revision requires the parent's reviewed updated pin.
+  # Copy the adapter itself into builder-source through the parent's ordinary
+  # source snapshot. Pin the copied adapter SHA too before invoking it.
+  runtime = copy_runtime(repo / 'integrations/learned-dialogue',
+                         builder_source / 'finetuned-runtime', runtime_pins)
+  request = prepare_request(
+      calls=work / 'failed-calls.json',
+      model_directory=explicit_model_directory,
+      manifest_sha256=parent_reviewed_manifest_sha256,
+      runtime_directory=runtime, runtime_sha256=runtime_pins,
+      seconds=60, mode=mode)
+  # If request is None, record disabled/unavailable and do not invoke the child.
+  # Request preparation returns None for off or auto + missing model/pin;
+  # any mismatching pin raises. Parent handles auto fallback vs required error.
+  # The destination runtime directory must be fresh and contain exactly the
+  # two source modules; resumed runs reuse verified snapshots instead of copy.
+
+Child CLI:
+  EXISTING_ML_PYTHON -I -B builder-source/finetuned_assist.py
+      --request finetuned-request.json --output finetuned-evidence.json
+  Use child_environment(os.environ), timeout <= remaining parent budget,
+  and the existing parent process-tree cancellation mechanism. The child also
+  checks a monotonic deadline, but cannot interrupt a blocked loader itself.
+  Remove stale proposal output before a fresh run: CLI refuses overwrite.
+  Validate the completed file using validate_result(read_json(output), request)
+  before exposing it to the builder. Never trust status stdout alone.
+
+Child-only model API:
+  FinetunedModel(request) validates the manifest, safetensors/config files and
+  exact two-module runtime snapshot, then invokes the parent's pinned
+  minilm_ft_eval.load_model(model_directory, device='cpu'). Torch uses 2 threads.
+  FinetunedModel.predict(inputs) accepts only exact snapshots:
+    {'current_utterance': STRING,
+     'previous_utterances': [{'speaker': 'ASSISTANT', 'text': STRING}] or []}
+  It returns one dictionary per input with the exact 7 domain + 4 source-act
+  labels. Every head contains raw logit, finite sigmoid probability and the
+  Boolean probability >= CAL-manifest threshold. 1.01 disables selection.
+  Use build(request), rather than direct predict, to obtain source-bound rows.
+
+Input/output binding:
+  Only role/message from the supplied observed failed-call transcript file
+  enters inference. Case identities, scorer fields, expected actions, domain
+  labels, state, tool events and financial permissions are never features.
+  Context is strict immediately preceding message adjacency. Any intervening
+  system/tool/malformed message, USER turn or call boundary resets context.
+  This is deliberately stricter than skipping transport events to find an old
+  assistant question. It can omit useful context and must be reported as such.
+  Blank, malformed or oversized USER messages produce explicit skip diagnostics
+  and reset context before later USER turns. No hidden text truncation occurs.
+  Limits: 512 observed rows/calls, 20,000 message entries, 16,384 codepoints per
+  speech item, 2,000,000 accumulated observed context/user codepoints. Overall
+  row/message/aggregate overflow rejects the entire result rather than clipping.
+  Oversized/invalid assistant context is omitted; current USER can still remain.
+  Output contains call_index, message_index, input_sha256, 11 head scores, and
+  false bank_authority/UNKNOWN financial_authorization; it does not copy speech.
+  input_sha256 binds canonical sorted compact JSON UTF-8 of the exact snapshot.
+  source_sha256 binds the complete transcript file; request_sha256 binds the
+  exact request including paths, source/model/runtime pins and child budget.
+
+Validation and import scope:
+  Exact keys, types, taxonomy, indices, input SHA, result/request/model/source
+  pins, skipped records, finite logits/probabilities, exact sigmoid values and
+  CAL threshold selections are checked. Duplicate JSON keys and nonfinite JSON
+  constants are rejected. Model manifest paths cannot traverse, use links or
+  enumerate executable Python files; all loaded artifacts must be listed.
+  Required safetensors are encoder/model.safetensors and head.safetensors.
+  Unlisted model files and extra runtime modules are rejected. Runtime source
+  modules are explicitly loaded by their pinned file paths; caller-controlled
+  sys.path is not inserted. A foreign preloaded minilm_ft_core is rejected.
+  Parent runtime uses local_files_only/trust_remote_code=False and safetensors.
+  The old BANKING77 head is never read or attached to the new encoder basis.
+  Sources and model files are rechecked after inference. Hash checks detect
+  substituted files; they do not replace the parent's trusted freeze or make
+  arbitrary caller-supplied hashes into authentication.
+
+Modes and authority:
+  Parent owns --finetuned-assist auto/off/required and model-path default wiring.
+  Parent must gate off all enhanced helpers when --semantic-assist off, clear
+  stale output and never feed previous enhanced files to a classic build.
+  Missing default model is a pending availability condition, not a trained
+  model success. All proposals remain experimental; scores/selected flags
+  never authorize financial actions or override deterministic guards.
+
+Tests executed:
+  Python311 -B -m unittest discover -s competition/tests
+      -p test_finetuned_assist.py -v
+  22 tests passed; final suite runtime 0.983 seconds, command exit 0.
+  Covers Unicode/late withdrawal losslessness, source-gold feature exclusion,
+  skipped USER resets, event/call resets, overflow, precise schemas, logits,
+  selections, source/code/model tampering, foreign basis, path traversal,
+  unlisted artifacts, preloaded module rejection, modes, stripped token/Python
+  environment and actual isolated child CLI rejection before ML loading.
+
+Pending parent actions: builder wiring, reviewed trained-model manifest pin,
+actual CPU model availability/inference and any model-quality evaluation.
+No sidecar process remains running; no training or cloud process was launched.

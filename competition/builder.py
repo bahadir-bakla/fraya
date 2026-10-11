@@ -4,6 +4,7 @@ from validation import validate,validate_coverage
 from transcripts import compact_messages
 from semantic_assist import PROMPT_NOTICE, child_env, python_executable, validate_result
 from dialogue_assist import NOTICE as DIALOGUE_NOTICE, PINS as DIALOGUE_PINS, validate_result as validate_dialogue_result
+from finetuned_assist import NOTICE as FINETUNED_NOTICE, copy_runtime as copy_finetuned_runtime, prepare_request as finetuned_request, validate_result as validate_finetuned_result, child_environment as finetuned_environment
 
 ROOT=pathlib.Path(__file__).resolve().parent
 KIT=ROOT.parent/'build-the-builder 2'
@@ -35,9 +36,23 @@ def slot_lock(path):
         finally:unlock()
 
 def stamp(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
+_WRITE_LOCKS={}
+_WRITE_LOCKS_GUARD=threading.Lock()
 def write_json(path,value):
     path.parent.mkdir(parents=True,exist_ok=True)
-    temp=path.with_suffix(path.suffix+'.tmp');temp.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n');temp.replace(path)
+    # Windows may deny concurrent replacements even when temp names are unique.
+    with _WRITE_LOCKS_GUARD:lock=_WRITE_LOCKS.setdefault(str(path.absolute()),threading.Lock())
+    with lock:
+        temp=path.with_name(f'{path.name}.{os.getpid()}.{uuid.uuid4().hex[:8]}.tmp')
+        try:
+            temp.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+            for attempt in range(8):
+                try:temp.replace(path);break
+                except PermissionError:
+                    if attempt==7:raise
+                    time.sleep(min(0.05,0.005*2**attempt))
+        finally:
+            with contextlib.suppress(OSError):temp.unlink(missing_ok=True)
 
 def infer_practice_group(brief_paths):
     canonical=lambda value:re.sub(r'\s+',' ',value).strip()
@@ -115,7 +130,7 @@ class Run:
     def elapsed(self):return max(time.monotonic()-self.start,time.time()-datetime.datetime.fromisoformat(self.status['started']).timestamp())
     def prepare(self):
         source=self.path/('builder-source-resume' if self.args.resume_run else 'builder-source');source.mkdir(exist_ok=True)
-        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py')
+        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py')
         for name in source_names:
             shutil.copyfile(ROOT/name,source/name)
         self.event('builder_source',sha256={name:hashlib.sha256((source/name).read_bytes()).hexdigest() for name in source_names})
@@ -293,8 +308,44 @@ class Run:
         if timed_out:raise TimeoutError(f'{purpose} exceeded the run time budget')
         if proc.returncode:raise RuntimeError(f'{purpose} failed (exit {proc.returncode}): '+'\n'.join(lines[-8:])[:3000])
         return lines
+    def prepare_finetuned_assist(self):
+        self.finetuned_ready=False
+        output=self.work/'finetuned-evidence.json';output.unlink(missing_ok=True)
+        mode=getattr(self.args,'finetuned_assist','auto')
+        if mode=='off' or getattr(self.args,'semantic_assist','auto')=='off':return
+        calls=self.work/'failed-calls.json'
+        if not calls.exists():calls=self.work/'previous-failed-calls.json'
+        if not calls.exists():return
+        try:
+            if self.remaining()<125:raise TimeoutError('Insufficient fine-tuned diagnostic budget')
+            repo=ROOT.parent;default=repo/'integrations/learned-dialogue/minilm_ft_v1/model'
+            model=pathlib.Path(getattr(self.args,'finetuned_model',None) or default).resolve()
+            # The release pin is created only after actual training/evaluation/export checks.
+            release=repo/'integrations/learned-dialogue/minilm_ft_v1/release.json'
+            if not release.exists():
+                if mode=='required':raise ValueError('Fine-tuned release unavailable')
+                return
+            pin=json.loads(release.read_text(encoding='utf8'))
+            runtime=self.builder_source/'finetuned-runtime'
+            if runtime.exists():
+                for name,digest in pin['runtime_sha256'].items():
+                    if hashlib.sha256((runtime/name).read_bytes()).hexdigest()!=digest:raise ValueError('Fine-tuned runtime changed')
+            else:copy_finetuned_runtime(repo/'integrations/learned-dialogue',runtime,pin['runtime_sha256'])
+            seconds=min(60,self.remaining()-120)
+            request=finetuned_request(calls=calls,model_directory=model,manifest_sha256=pin['manifest_sha256'],runtime_directory=runtime,runtime_sha256=pin['runtime_sha256'],seconds=seconds,mode=mode)
+            if request is None:return
+            write_json(self.path/'finetuned-request.json',request)
+            command=[python_executable(getattr(self.args,'semantic_python',None)),'-I','-B',str(self.builder_source/'finetuned_assist.py'),'--request',str(self.path/'finetuned-request.json'),'--output',str(output)]
+            self.child(command,timeout=seconds,env=finetuned_environment(os.environ),log_name='finetuned-assist.log',purpose='Actual fine-tuned MiniLM observed semantic proposals')
+            result=json.loads(output.read_text(encoding='utf8'));validate_finetuned_result(result,request)
+            self.finetuned_hash=hashlib.sha256(output.read_bytes()).hexdigest();self.finetuned_ready=True
+            self.event('finetuned_assist',status='ready',turns=len(result['rows']),manifest_sha256=pin['manifest_sha256'],bank_authority=False,artifact_sha256=self.finetuned_hash)
+        except (OSError,ValueError,KeyError,RuntimeError,TimeoutError) as error:
+            output.unlink(missing_ok=True);self.event('finetuned_assist',status='unavailable',error_type=type(error).__name__)
+            if mode=='required':raise RuntimeError('Required fine-tuned semantic model unavailable') from None
     def model(self,round_number):
         self.prepare_dialogue_assist()
+        self.prepare_finetuned_assist()
         if getattr(self,'semantic_ready',False):
             if any(hashlib.sha256((self.work/name).read_bytes()).hexdigest()!=digest for name,digest in self.semantic_hashes.items()):
                 raise ValueError('Semantic evidence changed after its pinned generation')
@@ -309,6 +360,7 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
 '''
         if getattr(self,'semantic_ready',False):prompt+='\n'+PROMPT_NOTICE
         if getattr(self,'dialogue_ready',False):prompt+='\n'+DIALOGUE_NOTICE
+        if getattr(self,'finetuned_ready',False):prompt+='\nRead finetuned-evidence.json for the pinned observed-turn hypotheses, matching each call/message index to the failed calls. '+FINETUNED_NOTICE
         (self.path/f'prompt-{round_number}.txt').write_text(prompt)
         profile=model_permissions(os.environ)
         command=['codex','exec','--ignore-user-config','--skip-git-repo-check','--ephemeral','--config','default_permissions='+profile,'--config','approval_policy=never','--json','--color','never','--output-schema',str(self.path/'response.schema.json'),'--output-last-message',str(self.path/f'answer-{round_number}.json')]
@@ -332,6 +384,8 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             raise ValueError('Model changed the pinned semantic evidence')
         if getattr(self,'dialogue_ready',False) and hashlib.sha256((self.work/'dialogue-evidence.json').read_bytes()).hexdigest()!=self.dialogue_hash:
             raise ValueError('Model changed the pinned dialogue hypotheses')
+        if getattr(self,'finetuned_ready',False) and hashlib.sha256((self.work/'finetuned-evidence.json').read_bytes()).hexdigest()!=self.finetuned_hash:
+            raise ValueError('Model changed the pinned fine-tuned hypotheses')
         if any(hashlib.sha256((self.work/s['path']).read_bytes()).hexdigest()!=s['sha256'] for s in self.sources):
             raise ValueError('Model changed original brief evidence')
         if hasattr(self,'api_sha256') and hashlib.sha256((self.work/'inputs/openapi.json').read_bytes()).hexdigest()!=self.api_sha256:
@@ -446,13 +500,15 @@ def arguments():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('briefs',nargs='+');parser.add_argument('--tool-api',default=str(KIT/'tools/openapi.json'))
     parser.add_argument('--cases',default=str(KIT/'public-test-set.json'));parser.add_argument('--slot',default='competition-builder')
-    parser.add_argument('--rounds',type=int,default=3);parser.add_argument('--minutes',type=float,default=30)
+    parser.add_argument('--rounds',type=int,help='Build/repair rounds within the same 30 minutes (default 3 with tests, 6 with --skip-tests)');parser.add_argument('--minutes',type=float,default=30)
     parser.add_argument('--brief',help='Case group in the provided test set; public A/B groups are inferred from their exact evidence')
     parser.add_argument('--only');parser.add_argument('--style',choices=['pieces','corrects','talkative','asks_back','in_words'])
     parser.add_argument('--skip-tests',action='store_true');parser.add_argument('--model',default=os.environ.get('BUILDER_MODEL'))
     parser.add_argument('--semantic-assist',choices=['auto','off','required'],default='auto',help='Local pinned MiniLM evidence navigation; off preserves the classic builder')
     parser.add_argument('--semantic-python',help='Python executable containing torch/transformers; also accepts MINILM_PYTHON environment variable')
     parser.add_argument('--dialogue-assist',choices=['auto','off','required'],default='auto',help='Generic source-act repair diagnostics; classic semantic off disables this too')
+    parser.add_argument('--finetuned-assist',choices=['auto','off','required'],default='auto',help='Actual fine-tuned MiniLM repair hypotheses; classic semantic off disables it')
+    parser.add_argument('--finetuned-model',help='Explicit fine-tuned model directory; must match reviewed release manifest')
     parser.add_argument('--local-only',action='store_true',help='Generate and locally validate without credentials, Freya publication or simulation')
     parser.add_argument('--practice-repair',help='New explicitly logged practice cycle from a stopped public-brief run; never permitted for unseen briefs')
     parser.add_argument('--repair-first',action='store_true',help='With public practice repair, use the existing failed-call evidence before rerunning the candidate')
@@ -463,6 +519,8 @@ def arguments():
     except ValueError as error:parser.error(str(error))
     if args.resume_run and args.practice_repair:parser.error('Use either same-budget resume or a separate public practice repair cycle')
     if not 0<args.minutes<=30:parser.error('Each build is limited to 30 minutes.')
+    # Without tests a round costs only model time, so the full budget may need more than three short rounds.
+    if args.rounds is None:args.rounds=6 if args.skip_tests else 3
     if not 1<=args.rounds<=6:parser.error('Use 1 to 6 bounded build/repair rounds within the same 30-minute maximum.')
     if not re.fullmatch(r'[A-Za-z0-9_-]+',args.slot):parser.error('slot must use letters, numbers, - or _.')
     if not args.model:

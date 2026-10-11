@@ -1,0 +1,1037 @@
+{
+  "scope": "Four localized merged-guide paragraph edits; unchanged candidate literal CPU witnesses.",
+  "created_utc": "2026-10-11T12:28:10.448234+00:00",
+  "guide_before_sha256": "a2312fc1dac76c4e34d2a8727fd0f95ab3f8107e375a4bd8ab1958cf36cba46f",
+  "guide_after_sha256": "a670c60a80688ab2e599877574661baf9d7160865c5d8c2ea67347df8c39260d",
+  "edited_paragraph_lines": [
+    134,
+    172,
+    179,
+    185
+  ],
+  "all_other_guide_lines_unchanged": true,
+  "CRLF_preserved": true,
+  "recipient_policy_and_prior_financial_blocks_preserved": true,
+  "source": {
+    "path": "competition\\runs\\20261011-141710-d6397a\\work\\workflow.json",
+    "workflow_sha256": "4db038772a5484a3915187b3c8514971cfe71020c8c63d23229eddd1515c55a3",
+    "embedded_code_sha256": "fc6b7b9845041766b5881893032271b37a3dc696e997f2d04b27b22d1d63a846",
+    "node": "controller",
+    "run_status": "failed",
+    "published_version": null,
+    "limitation": "Pre-merge failed local classic candidate, not regenerated from the new guide."
+  },
+  "counts": {
+    "CPU_checks": 15,
+    "passed_controls": 9,
+    "remaining_source_counterexamples": 6,
+    "literal_controller_executions": 32
+  },
+  "observations": [
+    {
+      "id": "claim/I paid my credit card overdue amount.",
+      "expected": true,
+      "pass": true,
+      "classification": "conforming-source-unit",
+      "actual": true,
+      "trace": null
+    },
+    {
+      "id": "claim/I paid my credit card overdue amount, but I still owe that same overdue amount.",
+      "expected": false,
+      "pass": false,
+      "classification": "inconsistent-producer-robustness",
+      "actual": true,
+      "trace": null
+    },
+    {
+      "id": "claim/I never had the personal loan.",
+      "expected": true,
+      "pass": false,
+      "classification": "conforming-source-unit",
+      "actual": false,
+      "trace": null
+    },
+    {
+      "id": "claim/This personal loan is not mine.",
+      "expected": true,
+      "pass": false,
+      "classification": "conforming-source-unit",
+      "actual": false,
+      "trace": null
+    },
+    {
+      "id": "claim/I dispute the personal loan.",
+      "expected": true,
+      "pass": true,
+      "classification": "conforming-source-unit",
+      "actual": true,
+      "trace": null
+    },
+    {
+      "id": "claim/I do not dispute the personal loan.",
+      "expected": false,
+      "pass": true,
+      "classification": "conforming-source-unit",
+      "actual": false,
+      "trace": null
+    },
+    {
+      "id": "DOB/partial-no-comparison",
+      "expected": "No incomplete comparison or bank verification.",
+      "pass": true,
+      "classification": "literal-source-control",
+      "actual": {
+        "route": "listen",
+        "phase": "dob",
+        "line": "Please say your date of birth with the month as a word and a complete year.",
+        "op": {},
+        "readback": [],
+        "products": []
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "recipient",
+          "line": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Mx Vale?",
+          "op": {},
+          "readback": [],
+          "products": []
+        },
+        {
+          "route": "listen",
+          "phase": "dob",
+          "line": "What is your date of birth?",
+          "op": {},
+          "readback": [],
+          "products": []
+        },
+        {
+          "route": "listen",
+          "phase": "dob",
+          "line": "Please say your date of birth with the month as a word and a complete year.",
+          "op": {},
+          "readback": [],
+          "products": []
+        }
+      ]
+    },
+    {
+      "id": "DOB/same-answer-fragment-completion",
+      "expected": "Retained day/month plus explicit year prepares exactly 1987-05-04.",
+      "pass": false,
+      "classification": "proposed-fragment-contract-source-probe",
+      "actual": {
+        "route": "listen",
+        "phase": "dob",
+        "line": "Please say your date of birth with the month as a word and a complete year.",
+        "op": {},
+        "readback": [],
+        "products": []
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "recipient",
+          "line": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Mx Vale?",
+          "op": {},
+          "readback": [],
+          "products": []
+        },
+        {
+          "route": "listen",
+          "phase": "dob",
+          "line": "What is your date of birth?",
+          "op": {},
+          "readback": [],
+          "products": []
+        },
+        {
+          "route": "listen",
+          "phase": "dob",
+          "line": "Please say your date of birth with the month as a word and a complete year.",
+          "op": {},
+          "readback": [],
+          "products": []
+        },
+        {
+          "route": "listen",
+          "phase": "dob",
+          "line": "Please say your date of birth with the month as a word and a complete year.",
+          "op": {},
+          "readback": [],
+          "products": []
+        }
+      ]
+    },
+    {
+      "id": "DOB/complete-control",
+      "expected": "Complete current self DOB prepares a comparison, not verification.",
+      "pass": true,
+      "classification": "literal-source-control",
+      "actual": {
+        "route": "api_verify_identity",
+        "phase": "dob",
+        "line": "",
+        "op": {
+          "name": "verify_identity",
+          "body": {
+            "field": "date_of_birth",
+            "answer": "1987-05-04"
+          },
+          "success": 0,
+          "failure": 0,
+          "tries": 1
+        },
+        "readback": [],
+        "products": []
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "recipient",
+          "line": "Hello, I am a digital assistant calling from Freya Bank, and this call is recorded. Am I speaking with Mx Vale?",
+          "op": {},
+          "readback": [],
+          "products": []
+        },
+        {
+          "route": "listen",
+          "phase": "dob",
+          "line": "What is your date of birth?",
+          "op": {},
+          "readback": [],
+          "products": []
+        },
+        {
+          "route": "api_verify_identity",
+          "phase": "dob",
+          "line": "",
+          "op": {
+            "name": "verify_identity",
+            "body": {
+              "field": "date_of_birth",
+              "answer": "1987-05-04"
+            },
+            "success": 0,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": []
+        }
+      ]
+    },
+    {
+      "id": "consent/withdraw-no-write",
+      "expected": "Withdrawal retains terms and issues no promise request.",
+      "pass": true,
+      "classification": "literal-source-control",
+      "actual": {
+        "route": "listen",
+        "phase": "confirm",
+        "line": "Please confirm: credit card ending 2718, 400.00 on 2026-10-14; personal loan, 600.00 on 2026-10-14. Do you confirm?",
+        "op": {},
+        "readback": [
+          {
+            "i": 0,
+            "a": 40000,
+            "d": "2026-10-14"
+          },
+          {
+            "i": 1,
+            "a": 60000,
+            "d": "2026-10-14"
+          }
+        ],
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "pending",
+            "noted": false
+          },
+          {
+            "id": "cpu-loan",
+            "status": "pending",
+            "noted": false
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "confirm",
+          "line": "Please confirm: credit card ending 2718, 400.00 on 2026-10-14; personal loan, 600.00 on 2026-10-14. Do you confirm?",
+          "op": {},
+          "readback": [
+            {
+              "i": 0,
+              "a": 40000,
+              "d": "2026-10-14"
+            },
+            {
+              "i": 1,
+              "a": 60000,
+              "d": "2026-10-14"
+            }
+          ],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "listen",
+          "phase": "confirm",
+          "line": "Please confirm: credit card ending 2718, 400.00 on 2026-10-14; personal loan, 600.00 on 2026-10-14. Do you confirm?",
+          "op": {},
+          "readback": [
+            {
+              "i": 0,
+              "a": 40000,
+              "d": "2026-10-14"
+            },
+            {
+              "i": 1,
+              "a": 60000,
+              "d": "2026-10-14"
+            }
+          ],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "consent/continue-is-not-payment-confirmation",
+      "expected": "Yes to continuation cannot reuse the old payment question.",
+      "pass": false,
+      "classification": "inconsistent-producer-robustness",
+      "actual": {
+        "route": "api_create_promise",
+        "phase": "confirm",
+        "line": "",
+        "op": {
+          "name": "create_promise",
+          "body": {
+            "product_id": "cpu-card",
+            "amount": 400.0,
+            "date": "2026-10-14"
+          },
+          "success": 0,
+          "failure": 0,
+          "tries": 1
+        },
+        "readback": [],
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "pending",
+            "noted": false
+          },
+          {
+            "id": "cpu-loan",
+            "status": "pending",
+            "noted": false
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "confirm",
+          "line": "Please confirm: credit card ending 2718, 400.00 on 2026-10-14; personal loan, 600.00 on 2026-10-14. Do you confirm?",
+          "op": {},
+          "readback": [
+            {
+              "i": 0,
+              "a": 40000,
+              "d": "2026-10-14"
+            },
+            {
+              "i": 1,
+              "a": 60000,
+              "d": "2026-10-14"
+            }
+          ],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "listen",
+          "phase": "confirm",
+          "line": "I understand. May we continue briefly?",
+          "op": {},
+          "readback": [
+            {
+              "i": 0,
+              "a": 40000,
+              "d": "2026-10-14"
+            },
+            {
+              "i": 1,
+              "a": 60000,
+              "d": "2026-10-14"
+            }
+          ],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "api_create_promise",
+          "phase": "confirm",
+          "line": "",
+          "op": {
+            "name": "create_promise",
+            "body": {
+              "product_id": "cpu-card",
+              "amount": 400.0,
+              "date": "2026-10-14"
+            },
+            "success": 0,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "receipt/stale-promise-does-not-record",
+      "expected": "Unbound receipt cannot set a recorded promise.",
+      "pass": true,
+      "classification": "synthetic-stale-receipt-control",
+      "actual": {
+        "route": "api_create_promise",
+        "phase": "confirm",
+        "line": "",
+        "op": {
+          "name": "create_promise",
+          "body": {
+            "product_id": "cpu-loan",
+            "amount": 600.0,
+            "date": "2026-10-14"
+          },
+          "success": 0,
+          "failure": 0,
+          "tries": 1
+        },
+        "readback": [],
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "service_error",
+            "noted": false
+          },
+          {
+            "id": "cpu-loan",
+            "status": "pending",
+            "noted": false
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "confirm",
+          "line": "Please confirm: credit card ending 2718, 400.00 on 2026-10-14; personal loan, 600.00 on 2026-10-14. Do you confirm?",
+          "op": {},
+          "readback": [
+            {
+              "i": 0,
+              "a": 40000,
+              "d": "2026-10-14"
+            },
+            {
+              "i": 1,
+              "a": 60000,
+              "d": "2026-10-14"
+            }
+          ],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "api_create_promise",
+          "phase": "confirm",
+          "line": "",
+          "op": {
+            "name": "create_promise",
+            "body": {
+              "product_id": "cpu-card",
+              "amount": 400.0,
+              "date": "2026-10-14"
+            },
+            "success": 0,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "api_create_promise",
+          "phase": "confirm",
+          "line": "",
+          "op": {
+            "name": "create_promise",
+            "body": {
+              "product_id": "cpu-loan",
+              "amount": 600.0,
+              "date": "2026-10-14"
+            },
+            "success": 0,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "service_error",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "receipt/current-promises-control",
+      "expected": "Current successes precede recorded outcome.",
+      "pass": true,
+      "classification": "synthetic-current-receipt-control",
+      "actual": {
+        "route": "end",
+        "phase": "done",
+        "line": "Your payment promise is recorded. You will receive a text message confirming this promise. Thank you. Have a good day.",
+        "op": {},
+        "readback": [],
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "recorded",
+            "noted": false
+          },
+          {
+            "id": "cpu-loan",
+            "status": "recorded",
+            "noted": false
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "confirm",
+          "line": "Please confirm: credit card ending 2718, 400.00 on 2026-10-14; personal loan, 600.00 on 2026-10-14. Do you confirm?",
+          "op": {},
+          "readback": [
+            {
+              "i": 0,
+              "a": 40000,
+              "d": "2026-10-14"
+            },
+            {
+              "i": 1,
+              "a": 60000,
+              "d": "2026-10-14"
+            }
+          ],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "api_create_promise",
+          "phase": "confirm",
+          "line": "",
+          "op": {
+            "name": "create_promise",
+            "body": {
+              "product_id": "cpu-card",
+              "amount": 400.0,
+              "date": "2026-10-14"
+            },
+            "success": 0,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "pending",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "api_create_promise",
+          "phase": "confirm",
+          "line": "",
+          "op": {
+            "name": "create_promise",
+            "body": {
+              "product_id": "cpu-loan",
+              "amount": 600.0,
+              "date": "2026-10-14"
+            },
+            "success": 1,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "recorded",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "pending",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "end",
+          "phase": "done",
+          "line": "Your payment promise is recorded. You will receive a text message confirming this promise. Thank you. Have a good day.",
+          "op": {},
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "recorded",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "recorded",
+              "noted": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "notes/failed-first-note-retains-sibling",
+      "expected": "A failed first note does not skip the other required product note.",
+      "pass": false,
+      "classification": "synthetic-note-failure-obligation-probe",
+      "actual": {
+        "route": "end",
+        "phase": "done",
+        "line": "I could not complete the bank update. Thank you. Have a good day.",
+        "op": {},
+        "readback": [],
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "dispute",
+            "noted": false
+          },
+          {
+            "id": "cpu-loan",
+            "status": "dispute",
+            "noted": false
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "api_add_note",
+          "phase": "collective",
+          "line": "",
+          "op": {
+            "name": "add_note",
+            "body": {
+              "product_id": "cpu-card",
+              "reason": "dispute",
+              "text": "Customer disposition: dispute"
+            },
+            "success": 0,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "dispute",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "dispute",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "api_add_note",
+          "phase": "collective",
+          "line": "",
+          "op": {
+            "name": "add_note",
+            "body": {
+              "product_id": "cpu-card",
+              "reason": "dispute",
+              "text": "Customer disposition: dispute"
+            },
+            "success": 0,
+            "failure": 1,
+            "tries": 2
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "dispute",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "dispute",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "end",
+          "phase": "done",
+          "line": "I could not complete the bank update. Thank you. Have a good day.",
+          "op": {},
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "dispute",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "dispute",
+              "noted": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "notes/current-receipts-control",
+      "expected": "Both successful receipts precede note-based closure.",
+      "pass": true,
+      "classification": "synthetic-current-receipt-control",
+      "actual": {
+        "route": "end",
+        "phase": "done",
+        "line": " Thank you. Have a good day.",
+        "op": {},
+        "readback": [],
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "dispute",
+            "noted": true
+          },
+          {
+            "id": "cpu-loan",
+            "status": "dispute",
+            "noted": true
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "api_add_note",
+          "phase": "collective",
+          "line": "",
+          "op": {
+            "name": "add_note",
+            "body": {
+              "product_id": "cpu-card",
+              "reason": "dispute",
+              "text": "Customer disposition: dispute"
+            },
+            "success": 0,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "dispute",
+              "noted": false
+            },
+            {
+              "id": "cpu-loan",
+              "status": "dispute",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "api_add_note",
+          "phase": "collective",
+          "line": "",
+          "op": {
+            "name": "add_note",
+            "body": {
+              "product_id": "cpu-loan",
+              "reason": "dispute",
+              "text": "Customer disposition: dispute"
+            },
+            "success": 1,
+            "failure": 0,
+            "tries": 1
+          },
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "dispute",
+              "noted": true
+            },
+            {
+              "id": "cpu-loan",
+              "status": "dispute",
+              "noted": false
+            }
+          ]
+        },
+        {
+          "route": "end",
+          "phase": "done",
+          "line": " Thank you. Have a good day.",
+          "op": {},
+          "readback": [],
+          "products": [
+            {
+              "id": "cpu-card",
+              "status": "dispute",
+              "noted": true
+            },
+            {
+              "id": "cpu-loan",
+              "status": "dispute",
+              "noted": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "protected_hashes_before": {
+    "competition/releases/classic-baseline/a.review-template.json": "6fa31318b1b24073ef04f058d62c1a8e803bc2538fb437c43c3679dff94ba0b3",
+    "competition/releases/classic-baseline/b.review-template.json": "1768e23ee0c24c530786fc3fb7e58bf16a96ca48bb8d27914603109047d45163",
+    "competition/releases/classic-baseline/manifest.json": "2ecee0ee344e725974cfee629bb1fb0a030afa90c102d152ac0f32efecb88788",
+    "competition/releases/classic-baseline/README.txt": "b57d4c2d88963c94653db7149adb5a10969e93b442e5dd46a96a1c0211d3e5e3",
+    "analysis/official-a-next-v1.json": "c7621aa12da4312be4d7c1bf9e51ef1018d0ac3855d4e20d3b6a8035bcb1b7a6",
+    "analysis/official-a-next-v1.txt": "d7ab0bd9fb48f7fa7625fe3d67d43de2edeb76d3314e29290598c26268b5d912",
+    "analysis/official-a-next-v2.json": "1da3a25f267027ce1658b1896a1981530da07171f40d2a1fa026ea5f3027cc89",
+    "analysis/official-a-next-v2.txt": "d3f977d0cebcdf96b91c0d0bba1fa98317d81acb61d4988887270ee06ba0552d",
+    "analysis/official-a-next-v5.json": "233918b0d90ebf2c87d3d2d80164ddb6d2c96d61a4c315b52f8db35400596727",
+    "analysis/official-a-next-v5.txt": "5a76725afcef0ea3ce0b602e6544a55817cb9b1a5fd49f133fd524d3a4a7da0c",
+    "analysis/official-a-v10.json": "20f506b354a6bf62dceb261eb4bd8c593e9d79007e35ac8a234c4a74f9ce272c",
+    "analysis/official-a-v10.txt": "099716a41695d88dbef138dd2d626886dad76111c50568bde8620a56cb77c7d3",
+    "analysis/official-a-v4.json": "b8b4fd5092942d3a099b55ed10e5ef424f82b432a6ecfe1bfa94d8bdf90f4303",
+    "analysis/official-a-v4.txt": "7f5eb1b9c56d37047c4f2113651d4a05313ed97ed5521c16bce03f883a94ef04",
+    "analysis/official-a-v5.json": "81fc5bc7ae9530a78d7bbaa7469dd582a2800ace261e30ea205ecec96909c423",
+    "analysis/official-a-v5.txt": "7c6404e796ea5e3c894442651f19e42f10b592de5a9192bed4dd3fa046bb1276",
+    "analysis/official-a-v6.json": "0c82e266f886d615d9e500e9f5836437726ff18952fadd70788fa5f21f06d115",
+    "analysis/official-a-v6.txt": "4d01ab3d013c5bb3a6f630fd3f602971f6beaca5fed0787ef2c073b78c5da85f",
+    "analysis/official-a-v7.json": "251a4090412367af9102c49a5ed6d89776651a842d6b8a0a598353a0353b24f1",
+    "analysis/official-a-v7.txt": "c11f9966bdb3c866a6e9744f44e2c79eba7b4ac681432cf8ef7ba306453b3fbc",
+    "analysis/official-a-v8.json": "7a75f9f9f8180afe2fd62ea017f7ab42083add457c3d7b08f92a9b775a5672ed",
+    "analysis/official-a-v8.txt": "996a3662130367478bcdc16d4a3a638d865f86efe25559e9e074362ce5aff4e5",
+    "analysis/official-a-v9.json": "e73e75d8f075aa69fb7441ee4045014ea8a9a9adc56eeca344dc607ef81759b6",
+    "analysis/official-a-v9.txt": "afe75a39083b770e0f746eaa150b8c221af4287b2f9670cd6b419fb69dd994c3",
+    "analysis/official-b-next-v2.json": "de5cfbea0a616cd5b74947cfd343375960f5e24fdee7d57fcc742c91af20aef2",
+    "analysis/official-b-next-v2.txt": "65e7d26874a4a33e2bd7353f41f1381771b79222153ceb84d2695eb1a6d5185b",
+    "analysis/official-b-next-v4.json": "c55f925e12c70ea5baf70ec7b3b43a2cc0b4dd119f58eceb9d94a4c1da61aa25",
+    "analysis/official-b-next-v4.txt": "15803e0407ad03f7ad8bcc469ecc31fdaf2f41624f4253ac5f7c140fad21d0ec",
+    "analysis/official-b-next-v5.json": "790a99382e84d1acd942c2d93dc4862927a4905d98b6d7cd771daed31f84ab41",
+    "analysis/official-b-next-v5.txt": "922a655d535384cea7bfdfabb62bd62d81e6f7676cbc4912f34fa3d488440f96",
+    "analysis/official-b-v10.json": "779abe8140d97a8dec1a9f2de7604996a24ac1fed2db22d554d72f9aa998917f",
+    "analysis/official-b-v10.txt": "92e7b618e62de8d07e1ca830b623572227f7e8ff0a6b277ec41144ec00c2e830",
+    "analysis/official-b-v11.json": "f4dbcb6df5a80c7d633a069961f22b6a17f3c5e2f4af38f7f4c48d6fd375fe89",
+    "analysis/official-b-v11.txt": "7c6d56625dbdf81923bb91bf0523233aa15f37504ec2bd8c3d971006503fed2d",
+    "analysis/official-b-v14.json": "f13e9c44040fcc409ddf30695b5413410d9b3fd3a1f7ec97717ffd372c3bc0ca",
+    "analysis/official-b-v14.txt": "75944461fd24a1de5782cf9972cf17135b40a2a6a367a79c17aa851514ce23ca",
+    "analysis/official-b-v5.json": "f8b1cb17cf4e90c3f927c42b75f79cc330e7b02bd3de679c3563204d1e47c647",
+    "analysis/official-b-v5.txt": "10ad122f1c84483174a5da1671834e7bbbcc5f6c55760fe301fbeca5708660b2",
+    "analysis/official-b-v8.json": "aceb217cb7e1682b0be295fa41202b698ca84c975bb96dd63a3a6590826c8756",
+    "analysis/official-b-v8.txt": "8dcd36b5fae372a8d5a0dcffd79f64266eb206babd9af626c27891281e6e9875",
+    "analysis/official-b-v9.json": "7edd2be2df0c666488440398474f1253f2e3d939a137dd95ed3ffe90d1d5044d",
+    "analysis/official-b-v9.txt": "f71e668cfeb4681eaf90e50426e4c3e53980f9f540c43230a1a6f6c5f7e5180f",
+    "analysis/official-hackathon.html": "eab59d40a5acb8033ad16e4fa6bb00ae85a110f50c805982d8691d425ee09edb",
+    "analysis/official-hackathon.txt": "38ea1ce9dd688e82caaed4cc1b7c13ad0d42cc3a5c43b4be11e7ebb4fc875026",
+    "competition/builder.py": "9e546614479fa1ce2131dd9f0b47ef5cb39e3efb727bd48e1a1b86a6bc7dca9b",
+    "competition/bounded_freya.py": "b23d4377fe0cc6f4a141471b864ad83378df78ad3ea27f0526751a02a4113a65",
+    "competition/skills/classic-hardening-next.txt": "73656acb2b1b68c69cd05358167319f7715fb6e55c412bca7b636a7a07da4761",
+    "analysis/classic-next-review.json": "68f2116aba1959eb2a8549a33c2b4a3c45becb6578489c220d1bd0ee5d740c2e",
+    "analysis/day2-official-a-v11.json": "fc1f6a7d2b9e9e7920f2750d7ae9dc09eb26f5323afbed856be50052c527a094",
+    "competition-v3/build-the-builder/tools/score.py": "daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7",
+    "competition-v3/build-the-builder/tools/openapi.json": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+    "competition-v3/build-the-builder/public-test-set.json": "fb7f4c0082eecb724a6faab771b4339bc62655627e49251e6bb2a0cf59a72fcb",
+    "competition-v3/build-the-builder/briefs/brief-a.md": "d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7",
+    "competition-v3/build-the-builder/briefs/brief-b.md": "c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550"
+  },
+  "protected_hashes_after": {
+    "competition/releases/classic-baseline/a.review-template.json": "6fa31318b1b24073ef04f058d62c1a8e803bc2538fb437c43c3679dff94ba0b3",
+    "competition/releases/classic-baseline/b.review-template.json": "1768e23ee0c24c530786fc3fb7e58bf16a96ca48bb8d27914603109047d45163",
+    "competition/releases/classic-baseline/manifest.json": "2ecee0ee344e725974cfee629bb1fb0a030afa90c102d152ac0f32efecb88788",
+    "competition/releases/classic-baseline/README.txt": "b57d4c2d88963c94653db7149adb5a10969e93b442e5dd46a96a1c0211d3e5e3",
+    "analysis/official-a-next-v1.json": "c7621aa12da4312be4d7c1bf9e51ef1018d0ac3855d4e20d3b6a8035bcb1b7a6",
+    "analysis/official-a-next-v1.txt": "d7ab0bd9fb48f7fa7625fe3d67d43de2edeb76d3314e29290598c26268b5d912",
+    "analysis/official-a-next-v2.json": "1da3a25f267027ce1658b1896a1981530da07171f40d2a1fa026ea5f3027cc89",
+    "analysis/official-a-next-v2.txt": "d3f977d0cebcdf96b91c0d0bba1fa98317d81acb61d4988887270ee06ba0552d",
+    "analysis/official-a-next-v5.json": "233918b0d90ebf2c87d3d2d80164ddb6d2c96d61a4c315b52f8db35400596727",
+    "analysis/official-a-next-v5.txt": "5a76725afcef0ea3ce0b602e6544a55817cb9b1a5fd49f133fd524d3a4a7da0c",
+    "analysis/official-a-v10.json": "20f506b354a6bf62dceb261eb4bd8c593e9d79007e35ac8a234c4a74f9ce272c",
+    "analysis/official-a-v10.txt": "099716a41695d88dbef138dd2d626886dad76111c50568bde8620a56cb77c7d3",
+    "analysis/official-a-v4.json": "b8b4fd5092942d3a099b55ed10e5ef424f82b432a6ecfe1bfa94d8bdf90f4303",
+    "analysis/official-a-v4.txt": "7f5eb1b9c56d37047c4f2113651d4a05313ed97ed5521c16bce03f883a94ef04",
+    "analysis/official-a-v5.json": "81fc5bc7ae9530a78d7bbaa7469dd582a2800ace261e30ea205ecec96909c423",
+    "analysis/official-a-v5.txt": "7c6404e796ea5e3c894442651f19e42f10b592de5a9192bed4dd3fa046bb1276",
+    "analysis/official-a-v6.json": "0c82e266f886d615d9e500e9f5836437726ff18952fadd70788fa5f21f06d115",
+    "analysis/official-a-v6.txt": "4d01ab3d013c5bb3a6f630fd3f602971f6beaca5fed0787ef2c073b78c5da85f",
+    "analysis/official-a-v7.json": "251a4090412367af9102c49a5ed6d89776651a842d6b8a0a598353a0353b24f1",
+    "analysis/official-a-v7.txt": "c11f9966bdb3c866a6e9744f44e2c79eba7b4ac681432cf8ef7ba306453b3fbc",
+    "analysis/official-a-v8.json": "7a75f9f9f8180afe2fd62ea017f7ab42083add457c3d7b08f92a9b775a5672ed",
+    "analysis/official-a-v8.txt": "996a3662130367478bcdc16d4a3a638d865f86efe25559e9e074362ce5aff4e5",
+    "analysis/official-a-v9.json": "e73e75d8f075aa69fb7441ee4045014ea8a9a9adc56eeca344dc607ef81759b6",
+    "analysis/official-a-v9.txt": "afe75a39083b770e0f746eaa150b8c221af4287b2f9670cd6b419fb69dd994c3",
+    "analysis/official-b-next-v2.json": "de5cfbea0a616cd5b74947cfd343375960f5e24fdee7d57fcc742c91af20aef2",
+    "analysis/official-b-next-v2.txt": "65e7d26874a4a33e2bd7353f41f1381771b79222153ceb84d2695eb1a6d5185b",
+    "analysis/official-b-next-v4.json": "c55f925e12c70ea5baf70ec7b3b43a2cc0b4dd119f58eceb9d94a4c1da61aa25",
+    "analysis/official-b-next-v4.txt": "15803e0407ad03f7ad8bcc469ecc31fdaf2f41624f4253ac5f7c140fad21d0ec",
+    "analysis/official-b-next-v5.json": "790a99382e84d1acd942c2d93dc4862927a4905d98b6d7cd771daed31f84ab41",
+    "analysis/official-b-next-v5.txt": "922a655d535384cea7bfdfabb62bd62d81e6f7676cbc4912f34fa3d488440f96",
+    "analysis/official-b-v10.json": "779abe8140d97a8dec1a9f2de7604996a24ac1fed2db22d554d72f9aa998917f",
+    "analysis/official-b-v10.txt": "92e7b618e62de8d07e1ca830b623572227f7e8ff0a6b277ec41144ec00c2e830",
+    "analysis/official-b-v11.json": "f4dbcb6df5a80c7d633a069961f22b6a17f3c5e2f4af38f7f4c48d6fd375fe89",
+    "analysis/official-b-v11.txt": "7c6d56625dbdf81923bb91bf0523233aa15f37504ec2bd8c3d971006503fed2d",
+    "analysis/official-b-v14.json": "f13e9c44040fcc409ddf30695b5413410d9b3fd3a1f7ec97717ffd372c3bc0ca",
+    "analysis/official-b-v14.txt": "75944461fd24a1de5782cf9972cf17135b40a2a6a367a79c17aa851514ce23ca",
+    "analysis/official-b-v5.json": "f8b1cb17cf4e90c3f927c42b75f79cc330e7b02bd3de679c3563204d1e47c647",
+    "analysis/official-b-v5.txt": "10ad122f1c84483174a5da1671834e7bbbcc5f6c55760fe301fbeca5708660b2",
+    "analysis/official-b-v8.json": "aceb217cb7e1682b0be295fa41202b698ca84c975bb96dd63a3a6590826c8756",
+    "analysis/official-b-v8.txt": "8dcd36b5fae372a8d5a0dcffd79f64266eb206babd9af626c27891281e6e9875",
+    "analysis/official-b-v9.json": "7edd2be2df0c666488440398474f1253f2e3d939a137dd95ed3ffe90d1d5044d",
+    "analysis/official-b-v9.txt": "f71e668cfeb4681eaf90e50426e4c3e53980f9f540c43230a1a6f6c5f7e5180f",
+    "analysis/official-hackathon.html": "eab59d40a5acb8033ad16e4fa6bb00ae85a110f50c805982d8691d425ee09edb",
+    "analysis/official-hackathon.txt": "38ea1ce9dd688e82caaed4cc1b7c13ad0d42cc3a5c43b4be11e7ebb4fc875026",
+    "competition/builder.py": "9e546614479fa1ce2131dd9f0b47ef5cb39e3efb727bd48e1a1b86a6bc7dca9b",
+    "competition/bounded_freya.py": "b23d4377fe0cc6f4a141471b864ad83378df78ad3ea27f0526751a02a4113a65",
+    "competition/skills/classic-hardening-next.txt": "73656acb2b1b68c69cd05358167319f7715fb6e55c412bca7b636a7a07da4761",
+    "analysis/classic-next-review.json": "68f2116aba1959eb2a8549a33c2b4a3c45becb6578489c220d1bd0ee5d740c2e",
+    "analysis/day2-official-a-v11.json": "fc1f6a7d2b9e9e7920f2750d7ae9dc09eb26f5323afbed856be50052c527a094",
+    "competition-v3/build-the-builder/tools/score.py": "daf55989d47915d9a4f0387c2a4f6748580fcdf66b7d3ec61356925efb0d17d7",
+    "competition-v3/build-the-builder/tools/openapi.json": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+    "competition-v3/build-the-builder/public-test-set.json": "fb7f4c0082eecb724a6faab771b4339bc62655627e49251e6bb2a0cf59a72fcb",
+    "competition-v3/build-the-builder/briefs/brief-a.md": "d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7",
+    "competition-v3/build-the-builder/briefs/brief-b.md": "c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550"
+  },
+  "protected_unchanged": true,
+  "limits": [
+    "No Git, HTTP, platform, credentials, model fit, official score or candidate modification.",
+    "Synthetic receipt controls do not demonstrate hosted behavior or financial success.",
+    "Unit-source and proposed cross-turn fragment probes are distinct from actual extractor observations.",
+    "Guide edits require a future automatic generation and behavioral validation; old-source failures are retained.",
+    "Parent owns the merged builder checks; they are not run or claimed by this reviewer."
+  ]
+}

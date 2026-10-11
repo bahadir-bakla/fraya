@@ -1,0 +1,393 @@
+{
+  "SGD_holdout_aux_masked_for_TRAIN_projection_collision": {
+    "CAL": 483,
+    "EVAL": 525
+  },
+  "SGD_original_manifest_sha256": "7176ce8bf20c7e6adce899a276f7de0c042e0e33eb63999462264ca6c1843513",
+  "aux_label_order": [
+    "AFFIRM",
+    "NEGATE",
+    "INFORM",
+    "REQUEST"
+  ],
+  "counts": {
+    "CAL": {
+      "existing_authored": 24,
+      "fresh_authored": 320,
+      "sgd_aux": 16072
+    },
+    "EVAL": {
+      "existing_authored": 24,
+      "fresh_authored": 384,
+      "sgd_aux": 16295
+    },
+    "TRAIN": {
+      "existing_authored": 86,
+      "fresh_authored": 1120,
+      "sgd_aux": 132615,
+      "tau_policy_synthetic": 20048,
+      "tau_scenario_synthetic": 2472
+    }
+  },
+  "cross_split_projected_inputs": 811,
+  "domain_known_elements": {
+    "CAL": {
+      "correction": 312,
+      "current_affirm": 312,
+      "current_withdraw": 312,
+      "dispute": 328,
+      "proposal": 312,
+      "reported_third_party": 328,
+      "uncertain": 344
+    },
+    "EVAL": {
+      "correction": 392,
+      "current_affirm": 392,
+      "current_withdraw": 392,
+      "dispute": 392,
+      "proposal": 376,
+      "reported_third_party": 392,
+      "uncertain": 408
+    },
+    "TRAIN": {
+      "correction": 23702,
+      "current_affirm": 23701,
+      "current_withdraw": 23702,
+      "dispute": 23726,
+      "proposal": 23678,
+      "reported_third_party": 23726,
+      "uncertain": 23726
+    }
+  },
+  "domain_label_order": [
+    "proposal",
+    "dispute",
+    "correction",
+    "current_affirm",
+    "current_withdraw",
+    "uncertain",
+    "reported_third_party"
+  ],
+  "domain_positive_rows": {
+    "CAL": {
+      "correction": 52,
+      "current_affirm": 52,
+      "current_withdraw": 52,
+      "dispute": 52,
+      "proposal": 72,
+      "reported_third_party": 52,
+      "uncertain": 68
+    },
+    "EVAL": {
+      "correction": 84,
+      "current_affirm": 68,
+      "current_withdraw": 68,
+      "dispute": 52,
+      "proposal": 72,
+      "reported_third_party": 84,
+      "uncertain": 84
+    },
+    "TRAIN": {
+      "correction": 3464,
+      "current_affirm": 5094,
+      "current_withdraw": 4670,
+      "dispute": 3492,
+      "proposal": 6634,
+      "reported_third_party": 2065,
+      "uncertain": 3474
+    }
+  },
+  "duplicate_observed_rows": 15164,
+  "fresh_authored_template_families": {
+    "CAL": 20,
+    "EVAL": 24,
+    "TRAIN": 41
+  },
+  "generator": {
+    "external_spend": 0,
+    "path": "analysis/minilm-ft-data.py",
+    "sha256": "0776765a518854d9e05b0405989fb7ab57678659f2cdae25c982f430e42c1a9e",
+    "templates": "research/customer-benchmark/minilm-finetune-v1/templates.py",
+    "templates_sha256": "0e897c0ddf50bd8298a067e3640a77356ba3f1f5bae6a311428b5668b10df9a7"
+  },
+  "group_counts": {
+    "CAL": 1640,
+    "EVAL": 1644,
+    "TRAIN": 9994
+  },
+  "jsonl_bytes": 102475894,
+  "limitations": [
+    "Synthetic engineering labels are not independently adjudicated human gold.",
+    "Families share an author, ontology and broad semantic patterns; family-disjoint is not human IID.",
+    "Tau synthetic families are TRAIN-only; no task-blind Tau qualification claim.",
+    "SGD CAL/EVAL are frozen internal partitions of publisher TRAIN, not publisher official dev/test.",
+    "Short projected SGD inputs collide across frozen partitions; copied CAL/EVAL aux masks exclude inputs also present in TRAIN. Originals are unchanged.",
+    "3000 genuinely diverse independent domain templates not achieved; source contexts, templates and variants are counted separately.",
+    "current_affirm is semantic/admin agreement and never authentication or payment authority."
+  ],
+  "outputs": [
+    {
+      "bytes": 85950371,
+      "path": "research/customer-benchmark/minilm-finetune-v1/train.jsonl",
+      "rows": 156341,
+      "sha256": "b59d9f4086769b59dfb276d780d054ca93533f40af6e40937bf294a6f69fb804",
+      "split": "TRAIN"
+    },
+    {
+      "bytes": 8184247,
+      "path": "research/customer-benchmark/minilm-finetune-v1/cal.jsonl",
+      "rows": 16416,
+      "sha256": "9fa10107079594e315dc49dbbe0d7af5fdd119ba749c455183074c5a5d83147d",
+      "split": "CAL"
+    },
+    {
+      "bytes": 8341276,
+      "path": "research/customer-benchmark/minilm-finetune-v1/eval.jsonl",
+      "rows": 16703,
+      "sha256": "a563bca8e6f4a43680cef5ef881bfd8c15c2488392b04e191bb7880dd5da3aff",
+      "split": "EVAL"
+    }
+  ],
+  "report_strata": {
+    "existing_authored": "DIAGNOSTIC: all 134 prior exposed source rows, preserving old TRAIN/CAL/EVAL",
+    "fresh_authored_CAL": "NEW_SYNTHETIC_CAL: source=new-authored, split=CAL; 320 rows / 20 authored families",
+    "fresh_authored_EVAL": "NEW_SYNTHETIC_OOD_EVAL: source=new-authored, split=EVAL; 384 rows / 24 authored families",
+    "fresh_macro_grouping": "compute label and macro metrics separately on fresh authored EVAL groups; author-defined synthetic families, not human IID"
+  },
+  "schema": "research/customer-benchmark/minilm-finetune-v1/schema.json",
+  "schema_version": "minilm-finetune-v1",
+  "source_checks": [
+    {
+      "path": "research/customer-benchmark/tau-train/train-scenario-specs.jsonl",
+      "sha256": "a8e57343805f654a3b1feea4a393ca19e2315c571bca7128534a777423e966dd"
+    },
+    {
+      "path": "research/customer-benchmark/tau-train/train-policy-contexts.jsonl",
+      "sha256": "d44019b56a148757652994eab0e88e4e3bffeed708cc1c206e90884f0626d4f8"
+    },
+    {
+      "path": "research/customer-benchmark/day2-training-data/sgd/LICENSE.txt",
+      "sha256": "71a43a169b52bb1b39510b65ec5b43b4bbb59196d449a835fe58b50af6a72742"
+    },
+    {
+      "path": "research/customer-benchmark/day2-training-data/sgd/NOTICE.txt",
+      "sha256": "5df01f478eef5c5a5b6cb6befac1b02849e9aeef3dc3046948ac87b8ab21b216"
+    },
+    {
+      "path": "research/customer-benchmark/day2-training-data/sgd/PUBLISHER-README.md",
+      "sha256": "e16545f163578037e6b7315b8da243f9f9871f4f071a812ab86b73702f124168"
+    },
+    {
+      "path": "research/customer-benchmark/day2-training-data/sgd/design-contract.json",
+      "sha256": "f97bbc128a99048964761453c1ba13f4f66d2373ff4bae09e6bc6d4f14b11ab2"
+    },
+    {
+      "path": "research/customer-benchmark/day2-training-data/sgd/full-v1/split-plan.json",
+      "sha256": "4e30601875eb6d37d3a885ab969bf32c8e55bf0b9d4a5fc01b36040cf1d3ba41"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00001.jsonl",
+      "sha256": "4d31d2c63fb6bf8a51c420504e1f5d0cf0c9549609ee93cef5add7b5350ef874"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00002.jsonl",
+      "sha256": "04f77488886f2de48fd246b602948631300273507bf179434a687f1681b67f1e"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00003.jsonl",
+      "sha256": "8251a54abed56a71c09655a6620e649a301e0c172af65ff1cc6dd2f904bf6966"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00004.jsonl",
+      "sha256": "e69e607af9edbecf916274e990b4c16d10feda2a87e1202c452f821f12dd7824"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00005.jsonl",
+      "sha256": "032517416a9c7c37b9aa187629b61c70acc68e4da9a5867ebf56ad1a23686daa"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00006.jsonl",
+      "sha256": "6a231d19c566c91dc917391860201f1756bc9dfd090045d790ba74410feea8fe"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00007.jsonl",
+      "sha256": "56909e6018ec180fc6373aa8a84375a04eb873df856f673c84eaebc781f86ff5"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00008.jsonl",
+      "sha256": "1de7a6de53eac018349865acc9fe201dee6890b0e9947faeb326bd1d05c3106d"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00009.jsonl",
+      "sha256": "9dc7b119ff32d3debac02cc08b9e546b417038278a074ddb6b803c92c06fc0e4"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00010.jsonl",
+      "sha256": "2ef0eaf98845e906b7552292e1fa992c5ffa26167dee8d4ae08ce2b383a24061"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00011.jsonl",
+      "sha256": "63f5c4f0dacc27f5b9fee3ec0194548dfcb9f0ca3ce94033fe5ea1513e6ec9ad"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00012.jsonl",
+      "sha256": "65ea2388a87574ccad8125135bc9be2b02625ac7bdfe651950eaf97dd727d6cf"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00013.jsonl",
+      "sha256": "88f8ebd70542fe4af665ad356571766d09ef9db5e47987c99370f5e51e1d5adc"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00014.jsonl",
+      "sha256": "9574a417384fb12df9ca180a7a14ae4a2c058afe4f0835b30bfb0feb5323b04d"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00015.jsonl",
+      "sha256": "526ac47ff46ef82989f3dee6491e30a48276124dfda1cb16790ab21b46df12a9"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00016.jsonl",
+      "sha256": "8c6ab8794ac1d711e852e1a1aa2ffb91019e62e842de8afb1e0cf6fc69456f4b"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00017.jsonl",
+      "sha256": "7d84cca8353c48aa3e362cb0e76fc0c69364d399fc17b0be79123e3f0d32d72d"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00018.jsonl",
+      "sha256": "9fc1ec0db90a3b835c9c88d997314b471367695290ac7d92b51650b1727b4945"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00019.jsonl",
+      "sha256": "e8f66b6c0f882573283a2f7e87b79c57ff40bf3816ba52750804f27734f007c3"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00020.jsonl",
+      "sha256": "70525290526072867c95f6ce5f1a4789004ef6adbb026370108350c85555c950"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00021.jsonl",
+      "sha256": "414345154ad990f91c8321f6355f149467d4f792b777dfa0b1bb4dec3d06693f"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00022.jsonl",
+      "sha256": "1c086409e542b0c7f15216c0a485cc70711e9a53acf28b6c6a73f2cd4006e0f6"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00023.jsonl",
+      "sha256": "83b6031612de3c0e2dae3cc8def6fcdb5be573a096f7c943858385247248ed33"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00024.jsonl",
+      "sha256": "ba8940f22aeae4eba4d9813203bcf7227f49c985b8638fd76c4347038ac34143"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00025.jsonl",
+      "sha256": "1ecbf25524205c2557d44d7fb0acb7aaaf751ad4092b6b3d3c3586df1eac4a34"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00026.jsonl",
+      "sha256": "3ab9485e5893112e9eb356e5a0d85601fedacafcdc5c4cba4cef84a04a55cca9"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00027.jsonl",
+      "sha256": "eafb6152f420cff182e8239600519c177d130b51e736285fd52d5f0a359ad044"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00028.jsonl",
+      "sha256": "c668b61f3a6b16a2653fe5bb0eb163b9859e225f27acf2b6175565b2c6e3283c"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/train-00029.jsonl",
+      "sha256": "b75e966f51111fc380c44acd59d1f4a44119cd99737cb63bf130dcef474da410"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/cal-00001.jsonl",
+      "sha256": "fcffd0ef7c8d7148844d9c2339ab47ca732093934d1d44845bcd18f8386a88ef"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/cal-00002.jsonl",
+      "sha256": "9c766701c3e670118808e74f6a6d37ab64e83a39dfe42d5c1052acf24c895ad9"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/cal-00003.jsonl",
+      "sha256": "ebc12443701367585c33f27635d7e6052c4ec27cdce006b01ab05db6f3e95f1a"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/cal-00004.jsonl",
+      "sha256": "41427d7a211e13aab9b6296422813b8f91b6c3f16d37d0d9a170edb88c1eebca"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/eval-00001.jsonl",
+      "sha256": "1088d52105f48f6c227e22a3cfb2da4ae267f91b0dfd6c29e88ae73416a71b19"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/eval-00002.jsonl",
+      "sha256": "2abb978e108430c8ac954536ae6469734712eb3ae5a96da04e76e6228deb9740"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/eval-00003.jsonl",
+      "sha256": "61ef9b3becb6735ffa21af5a1e3b8fd3b3f3452dd81967addf3cd7afddfe7a7c"
+    },
+    {
+      "path": "local-runs/customer-benchmark-day2-sgd/full-v1/eval-00004.jsonl",
+      "sha256": "a804e409212b71d819307fa608b0ea5a53e5e9dde552d7c547505db55c7b8af0"
+    },
+    {
+      "path": "research/customer-benchmark/repayment-semantic/train.jsonl",
+      "sha256": "a63a513538e14cd8a458b689b5d447eba4e6d4f3fc1b9d5267a8330b0b8838c2"
+    },
+    {
+      "path": "research/customer-benchmark/repayment-semantic/cal.jsonl",
+      "sha256": "329179c4c7442e47646094d4608a68be870f0ea0b416343acb72b45f03ce375b"
+    },
+    {
+      "path": "research/customer-benchmark/repayment-semantic/heldout.jsonl",
+      "sha256": "9c561a7ef422c0e4b12d7f8c32d492bf223fa5323649ba42cc889149dbbb8816"
+    }
+  ],
+  "source_overlap_mask_reasons": {
+    "path": "research/customer-benchmark/minilm-finetune-v1/source-overlap.jsonl",
+    "rows": 1008,
+    "sha256": "36b5da0bdc0808c9b21e888113df047884d150b45e807fbe7391104c39ca6a56"
+  },
+  "tau_original_manifest_sha256": "ad60d0e9187c395109774c8ef81e8772eb7dcb18d1a3140ec255f182346be11b",
+  "tau_source_contexts": {
+    "TRAIN_policy_chunks": 716,
+    "independent_IID_roots_claimed": 0,
+    "official_TRAIN_scenarios": 103,
+    "policy_document_roots": 701,
+    "tau_synthetic_embargo_families": 2
+  },
+  "training_contract": {
+    "all_SGD_TRAIN_rows_required_per_aux_epoch": 132615,
+    "false_mask_means_unknown": true,
+    "generic_AFFIRM_is_not_domain_authority": true,
+    "input_allowlist": [
+      "input.current_utterance",
+      "input.previous_utterances[].speaker",
+      "input.previous_utterances[].text"
+    ],
+    "never_encode": [
+      "id",
+      "source",
+      "group",
+      "split",
+      "domain_labels",
+      "domain_mask",
+      "aux_labels",
+      "aux_mask",
+      "sources.json",
+      "ancestry.jsonl"
+    ],
+    "official_TEST_tasks_used": 0,
+    "tau_scenario_generation_is_synthetic": true
+  },
+  "unique_observed_inputs_by_kind": {
+    "existing_authored": 134,
+    "fresh_authored": 858,
+    "sgd_aux": 158154,
+    "tau_policy_synthetic": 15015,
+    "tau_scenario_synthetic": 135
+  }
+}

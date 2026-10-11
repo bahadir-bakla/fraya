@@ -1,0 +1,68 @@
+Final independent MiniLM source audit -- Codex, native Opus unavailable.
+2026-10-11T12:31:15.485255+00:00
+
+No training or CPU inference blocker found. One P2 evaluation-admission defect.
+All five previous source regressions PASS. Final suite: 8 tests, 7 PASS, 1 FAIL, 0 ERROR.
+Command: python -B new.py; evidence: analysis/minilm-ft-final-review.tests.json.
+
+P2: integrations/learned-dialogue/minilm_ft_eval.py:22 accepts TRAIN-tagged records
+and emits a report describing them as heldout. Test07 reproduced this using only
+synthetic in-memory records, mocked model predictions and mocked file operations.
+Require EVAL split tags and the frozen EVAL digest before predictions. For the
+evaluation already running, check its returned EVAL_sha256 against freeze.json
+before accepting metrics; this finding does not justify rerunning/retuning EVAL.
+No actual EVAL text or result metrics were inspected. It does not block training.
+
+Verified actual h100-run3 exports: both arms TRAIN156341/CAL16416, two epochs,
+2444 optimizer steps per arm, unique TRAIN rows156341, all_train_rows_seen=true.
+Fine-tuned: 101 changed encoder tensors, delta_L2=5.292286992607327,103 trainable.
+Frozen: zero changed tensors,delta0,zero trainable. Both report H10080GB HBM3.
+All eight manifest-listed artifacts per arm hash-verified. Actual fine-tuned
+export loads encoder/head as FP32 on CPU and produces finite [1,11] logits.
+These prove returned training/update/export behavior, not accuracy or bank authority.
+Provider stopped/tasks0 is user-reported; auditor made no provider calls.
+
+Additional actual CPU source test: real MiniLM on three synthetic AUX-known/
+DOMAIN-unknown rows, two epochs, batch2, four updates, all three rows consumed
+including the last short batch. Fine-tuned101 changed versus frozen0. No exports
+or original/publisher weights were modified. Unknown supervised gradients zero;
+empty-supervision fits rejected. Separate7/7/4/4 and TRAIN/CAL tags now enforced.
+
+TRAIN156341/CAL16416 independently scanned and hashed; SGD TRAIN132615 retained,
+SGD domain masks all false, allowlisted observed features only, no eligible
+TRAIN/CAL input collision, no history over two turns. Tokenizer preserves all
+909 tokens across four windows; attention pooling excludes padding. EVAL never
+opened. Existing 14 SGD TRAIN AUX-conflict comparisons remain known source noise.
+
+Inference adapter: actual manifest pin checked and tampered pin rejected; oracle
+input fields rejected; intervening tool resets context; disabled threshold1.01
+abstains even at logit1000. All semantics remain task proposals, financial
+authorization UNKNOWN and bank_authority false. No model quality claim.
+
+Launcher/source: one H100,max container1,retries0,240s startup,1800s compute
+argument/1860s function timeout, guardian armed before app.run with2700s wall.
+No block_network=True remains, permitting Modal result upload. Local model
+reads use local_files_only/trust_remote_code=false/token=false; image sets
+offline HF/Transformers flags. Exact uploads: TRAIN/CAL, six encoder files,
+core and modal source; no EVAL or directory upload. Include_source false.
+Ledger arithmetic tested in memory; source three-start cap recorded before
+app.run. No fourth start; budget snapshot: {"accounted_upper_USD": 30.0, "actual_task_cost_USD": 0, "invoice_verified": false, "reserved_USD": 0, "start_count": 3}.
+
+No live platform, cloud, training-launch or credential/env-file actions.
+Parent source unchanged; only final-review artifacts and new.py written.
+
+Exact current source SHA256 (unchanged since tests=True):
+integrations/learned-dialogue/minilm_ft_core.py 560deaa6344b88b893b0105b48204725e578a0a0fa3acab7fa2f4bdc7173f00f
+integrations/learned-dialogue/minilm_ft_modal.py 07eea2af4ed03ef934b68b0879afaa498d74221d5a3842eeddb0ed7cdd7f58c6
+integrations/learned-dialogue/minilm_ft_launch.py cb90be8eb10728ee06d9e43c6cc9d1c09a2ef96d743679349a0a56e01e5e942a
+integrations/learned-dialogue/minilm_ft_guard.py ca11b7a0c207f4aa398084391ac52337d4379334ecbb55621817411f04d01930
+integrations/learned-dialogue/minilm_ft_eval.py ac99b7cd9cff296ad4d410c335a39520d2f0138c455996e6082690ec3d8cb7e1
+competition/finetuned_assist.py be6388312959a701d9529292032667ba153538bbb397a8f733c551d65f097d12
+
+Actual returned model pins:
+frozen manifest 521fa9e37a52011d03185ee40be7482c3ed9d13c0c6bec574e8f46d132219f51
+frozen encoder 5ba0032aefec27c763b2d9c8912eeec19529d4efdab9a71a9756e8056ba8f2e0
+frozen head 870c8d9507a4db25f9427fa49bd56d9b0b31d29e11ab2c6414ae965503ec2f75
+finetuned manifest 0e8b19305d935c08ec0b25ff9ca42ac556d3474cf6c859a06683988f630350ea
+finetuned encoder 40d8eea44e030a64cd9660d338b47c2a94983ccbe0ff3d5b130e830d30bfc39f
+finetuned head 4212dd447c2853b8f8f7ff69bfb49a96da8a10e5c15ae97cc83e624afb18fe32

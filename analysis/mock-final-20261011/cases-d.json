@@ -1,0 +1,767 @@
+[
+ {
+  "id": "PUB-11",
+  "case_label": "D-11",
+  "brief": "D",
+  "family": "Multi-product",
+  "level": "medium",
+  "title": "[MOCK D-11] Three products, one date that the memo reopened",
+  "variables": {
+   "first_name": "Sofia",
+   "last_name": "Almeida",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1987-06-03",
+   "phone_last4": "2288"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "2288",
+    "past_due": 220.0,
+    "days_late": 9,
+    "minimum_payment": 66.0
+   },
+   {
+    "type": "personal_loan",
+    "past_due": 640.0,
+    "days_late": 9,
+    "instalment_amount": 213.0
+   },
+   {
+    "type": "car_loan",
+    "past_due": 75.0,
+    "days_late": 3,
+    "instalment_amount": 25.0
+   }
+  ],
+  "script": "Verified. Cannot clear everything today. Wants to pay all three in full on Friday 23 October. Confirms once at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 220.0,
+     "date": "2026-10-23"
+    },
+    {
+     "product_id": "p2",
+     "amount": 640.0,
+     "date": "2026-10-23"
+    },
+    {
+     "product_id": "p3",
+     "amount": 75.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "all three products stated before any question about paying",
+   "if the agent takes the products one at a time, it starts with the personal loan (highest balance)",
+   "one read-back for all three and one confirmation",
+   "the agent does not move the date away from 23 October"
+  ],
+  "rule_refs": [
+   "POL 7.5.3",
+   "POL 7.6.2",
+   "POL 7.6.3",
+   "POL 7.8.1",
+   "POL 7.8.2",
+   "POL 7.8.4",
+   "POL 7.10.1",
+   "MEMO M1",
+   "MEMO M2"
+  ],
+  "rationale": "All three are standard track (9, 9, 3 days). Memo M2: deadline is the 6th business day after today; with M1 (20 Oct closed, 23 Oct open) that is Fri 23 Oct. 23 Oct is a business day after M1 and fits every product (7.8.4). Full amounts on 2026-10-23. Reading CP-7 alone would wrongly treat 23 Oct as closed."
+ },
+ {
+  "id": "PUB-12",
+  "case_label": "D-12",
+  "brief": "D",
+  "family": "Multi-product",
+  "level": "hard",
+  "title": "[MOCK D-12] One promise, one refusal, one dispute",
+  "variables": {
+   "first_name": "Marcus",
+   "last_name": "Bell",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1983-10-19",
+   "phone_last4": "4410"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "9015",
+    "past_due": 510.0,
+    "days_late": 16,
+    "minimum_payment": 153.0
+   },
+   {
+    "type": "personal_loan",
+    "past_due": 1320.0,
+    "days_late": 16,
+    "instalment_amount": 440.0
+   },
+   {
+    "type": "car_loan",
+    "past_due": 140.0,
+    "days_late": 7,
+    "instalment_amount": 46.0
+   }
+  ],
+  "script": "Gives the date of birth correctly. Gives the last four digits as 4401 first, then 4410. When asked whether he can clear everything today, just says no. Answers about one product at a time, only when that product comes up: for the personal loan he flatly refuses every offer; for the credit card he says he will pay it in full tomorrow; for the car loan he says it was settled when he sold the car last spring and is not his any more. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 510.0,
+     "date": "2026-10-15"
+    }
+   ],
+   "notes": [
+    {
+     "product_id": "p2",
+     "reason": "refused"
+    },
+    {
+     "product_id": "p3",
+     "reason": "dispute"
+    }
+   ],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the date of birth is asked before the phone digits, and the phone question is asked again once",
+   "the personal loan is discussed before the credit card and the car loan",
+   "two offers on the personal loan: 1,320.00 on Friday 16 October, then 440.00 on Wednesday 21 October",
+   "the agent does not argue about the car loan"
+  ],
+  "rule_refs": [
+   "POL 7.4.1",
+   "POL 7.4.2",
+   "POL 7.8.2",
+   "POL 7.8.3",
+   "POL 7.11.2",
+   "POL 7.12.1",
+   "CL Table B",
+   "MEMO M1"
+  ],
+  "rationale": "One wrong answer on the phone question is allowed (7.4.2). Order by past_due: p2 1320, p1 510, p3 140 (7.8.2). p2 escalated (16 days): attempt 1 full on the 2nd business day (Fri 16 Oct), attempt 2 floor 440.00 on its deadline, the 4th business day after today = Wed 21 Oct with 20 Oct closed (M1); both refused, note refused. p1: he proposes full tomorrow, Thu 15 Oct, valid. p3: settled in the past = dispute (7.11.2). A promise was recorded, so outcome promise."
+ },
+ {
+  "id": "PUB-13",
+  "case_label": "D-13",
+  "brief": "D",
+  "family": "Multi-product",
+  "level": "hard",
+  "title": "[MOCK D-13] One date for both, after both deadlines: earliest deadline for all",
+  "variables": {
+   "first_name": "Elena",
+   "last_name": "Rossi",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1991-01-08",
+   "phone_last4": "6604"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "6604",
+    "past_due": 300.0,
+    "days_late": 4,
+    "minimum_payment": 90.0
+   },
+   {
+    "type": "personal_loan",
+    "past_due": 900.0,
+    "days_late": 20,
+    "instalment_amount": 300.0
+   }
+  ],
+  "script": "Verified. Cannot clear everything today. Wants to pay both in full on 30 October. When told the latest date that works for both, accepts it for both. Confirms once.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 300.0,
+     "date": "2026-10-21"
+    },
+    {
+     "product_id": "p2",
+     "amount": 900.0,
+     "date": "2026-10-21"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent offers Wednesday 21 October for both products",
+   "the read-back names 21 October for both",
+   "one create_promise per product"
+  ],
+  "rule_refs": [
+   "POL 7.6.3",
+   "POL 7.8.4",
+   "POL 7.10.1",
+   "MEMO M1",
+   "MEMO M2"
+  ],
+  "rationale": "p1 standard (4 days) deadline = 6th business day = Fri 23 Oct (M1, M2); p2 escalated (20 days) deadline = 4th business day = Wed 21 Oct (M1 makes 20 Oct a closure). 30 Oct is after both, so 7.8.4 offers the earliest deadline, 21 Oct, for both. Full amounts on 2026-10-21. Brief B logic would give p1 its own deadline; CP-7 without the memo would give 20 Oct."
+ },
+ {
+  "id": "PUB-01",
+  "case_label": "D-01",
+  "brief": "D",
+  "family": "Refusal",
+  "level": "easy",
+  "title": "[MOCK D-01] Standard track: one offer, then refused",
+  "variables": {
+   "first_name": "Daniel",
+   "last_name": "Reyes",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1988-03-14",
+   "phone_last4": "4471"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "4821",
+    "past_due": 420.0,
+    "days_late": 6,
+    "minimum_payment": 126.0
+   }
+  ],
+  "script": "Verified. Says no, he will not pay, and gives no reason. Flatly refuses every offer without giving a date or amount.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "NP-RTP",
+   "promises": [],
+   "notes": [
+    {
+     "product_id": "p1",
+     "reason": "refused"
+    }
+   ],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "exactly one persuasion offer: 420.00 on Friday 16 October",
+   "the agent never says the word 'debt'",
+   "the agent greets him by his first name after confirmation"
+  ],
+  "rule_refs": [
+   "EMAIL",
+   "POL 7.8.1",
+   "POL 7.8.2",
+   "POL 7.8.3",
+   "POL 7.12.1",
+   "CL Table C"
+  ],
+  "rationale": "Standard track (6 days) has one attempt (7.8.3): full 420.00 on the 2nd business day after today, Fri 16 Oct. Refused, attempts used up: note refused (7.12.1, single product too), Table C: NP-RTP."
+ },
+ {
+  "id": "PUB-02",
+  "case_label": "D-02",
+  "brief": "D",
+  "family": "Third party",
+  "level": "hard",
+  "title": "[MOCK D-02] Relative offers an evening slot the memo no longer allows",
+  "variables": {
+   "first_name": "Maria",
+   "last_name": "Costa",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1979-11-02",
+   "phone_last4": "0358"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 310.5,
+    "days_late": 11,
+    "instalment_amount": 103.5
+   }
+  ],
+  "script": "The person who answers is Maria's husband. Asks what the call is about and offers to pay himself. Says she can be reached tomorrow evening at seven. If asked for another time, says Friday at half past five in the afternoon.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "NR-CB",
+   "promises": [],
+   "notes": [],
+   "callbacks": [
+    {
+     "date": "2026-10-16",
+     "time": "17:30"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "the agent gives no reason for the call and names no product or amount",
+   "the agent does not book 19:00 and asks once for another time",
+   "callback booked for Friday 16 October at 17:30"
+  ],
+  "rule_refs": [
+   "POL 7.3.1",
+   "POL 7.3.2",
+   "POL 7.3.3",
+   "MEMO M4"
+  ],
+  "rationale": "Memo M4: third-party callbacks 09:00 to 18:00, today up to the 2nd business day after today (Thu 15, Fri 16 Oct). 19:00 tomorrow is outside: ask once more (7.3.3). Friday 17:30 is inside: callback 2026-10-16 17:30, NR-CB. CP-7 alone (until 20:00) would have booked 15 Oct 19:00.",
+  "third_party": true
+ },
+ {
+  "id": "PUB-03",
+  "case_label": "D-03",
+  "brief": "D",
+  "family": "Identity",
+  "level": "medium",
+  "title": "[MOCK D-03] Declines the security questions",
+  "variables": {
+   "first_name": "Owen",
+   "last_name": "Park",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1992-07-21",
+   "phone_last4": "6630"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "0377",
+    "past_due": 95.0,
+    "days_late": 4,
+    "minimum_payment": 28.5
+   }
+  ],
+  "script": "Confirms the name. When asked for his date of birth, asks what the call is about. After the agent explains why it asks, says he never gives personal details on the phone and will not answer.",
+  "expected": {
+   "outcome": "not_verified",
+   "reason": "NV-REFUSE",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent explains once that the questions protect his account",
+   "no product, amount or reason for the call is disclosed",
+   "verify_identity and get_account are never called"
+  ],
+  "rule_refs": [
+   "POL 7.2.4",
+   "POL 7.4.5",
+   "POL 7.12.2",
+   "CL Table B"
+  ],
+  "rationale": "First question instead of an answer: explain once and ask again (7.4.5). Second refusal closes not_verified / NV-REFUSE. No notes on unverified calls (7.12.2)."
+ },
+ {
+  "id": "PUB-04",
+  "case_label": "D-04",
+  "brief": "D",
+  "family": "Amounts",
+  "level": "hard",
+  "title": "[MOCK D-04] Offers her usual instalment, below the memo's car floor",
+  "variables": {
+   "first_name": "Lena",
+   "last_name": "Hoffmann",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1984-01-30",
+   "phone_last4": "2219"
+  },
+  "products": [
+   {
+    "type": "car_loan",
+    "past_due": 1250.0,
+    "days_late": 14,
+    "instalment_amount": 400.0
+   }
+  ],
+  "script": "Verified. When asked whether she can pay the full amount today, says she can pay 400, her usual monthly instalment, on Friday the 23rd. If told that amount cannot be recorded and offered a higher amount for the same day, accepts it. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 625.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent does not accept 400",
+   "the agent offers 625.00 for Friday 23 October",
+   "the promise is read back and confirmed before it is recorded"
+  ],
+  "rule_refs": [
+   "POL 7.7.5",
+   "POL 7.6.3",
+   "MEMO M1",
+   "MEMO M2",
+   "MEMO M3"
+  ],
+  "rationale": "Car loan floor is 50% of 1250.00 = 625.00 (M3, not the 400 instalment). Standard track (14 days) deadline Fri 23 Oct (M1, M2), and 23 Oct is a business day (M1). 400 is below the floor: offer the floor keeping her date (7.7.5). Promise 625.00 on 2026-10-23."
+ },
+ {
+  "id": "PUB-05",
+  "case_label": "D-05",
+  "brief": "D",
+  "family": "Hardship",
+  "level": "medium",
+  "title": "[MOCK D-05] Lost his job, accepts a Financial Support callback",
+  "variables": {
+   "first_name": "Tomas",
+   "last_name": "Novak",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1990-09-09",
+   "phone_last4": "8846"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 780.0,
+    "days_late": 21,
+    "instalment_amount": 260.0
+   }
+  ],
+  "script": "Verified. Says he lost his job last month and cannot pay anything. Asks for a discount. When offered a call back from a support team, says tomorrow at two in the afternoon.",
+  "expected": {
+   "outcome": "no_promise",
+   "reason": "NP-FSCB",
+   "promises": [],
+   "notes": [
+    {
+     "product_id": "p1",
+     "reason": "hardship"
+    }
+   ],
+   "callbacks": [
+    {
+     "date": "2026-10-15",
+     "time": "14:00"
+    }
+   ],
+   "transfers": []
+  },
+  "checks": [
+   "one sentence of sympathy and no persuasion attempt",
+   "no discount, waiver or plan offered",
+   "callback booked for Thursday 15 October at 14:00"
+  ],
+  "rule_refs": [
+   "POL 7.9.1",
+   "POL 7.9.2",
+   "POL 7.9.3",
+   "CL Table C",
+   "MEMO M5"
+  ],
+  "rationale": "Hardship (7.9.1): no persuasion; offer a Financial Support callback on the 1st or 2nd business day after today, 09:00 to 16:00 (7.9.2). Thu 15 Oct 14:00 is inside. Note hardship (7.9.3). Table C priority 2 with a callback, code renamed by memo M5 from NP-HCB to NP-FSCB."
+ },
+ {
+  "id": "PUB-06",
+  "case_label": "D-06",
+  "brief": "D",
+  "family": "Dates",
+  "level": "hard",
+  "title": "[MOCK D-06] Minimum payment 'next Tuesday', a new closure day",
+  "variables": {
+   "first_name": "Priya",
+   "last_name": "Nair",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1986-05-17",
+   "phone_last4": "1502"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "1903",
+    "past_due": 2125.1,
+    "days_late": 12,
+    "minimum_payment": 637.5
+   }
+  ],
+  "script": "Verified. Says the full amount is too much right now. Accepts the minimum amount when it is offered. Wants to pay it next Tuesday. When told that day is not possible and offered another, accepts it. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 637.5,
+     "date": "2026-10-21"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the minimum amount is offered once with the note that the remainder stays overdue",
+   "the agent does not accept Tuesday 20 October and offers Wednesday 21 October",
+   "promise for 637.50 on Wednesday 21 October"
+  ],
+  "rule_refs": [
+   "POL 7.6.5",
+   "POL 7.6.8",
+   "POL 7.7.1",
+   "POL 7.7.4",
+   "MEMO M1",
+   "MEMO M2"
+  ],
+  "rationale": "Credit card floor = max(637.50, 50.00) = 637.50 (7.7.1). 'Next Tuesday' = Tuesday of the following week, Tue 20 Oct (7.6.8), a closure day under M1, so the next business day Wed 21 Oct is offered (7.6.5); it is inside the standard deadline Fri 23 Oct (M2). Promise 637.50 on 2026-10-21."
+ },
+ {
+  "id": "PUB-07",
+  "case_label": "D-07",
+  "brief": "D",
+  "family": "Third party",
+  "level": "easy",
+  "title": "[MOCK D-07] Wrong number",
+  "variables": {
+   "first_name": "Samuel",
+   "last_name": "Ortiz",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1975-12-05",
+   "phone_last4": "7093"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 540.0,
+    "days_late": 5,
+    "instalment_amount": 180.0
+   }
+  ],
+  "script": "The person who answers says there is nobody called Samuel Ortiz at this number; it has been their number for years.",
+  "expected": {
+   "outcome": "not_reached",
+   "reason": "NR-WRONG",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent gives no reason for the call",
+   "no security questions are asked",
+   "the call is closed politely after the wrong-number statement"
+  ],
+  "rule_refs": [
+   "POL 7.2.4",
+   "POL 7.3.4",
+   "CL Table B"
+  ],
+  "rationale": "7.3.4: wrong number, not_reached / NR-WRONG; no notes on unreached calls (7.12.2).",
+  "third_party": true
+ },
+ {
+  "id": "PUB-08",
+  "case_label": "D-08",
+  "brief": "D",
+  "family": "Already paid",
+  "level": "medium",
+  "title": "[MOCK D-08] Paid this morning: note and paid",
+  "variables": {
+   "first_name": "Hannah",
+   "last_name": "Schmidt",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1993-04-28",
+   "phone_last4": "3317"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "5512",
+    "past_due": 180.0,
+    "days_late": 5,
+    "minimum_payment": 54.0
+   }
+  ],
+  "script": "Verified. Says she paid it in the app this morning.",
+  "expected": {
+   "outcome": "paid",
+   "reason": null,
+   "promises": [],
+   "notes": [
+    {
+     "product_id": "p1",
+     "reason": "paid"
+    }
+   ],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent says payments can take up to three business days to show",
+   "no promise recorded"
+  ],
+  "rule_refs": [
+   "POL 7.11.1",
+   "POL 7.12.1",
+   "CL Table B"
+  ],
+  "rationale": "7.11.1: no arrangement, note paid (7.12.1 requires a note on single-product calls). Every product is noted paid, so Table B gives outcome paid with no code."
+ },
+ {
+  "id": "PUB-09",
+  "case_label": "D-09",
+  "brief": "D",
+  "family": "Restructuring",
+  "level": "hard",
+  "title": "[MOCK D-09] Agrees the floor, then asks for a plan at the read-back",
+  "variables": {
+   "first_name": "Victor",
+   "last_name": "Ionescu",
+   "title": "Mr",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1981-08-11",
+   "phone_last4": "5560"
+  },
+  "products": [
+   {
+    "type": "personal_loan",
+    "past_due": 2100.0,
+    "days_late": 28,
+    "instalment_amount": 700.0
+   }
+  ],
+  "script": "Verified. Says the full amount is too much. When offered a lower amount, agrees to it for Friday 16 October. When the agent reads the arrangement back, he does NOT say 'Yes, I confirm' and does not agree: instead he says he would rather have lower monthly instalments and asks for a new payment plan. This replaces the rule about confirming at the read-back.",
+  "expected": {
+   "outcome": "transferred",
+   "reason": "XFER-RESTR",
+   "promises": [],
+   "notes": [],
+   "callbacks": [],
+   "transfers": [
+    {
+     "queue": "restructuring"
+    }
+   ]
+  },
+  "checks": [
+   "no create_promise call is made",
+   "transfer_to_agent called with queue restructuring",
+   "the agent does not describe a plan of its own",
+   "no add_note call is made"
+  ],
+  "rule_refs": [
+   "POL 7.7.4",
+   "POL 7.11.4",
+   "POL 7.11.5",
+   "CL Table B"
+  ],
+  "rationale": "Floor 700.00 agreed for Fri 16 Oct but not yet confirmed or recorded. The plan request transfers to restructuring; agreed-but-unrecorded arrangements are not recorded (7.11.4); no notes on a transfer (7.11.5). transferred / XFER-RESTR."
+ },
+ {
+  "id": "PUB-10",
+  "case_label": "D-10",
+  "brief": "D",
+  "family": "Tool failure",
+  "level": "hard",
+  "title": "[MOCK D-10] Date after the memo deadline, then a service failure",
+  "variables": {
+   "first_name": "Grace",
+   "last_name": "Lin",
+   "title": "Ms",
+   "now": "2026-10-14T11:00"
+  },
+  "identity": {
+   "date_of_birth": "1989-02-23",
+   "phone_last4": "9904"
+  },
+  "products": [
+   {
+    "type": "credit_card",
+    "card_last4": "7740",
+    "past_due": 365.0,
+    "days_late": 8,
+    "minimum_payment": 109.5
+   }
+  ],
+  "script": "Verified. Cannot pay today. Offers to pay the full amount on Monday 26 October. Accepts the latest possible date when it is offered. Confirms at the read-back.",
+  "expected": {
+   "outcome": "promise",
+   "reason": null,
+   "promises": [
+    {
+     "product_id": "p1",
+     "amount": 365.0,
+     "date": "2026-10-23"
+    }
+   ],
+   "notes": [],
+   "callbacks": [],
+   "transfers": []
+  },
+  "checks": [
+   "the agent names Friday 23 October as the latest date",
+   "exactly one promise in the ledger after the retry",
+   "the agent does not say the arrangement is set up before a successful call",
+   "'A confirmation text will follow for each arrangement.' is said after the success"
+  ],
+  "rule_refs": [
+   "POL 7.6.6",
+   "POL 7.10.2",
+   "POL 7.10.3",
+   "POL 7.10.4",
+   "MEMO M1",
+   "MEMO M2"
+  ],
+  "rationale": "Standard track (8 days): deadline is the 6th business day after today, Fri 23 Oct (M1, M2); 26 Oct is after it, so 23 Oct is offered (7.6.6). The mock fails the first create_promise (PUB-10 fault); 7.10.3 retries, the second call succeeds. Promise 365.00 on 2026-10-23. CP-7 alone (8th business day, 23 Oct closed = 27 Oct) would wrongly accept 26 Oct.",
+  "faults": [
+   {
+    "tool": "create_promise",
+    "fail_first_n": 1
+   }
+  ]
+ }
+]

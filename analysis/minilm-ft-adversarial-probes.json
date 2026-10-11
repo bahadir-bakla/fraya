@@ -1,0 +1,226 @@
+[
+  {
+    "id": "F01-01", "group": "F01-consent-attribution", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Yes, please send me a copy.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "May I send you a copy of the statement?"}]},
+    "domain_labels": [0,0,0,1,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Explicit current agreement to an administrative action is current_affirm. Sending a copy contains no future-paying commitment. No financial authorization or bank action is inferred."
+  },
+  {
+    "id": "F01-02", "group": "F01-consent-attribution", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "My sister said, 'Yes, I agree to the new date.' Those are her words; I haven't decided.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "What did your sister say about the revised date?"}]},
+    "domain_labels": [0,0,0,0,0,1,1], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Quoted agreement belongs to a reported third party. The current speaker explicitly remains undecided; the quoted yes does not establish the speaker's current affirmation. No payment commitment is stated."
+  },
+  {
+    "id": "F01-03", "group": "F01-consent-attribution", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "My cousin said, 'Yes, I agree.' I also agree to receiving reminders by email.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you personally agree to receiving reminders by email?"}]},
+    "domain_labels": [0,0,0,1,0,0,1], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Both reported third-party agreement and explicit current agreement in the speaker's own words appear. Administrative consent is affirmative even without a payment proposal."
+  },
+  {
+    "id": "F01-04", "group": "F01-consent-attribution", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "You wrote 'yes, I agree' in that example. I'm quoting the example, and I don't know whether I agree with this date.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "The example response was 'yes, I agree.' Do you agree to the date shown here?"}]},
+    "domain_labels": [0,0,0,0,0,1,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "An example quoted from the assistant is not the current speaker's agreement or a report about a nonparticipant third party. The speaker explicitly expresses uncertainty about the current date."
+  },
+  {
+    "id": "F02-01", "group": "F02-withdrawal-after-own-yes", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "I withdraw the agreement I gave you. I will not commit to that payment date now.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you agree to pay 80 euros on Tuesday?"}, {"speaker": "USER", "text": "Yes, I agree, and I will pay 80 euros on Tuesday."}, {"speaker": "ASSISTANT", "text": "Should I keep that agreement in the note?"}]},
+    "domain_labels": [0,0,0,0,1,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "An observed earlier own yes is explicitly revoked in the current turn. The earlier payment promise is not carried forward. Revocation alone is not a separate factual or replacement-terms correction."
+  },
+  {
+    "id": "F02-02", "group": "F02-withdrawal-after-own-yes", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "I take back my earlier yes to reminders by text. I agree that you may read the statement aloud now.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you agree to reminders by text?"}, {"speaker": "USER", "text": "Yes, I agree to text reminders."}, {"speaker": "ASSISTANT", "text": "I can also read the statement aloud. What do you agree to now?"}]},
+    "domain_labels": [0,0,0,1,1,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Withdrawal of the earlier text-reminder agreement coexists with a separate explicit current agreement to reading aloud. Both are administrative; neither supplies a payment commitment."
+  },
+  {
+    "id": "F02-03", "group": "F02-withdrawal-after-own-yes", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Önce tamam dedim ama o ödeme gününe verdiğim onayı geri alıyorum. Şimdilik tarih sözü vermiyorum.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Salı günü 80 avro ödemeyi kabul ediyor musunuz?"}, {"speaker": "USER", "text": "Tamam, salı günü için kabul ediyorum."}, {"speaker": "ASSISTANT", "text": "Bu onayınız hâlâ geçerli mi?"}]},
+    "domain_labels": [0,0,0,0,1,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "OOD: Turkish colloquial engineering probe. The speaker explicitly takes back their observed earlier agreement to the payment day. Refusing to promise a date is not itself expressed uncertainty or a new payment proposal."
+  },
+  {
+    "id": "F02-04", "group": "F02-withdrawal-after-own-yes", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Benim önceki tamamım duruyor, geri almıyorum. Abim 'ben onayımı geri çektim' dedi; bu onun lafı.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Cuma tarihini kabul ediyor musunuz?"}, {"speaker": "USER", "text": "Tamam, cuma tarihini kabul ediyorum."}, {"speaker": "ASSISTANT", "text": "Sizin onayınız ve abinizin söylediği hakkında ne yazayım?"}]},
+    "domain_labels": [0,0,0,1,0,0,1], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "OOD: Turkish colloquial engineering probe. The speaker expressly maintains their own agreement. Withdrawal is attributed only to the brother; it does not establish current_withdraw for the speaker. No future-paying commitment is spoken."
+  },
+  {
+    "id": "F03-01", "group": "F03-two-question-yes", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Yes.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you want me to email the invoice, and do you agree to pay the balance on Friday?"}]},
+    "domain_labels": [0,0,0,1,0,0,0], "domain_mask": [false,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "proposal is UNKNOWN: yes could answer only the email question or also the payment question. current_affirm is known because an explicit current affirmative answer exists, including a possible administrative agreement. Scope ambiguity alone does not establish spoken uncertainty."
+  },
+  {
+    "id": "F03-02", "group": "F03-two-question-yes", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Yes.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you dispute the late fee, and should I read the item list aloud?"}]},
+    "domain_labels": [0,0,0,1,0,0,0], "domain_mask": [true,false,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "dispute is UNKNOWN because the bare yes has unresolved scope across two questions. The utterance is explicitly affirmative, so current_affirm is known; it makes no payment commitment. Classifier uncertainty is not the uncertain speech label."
+  },
+  {
+    "id": "F03-03", "group": "F03-two-question-yes", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Yes.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you agree to keeping the original schedule?"}, {"speaker": "USER", "text": "Yes, I agree to keeping it."}, {"speaker": "ASSISTANT", "text": "Do you agree to keeping the original schedule, or are you withdrawing your earlier agreement?"}]},
+    "domain_labels": [0,0,0,0,0,0,0], "domain_mask": [true,true,true,false,false,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "current_affirm and current_withdraw are UNKNOWN: yes might retain the agreement or affirm the question about withdrawing it. The alternatives conflict, so neither is forced. No paying promise appears, and the speaker does not explicitly express uncertainty."
+  },
+  {
+    "id": "F03-04", "group": "F03-two-question-yes", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Yes to sending the receipt only. I am not making a payment promise.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Should I send a receipt, and are you promising to pay 25 pounds tomorrow?"}]},
+    "domain_labels": [0,0,0,1,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "The speaker resolves the two-question scope explicitly. Administrative agreement establishes current_affirm, while the explicit exclusion of a payment promise establishes proposal=0."
+  },
+  {
+    "id": "F04-01", "group": "F04-fact-and-terms-corrections", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Correction: it was the green fan, and the order date was 6 March. Please replace both details.", "previous_utterances": [{"speaker": "USER", "text": "I ordered the blue heater on 4 March."}, {"speaker": "ASSISTANT", "text": "I recorded blue heater, 4 March. Is that accurate?"}]},
+    "domain_labels": [0,0,1,0,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "The current turn explicitly revises two previously observed facts: product and order date. Correcting a product record is not automatically a dispute about debt or withdrawal of consent."
+  },
+  {
+    "id": "F04-02", "group": "F04-fact-and-terms-corrections", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "I said sixty earlier; change that to forty on the 14th. I will pay forty on the 14th.", "previous_utterances": [{"speaker": "USER", "text": "I'll pay sixty on the 12th."}, {"speaker": "ASSISTANT", "text": "I have noted sixty on the 12th. What should the amount and date be?"}]},
+    "domain_labels": [1,0,1,0,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "An explicit replacement amount and date correct prior payment terms and carry a new future-paying commitment. No explicit agreement marker or express revocation of prior consent is stated; a terms revision alone is not forced into withdrawal."
+  },
+  {
+    "id": "F04-03", "group": "F04-fact-and-terms-corrections", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "I can't remember. It may have been Tuesday, but I can't confirm a correction.", "previous_utterances": [{"speaker": "USER", "text": "The replacement charger was ordered on Monday."}, {"speaker": "ASSISTANT", "text": "Was the replacement charger ordered on Monday?"}]},
+    "domain_labels": [0,0,0,0,0,1,0], "domain_mask": [true,true,false,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "correction is UNKNOWN: Tuesday is offered tentatively while the speaker expressly cannot confirm a revision of Monday. Explicit inability to remember establishes uncertain."
+  },
+  {
+    "id": "F04-04", "group": "F04-fact-and-terms-corrections", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "My neighbor said, 'No, delivery was April 3.' I'm relaying what she said; I haven't checked which date is right.", "previous_utterances": [{"speaker": "USER", "text": "Delivery was April 2."}, {"speaker": "ASSISTANT", "text": "I've written April 2. Do you have an update?"}]},
+    "domain_labels": [0,0,0,0,0,1,1], "domain_mask": [true,true,false,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "correction is UNKNOWN: the conflicting date is attributed to a neighbor and the speaker does not endorse a replacement. Reported third-party speech and expressed uncertainty are explicit."
+  },
+  {
+    "id": "F05-01", "group": "F05-paid-versus-owed-denials", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "I did not pay it. The amount is still due, and I am not setting a payment date.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Are you saying you already paid, or that the charge is not owed?"}]},
+    "domain_labels": [0,0,0,0,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Denying completed payment while acknowledging the amount remains due is not denying debt. A factual acknowledgement does not by itself establish explicit current agreement, and no previous fact is revised."
+  },
+  {
+    "id": "F05-02", "group": "F05-paid-versus-owed-denials", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "I do not owe that amount. That charge is wrong; I dispute it.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Are you saying you already paid, or that the charge is not owed?"}]},
+    "domain_labels": [0,1,0,0,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "The denial concerns the obligation and explicitly disputes the charge, unlike the paired denial of having paid. No previous own statement or agreement is supplied for correction or withdrawal."
+  },
+  {
+    "id": "F05-03", "group": "F05-paid-versus-owed-denials", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "No, I misspoke: I have not paid it. I still owe it, but I haven't decided when to pay.", "previous_utterances": [{"speaker": "USER", "text": "I paid it on Monday."}, {"speaker": "ASSISTANT", "text": "I'll note that you paid on Monday."}]},
+    "domain_labels": [0,0,1,0,0,1,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "The speaker explicitly corrects their earlier claim of completed payment and remains undecided about a future date. Acknowledging debt is not a dispute, a paying commitment, or explicit agreement to an action."
+  },
+  {
+    "id": "F05-04", "group": "F05-paid-versus-owed-denials", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "No, I dispute the late fee. I agree to receive a breakdown by email, and I will pay the undisputed 30 euros tomorrow.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you agree to the late fee? I can email a breakdown of the separate charges."}]},
+    "domain_labels": [1,1,0,1,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "The turn combines a fee dispute, explicit administrative agreement, and a future-paying commitment for a separate amount. Refusing the fee is not withdrawal because no earlier own agreement to that fee is observed."
+  },
+  {
+    "id": "F06-01", "group": "F06-conditional-and-other-payer", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "I commit to paying 45 euros on Friday if the duplicate charge is removed. The duplicate charge is wrong and I dispute it.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "What payment can you commit to?"}]},
+    "domain_labels": [1,1,0,0,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "The speaker explicitly commits to a future payment subject to a stated condition and disputes a duplicate charge. The proposal label records the conditional speech commitment; it does not assert that the condition will occur or payment is authorized."
+  },
+  {
+    "id": "F06-02", "group": "F06-conditional-and-other-payer", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Hypothetically, if someone paid half next month, would the fee disappear? I'm asking about a possibility; I am not promising a payment.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Can you suggest a payment arrangement?"}]},
+    "domain_labels": [0,0,0,0,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "A hypothetical question expressly excludes a payment promise. An imagined someone is not an actual reported third-party statement. Asking how a condition works is not itself a dispute or expressed indecision."
+  },
+  {
+    "id": "F06-03", "group": "F06-conditional-and-other-payer", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "My father told me, 'I'll pay the balance on Thursday.' I'm reporting his promise. I haven't agreed to make any payment myself.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "What did your father say?"}]},
+    "domain_labels": [0,0,0,0,0,0,1], "domain_mask": [false,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "proposal is UNKNOWN because a future-paying commitment is explicitly reported from someone else, while the current speaker expressly has not agreed to pay. Whether the proposal target includes reported commitments is left unresolved. Third-party reporting is explicit; actual identity, authority, and payment execution are not labeled."
+  },
+  {
+    "id": "F06-04", "group": "F06-conditional-and-other-payer", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "If I get overtime money, maybe I could pay something next week. I can't commit to an amount or a day.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "What can you say about a future payment?"}]},
+    "domain_labels": [0,0,0,0,0,1,0], "domain_mask": [false,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "proposal is UNKNOWN at the boundary between a tentative conditional payment suggestion and a commitment; the speaker explicitly cannot commit to amount or date. The hedging and inability to commit establish uncertain."
+  },
+  {
+    "id": "F07-01", "group": "F07-turkish-colloquial-mixed", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Tamam ya, e-postayla gönder; buna razıyım. Kalan 200 lirayı da cuma ben ödeyeceğim.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Dosyayı e-postayla göndermemi kabul ediyor musunuz?"}]},
+    "domain_labels": [1,0,0,1,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "OOD: Turkish colloquial engineering probe. Explicit agreement to email delivery coexists with the speaker's explicit future-paying commitment for Friday. No bank action or authority is inferred from either statement."
+  },
+  {
+    "id": "F07-02", "group": "F07-turkish-colloquial-mixed", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Yok abi, kulaklık değil hoparlördü, tarih de 9 Mayıs. Ama o ekstra ücreti kabul etmiyorum, yanlış yazılmış; itiraz ediyorum.", "previous_utterances": [{"speaker": "USER", "text": "Ürün kulaklık, tarih 8 Mayıs."}, {"speaker": "ASSISTANT", "text": "Kulaklık ve 8 Mayıs diye yazdım, doğru mu?"}]},
+    "domain_labels": [0,1,1,0,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "OOD: Turkish colloquial engineering probe. The speaker replaces observed product/date facts and disputes an extra fee. Colloquial direct address abi does not report a third party; refusing a fee without earlier own consent is not withdrawal."
+  },
+  {
+    "id": "F07-03", "group": "F07-turkish-colloquial-mixed", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Annem 'tamam, kabul ediyorum' dedi. Ben daha emin değilim ya, onun tamamı benim onayım sayılmaz.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Anneniz ne dedi, siz ne düşünüyorsunuz?"}]},
+    "domain_labels": [0,0,0,0,0,1,1], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "OOD: Turkish colloquial engineering probe. The mother's quoted consent is expressly separated from the current speaker's consent. The speaker states current uncertainty, with no own affirmation or observed own revocation."
+  },
+  {
+    "id": "F07-04", "group": "F07-turkish-colloquial-mixed", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Yok, ödedim demiyorum; daha ödemedim. Borç yok da demiyorum, borç duruyor. Ne zaman öderim, vallahi belli değil.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Borcu yok saydığınızı mı, yoksa ödeme yapmadığınızı mı söylüyorsunuz?"}]},
+    "domain_labels": [0,0,0,0,0,1,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "OOD: Turkish colloquial engineering probe. The speaker denies having paid but explicitly does not deny the debt, and expresses uncertainty about when payment might happen. Clarifying the assistant's alternatives does not revise a previously asserted fact."
+  },
+  {
+    "id": "F08-01", "group": "F08-final-correction-in-speech", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Let me explain why I want the note read carefully before you finish it. I am talking about the small appliance order we discussed, and I have the paper receipt beside me while I speak. Earlier in this conversation I gave you a quick answer because I was sorting several envelopes on the table. One envelope held the order receipt, another held a delivery slip, and a third held the printed list of charges. The papers were folded together, so the first description I gave you came from the wrong line. I want the details I actually say now to be the details you write down. The receipt has a product description near the top, then a separate order date below it, and the delivery slip has its own date in another corner. Those dates serve different purposes. Reading a delivery date aloud does not make it the date I placed the order. I also mentioned Tuesday while we were discussing a possible payment arrangement. That was the day printed on the first note in the envelope, and I repeated it when you asked me for a quick answer. I remember saying yes to that arrangement in this conversation. I am mentioning that earlier yes so you understand exactly which agreement I am changing now. There is also a handwritten note from my mother. She told me, 'Yes, I agree with Tuesday,' and I copied her words onto the back of the envelope. Her statement belongs to her, and I am not using her statement as my own answer. The printed charge list shows two separate lines with the same description and the same amount of thirty euros. I can read both lines, and I am raising a complaint about that repetition. There is a separate amount of fifty euros that I am prepared to pay under the replacement arrangement I will state at the end. Please keep the paper descriptions separate while I finish speaking. The shape of the appliance box, the color of the packing tape, and the delivery person's arrival time are background details, and none of those changes what I am about to say about the order or payment. I have now read the product description and the order date from the receipt itself. Here is my final correction: the item was a desk fan, ordered on 11 June. I withdraw my earlier agreement to pay 80 on Tuesday. I now agree to paying 50 on Friday, and I will pay 50 on Friday. I dispute the remaining 30 because it is a duplicate charge.", "previous_utterances": [{"speaker": "USER", "text": "I agree to pay 80 on Tuesday, and the item was a vacuum ordered on 9 June."}, {"speaker": "ASSISTANT", "text": "I have written vacuum, 9 June, and payment of 80 on Tuesday. What should remain in the note?"}]},
+    "domain_labels": [1,1,1,1,1,0,1], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Long speech case. The ending explicitly corrects product/date, revokes the speaker's observed earlier payment agreement, affirms a replacement, makes a future-paying commitment, and disputes a duplicate. The mother's quoted yes supplies reported_third_party, not the speaker's consent. Background retelling does not override the final statements; no present uncertainty is expressed."
+  },
+  {
+    "id": "F08-02", "group": "F08-final-correction-in-speech", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "I want to give you the full explanation because my first answer mixed two shopping trips together. The first trip was for kitchen equipment, and the second trip was for a gift that I picked up several days later. I kept both receipts in the same pocket of a cloth bag. When you asked about the product at the beginning of this conversation, I looked at the picture on the gift box instead of reading the item description on the kitchen receipt. That is why the product name I gave you needs to be replaced. I am now reading from the kitchen receipt, which is flat on the table in front of me. There is an order date, a delivery date, and a date when the receipt was printed again. I read the reprint date first, but the order date is a different line. I will give you the correct order date before I finish. The payment discussion also needs a separate explanation. You asked whether I agreed to paying ninety on Wednesday, and I said yes during that earlier part of our conversation. I know that I said those words, and I want to be clear that the earlier yes was mine. My aunt was in the room afterward and told me, 'Yes, Wednesday is fine with me.' I am reporting what she said because her comment is written on the same paper. She was talking about her own preference, and her preference does not supply an answer from me now. The note also includes a telephone number for the delivery desk, a description of the cardboard packaging, and a reminder to keep the instruction booklet. Those are ordinary details on the receipt and on the paper beside it. They are not payment promises. I am not disputing the charge in this conversation; I am explaining the product record and the agreement I gave earlier. I have put the gift receipt back into the bag so I can read only the kitchen receipt for the correction. Please let me finish the last part before you repeat the note. The number ninety and the word Wednesday describe the arrangement I agreed to earlier, but repeating those words here is not a new promise to follow it. The box I am keeping contains the kitchen item, and the printed order line gives the information I want you to use. For the record, the item was a kettle ordered on 17 August, not a blender ordered on 16 August. I take back my earlier yes to paying 90 on Wednesday. I do not agree to any payment schedule now, and I can't say whether I will pay next week. My aunt's yes is hers.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you agree to pay 90 on Wednesday? What was the product and order date?"}, {"speaker": "USER", "text": "Yes, I agree to pay 90 on Wednesday. It was a blender ordered on 16 August."}, {"speaker": "ASSISTANT", "text": "I noted blender, 16 August, and 90 on Wednesday. Is that still what you want?"}]},
+    "domain_labels": [0,0,1,0,1,1,1], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Long speech case. The final correction replaces observed product/date facts and explicitly withdraws the speaker's prior yes. Historical and aunt-attributed yes statements do not establish current affirmation. The speaker expressly cannot say whether they will pay next week, giving uncertain without a new payment proposal; dispute is explicitly excluded."
+  },
+  {
+    "id": "F08-03", "group": "F08-final-correction-in-speech", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "Earlier I said red lamp, but the item was a white clock. That is the only correction. Yes, I still agree to the Monday schedule, and I will pay 70 on Monday.", "previous_utterances": [{"speaker": "USER", "text": "I agree to pay 70 on Monday for the red lamp."}, {"speaker": "ASSISTANT", "text": "I wrote red lamp and payment of 70 on Monday. What should I correct?"}]},
+    "domain_labels": [1,0,1,1,0,0,0], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Short control in the final-correction family: product correction coexists with explicit retention of the payment agreement and a current future-paying commitment. Correcting one fact does not revoke a separate agreement."
+  },
+  {
+    "id": "F08-04", "group": "F08-final-correction-in-speech", "source": "postfit-independent-authored", "split": "DIAGNOSTIC",
+    "input": {"current_utterance": "My brother said, 'Yes, keep the Friday plan.' I withdraw my own earlier agreement to that plan. Correction: the order was on 22 July, not 20 July. I am unsure what payment date I could accept now.", "previous_utterances": [{"speaker": "ASSISTANT", "text": "Do you agree to the Friday plan, and was the order on 20 July?"}, {"speaker": "USER", "text": "Yes, I agree to the Friday plan. The order was on 20 July."}, {"speaker": "ASSISTANT", "text": "What is your final update?"}]},
+    "domain_labels": [0,0,1,0,1,1,1], "domain_mask": [true,true,true,true,true,true,true],
+    "aux_labels": [0,0,0,0], "aux_mask": [false,false,false,false],
+    "rationale": "Short control in the final-correction family: an attributed yes coexists with own withdrawal, a date correction, and explicit current uncertainty. The brother's quoted preference neither retains the speaker's agreement nor supplies a payment commitment."
+  }
+]

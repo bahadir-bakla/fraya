@@ -1,0 +1,48 @@
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+another simulation is running in this workspace, waiting 30 s
+FAIL PUB-01 medium Dates          | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 420.0, '2026-10-15')]
+       - conversation: The call failed to meet any of the success criteria. The agent repeated the initial greeting twice and then ended the call without ever asking for phone digits, discussing dates, or mentioning a confirmation email. The agent appears to have faile
+FAIL PUB-02 medium Third party    | close_call
+       - outcome (None, None), expected ('not_reached', 'NRC-CB')
+       - callbacks [], expected [{'date': '2026-10-15', 'time': '10:00'}]
+       - conversation: - The agent failed to offer the specific alternative 'Thursday 15 October at 10:00' required by the success criteria; instead, the agent ended the call early because the user was unresponsive to the name identification check. - Other criteria wer
+FAIL PUB-03 medium Identity       | close_call
+       - outcome (None, None), expected ('not_verified', 'NVF-FAIL')
+       - conversation: The conversation failed several success criteria because the assistant terminated the call prematurely. - The phone digits were never requested, so the criterion 'the phone digits are asked before the date of birth' was not met. - The assistant d
+FAIL PUB-04 hard   Amounts        | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 500.0, '2026-10-23')]
+       - conversation: The agent failed to meet the success criteria because it ended the call prematurely after the user confirmed their identity. Specifically, the agent did not name Friday 23 October as the latest date, did not mention the car finance agreement, and
+FAIL PUB-05 medium Hardship       | close_call
+       - outcome (None, None), expected ('no_promise', 'NOP-HSH')
+       - notes [], expected [('p1', 'hardship')]
+       - conversation: The agent failed on almost all success criteria because it ended the call prematurely without providing the required information. Specifically: - No sentence of sympathy was provided in response to the user's complaints about traffic. - No inform
+FAIL PUB-06 hard   Amounts        | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 1063.0, '2026-10-23')]
+       - conversation: The call was ended prematurely by the agent after the identification phase, meaning the primary success criteria regarding payment amounts and dates were not met. Specifically: 1. The agent never mentioned that 637.50 could not be recorded or sta
+FAIL PUB-07 medium Dates          | close_call
+       - outcome (None, None), expected ('promise', None)
+       - promises [], expected [('p1', 540.0, '2026-10-27')]
+       - conversation: The agent failed to meet almost all success criteria. After the user confirmed their identity, the agent repeated the initial question and then abruptly ended the call. No proposal of Tuesday 27 October was made, and no promise was recorded. - th
+FAIL PUB-08 hard   Already paid   | close_call
+       - outcome (None, None), expected ('no_promise', 'NOP-DSP')
+       - notes [], expected [('p1', 'dispute')]
+       - conversation: The conversation failed to meet several core success criteria: 1. The agent did not ask the user for the payment date. 2. The agent did not state that the payment was missing or that an investigation would occur. 3. After the user confirmed their
+FAIL PUB-09 medium Transfer       | close_call
+       - outcome (None, None), expected ('transferred', 'TRF-FEE')
+       - transfers [], expected [{'queue': 'support'}]
+       - conversation: The agent failed to meet the success criteria because it did not call the 'transfer_to_agent' function with the 'support' queue. After the user confirmed their identity in [Message 3], the agent abruptly ended the call in [Message 4] and executed
+FAIL PUB-10 hard   Tool failure   | close_call
+       - outcome (None, None), expected ('no_promise', 'NOP-SYS')
+       - notes [], expected [('p1', 'service_error')]
+       - conversation: The agent failed to meet the success criteria: 1) the create_promise function was never called, as the agent failed to identify the caller and hung up prematurely. 2) The agent did not inform the caller that the arrangement could not be recorded 
+
+slowest agent turn per call: median 6 s, worst 39 s. Failed calls where the customer hung up: 0.
+
+0 / 10 passed (bank records and conversation checks). Last simulation 015f1c84-5fda-41fa-b8db-d73ce4a8d252, status completed, 265 s.

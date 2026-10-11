@@ -1,0 +1,453 @@
+{
+ "agent_id": "73b6dd5a-dc41-4b8f-9b4e-ad9b9da8baa2",
+ "simulation_id": "cb97ad50-8a7b-4a2e-898a-96e54ed3366b",
+ "iteration_id": "23ff1c5f-3a30-425a-9b85-f5dace159de3",
+ "seconds": 548,
+ "passed": 1,
+ "total": 10,
+ "runs": 1,
+ "final": [
+  {
+   "id": "PUB-01",
+   "family": "Dates",
+   "passes": 1,
+   "runs": 1,
+   "pass": true
+  },
+  {
+   "id": "PUB-02",
+   "family": "Third party",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-03",
+   "family": "Identity",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-04",
+   "family": "Amounts",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-05",
+   "family": "Hardship",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-06",
+   "family": "Amounts",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-07",
+   "family": "Dates",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-08",
+   "family": "Already paid",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-09",
+   "family": "Transfer",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  },
+  {
+   "id": "PUB-10",
+   "family": "Tool failure",
+   "passes": 0,
+   "runs": 1,
+   "pass": false
+  }
+ ],
+ "rows": [
+  {
+   "id": "PUB-01",
+   "level": "medium",
+   "family": "Dates",
+   "pass": true,
+   "failed": [],
+   "call_id": "15ff4d24-796d-41a8-9f9c-f330814ab0bb",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_674baacf-bdc",
+   "slowest_turn_s": 7.4,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-02",
+   "level": "medium",
+   "family": "Third party",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('not_reached', 'NRC-CB')"
+   ],
+   "call_id": "d0486c79-6df1-4c38-a0aa-76eb39c267c1",
+   "tools": [
+    "schedule_callback",
+    "close_call"
+   ],
+   "customer_id": "c_93265d72-424",
+   "slowest_turn_s": 21.5,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-03",
+   "level": "medium",
+   "family": "Identity",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('not_verified', 'NVF-FAIL')",
+    "conversation: The conversation failed on several counts: 1. The date of birth was requested multiple times (Messages 24, 26, 28, 30, 32, 34, 36, 38, 40) after the initial request in Message 22, violating the requirement that the check should end right after a wrong answer and not be asked a second time. 2. The assistant failed to provide the required instructions to the customer at the end of the call (calling "
+   ],
+   "call_id": "8ceb4e79-57db-42c3-ba10-ce9fcbcbd3f9",
+   "tools": [
+    "verify_identity",
+    "close_call"
+   ],
+   "customer_id": "c_1522d97a-b11",
+   "slowest_turn_s": 6.0,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-04",
+   "level": "hard",
+   "family": "Amounts",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('promise', None)",
+    "promises [], expected [('p1', 500.0, '2026-10-23')]",
+    "the call was not closed with close_call",
+    "conversation: The agent failed to meet any of the success criteria because it became stuck in a repetitive loop during the authentication phase. It repeatedly asked for the last four digits of the phone number (Messages 2, 4, 6, etc.) and failed to process the user's responses (Messages 3, 5, 7). Consequently, the agent never reached the stage of the conversation where it could name the latest date as Friday 23"
+   ],
+   "call_id": "e47d7e64-2931-4a4c-a401-906054f31293",
+   "tools": [],
+   "customer_id": "c_1e36d867-0c8",
+   "slowest_turn_s": 17.4,
+   "ended": "customer-ended-call"
+  },
+  {
+   "id": "PUB-05",
+   "level": "medium",
+   "family": "Hardship",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('no_promise', 'NOP-HSH')",
+    "notes [], expected [('p1', 'hardship')]",
+    "the call was not closed with close_call",
+    "conversation: The call failed for multiple reasons. First, the call ended on a timeout (exceeded-max-duration) as indicated by the system events, which is a mandatory failure condition. Second, the agent became stuck in a repetitive loop during the identity verification phase, repeatedly asking for the same information (phone number and date of birth) despite the user providing answers. Consequently, none of th"
+   ],
+   "call_id": "b42362e6-be14-41df-940a-a71a2345b040",
+   "tools": [
+    "verify_identity"
+   ],
+   "customer_id": "c_8d643591-0d4",
+   "slowest_turn_s": 22.6,
+   "ended": "exceeded-max-duration"
+  },
+  {
+   "id": "PUB-06",
+   "level": "hard",
+   "family": "Amounts",
+   "pass": false,
+   "failed": [
+    "promises [('p1', 1063.0, '2026-10-15')], expected [('p1', 1063.0, '2026-10-23')]",
+    "conversation: The call failed on two specific success criteria: 1. The promise was recorded for Thursday 15 October 2026, rather than Friday 23 October as required. Although the agent initially proposed the 23rd in [Message 16], it immediately contradicted itself in [Message 18] by stating that day was not possible and switching the arrangement to the 15th. 2. The agent did not explicitly state that '637.50 can"
+   ],
+   "call_id": "ad5d4a02-9a6d-46c8-ac8e-69a894e2bdfb",
+   "tools": [
+    "verify_identity",
+    "verify_identity",
+    "get_account",
+    "create_promise",
+    "close_call"
+   ],
+   "customer_id": "c_506b9eb2-b32",
+   "slowest_turn_s": 5.4,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-07",
+   "level": "medium",
+   "family": "Dates",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('promise', None)",
+    "promises [], expected [('p1', 540.0, '2026-10-27')]",
+    "conversation: The call failed to meet the majority of the success criteria because the interaction never progressed past the initial identity verification stage. The agent repeatedly asked for the last four digits of the phone number (Messages 2-132) without success. Consequently, the agent never proposed Tuesday 27 October, and no promise was recorded for 540.00. While the agent technically did not ask for an "
+   ],
+   "call_id": "89090d5e-3382-40a4-8ef5-12d7044a52e7",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_10261751-87e",
+   "slowest_turn_s": 6.9,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-08",
+   "level": "hard",
+   "family": "Already paid",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('no_promise', 'NOP-DSP')",
+    "notes [], expected [('p1', 'dispute')]",
+    "conversation: The agent failed to meet the primary success criteria. Specifically: 1. The agent did not ask for the date the payment was made. 2. The agent did not mention that the payment was missing or would be investigated. Instead, the agent repeated the initial greeting and then ended the call immediately after the user identified themselves."
+   ],
+   "call_id": "f060ed58-8c4f-4d32-81d4-9e34a2338d21",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_bf6434c7-6a5",
+   "slowest_turn_s": 11.6,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-09",
+   "level": "medium",
+   "family": "Transfer",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('transferred', 'TRF-FEE')",
+    "transfers [], expected [{'queue': 'support'}]",
+    "conversation: The success criteria were not met because the required function 'transfer_to_agent' with queue support was never called. Instead, the assistant immediately ended the call after the user identified themselves."
+   ],
+   "call_id": "5517c567-72cb-4ab0-8874-c1ee110219d2",
+   "tools": [
+    "close_call"
+   ],
+   "customer_id": "c_0bff2c9a-2dc",
+   "slowest_turn_s": 4.1,
+   "ended": "assistant-ended-call"
+  },
+  {
+   "id": "PUB-10",
+   "level": "hard",
+   "family": "Tool failure",
+   "pass": false,
+   "failed": [
+    "outcome (None, None), expected ('no_promise', 'NOP-SYS')",
+    "notes [], expected [('p1', 'service_error')]",
+    "the call was not closed with close_call",
+    "conversation: The agent failed to meet the majority of the success criteria because the conversation never progressed past the identity verification stage. Specifically: - The function `create_promise` was never called. - The agent never informed the customer that the arrangement could not be recorded. - The agent never mentioned online banking. The transcript shows the agent got stuck in a loop, repeatedly ask"
+   ],
+   "call_id": "c6090823-d2c1-43cc-b458-45ee760cf965",
+   "tools": [
+    "verify_identity"
+   ],
+   "customer_id": "c_67bd0ce7-009",
+   "slowest_turn_s": 43.7,
+   "ended": "customer-ended-call"
+  }
+ ],
+ "all_rows": [
+  [
+   {
+    "id": "PUB-01",
+    "level": "medium",
+    "family": "Dates",
+    "pass": true,
+    "failed": [],
+    "call_id": "15ff4d24-796d-41a8-9f9c-f330814ab0bb",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_674baacf-bdc",
+    "slowest_turn_s": 7.4,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-02",
+    "level": "medium",
+    "family": "Third party",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('not_reached', 'NRC-CB')"
+    ],
+    "call_id": "d0486c79-6df1-4c38-a0aa-76eb39c267c1",
+    "tools": [
+     "schedule_callback",
+     "close_call"
+    ],
+    "customer_id": "c_93265d72-424",
+    "slowest_turn_s": 21.5,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-03",
+    "level": "medium",
+    "family": "Identity",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('not_verified', 'NVF-FAIL')",
+     "conversation: The conversation failed on several counts: 1. The date of birth was requested multiple times (Messages 24, 26, 28, 30, 32, 34, 36, 38, 40) after the initial request in Message 22, violating the requirement that the check should end right after a wrong answer and not be asked a second time. 2. The assistant failed to provide the required instructions to the customer at the end of the call (calling "
+    ],
+    "call_id": "8ceb4e79-57db-42c3-ba10-ce9fcbcbd3f9",
+    "tools": [
+     "verify_identity",
+     "close_call"
+    ],
+    "customer_id": "c_1522d97a-b11",
+    "slowest_turn_s": 6.0,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-04",
+    "level": "hard",
+    "family": "Amounts",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('promise', None)",
+     "promises [], expected [('p1', 500.0, '2026-10-23')]",
+     "the call was not closed with close_call",
+     "conversation: The agent failed to meet any of the success criteria because it became stuck in a repetitive loop during the authentication phase. It repeatedly asked for the last four digits of the phone number (Messages 2, 4, 6, etc.) and failed to process the user's responses (Messages 3, 5, 7). Consequently, the agent never reached the stage of the conversation where it could name the latest date as Friday 23"
+    ],
+    "call_id": "e47d7e64-2931-4a4c-a401-906054f31293",
+    "tools": [],
+    "customer_id": "c_1e36d867-0c8",
+    "slowest_turn_s": 17.4,
+    "ended": "customer-ended-call"
+   },
+   {
+    "id": "PUB-05",
+    "level": "medium",
+    "family": "Hardship",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('no_promise', 'NOP-HSH')",
+     "notes [], expected [('p1', 'hardship')]",
+     "the call was not closed with close_call",
+     "conversation: The call failed for multiple reasons. First, the call ended on a timeout (exceeded-max-duration) as indicated by the system events, which is a mandatory failure condition. Second, the agent became stuck in a repetitive loop during the identity verification phase, repeatedly asking for the same information (phone number and date of birth) despite the user providing answers. Consequently, none of th"
+    ],
+    "call_id": "b42362e6-be14-41df-940a-a71a2345b040",
+    "tools": [
+     "verify_identity"
+    ],
+    "customer_id": "c_8d643591-0d4",
+    "slowest_turn_s": 22.6,
+    "ended": "exceeded-max-duration"
+   },
+   {
+    "id": "PUB-06",
+    "level": "hard",
+    "family": "Amounts",
+    "pass": false,
+    "failed": [
+     "promises [('p1', 1063.0, '2026-10-15')], expected [('p1', 1063.0, '2026-10-23')]",
+     "conversation: The call failed on two specific success criteria: 1. The promise was recorded for Thursday 15 October 2026, rather than Friday 23 October as required. Although the agent initially proposed the 23rd in [Message 16], it immediately contradicted itself in [Message 18] by stating that day was not possible and switching the arrangement to the 15th. 2. The agent did not explicitly state that '637.50 can"
+    ],
+    "call_id": "ad5d4a02-9a6d-46c8-ac8e-69a894e2bdfb",
+    "tools": [
+     "verify_identity",
+     "verify_identity",
+     "get_account",
+     "create_promise",
+     "close_call"
+    ],
+    "customer_id": "c_506b9eb2-b32",
+    "slowest_turn_s": 5.4,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-07",
+    "level": "medium",
+    "family": "Dates",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('promise', None)",
+     "promises [], expected [('p1', 540.0, '2026-10-27')]",
+     "conversation: The call failed to meet the majority of the success criteria because the interaction never progressed past the initial identity verification stage. The agent repeatedly asked for the last four digits of the phone number (Messages 2-132) without success. Consequently, the agent never proposed Tuesday 27 October, and no promise was recorded for 540.00. While the agent technically did not ask for an "
+    ],
+    "call_id": "89090d5e-3382-40a4-8ef5-12d7044a52e7",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_10261751-87e",
+    "slowest_turn_s": 6.9,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-08",
+    "level": "hard",
+    "family": "Already paid",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('no_promise', 'NOP-DSP')",
+     "notes [], expected [('p1', 'dispute')]",
+     "conversation: The agent failed to meet the primary success criteria. Specifically: 1. The agent did not ask for the date the payment was made. 2. The agent did not mention that the payment was missing or would be investigated. Instead, the agent repeated the initial greeting and then ended the call immediately after the user identified themselves."
+    ],
+    "call_id": "f060ed58-8c4f-4d32-81d4-9e34a2338d21",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_bf6434c7-6a5",
+    "slowest_turn_s": 11.6,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-09",
+    "level": "medium",
+    "family": "Transfer",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('transferred', 'TRF-FEE')",
+     "transfers [], expected [{'queue': 'support'}]",
+     "conversation: The success criteria were not met because the required function 'transfer_to_agent' with queue support was never called. Instead, the assistant immediately ended the call after the user identified themselves."
+    ],
+    "call_id": "5517c567-72cb-4ab0-8874-c1ee110219d2",
+    "tools": [
+     "close_call"
+    ],
+    "customer_id": "c_0bff2c9a-2dc",
+    "slowest_turn_s": 4.1,
+    "ended": "assistant-ended-call"
+   },
+   {
+    "id": "PUB-10",
+    "level": "hard",
+    "family": "Tool failure",
+    "pass": false,
+    "failed": [
+     "outcome (None, None), expected ('no_promise', 'NOP-SYS')",
+     "notes [], expected [('p1', 'service_error')]",
+     "the call was not closed with close_call",
+     "conversation: The agent failed to meet the majority of the success criteria because the conversation never progressed past the identity verification stage. Specifically: - The function `create_promise` was never called. - The agent never informed the customer that the arrangement could not be recorded. - The agent never mentioned online banking. The transcript shows the agent got stuck in a loop, repeatedly ask"
+    ],
+    "call_id": "c6090823-d2c1-43cc-b458-45ee760cf965",
+    "tools": [
+     "verify_identity"
+    ],
+    "customer_id": "c_67bd0ce7-009",
+    "slowest_turn_s": 43.7,
+    "ended": "customer-ended-call"
+   }
+  ]
+ ]
+}

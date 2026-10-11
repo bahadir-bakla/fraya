@@ -1,0 +1,43 @@
+FROZEN TRAINER HANDOFF: minilm-finetune-v1
+
+Critical source audit PASS. No model training or GPU/API/Git/platform calls performed by this builder.
+Exact schema: id, group, split, source, input, domain_labels, domain_mask, aux_labels, aux_mask.
+input.current_utterance: string; input.previous_utterances: [{speaker: ASSISTANT|USER, text: string}].
+Domain order: proposal, dispute, correction, current_affirm, current_withdraw, uncertain, reported_third_party.
+Aux order: AFFIRM, NEGATE, INFORM, REQUEST. False masks mean unknown or ineligible; they are never negative labels.
+Only input fields are encoder features. Source IDs, labels, masks, provenance and groups are loss/report metadata.
+
+TRAIN 156341 = SGD 132615 + existing authored 86 + fresh authored 1120 + tau policy synthetic 20048 + tau scenario synthetic 2472.
+CAL 16416 = SGD 16072 + diagnostic authored 24 + fresh authored 320.
+EVAL 16703 = SGD 16295 + diagnostic authored 24 + fresh authored 384. EVAL stays local.
+Total rows 189460; JSONL bytes 102475894 (102.476 MB). All 132615 SGD TRAIN rows retained and available to every aux epoch.
+
+Fresh authored scenario families: TRAIN 41, CAL 20, EVAL 24. All slot/name/date/currency/paraphrase variants remain within family.
+Tau source coverage: all 103 official TRAIN scenarios + 716 policy chunks / 701 documents; explicitly synthetic.
+Tau templates conservatively unioned into two TRAIN-only recipe embargo groups; not 22520 independent roots.
+Observed-input uniqueness: SGD 158154; existing authored 134; fresh authored 858; policy synthetic 15015; scenario synthetic 135.
+These uniqueness counts are across splits per kind, not independent source counts. Duplicate variant rows are deliberately retained.
+No 3000 independent template/root claim; all sources share engineered authoring assumptions and no human IID claim.
+
+Aux overlap: 811 unique projected cross-split inputs. CAL 483 and EVAL 525 rows matching TRAIN have aux_mask all false.
+Publisher aux_labels and original source rows/indices/splits remain intact. source-overlap.jsonl gives every affected ID and explicit source_overlap mask_reason.
+SGD original full-v1 manifest bytes/hash and all 37 local shards reverified unchanged; every 164982 source user row compared exactly.
+Leak isolation: SGD domain_mask all false, gold metadata absent from inputs, 1000 gold-action metamorphic feature tests passed.
+New domain exact input overlap across TRAIN/CAL/EVAL: zero. Numeric/name/date identical recipes crossing family roots: zero.
+Synthetic unknown domain elements retained masked: 393.
+
+Report prior 134 authored rows only as DIAGNOSTIC (source=existing-authored).
+Fresh CAL: split=CAL and source=new-authored (320 rows / 20 families).
+Fresh EVAL/OOD macro: split=EVAL and source=new-authored (384 rows / 24 families); aggregate by group separately.
+current_affirm includes admin assent and never money authority. Source generic AFFIRM is a separate auxiliary head.
+
+Replay from fraya root: python analysis/minilm-ft-data.py
+Critical audit: python research/customer-benchmark/minilm-finetune-v1/audit.py
+Read-only packet checks: python analysis/minilm-ft-data.py --validate-only
+Replay regenerates packet outputs; do not replay into this frozen directory during a running trainer.
+Source registry: sources.json; group ancestry: ancestry.jsonl; source checks/counts/hash inventory: manifest.json.
+
+File hashes:
+C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\fraya\research\customer-benchmark\minilm-finetune-v1\train.jsonl rows=156341 sha256=b59d9f4086769b59dfb276d780d054ca93533f40af6e40937bf294a6f69fb804
+C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\fraya\research\customer-benchmark\minilm-finetune-v1\cal.jsonl rows=16416 sha256=9fa10107079594e315dc49dbbe0d7af5fdd119ba749c455183074c5a5d83147d
+C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\fraya\research\customer-benchmark\minilm-finetune-v1\eval.jsonl rows=16703 sha256=a563bca8e6f4a43680cef5ef881bfd8c15c2488392b04e191bb7880dd5da3aff

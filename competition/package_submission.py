@@ -3,6 +3,21 @@ import argparse,hashlib,json,pathlib,re,zipfile
 ROOT=pathlib.Path(__file__).resolve().parent
 KIT=ROOT.parent/'build-the-builder 2'
 
+def finetuned_files(repo):
+    """Include the verified optional trained encoder and its offline runtime."""
+    from finetuned_assist import read_json, sha, verify_manifest
+    base=repo/'integrations/learned-dialogue';release=base/'minilm_ft_v1/release.json'
+    if not release.exists():return []
+    pins=read_json(release)
+    request={'schema':'builder.finetuned_proposals.v1','calls':str((repo/'unused-calls.json').resolve()),'calls_sha256':'0'*64,'model_directory':str((base/'minilm_ft_v1/model').resolve()),'manifest_sha256':pins['manifest_sha256'],'runtime_directory':str(base.resolve()),'runtime_sha256':pins['runtime_sha256'],'seconds':60}
+    model=verify_manifest(request)
+    files=[release,base/'minilm_ft_v1/model/manifest.json']
+    files.extend(base/'minilm_ft_v1/model'/name for name in model['files'])
+    for name,digest in pins['runtime_sha256'].items():
+        if sha(base/name)!=digest:raise ValueError('Fine-tuned runtime pin mismatch: '+name)
+        files.append(base/name)
+    return [(file,file.relative_to(repo).as_posix()) for file in files]
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--run',nargs='+');parser.add_argument('--output');args=parser.parse_args()
     ids=args.run or [json.loads((ROOT/'.state/latest.json').read_text())['run_id']]
@@ -19,12 +34,13 @@ def main():
     output=pathlib.Path(args.output).resolve() if args.output else ROOT/'submissions'/((ids[0] if len(ids)==1 else 'freya-hackathon-demo')+'.zip')
     output.parent.mkdir(parents=True,exist_ok=True)
     files=[]
-    for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','setup_minilm.py','server.py','package_submission.py','README.md'):
+    for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py','setup_minilm.py','server.py','package_submission.py','README.md'):
         files.append((ROOT/name,'competition/'+name))
     # The optional encoder is installed separately using its exact public pins.
     for name in ('day2_pretrained_head.json','day2_pretrained_runtime.py','sgd_act_aux_runtime.py','sgd_act_aux_weights.json','sgd_act_aux_calibration.json'):
         file=ROOT.parent/'integrations/learned-dialogue'/name
         files.append((file,'integrations/learned-dialogue/'+name))
+    files.extend(finetuned_files(ROOT.parent))
     for directory in ('skills','tests','web'):
         files.extend((file,'competition/'+str(file.relative_to(ROOT))) for file in (ROOT/directory).rglob('*') if file.is_file() and '__pycache__' not in file.parts)
     ancestry=[];pending=[ROOT/'runs'/ident for ident in ids];seen=set()

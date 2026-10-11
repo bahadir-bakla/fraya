@@ -1,0 +1,102 @@
+Independent Codex MiniLM fine-tuning audit, 2026-10-11
+Native Opus unavailable. This review makes no Opus, accuracy, bank-authority,
+human-gold, or hosted-qualification claim. Parent owns implementation and launch.
+
+Disposition: written frozen packet is structurally eligible for engineering
+training; no current-packet critical launch blocker was found. The source defects
+below are reproduced defensive fixes and do not affect this frozen TRAIN packet. No formal
+human-gold wait, obsolete V5 gate, or old night-stop gate is imposed here.
+
+Five meaningful source tests: python -B independentauditwitness.py
+Evidence: analysis/minilm-ft-independent-review.tests.json (source hashes,
+per-test outcomes and full packet results). Current observed result: 3 PASS,
+2 FAIL, 0 ERROR. The two failures cover three reproducible source defects.
+
+F1 [P1] minilm_ft_core.py:132 train_both checks groups but not row split tags.
+A row tagged EVAL is accepted as TRAIN; an EVAL-tagged CAL row is accepted for
+threshold selection. Witness intercepts train_arm and proves both reach the fit.
+Patch: before any optimizer/model allocation require nonempty TRAIN/CAL, every
+TRAIN row split == TRAIN and every CAL row split == CAL. Share the check with
+minilm_ft_launch.py before reserve/image construction; bind packet hashes to the
+frozen manifest. Current frozen packet contains zero mismatched split tags.
+
+F2 [P2] minilm_ft_core.py:25 targets validates concatenated length only.
+Six domain labels/masks and five aux labels/masks pass as eleven, silently moving
+an aux value into reported_third_party. Patch: separately require list lengths
+7/7/4/4, retain binary-value and boolean-mask validation. Frozen packet's actual
+arrays all have the accepted 7-domain + 4-aux dimensions.
+
+F3 [P2] minilm_ft_core.py:100-109 all-unknown batches still call optimizer.step.
+Masked loss gradients are exactly zero, but AdamW weight decay changes encoder
+weights; changed-tensor proof alone can therefore accept a decay-only fit.
+Patch: skip optimization when no supervised masks are true, reject an entire
+fit with zero supervised steps, and record supervised steps/finite nonzero
+encoder-gradient evidence. Keep row-consumption counts separate from optimizer
+steps. Actual TRAIN has zero all-unknown rows; pilot's nonzero loss and 101 vs 0
+changed tensors are valid update evidence, not accuracy validation.
+
+Written packet independent full scan and manifest hash verification:
+TRAIN 156341, CAL 16416, EVAL 16703; all 132615 SGD TRAIN retained.
+TRAIN domain rows 23726. Fresh CAL 320/20 families; fresh EVAL 384/24 families.
+Exact schema, observed input allowlist, source registration, ancestry groups,
+template/dialogue/scenario/document root split separation all pass.
+No eligible domain input crosses splits. No eligible known head input crosses
+TRAIN to CAL/EVAL. CAL 483 and EVAL 525 TRAIN-matching SGD rows are all unknown.
+No packet row has history longer than two turns. Real local tokenizer reconstructs
+all 909 observed tokens across four overflow windows, including a late withdrawal.
+Actual Model.encode attention pooling excludes padding. Metadata/label mutations
+leave observed_text unchanged; no labels, source IDs, provenance, gold frames,
+or publisher TEST tasks enter the model features.
+
+Data limitations requiring honest reporting, not a training veto:
+35 EVAL rows share CAL-observed inputs with known AUX labels; aux diagnostics
+are not an independent CAL/EVAL generalization estimate. Fresh DOMAIN remains
+disjoint. Fourteen TRAIN comparisons have identical observed input but conflicting
+SGD AUX labels (INFORM 13, AFFIRM 2, REQUEST 1; counts may overlap within a row).
+These are source/projection noise, with no domain contradiction observed. Keep
+the frozen packet unchanged for this run; optionally mask those conflicting
+axes in a later explicitly versioned packet without dropping TRAIN rows.
+Prior 24 CAL + 24 EVAL authored records remain exposed diagnostics. Report fresh
+source=new-authored EVAL separately. Default CAL domain thresholds use all 344
+known domain rows, including 24 prior diagnostics; disclose that mixture.
+
+Calibration/test isolation:
+Optimizer consumes rows only, never cal. CAL selects thresholds after training,
+not weights/checkpoints. Threshold search requires >=10 positive predictions
+and empirical precision >=.95, otherwise disables the head at 1.01. These are
+selection-sample statistics, not calibrated confidence or a 95% guarantee.
+Evaluate only after weights/thresholds freeze. CAL_selected is optimistic fitting
+performance. Model export casts encoder to fp16 after CAL prediction: parent
+should check reload/tokenizer/head parity on TRAIN/CAL and report actual exported
+scores before any single EVAL pass. No accuracy/safety conclusion follows here.
+
+Guardian/budget/payload:
+Revised guardian starts BEFORE app.run, uses freya-minilm-ft-unique run name,
+discovers the owned app through exact description matching before app_id exposure,
+uses a monotonic 2700-second wall and records provider state after stop.
+Installed Modal 1.5.1 CLI emits app_id/description/state/tasks/stopped_at keys;
+stop --yes and all used SDK function options exist. Startup timeout240, compute
+argument1800, function hard timeout1860, zero retries, one H100/max container1,
+single-use, min containers0, network blocked, no secrets/volumes/schedule.
+In-memory actual ledger functions reject a second active job and charged + holds
++ reservation > USD35, and conservatively settle the USD10 hold. Ledger snapshot
+prelaunch actual cost0. No sidecar reservation, identity/provider call or launch.
+Upload allowlist is TRAIN/CAL + six pinned encoder files + core source, with
+include_source=False; EVAL and arbitrary directories are absent.
+Published pricing https://modal.com/pricing checked 2026-10-11: H100 .001097/sec,
+CPU .0000131/core/sec, memory .00000222/GiB/sec. 2700*(.001097 + 4*.0000131 +
+16*.00000222) = USD3.199284 for the specified training container, excluding
+image-build/shutdown/egress overhead. USD10 is a reservation, not an invoice.
+
+Runtime compatibility scope:
+Actual local pilot Torch2.11.0+cu128 / Transformers5.3.0; Modal SDK1.5.1.
+Remote image pins Torch2.6.0 / Transformers4.48.3 / safetensors.5.2 / numpy2.2.6.
+The pilot does not validate that pinned remote image. No incompatible Modal SDK
+argument was found; API inspection is local, not proof of remote execution.
+Parent should record actual remote package versions/GPU, supervised steps,
+changed tensors/delta, all-row coverage and shutdown state in its actual receipt.
+The authorized engineering run can proceed; no human-gold gate is imposed.
+
+Only new audit report files and independentauditwitness.py were written.
+Originals, old frozen weights, publisher data, integrations, credential/env files
+and cloud launch remain parent/data-owner controlled.

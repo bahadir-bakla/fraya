@@ -1,0 +1,90 @@
+{
+  "schema": "minilm-ft-builder-adapter.handoff.v1",
+  "status": "SOURCE_COMPLETE_MODEL_PENDING",
+  "source_pins": {
+    "competition/finetuned_assist.py": "2c56283526913f6141df4bf16e0ab2e3bd08043f2dafd6fdc756a4b10a538d28",
+    "competition/tests/test_finetuned_assist.py": "53459f6afdd0f8108c5ea2f59a16f5132f41982d833ba9969aeb66fe5018a93a",
+    "analysis/minilm-ft-builder-adapter.txt": "d40e8f73ad75206180dceff51f4a04a5c18a7171283c2c44fc0a2073f500625e"
+  },
+  "parent_runtime_pins": {
+    "minilm_ft_core.py": "4c1178484f29126fd7d11faa5ae01aceeaaa1831c9f266ffafd0d09d25a19454",
+    "minilm_ft_eval.py": "ac99b7cd9cff296ad4d410c335a39520d2f0138c455996e6082690ec3d8cb7e1"
+  },
+  "tests": {
+    "command": "Python311 -B -m unittest discover -s competition/tests -p test_finetuned_assist.py -v",
+    "passed": 22,
+    "failed": 0,
+    "seconds": 0.983,
+    "exit_code": 0,
+    "evidence_kind": "stdlib fixture/mock contract checks; isolated real CLI wrong-pin rejection; no trained-model inference"
+  },
+  "default_model_manifest_exists": false,
+  "model_inference_executed": false,
+  "training_executed": false,
+  "cloud_executed": false,
+  "bank_authority": false,
+  "financial_authorization": "UNKNOWN",
+  "taxonomy": {
+    "domain7": [
+      "proposal",
+      "dispute",
+      "correction",
+      "current_affirm",
+      "current_withdraw",
+      "uncertain",
+      "reported_third_party"
+    ],
+    "aux4": [
+      "AFFIRM",
+      "NEGATE",
+      "INFORM",
+      "REQUEST"
+    ]
+  },
+  "host_api": [
+    "copy_runtime",
+    "prepare_request",
+    "validate_result",
+    "read_json",
+    "child_environment"
+  ],
+  "child_api": [
+    "FinetunedModel(request)",
+    "FinetunedModel.predict(exact_observed_inputs)",
+    "build(request)"
+  ],
+  "limits": {
+    "observed_rows": 512,
+    "calls": 512,
+    "messages": 20000,
+    "speech_codepoints": 16384,
+    "aggregate_observed_codepoints": 2000000,
+    "child_seconds_max": 600,
+    "cpu_threads": 2
+  },
+  "context_contract": "Strict previous-message ASSISTANT adjacency. Intervening events/invalid messages/USER/call boundaries reset. Invalid USER skips are explicit. No text truncation. Oversized assistant context omitted.",
+  "request_fields": [
+    "schema",
+    "calls",
+    "calls_sha256",
+    "model_directory",
+    "manifest_sha256",
+    "runtime_directory",
+    "runtime_sha256",
+    "seconds"
+  ],
+  "output_raw_speech_copy": false,
+  "runtime_load": "Explicit pinned modules, then minilm_ft_eval.load_model(path,device=cpu); local safetensors; no old BANKING77 head",
+  "model_pin_trust": "Caller must supply parent-reviewed manifest SHA. Self-derived writable hashes are not authorization.",
+  "pending": [
+    "Parent builder CLI/mode integration including semantic-assist off disables all",
+    "Parent reviewed actual fine-tuned model manifest expected SHA",
+    "Actual trained-model CPU inference and quality review"
+  ],
+  "background_processes_launched": 0,
+  "prior_files_written": false,
+  "default_model_directory": "integrations/learned-dialogue/minilm_ft_v1/model",
+  "completed_utc": "2026-10-11T12:15:34.535442+00:00",
+  "initial_runtime_core_sha256": "6c523df2045faf9ecb727f9a6b5547182168b7bd92e73851006f2b96ca18ecb5",
+  "parent_runtime_drift": "Core changed during task; latest observed input/taxonomy/Model.predict contracts rechecked compatible. Parent must provide reviewed version-specific pins for copied runtime."
+}

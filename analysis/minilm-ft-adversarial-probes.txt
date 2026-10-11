@@ -1,0 +1,435 @@
+MiniLM postfit independent adversarial dialogue probes
+
+PURPOSE AND PROVENANCE
+Postfit R&D diagnostic independent author wording; not calibrated qualification.
+Source: postfit-independent-authored. Split: DIAGNOSTIC.
+32 newly authored synthetic dialogue probes, in eight engineering families with four variants each.
+These are transcript-style observed-word inputs, not recordings or human-annotated gold.
+The eight family IDs preserve separate-family engineering provenance: variants within a family are related, and must not be presented as IID samples or independently counted evidence of generalization.
+No training, CAL, EVAL, model predictions, or old test scenarios were read to author these probes. No cloud, platform, keys, git, or training operation was used.
+No comparison with training material was performed; no statistical independence, unseen-data guarantee, human-gold, calibration, or qualification claim is made.
+All labels are author-specified diagnostic annotations. No model outputs or predicted values are included.
+Only current_utterance and previous_utterances belong to input. Their values are authored spoken words, with USER/ASSISTANT turn attribution; no generated state, oracle, hidden phase, label, or rationale is an input feature.
+Rationales, masks, family/source/split metadata, OOD designations, and validation details remain outside input.
+
+ANNOTATION ORDER AND CONVENTIONS
+Domain order: proposal, dispute, correction, current_affirm, current_withdraw, uncertain, reported_third_party.
+Each domain_labels array has seven binary integers; each domain_mask array has seven booleans.
+A true mask makes its author label interpretable. A false mask means UNKNOWN; the stored zero is a serialization placeholder, not a negative label. Do not score UNKNOWN positions as negative or infer their value.
+Each aux_labels array is [0,0,0,0]; each aux_mask array is [false,false,false,false]. Auxiliary positions have no supervised target here.
+Labels describe current speech, using observed history to resolve references; earlier labels or promises are not carried into the current turn automatically.
+proposal: explicit future-paying commitment, including an expressly committed conditional payment. A question, mere payment vocabulary, historical promise, or expressly hypothetical possibility does not by itself establish a current commitment. Reported-only payment promises and tentative commitment boundaries are masked where target scope is unresolved.
+dispute: explicit contest of a debt, charge, fee, or amount. Denying having paid is different from denying that debt is owed.
+correction: revision of a previously spoken fact or terms, with prior context supplied. Tentative or unendorsed reported revisions are masked. Express withdrawal alone does not add a separate correction label.
+current_affirm: explicit current agreement, acceptance, maintained agreement, or affirmative answer, including administrative agreement. Mere factual acknowledgement or a unilateral payment statement without explicit agreement is not forced into this label. A yes with clear positive agreement alternatives can establish affirmation even when its financial scope is UNKNOWN; yes between retain/withdraw alternatives is masked.
+current_withdraw: express revocation of the speaker's own previously observed agreement. Initial refusal, factual correction, or another person's reported withdrawal does not by itself establish it.
+uncertain: expressed current hesitation, indecision, or inability to confirm; annotation ambiguity alone is not evidence of uncertain speech.
+reported_third_party: a statement or position explicitly attributed to a nonparticipant person. Quoted assistant examples, hypothetical someone, and colloquial direct address do not establish it.
+These conventions classify words and attribution expressed in the dialogue. They assert no verified identity, bank-action ground truth, financial authority, authorization to execute a payment, or actual payment outcome.
+
+LANGUAGE AND COVERAGE
+26 English probes; six Turkish colloquial probes explicitly designated OOD for this English-primary diagnostic. OOD is an engineering designation, not an empirical training-distribution finding.
+Turkish OOD IDs: F02-03, F02-04, F07-01, F07-02, F07-03, F07-04.
+Coverage includes combined intents, quoted versus own consent, withdrawal after prior yes, ambiguous yes to two assistant questions, product/date corrections, deny-paid versus deny-debt contrast, hypothetical and conditional payment, someone else's reported payment promise, and final corrections after long speech.
+F08-01 and F08-02 are the two long current utterances. Length validation uses whitespace-delimited tokens (regex \S+), not a model tokenizer; no model or tokenizer was loaded.
+
+VALIDATION
+PASS: 32 rows, 32 unique IDs, eight expected groups, four variants in every group.
+PASS: exact row keys and input keys, seven binary domain labels, seven boolean masks, four integer-zero auxiliary labels, four false boolean auxiliary masks.
+PASS: nonempty spoken current utterances, nonempty arrays of history turns with exactly speaker/text and only USER/ASSISTANT speakers, nonempty rationale outside input.
+PASS: eight UNKNOWN positions use mask=false and numeric zero placeholders with explicit rationale.
+PASS: exactly six Turkish OOD probes and exactly two current utterances above 300 whitespace tokens.
+PASS: input structure contains no annotation/state/oracle fields; input speech passed a sentinel-word check and author review for speech-only features. This is structural/editorial validation, not an external factual or linguistic adjudication.
+Only the two requested output files were created. All dialogue wording was authored during this bounded task.
+Long current-utterance lengths: F08-01=429, F08-02=452 whitespace tokens.
+UNKNOWN positions: F03-01:proposal, F03-02:dispute, F03-03:current_affirm, F03-03:current_withdraw, F04-03:correction, F04-04:correction, F06-03:proposal, F06-04:proposal
+JSON SHA256: 965b6ae69351131f5689a5206a9f5a83041c7756848b6062f3fde60dcaaf459a
+JSON path: C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\fraya\analysis\minilm-ft-adversarial-probes.json
+TXT path: C:\Users\9bakl\OneDrive\Belgeler\ChatGPT\BUILD THE BUILDER\fraya\analysis\minilm-ft-adversarial-probes.txt
+The final TXT SHA256 is reported with the delivered files; a self-hash is not embedded in this text.
+
+FAMILIES
+F01-consent-attribution: 4 variants
+F02-withdrawal-after-own-yes: 4 variants
+F03-two-question-yes: 4 variants
+F04-fact-and-terms-corrections: 4 variants
+F05-paid-versus-owed-denials: 4 variants
+F06-conditional-and-other-payer: 4 variants
+F07-turkish-colloquial-mixed: 4 variants
+F08-final-correction-in-speech: 4 variants
+
+COMPLETE PROBE TRANSCRIPTS AND AUTHOR ANNOTATIONS
+
+F01-01 | F01-consent-attribution | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: May I send you a copy of the statement?
+Current USER: Yes, please send me a copy.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,1,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Explicit current agreement to an administrative action is current_affirm. Sending a copy contains no future-paying commitment. No financial authorization or bank action is inferred.
+
+F01-02 | F01-consent-attribution | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: What did your sister say about the revised date?
+Current USER: My sister said, 'Yes, I agree to the new date.' Those are her words; I haven't decided.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,1,1]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=0; current_withdraw=0; uncertain=1; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Quoted agreement belongs to a reported third party. The current speaker explicitly remains undecided; the quoted yes does not establish the speaker's current affirmation. No payment commitment is stated.
+
+F01-03 | F01-consent-attribution | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you personally agree to receiving reminders by email?
+Current USER: My cousin said, 'Yes, I agree.' I also agree to receiving reminders by email.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,1,0,0,1]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Both reported third-party agreement and explicit current agreement in the speaker's own words appear. Administrative consent is affirmative even without a payment proposal.
+
+F01-04 | F01-consent-attribution | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: The example response was 'yes, I agree.' Do you agree to the date shown here?
+Current USER: You wrote 'yes, I agree' in that example. I'm quoting the example, and I don't know whether I agree with this date.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,1,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=0; current_withdraw=0; uncertain=1; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: An example quoted from the assistant is not the current speaker's agreement or a report about a nonparticipant third party. The speaker explicitly expresses uncertainty about the current date.
+
+F02-01 | F02-withdrawal-after-own-yes | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you agree to pay 80 euros on Tuesday?
+Previous USER: Yes, I agree, and I will pay 80 euros on Tuesday.
+Previous ASSISTANT: Should I keep that agreement in the note?
+Current USER: I withdraw the agreement I gave you. I will not commit to that payment date now.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,1,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=0; current_withdraw=1; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: An observed earlier own yes is explicitly revoked in the current turn. The earlier payment promise is not carried forward. Revocation alone is not a separate factual or replacement-terms correction.
+
+F02-02 | F02-withdrawal-after-own-yes | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you agree to reminders by text?
+Previous USER: Yes, I agree to text reminders.
+Previous ASSISTANT: I can also read the statement aloud. What do you agree to now?
+Current USER: I take back my earlier yes to reminders by text. I agree that you may read the statement aloud now.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,1,1,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=1; current_withdraw=1; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Withdrawal of the earlier text-reminder agreement coexists with a separate explicit current agreement to reading aloud. Both are administrative; neither supplies a payment commitment.
+
+F02-03 | F02-withdrawal-after-own-yes | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Salı günü 80 avro ödemeyi kabul ediyor musunuz?
+Previous USER: Tamam, salı günü için kabul ediyorum.
+Previous ASSISTANT: Bu onayınız hâlâ geçerli mi?
+Current USER: Önce tamam dedim ama o ödeme gününe verdiğim onayı geri alıyorum. Şimdilik tarih sözü vermiyorum.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,1,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=0; current_withdraw=1; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: OOD: Turkish colloquial engineering probe. The speaker explicitly takes back their observed earlier agreement to the payment day. Refusing to promise a date is not itself expressed uncertainty or a new payment proposal.
+
+F02-04 | F02-withdrawal-after-own-yes | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Cuma tarihini kabul ediyor musunuz?
+Previous USER: Tamam, cuma tarihini kabul ediyorum.
+Previous ASSISTANT: Sizin onayınız ve abinizin söylediği hakkında ne yazayım?
+Current USER: Benim önceki tamamım duruyor, geri almıyorum. Abim 'ben onayımı geri çektim' dedi; bu onun lafı.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,1,0,0,1]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: OOD: Turkish colloquial engineering probe. The speaker expressly maintains their own agreement. Withdrawal is attributed only to the brother; it does not establish current_withdraw for the speaker. No future-paying commitment is spoken.
+
+F03-01 | F03-two-question-yes | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you want me to email the invoice, and do you agree to pay the balance on Friday?
+Current USER: Yes.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,1,0,0,0]
+domain_mask: [false,true,true,true,true,true,true]
+Interpretable targets: proposal=UNKNOWN; dispute=0; correction=0; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: proposal is UNKNOWN: yes could answer only the email question or also the payment question. current_affirm is known because an explicit current affirmative answer exists, including a possible administrative agreement. Scope ambiguity alone does not establish spoken uncertainty.
+
+F03-02 | F03-two-question-yes | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you dispute the late fee, and should I read the item list aloud?
+Current USER: Yes.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,1,0,0,0]
+domain_mask: [true,false,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=UNKNOWN; correction=0; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: dispute is UNKNOWN because the bare yes has unresolved scope across two questions. The utterance is explicitly affirmative, so current_affirm is known; it makes no payment commitment. Classifier uncertainty is not the uncertain speech label.
+
+F03-03 | F03-two-question-yes | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you agree to keeping the original schedule?
+Previous USER: Yes, I agree to keeping it.
+Previous ASSISTANT: Do you agree to keeping the original schedule, or are you withdrawing your earlier agreement?
+Current USER: Yes.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,0,0]
+domain_mask: [true,true,true,false,false,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=UNKNOWN; current_withdraw=UNKNOWN; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: current_affirm and current_withdraw are UNKNOWN: yes might retain the agreement or affirm the question about withdrawing it. The alternatives conflict, so neither is forced. No paying promise appears, and the speaker does not explicitly express uncertainty.
+
+F03-04 | F03-two-question-yes | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Should I send a receipt, and are you promising to pay 25 pounds tomorrow?
+Current USER: Yes to sending the receipt only. I am not making a payment promise.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,1,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: The speaker resolves the two-question scope explicitly. Administrative agreement establishes current_affirm, while the explicit exclusion of a payment promise establishes proposal=0.
+
+F04-01 | F04-fact-and-terms-corrections | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous USER: I ordered the blue heater on 4 March.
+Previous ASSISTANT: I recorded blue heater, 4 March. Is that accurate?
+Current USER: Correction: it was the green fan, and the order date was 6 March. Please replace both details.
+OUTSIDE INPUT:
+domain_labels: [0,0,1,0,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=1; current_affirm=0; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: The current turn explicitly revises two previously observed facts: product and order date. Correcting a product record is not automatically a dispute about debt or withdrawal of consent.
+
+F04-02 | F04-fact-and-terms-corrections | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous USER: I'll pay sixty on the 12th.
+Previous ASSISTANT: I have noted sixty on the 12th. What should the amount and date be?
+Current USER: I said sixty earlier; change that to forty on the 14th. I will pay forty on the 14th.
+OUTSIDE INPUT:
+domain_labels: [1,0,1,0,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=1; dispute=0; correction=1; current_affirm=0; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: An explicit replacement amount and date correct prior payment terms and carry a new future-paying commitment. No explicit agreement marker or express revocation of prior consent is stated; a terms revision alone is not forced into withdrawal.
+
+F04-03 | F04-fact-and-terms-corrections | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous USER: The replacement charger was ordered on Monday.
+Previous ASSISTANT: Was the replacement charger ordered on Monday?
+Current USER: I can't remember. It may have been Tuesday, but I can't confirm a correction.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,1,0]
+domain_mask: [true,true,false,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=UNKNOWN; current_affirm=0; current_withdraw=0; uncertain=1; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: correction is UNKNOWN: Tuesday is offered tentatively while the speaker expressly cannot confirm a revision of Monday. Explicit inability to remember establishes uncertain.
+
+F04-04 | F04-fact-and-terms-corrections | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous USER: Delivery was April 2.
+Previous ASSISTANT: I've written April 2. Do you have an update?
+Current USER: My neighbor said, 'No, delivery was April 3.' I'm relaying what she said; I haven't checked which date is right.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,1,1]
+domain_mask: [true,true,false,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=UNKNOWN; current_affirm=0; current_withdraw=0; uncertain=1; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: correction is UNKNOWN: the conflicting date is attributed to a neighbor and the speaker does not endorse a replacement. Reported third-party speech and expressed uncertainty are explicit.
+
+F05-01 | F05-paid-versus-owed-denials | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Are you saying you already paid, or that the charge is not owed?
+Current USER: I did not pay it. The amount is still due, and I am not setting a payment date.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=0; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Denying completed payment while acknowledging the amount remains due is not denying debt. A factual acknowledgement does not by itself establish explicit current agreement, and no previous fact is revised.
+
+F05-02 | F05-paid-versus-owed-denials | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Are you saying you already paid, or that the charge is not owed?
+Current USER: I do not owe that amount. That charge is wrong; I dispute it.
+OUTSIDE INPUT:
+domain_labels: [0,1,0,0,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=1; correction=0; current_affirm=0; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: The denial concerns the obligation and explicitly disputes the charge, unlike the paired denial of having paid. No previous own statement or agreement is supplied for correction or withdrawal.
+
+F05-03 | F05-paid-versus-owed-denials | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous USER: I paid it on Monday.
+Previous ASSISTANT: I'll note that you paid on Monday.
+Current USER: No, I misspoke: I have not paid it. I still owe it, but I haven't decided when to pay.
+OUTSIDE INPUT:
+domain_labels: [0,0,1,0,0,1,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=1; current_affirm=0; current_withdraw=0; uncertain=1; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: The speaker explicitly corrects their earlier claim of completed payment and remains undecided about a future date. Acknowledging debt is not a dispute, a paying commitment, or explicit agreement to an action.
+
+F05-04 | F05-paid-versus-owed-denials | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you agree to the late fee? I can email a breakdown of the separate charges.
+Current USER: No, I dispute the late fee. I agree to receive a breakdown by email, and I will pay the undisputed 30 euros tomorrow.
+OUTSIDE INPUT:
+domain_labels: [1,1,0,1,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=1; dispute=1; correction=0; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: The turn combines a fee dispute, explicit administrative agreement, and a future-paying commitment for a separate amount. Refusing the fee is not withdrawal because no earlier own agreement to that fee is observed.
+
+F06-01 | F06-conditional-and-other-payer | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: What payment can you commit to?
+Current USER: I commit to paying 45 euros on Friday if the duplicate charge is removed. The duplicate charge is wrong and I dispute it.
+OUTSIDE INPUT:
+domain_labels: [1,1,0,0,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=1; dispute=1; correction=0; current_affirm=0; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: The speaker explicitly commits to a future payment subject to a stated condition and disputes a duplicate charge. The proposal label records the conditional speech commitment; it does not assert that the condition will occur or payment is authorized.
+
+F06-02 | F06-conditional-and-other-payer | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Can you suggest a payment arrangement?
+Current USER: Hypothetically, if someone paid half next month, would the fee disappear? I'm asking about a possibility; I am not promising a payment.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=0; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: A hypothetical question expressly excludes a payment promise. An imagined someone is not an actual reported third-party statement. Asking how a condition works is not itself a dispute or expressed indecision.
+
+F06-03 | F06-conditional-and-other-payer | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: What did your father say?
+Current USER: My father told me, 'I'll pay the balance on Thursday.' I'm reporting his promise. I haven't agreed to make any payment myself.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,0,1]
+domain_mask: [false,true,true,true,true,true,true]
+Interpretable targets: proposal=UNKNOWN; dispute=0; correction=0; current_affirm=0; current_withdraw=0; uncertain=0; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: proposal is UNKNOWN because a future-paying commitment is explicitly reported from someone else, while the current speaker expressly has not agreed to pay. Whether the proposal target includes reported commitments is left unresolved. Third-party reporting is explicit; actual identity, authority, and payment execution are not labeled.
+
+F06-04 | F06-conditional-and-other-payer | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: What can you say about a future payment?
+Current USER: If I get overtime money, maybe I could pay something next week. I can't commit to an amount or a day.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,1,0]
+domain_mask: [false,true,true,true,true,true,true]
+Interpretable targets: proposal=UNKNOWN; dispute=0; correction=0; current_affirm=0; current_withdraw=0; uncertain=1; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: proposal is UNKNOWN at the boundary between a tentative conditional payment suggestion and a commitment; the speaker explicitly cannot commit to amount or date. The hedging and inability to commit establish uncertain.
+
+F07-01 | F07-turkish-colloquial-mixed | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Dosyayı e-postayla göndermemi kabul ediyor musunuz?
+Current USER: Tamam ya, e-postayla gönder; buna razıyım. Kalan 200 lirayı da cuma ben ödeyeceğim.
+OUTSIDE INPUT:
+domain_labels: [1,0,0,1,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=1; dispute=0; correction=0; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: OOD: Turkish colloquial engineering probe. Explicit agreement to email delivery coexists with the speaker's explicit future-paying commitment for Friday. No bank action or authority is inferred from either statement.
+
+F07-02 | F07-turkish-colloquial-mixed | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous USER: Ürün kulaklık, tarih 8 Mayıs.
+Previous ASSISTANT: Kulaklık ve 8 Mayıs diye yazdım, doğru mu?
+Current USER: Yok abi, kulaklık değil hoparlördü, tarih de 9 Mayıs. Ama o ekstra ücreti kabul etmiyorum, yanlış yazılmış; itiraz ediyorum.
+OUTSIDE INPUT:
+domain_labels: [0,1,1,0,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=1; correction=1; current_affirm=0; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: OOD: Turkish colloquial engineering probe. The speaker replaces observed product/date facts and disputes an extra fee. Colloquial direct address abi does not report a third party; refusing a fee without earlier own consent is not withdrawal.
+
+F07-03 | F07-turkish-colloquial-mixed | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Anneniz ne dedi, siz ne düşünüyorsunuz?
+Current USER: Annem 'tamam, kabul ediyorum' dedi. Ben daha emin değilim ya, onun tamamı benim onayım sayılmaz.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,1,1]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=0; current_withdraw=0; uncertain=1; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: OOD: Turkish colloquial engineering probe. The mother's quoted consent is expressly separated from the current speaker's consent. The speaker states current uncertainty, with no own affirmation or observed own revocation.
+
+F07-04 | F07-turkish-colloquial-mixed | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Borcu yok saydığınızı mı, yoksa ödeme yapmadığınızı mı söylüyorsunuz?
+Current USER: Yok, ödedim demiyorum; daha ödemedim. Borç yok da demiyorum, borç duruyor. Ne zaman öderim, vallahi belli değil.
+OUTSIDE INPUT:
+domain_labels: [0,0,0,0,0,1,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=0; current_affirm=0; current_withdraw=0; uncertain=1; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: OOD: Turkish colloquial engineering probe. The speaker denies having paid but explicitly does not deny the debt, and expresses uncertainty about when payment might happen. Clarifying the assistant's alternatives does not revise a previously asserted fact.
+
+F08-01 | F08-final-correction-in-speech | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous USER: I agree to pay 80 on Tuesday, and the item was a vacuum ordered on 9 June.
+Previous ASSISTANT: I have written vacuum, 9 June, and payment of 80 on Tuesday. What should remain in the note?
+Current USER: Let me explain why I want the note read carefully before you finish it. I am talking about the small appliance order we discussed, and I have the paper receipt beside me while I speak. Earlier in this conversation I gave you a quick answer because I was sorting several envelopes on the table. One envelope held the order receipt, another held a delivery slip, and a third held the printed list of charges. The papers were folded together, so the first description I gave you came from the wrong line. I want the details I actually say now to be the details you write down. The receipt has a product description near the top, then a separate order date below it, and the delivery slip has its own date in another corner. Those dates serve different purposes. Reading a delivery date aloud does not make it the date I placed the order. I also mentioned Tuesday while we were discussing a possible payment arrangement. That was the day printed on the first note in the envelope, and I repeated it when you asked me for a quick answer. I remember saying yes to that arrangement in this conversation. I am mentioning that earlier yes so you understand exactly which agreement I am changing now. There is also a handwritten note from my mother. She told me, 'Yes, I agree with Tuesday,' and I copied her words onto the back of the envelope. Her statement belongs to her, and I am not using her statement as my own answer. The printed charge list shows two separate lines with the same description and the same amount of thirty euros. I can read both lines, and I am raising a complaint about that repetition. There is a separate amount of fifty euros that I am prepared to pay under the replacement arrangement I will state at the end. Please keep the paper descriptions separate while I finish speaking. The shape of the appliance box, the color of the packing tape, and the delivery person's arrival time are background details, and none of those changes what I am about to say about the order or payment. I have now read the product description and the order date from the receipt itself. Here is my final correction: the item was a desk fan, ordered on 11 June. I withdraw my earlier agreement to pay 80 on Tuesday. I now agree to paying 50 on Friday, and I will pay 50 on Friday. I dispute the remaining 30 because it is a duplicate charge.
+OUTSIDE INPUT:
+domain_labels: [1,1,1,1,1,0,1]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=1; dispute=1; correction=1; current_affirm=1; current_withdraw=1; uncertain=0; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Long speech case. The ending explicitly corrects product/date, revokes the speaker's observed earlier payment agreement, affirms a replacement, makes a future-paying commitment, and disputes a duplicate. The mother's quoted yes supplies reported_third_party, not the speaker's consent. Background retelling does not override the final statements; no present uncertainty is expressed.
+
+F08-02 | F08-final-correction-in-speech | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you agree to pay 90 on Wednesday? What was the product and order date?
+Previous USER: Yes, I agree to pay 90 on Wednesday. It was a blender ordered on 16 August.
+Previous ASSISTANT: I noted blender, 16 August, and 90 on Wednesday. Is that still what you want?
+Current USER: I want to give you the full explanation because my first answer mixed two shopping trips together. The first trip was for kitchen equipment, and the second trip was for a gift that I picked up several days later. I kept both receipts in the same pocket of a cloth bag. When you asked about the product at the beginning of this conversation, I looked at the picture on the gift box instead of reading the item description on the kitchen receipt. That is why the product name I gave you needs to be replaced. I am now reading from the kitchen receipt, which is flat on the table in front of me. There is an order date, a delivery date, and a date when the receipt was printed again. I read the reprint date first, but the order date is a different line. I will give you the correct order date before I finish. The payment discussion also needs a separate explanation. You asked whether I agreed to paying ninety on Wednesday, and I said yes during that earlier part of our conversation. I know that I said those words, and I want to be clear that the earlier yes was mine. My aunt was in the room afterward and told me, 'Yes, Wednesday is fine with me.' I am reporting what she said because her comment is written on the same paper. She was talking about her own preference, and her preference does not supply an answer from me now. The note also includes a telephone number for the delivery desk, a description of the cardboard packaging, and a reminder to keep the instruction booklet. Those are ordinary details on the receipt and on the paper beside it. They are not payment promises. I am not disputing the charge in this conversation; I am explaining the product record and the agreement I gave earlier. I have put the gift receipt back into the bag so I can read only the kitchen receipt for the correction. Please let me finish the last part before you repeat the note. The number ninety and the word Wednesday describe the arrangement I agreed to earlier, but repeating those words here is not a new promise to follow it. The box I am keeping contains the kitchen item, and the printed order line gives the information I want you to use. For the record, the item was a kettle ordered on 17 August, not a blender ordered on 16 August. I take back my earlier yes to paying 90 on Wednesday. I do not agree to any payment schedule now, and I can't say whether I will pay next week. My aunt's yes is hers.
+OUTSIDE INPUT:
+domain_labels: [0,0,1,0,1,1,1]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=1; current_affirm=0; current_withdraw=1; uncertain=1; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Long speech case. The final correction replaces observed product/date facts and explicitly withdraws the speaker's prior yes. Historical and aunt-attributed yes statements do not establish current affirmation. The speaker expressly cannot say whether they will pay next week, giving uncertain without a new payment proposal; dispute is explicitly excluded.
+
+F08-03 | F08-final-correction-in-speech | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous USER: I agree to pay 70 on Monday for the red lamp.
+Previous ASSISTANT: I wrote red lamp and payment of 70 on Monday. What should I correct?
+Current USER: Earlier I said red lamp, but the item was a white clock. That is the only correction. Yes, I still agree to the Monday schedule, and I will pay 70 on Monday.
+OUTSIDE INPUT:
+domain_labels: [1,0,1,1,0,0,0]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=1; dispute=0; correction=1; current_affirm=1; current_withdraw=0; uncertain=0; reported_third_party=0
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Short control in the final-correction family: product correction coexists with explicit retention of the payment agreement and a current future-paying commitment. Correcting one fact does not revoke a separate agreement.
+
+F08-04 | F08-final-correction-in-speech | postfit-independent-authored | DIAGNOSTIC
+INPUT:
+Previous ASSISTANT: Do you agree to the Friday plan, and was the order on 20 July?
+Previous USER: Yes, I agree to the Friday plan. The order was on 20 July.
+Previous ASSISTANT: What is your final update?
+Current USER: My brother said, 'Yes, keep the Friday plan.' I withdraw my own earlier agreement to that plan. Correction: the order was on 22 July, not 20 July. I am unsure what payment date I could accept now.
+OUTSIDE INPUT:
+domain_labels: [0,0,1,0,1,1,1]
+domain_mask: [true,true,true,true,true,true,true]
+Interpretable targets: proposal=0; dispute=0; correction=1; current_affirm=0; current_withdraw=1; uncertain=1; reported_third_party=1
+aux_labels: [0,0,0,0]; aux_mask: [false,false,false,false]
+Rationale: Short control in the final-correction family: an attributed yes coexists with own withdrawal, a date correction, and explicit current uncertainty. The brother's quoted preference neither retains the speaker's agreement nor supplies a payment commitment.

@@ -1,0 +1,47 @@
+{
+  "schema_version": "minilm-finetune-v1",
+  "row_keys": [
+    "id",
+    "group",
+    "split",
+    "source",
+    "input",
+    "domain_labels",
+    "domain_mask",
+    "aux_labels",
+    "aux_mask"
+  ],
+  "domain_labels": [
+    "proposal",
+    "dispute",
+    "correction",
+    "current_affirm",
+    "current_withdraw",
+    "uncertain",
+    "reported_third_party"
+  ],
+  "aux_labels": [
+    "AFFIRM",
+    "NEGATE",
+    "INFORM",
+    "REQUEST"
+  ],
+  "input": {
+    "current_utterance": "string; current USER text only",
+    "previous_utterances": [
+      {
+        "speaker": "ASSISTANT or USER",
+        "text": "string; observed prior text only"
+      }
+    ]
+  },
+  "mask": "false means unknown, not negative; masked values stored as zero placeholders",
+  "files": [
+    "train.jsonl",
+    "cal.jsonl",
+    "eval.jsonl"
+  ],
+  "provenance": "source is a registry key in sources.json; group roots recorded in ancestry.jsonl; never encode either as text",
+  "SGD": "all original TRAIN 132615 USER rows retained; original CAL/EVAL retained; preceding SYSTEM only, no gold frames in input",
+  "semantic_scope": "current_affirm includes administrative agreement and is never payment authority"
+}

@@ -1,0 +1,23 @@
+{
+  "auditor": "Codex",
+  "native_Opus_available": false,
+  "status": "CURRENT_FROZEN_PACKET_ELIGIBLE_SOURCE_HARDENING_FINDINGS",
+  "current_frozen_packet_launch_blockers": [],
+  "source_tests": "analysis/minilm-ft-independent-review.tests.json",
+  "witness": "independentauditwitness.py",
+  "test_command": "python -B independentauditwitness.py",
+  "findings": [
+    {"id":"F1","priority":"P1","file":"integrations/learned-dialogue/minilm_ft_core.py","line":132,"defect":"EVAL-tagged TRAIN or CAL rows reach fit/threshold selection","patch":"Require correct TRAIN/CAL split tags before model allocation and prelaunch; bind frozen manifest hashes","current_packet_affected":false},
+    {"id":"F2","priority":"P2","file":"integrations/learned-dialogue/minilm_ft_core.py","line":25,"defect":"6-domain + 5-aux arrays silently pass eleven-head validation","patch":"Validate separate labels/masks dimensions 7/7/4/4","current_packet_affected":false},
+    {"id":"F3","priority":"P2","file":"integrations/learned-dialogue/minilm_ft_core.py","line":100,"defect":"All-unknown zero-loss batches change encoder by AdamW decay","patch":"Skip empty-supervision updates; reject zero-supervised-step fits; report nonzero encoder-gradient evidence","current_packet_affected":false}
+  ],
+  "packet":{"TRAIN":156341,"CAL":16416,"EVAL":16703,"SGD_TRAIN":132615,"domain_TRAIN":23726,"fresh_CAL":320,"fresh_EVAL":384,"schema":"7 domain + 4 aux","structural_pass":true,"TRAIN_all_unknown":0,"CAL_unknown_collision_rows":483,"EVAL_unknown_collision_rows":525,"CAL_EVAL_eligible_aux_collision_rows":35,"TRAIN_conflicting_aux_comparisons":14,"fresh_domain_split_collisions":0},
+  "guardian":{"starts_before_app_run":true,"unique_app_name":true,"description_discovery":true,"wall_seconds":2700,"provider_after_recorded":true,"source_review_only":true},
+  "containment":{"gpu":"H100","max_containers":1,"retries":0,"compute_seconds":1800,"startup_timeout_seconds":240,"function_timeout_seconds":1860,"reserved_USD":10,"aggregate_USD":35,"sidecar_cloud_calls":0,"sidecar_cloud_cost":0,"holdout_uploaded":false},
+  "pricing":{"source":"https://modal.com/pricing","checked_date":"2026-10-11","H100_USD_per_second":0.001097,"CPU_USD_core_second":0.0000131,"memory_USD_GiB_second":0.00000222,"specified_container_2700s_USD":3.199284,"excludes":"image-build/shutdown/egress overhead; not provider invoice"},
+  "runtime":{"local_torch":"2.11.0+cu128","local_transformers":"5.3.0","local_modal":"1.5.1","remote_pinned_torch":"2.6.0","remote_pinned_transformers":"4.48.3","remote_runtime_exercised_by_sidecar":false,"SDK_options_locally_supported":true},
+  "pilot":{"TRAIN":16,"CAL":8,"optimizer_steps":2,"finetuned_changed_tensors":101,"frozen_changed_tensors":0,"accuracy_validation":false},
+  "formal_human_gold_gate":false,
+  "bank_authority":false,
+  "implementation_owner":"parent"
+}
