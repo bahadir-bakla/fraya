@@ -1,0 +1,1251 @@
+{
+  "schema": "final_sprint.recipient_assertion.20261011",
+  "status": "FIRST_SLICE_IMPLEMENTED_TESTED_READY_FOR_PARENT_REVIEW",
+  "finished_utc": "2026-10-11T14:45:33.747908+00:00",
+  "changed_files": [
+    "competition/recipient_assertion.py",
+    "competition/tests/test_recipient_assertion.py",
+    "analysis/final-sprint-recipient-implementation-20261011.json",
+    "analysis/final-sprint-recipient-implementation-20261011.txt"
+  ],
+  "source_sha256": {
+    "competition/recipient_assertion.py": "5a2cd9c467f2dfe05ef26fa36fe5f22acaa00ca36fd5d487e904fc2f02c2cb8d",
+    "competition/tests/test_recipient_assertion.py": "f5a69a75544f726a27ed88baa97afa8ae2f3293f07a7e0144e8d04a3fa806588",
+    "analysis/local-recipient-fresh-probes-20261011.json": "448ec29e2260eedf1ebd565d09192267f531dd1758ca9a443d19a24937186b27"
+  },
+  "module_bytes": 16952,
+  "api": {
+    "signature": "recipient_assertion(raw, given_name, last_name, title='') -> dict",
+    "decision": [
+      "SELF",
+      "OTHER",
+      "UNKNOWN"
+    ],
+    "source_span": "[start,end] Python codepoint offsets, end exclusive; [] for UNKNOWN. All individual assertions retain exact text, subject, polarity and spans.",
+    "bank_authority": false,
+    "recipient_self": "True /False /None, source hypothesis only.",
+    "inline_source": "Copy exact entire module into code_exec, then call the function using dynamic first_name/last_name/title variables. Only re+builtins; no entry point, IO, external imports or template scanner markers.",
+    "scope": "Current recipient-opening answer only. Short affirmatives and bare exact-name answers assume this opening context. SELF permits asking security questions; it never establishes verified identity/disclosure or authorizes any bank action."
+  },
+  "tests": {
+    "command": [
+      "C:\\Users\\9bakl\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "competition/tests",
+      "-p",
+      "test_*.py"
+    ],
+    "passed": 161,
+    "failed": 0,
+    "seconds": 13.3,
+    "new_test_methods": 18,
+    "output": ".................................................................................................................................................................\n----------------------------------------------------------------------\nRan 161 tests in 13.300s\n\nOK\n",
+    "meaningful_coverage": [
+      "Parameterized English/Turkish/accented/hyphen/apostrophe subjects",
+      "Exact dynamic name phrases and multilingual title aliases",
+      "Quote versus natural apostrophe; postposed attribution",
+      "Recipient-specific denial versus unrelated negation",
+      "Separate later DOB-refusal acts, including reordered clauses",
+      "Courtesy suffixes and unknown extraction without model state",
+      "Different given name cannot discard a matching surname",
+      "Caller/no-answer annotation cannot become speaker assertion",
+      "Question/hypothetical/reported and contradictory identities remain unresolved",
+      "Common-word name not treated as a reporting blacklist",
+      "Source spans slice exact original strings",
+      "Exact source executes inline; source imports/template markers/size checked"
+    ]
+  },
+  "exposed24_diagnostic": {
+    "cases": 24,
+    "known": 21,
+    "known_correct": 21,
+    "positive_self": 12,
+    "positive_cases": 12,
+    "negative_other": 9,
+    "negative_cases": 9,
+    "negative_false_self": 0,
+    "unknown_preserved": 3,
+    "unknown_cases": 3,
+    "all_source_expectations_match": true,
+    "label_access": "Diagnosis only after all 24 parser executions; no expected labels enter runtime fields.",
+    "seconds": 0.004044099994644057,
+    "rows": [
+      {
+        "id": "fresh24-01",
+        "input": {
+          "raw": "I'm Elif.",
+          "given_name": "Elif",
+          "last_name": "Şahin",
+          "title": "Ms"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            9
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                9
+              ],
+              "text": "I'm Elif.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "given"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-02",
+        "input": {
+          "raw": "O’Neill speaking.",
+          "given_name": "Niamh",
+          "last_name": "O’Neill",
+          "title": "Dr"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            17
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                17
+              ],
+              "text": "O’Neill speaking.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-03",
+        "input": {
+          "raw": "Ben Deniz Öztürk.",
+          "given_name": "Deniz",
+          "last_name": "Öztürk",
+          "title": "Dr"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            17
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                17
+              ],
+              "text": "Ben Deniz Öztürk.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "given",
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-04",
+        "input": {
+          "raw": "Anne-Marie here.",
+          "given_name": "Anne-Marie",
+          "last_name": "Bennett",
+          "title": "Ms"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            16
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                16
+              ],
+              "text": "Anne-Marie here.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "given"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-05",
+        "input": {
+          "raw": "Profesör Çelik benim.",
+          "given_name": "İpek",
+          "last_name": "Çelik",
+          "title": "Prof"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            21
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                21
+              ],
+              "text": "Profesör Çelik benim.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-06",
+        "input": {
+          "raw": "This is Liam O'Connor.",
+          "given_name": "Liam",
+          "last_name": "O'Connor",
+          "title": "Mr"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            22
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                22
+              ],
+              "text": "This is Liam O'Connor.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "given",
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-07",
+        "input": {
+          "raw": "Yılmaz benim, buyurun.",
+          "given_name": "Çağrı",
+          "last_name": "Yılmaz",
+          "title": "Mr"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            13
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                13
+              ],
+              "text": "Yılmaz benim,",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-08",
+        "input": {
+          "raw": "Dr Reed-Jones speaking.",
+          "given_name": "Sophie",
+          "last_name": "Reed-Jones",
+          "title": "Dr"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            23
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                23
+              ],
+              "text": "Dr Reed-Jones speaking.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-09",
+        "input": {
+          "raw": "Gökçe benim; doğum tarihimi söylemem.",
+          "given_name": "Gökçe",
+          "last_name": "Akın",
+          "title": "Ms"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            12
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                12
+              ],
+              "text": "Gökçe benim;",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "given"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            },
+            {
+              "act": "dob_refusal",
+              "source_span": [
+                13,
+                36
+              ],
+              "text": "doğum tarihimi söylemem",
+              "subject": "speaker",
+              "polarity": "negative",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "INDEPENDENT_DISCLOSURE_REFUSAL"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-10",
+        "input": {
+          "raw": "I'm Ava Martin, but I won't verify my birthday.",
+          "given_name": "Ava",
+          "last_name": "Martin",
+          "title": "Mrs"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            15
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                15
+              ],
+              "text": "I'm Ava Martin,",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "given",
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            },
+            {
+              "act": "dob_refusal",
+              "source_span": [
+                20,
+                46
+              ],
+              "text": "I won't verify my birthday",
+              "subject": "speaker",
+              "polarity": "negative",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "INDEPENDENT_DISCLOSURE_REFUSAL"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-11",
+        "input": {
+          "raw": "Eylül Demir konuşuyor.",
+          "given_name": "Eylül",
+          "last_name": "Demir",
+          "title": "Ms"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            22
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                22
+              ],
+              "text": "Eylül Demir konuşuyor.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "given",
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-12",
+        "input": {
+          "raw": "Sir James D'Arcy here.",
+          "given_name": "James",
+          "last_name": "D'Arcy",
+          "title": "Sir"
+        },
+        "output": {
+          "decision": "SELF",
+          "recipient_self": true,
+          "source_span": [
+            0,
+            22
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                22
+              ],
+              "text": "Sir James D'Arcy here.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "SELF",
+              "matched_name_parts": [
+                "given",
+                "family"
+              ],
+              "reason": "CURRENT_NAME_ASSERTION"
+            }
+          ],
+          "reason": "CURRENT_NAME_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": true,
+        "correct": true
+      },
+      {
+        "id": "fresh24-13",
+        "input": {
+          "raw": "Esra'nın kardeşiyim; Esra burada değil.",
+          "given_name": "Esra",
+          "last_name": "Kılıç",
+          "title": "Ms"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            21,
+            39
+          ],
+          "assertions": [
+            {
+              "act": "other_person",
+              "source_span": [
+                9,
+                19
+              ],
+              "text": "kardeşiyim",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "OTHER",
+              "matched_name_parts": [],
+              "reason": "CURRENT_THIRD_PARTY_RELATION"
+            },
+            {
+              "act": "recipient_absent",
+              "source_span": [
+                21,
+                39
+              ],
+              "text": "Esra burada değil.",
+              "subject": "recipient",
+              "polarity": "negative",
+              "decision": "OTHER",
+              "matched_name_parts": [],
+              "reason": "CURRENT_RECIPIENT_ABSENCE"
+            }
+          ],
+          "reason": "CURRENT_RECIPIENT_ABSENCE",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-14",
+        "input": {
+          "raw": "I'm his assistant. Oliver is away.",
+          "given_name": "Oliver",
+          "last_name": "Clarke",
+          "title": "Mr"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            19,
+            34
+          ],
+          "assertions": [
+            {
+              "act": "other_person",
+              "source_span": [
+                0,
+                17
+              ],
+              "text": "I'm his assistant",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "OTHER",
+              "matched_name_parts": [],
+              "reason": "CURRENT_THIRD_PARTY_RELATION"
+            },
+            {
+              "act": "recipient_absent",
+              "source_span": [
+                19,
+                34
+              ],
+              "text": "Oliver is away.",
+              "subject": "recipient",
+              "polarity": "negative",
+              "decision": "OTHER",
+              "matched_name_parts": [],
+              "reason": "CURRENT_RECIPIENT_ABSENCE"
+            }
+          ],
+          "reason": "CURRENT_RECIPIENT_ABSENCE",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-15",
+        "input": {
+          "raw": "Ben İlker Şen değilim.",
+          "given_name": "İlker",
+          "last_name": "Şen",
+          "title": "Mr"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            0,
+            22
+          ],
+          "assertions": [
+            {
+              "act": "identity_denial",
+              "source_span": [
+                0,
+                22
+              ],
+              "text": "Ben İlker Şen değilim.",
+              "subject": "speaker",
+              "polarity": "negative",
+              "decision": "OTHER",
+              "matched_name_parts": [
+                "given",
+                "family"
+              ],
+              "reason": "CURRENT_RECIPIENT_DENIAL"
+            }
+          ],
+          "reason": "CURRENT_RECIPIENT_DENIAL",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-16",
+        "input": {
+          "raw": "No, I'm not Dr O’Malley.",
+          "given_name": "Grace",
+          "last_name": "O’Malley",
+          "title": "Dr"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            4,
+            24
+          ],
+          "assertions": [
+            {
+              "act": "identity_denial",
+              "source_span": [
+                4,
+                24
+              ],
+              "text": "I'm not Dr O’Malley.",
+              "subject": "speaker",
+              "polarity": "negative",
+              "decision": "OTHER",
+              "matched_name_parts": [
+                "family"
+              ],
+              "reason": "CURRENT_RECIPIENT_DENIAL"
+            }
+          ],
+          "reason": "CURRENT_RECIPIENT_DENIAL",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-17",
+        "input": {
+          "raw": "Selin dün 'Selin Koç benim' dedi. Ben annesiyim.",
+          "given_name": "Selin",
+          "last_name": "Koç",
+          "title": "Ms"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            34,
+            47
+          ],
+          "assertions": [
+            {
+              "act": "quotation",
+              "source_span": [
+                10,
+                27
+              ],
+              "text": "'Selin Koç benim'",
+              "subject": "unknown",
+              "polarity": "unknown",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "QUOTED_NOT_CURRENT_SELF"
+            },
+            {
+              "act": "reported_identity",
+              "source_span": [
+                28,
+                33
+              ],
+              "text": "dedi.",
+              "subject": "reported",
+              "polarity": "unknown",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "ATTRIBUTED_NOT_CURRENT_SELF"
+            },
+            {
+              "act": "other_person",
+              "source_span": [
+                34,
+                47
+              ],
+              "text": "Ben annesiyim",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "OTHER",
+              "matched_name_parts": [],
+              "reason": "CURRENT_THIRD_PARTY_RELATION"
+            }
+          ],
+          "reason": "CURRENT_THIRD_PARTY_RELATION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-18",
+        "input": {
+          "raw": "Theo said 'I'm Theo Smith-Jones.' I'm his neighbour.",
+          "given_name": "Theo",
+          "last_name": "Smith-Jones",
+          "title": "Mr"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            34,
+            51
+          ],
+          "assertions": [
+            {
+              "act": "quotation",
+              "source_span": [
+                10,
+                33
+              ],
+              "text": "'I'm Theo Smith-Jones.'",
+              "subject": "reported",
+              "polarity": "unknown",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "QUOTED_NOT_CURRENT_SELF"
+            },
+            {
+              "act": "reported_identity",
+              "source_span": [
+                0,
+                9
+              ],
+              "text": "Theo said",
+              "subject": "reported",
+              "polarity": "unknown",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "ATTRIBUTED_NOT_CURRENT_SELF"
+            },
+            {
+              "act": "other_person",
+              "source_span": [
+                34,
+                51
+              ],
+              "text": "I'm his neighbour",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "OTHER",
+              "matched_name_parts": [],
+              "reason": "CURRENT_THIRD_PARTY_RELATION"
+            }
+          ],
+          "reason": "CURRENT_THIRD_PARTY_RELATION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-19",
+        "input": {
+          "raw": "[no answer; voicemail: Aslı Yıldız]",
+          "given_name": "Aslı",
+          "last_name": "Yıldız",
+          "title": "Ms"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            0,
+            35
+          ],
+          "assertions": [
+            {
+              "act": "no_answer",
+              "source_span": [
+                0,
+                35
+              ],
+              "text": "[no answer; voicemail: Aslı Yıldız]",
+              "subject": "no_current_speaker",
+              "polarity": "negative",
+              "decision": "OTHER",
+              "matched_name_parts": [],
+              "reason": "NO_LIVE_ANSWER"
+            }
+          ],
+          "reason": "NO_LIVE_ANSWER",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-20",
+        "input": {
+          "raw": "[silence; caller repeats 'Dr Maya Patel?']",
+          "given_name": "Maya",
+          "last_name": "Patel",
+          "title": "Dr"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            0,
+            42
+          ],
+          "assertions": [
+            {
+              "act": "quotation",
+              "source_span": [
+                25,
+                41
+              ],
+              "text": "'Dr Maya Patel?'",
+              "subject": "unknown",
+              "polarity": "unknown",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "QUOTED_NOT_CURRENT_SELF"
+            },
+            {
+              "act": "no_answer",
+              "source_span": [
+                0,
+                42
+              ],
+              "text": "[silence; caller repeats 'Dr Maya Patel?']",
+              "subject": "no_current_speaker",
+              "polarity": "negative",
+              "decision": "OTHER",
+              "matched_name_parts": [],
+              "reason": "NO_LIVE_ANSWER"
+            }
+          ],
+          "reason": "NO_LIVE_ANSWER",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-21",
+        "input": {
+          "raw": "Ben Cem Kaya; Emre'yi çağırayım.",
+          "given_name": "Emre",
+          "last_name": "Kaya",
+          "title": "Mr"
+        },
+        "output": {
+          "decision": "OTHER",
+          "recipient_self": false,
+          "source_span": [
+            0,
+            13
+          ],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                13
+              ],
+              "text": "Ben Cem Kaya;",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "OTHER",
+              "matched_name_parts": [
+                "family"
+              ],
+              "reason": "EXPLICIT_DIFFERENT_NAME"
+            }
+          ],
+          "reason": "EXPLICIT_DIFFERENT_NAME",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": false,
+        "correct": true
+      },
+      {
+        "id": "fresh24-22",
+        "input": {
+          "raw": "Alex? Which Alex?",
+          "given_name": "Alex",
+          "last_name": "Taylor",
+          "title": "Mx"
+        },
+        "output": {
+          "decision": "UNKNOWN",
+          "recipient_self": null,
+          "source_span": [],
+          "assertions": [
+            {
+              "act": "identity_question",
+              "source_span": [
+                0,
+                5
+              ],
+              "text": "Alex?",
+              "subject": "unknown",
+              "polarity": "unknown",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "QUESTION_NOT_ASSERTION"
+            },
+            {
+              "act": "identity_question",
+              "source_span": [
+                6,
+                17
+              ],
+              "text": "Which Alex?",
+              "subject": "unknown",
+              "polarity": "unknown",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "QUESTION_NOT_ASSERTION"
+            }
+          ],
+          "reason": "NO_CURRENT_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": null,
+        "correct": true
+      },
+      {
+        "id": "fresh24-23",
+        "input": {
+          "raw": "Doktor konuşuyor.",
+          "given_name": "Zeynep",
+          "last_name": "Acar",
+          "title": "Dr"
+        },
+        "output": {
+          "decision": "UNKNOWN",
+          "recipient_self": null,
+          "source_span": [],
+          "assertions": [
+            {
+              "act": "self_identification",
+              "source_span": [
+                0,
+                17
+              ],
+              "text": "Doktor konuşuyor.",
+              "subject": "speaker",
+              "polarity": "positive",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "TITLE_ONLY"
+            }
+          ],
+          "reason": "NO_CURRENT_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": null,
+        "correct": true
+      },
+      {
+        "id": "fresh24-24",
+        "input": {
+          "raw": "'I'm Robert Wilson.'",
+          "given_name": "Robert",
+          "last_name": "Wilson",
+          "title": "Mr"
+        },
+        "output": {
+          "decision": "UNKNOWN",
+          "recipient_self": null,
+          "source_span": [],
+          "assertions": [
+            {
+              "act": "quotation",
+              "source_span": [
+                0,
+                20
+              ],
+              "text": "'I'm Robert Wilson.'",
+              "subject": "unknown",
+              "polarity": "unknown",
+              "decision": "UNKNOWN",
+              "matched_name_parts": [],
+              "reason": "QUOTED_NOT_CURRENT_SELF"
+            }
+          ],
+          "reason": "NO_CURRENT_ASSERTION",
+          "bank_authority": false
+        },
+        "diagnostic_expected_self": null,
+        "correct": true
+      }
+    ]
+  },
+  "four_previous_failures": {
+    "fresh24-05": {
+      "decision": "SELF",
+      "recipient_self": true,
+      "source_span": [
+        0,
+        21
+      ],
+      "assertions": [
+        {
+          "act": "self_identification",
+          "source_span": [
+            0,
+            21
+          ],
+          "text": "Profesör Çelik benim.",
+          "subject": "speaker",
+          "polarity": "positive",
+          "decision": "SELF",
+          "matched_name_parts": [
+            "family"
+          ],
+          "reason": "CURRENT_NAME_ASSERTION"
+        }
+      ],
+      "reason": "CURRENT_NAME_ASSERTION",
+      "bank_authority": false
+    },
+    "fresh24-07": {
+      "decision": "SELF",
+      "recipient_self": true,
+      "source_span": [
+        0,
+        13
+      ],
+      "assertions": [
+        {
+          "act": "self_identification",
+          "source_span": [
+            0,
+            13
+          ],
+          "text": "Yılmaz benim,",
+          "subject": "speaker",
+          "polarity": "positive",
+          "decision": "SELF",
+          "matched_name_parts": [
+            "family"
+          ],
+          "reason": "CURRENT_NAME_ASSERTION"
+        }
+      ],
+      "reason": "CURRENT_NAME_ASSERTION",
+      "bank_authority": false
+    },
+    "fresh24-09": {
+      "decision": "SELF",
+      "recipient_self": true,
+      "source_span": [
+        0,
+        12
+      ],
+      "assertions": [
+        {
+          "act": "self_identification",
+          "source_span": [
+            0,
+            12
+          ],
+          "text": "Gökçe benim;",
+          "subject": "speaker",
+          "polarity": "positive",
+          "decision": "SELF",
+          "matched_name_parts": [
+            "given"
+          ],
+          "reason": "CURRENT_NAME_ASSERTION"
+        },
+        {
+          "act": "dob_refusal",
+          "source_span": [
+            13,
+            36
+          ],
+          "text": "doğum tarihimi söylemem",
+          "subject": "speaker",
+          "polarity": "negative",
+          "decision": "UNKNOWN",
+          "matched_name_parts": [],
+          "reason": "INDEPENDENT_DISCLOSURE_REFUSAL"
+        }
+      ],
+      "reason": "CURRENT_NAME_ASSERTION",
+      "bank_authority": false
+    },
+    "fresh24-10": {
+      "decision": "SELF",
+      "recipient_self": true,
+      "source_span": [
+        0,
+        15
+      ],
+      "assertions": [
+        {
+          "act": "self_identification",
+          "source_span": [
+            0,
+            15
+          ],
+          "text": "I'm Ava Martin,",
+          "subject": "speaker",
+          "polarity": "positive",
+          "decision": "SELF",
+          "matched_name_parts": [
+            "given",
+            "family"
+          ],
+          "reason": "CURRENT_NAME_ASSERTION"
+        },
+        {
+          "act": "dob_refusal",
+          "source_span": [
+            20,
+            46
+          ],
+          "text": "I won't verify my birthday",
+          "subject": "speaker",
+          "polarity": "negative",
+          "decision": "UNKNOWN",
+          "matched_name_parts": [],
+          "reason": "INDEPENDENT_DISCLOSURE_REFUSAL"
+        }
+      ],
+      "reason": "CURRENT_NAME_ASSERTION",
+      "bank_authority": false
+    }
+  },
+  "limitations": [
+    "Grammar is deliberately bounded, not a general natural-language identity verifier. Unsupported or ambiguous forms need neutral clarification.",
+    "The fresh24 cohort is now exposed; its exact source matches do not establish independent qualification or an end-to-end improvement.",
+    "OTHER denotes a current nonself/exclusion/absence/no-answer source act, not authenticated knowledge about another person.",
+    "Unicode letters, punctuation and Turkish case forms are preserved; only listed common Latin decompositions are composed, not full Unicode NFC.",
+    "Bare name replies adjacent to quotations stay UNKNOWN unless an explicit unquoted self frame resolves them.",
+    "Standalone parser executed only; parent owns builder/guide wiring and automatic generation. No candidate/controller/bank replay or platform tests executed here."
+  ],
+  "inference_calls": 0,
+  "Freya_calls": 0,
+  "cloud_calls": 0,
+  "network_calls": 0,
+  "model_or_threshold_changes": false,
+  "protected_files_edited": false
+}

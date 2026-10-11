@@ -1,0 +1,171 @@
+Final sprint fresh semantic probes — 2026-10-11
+
+64 newly authored synthetic observed-language cases. 16 construction families x 4 variants; 32 within-language semantic pairs. 32 English and 32 Turkish cases. Exactly 12 Turkish current utterances exceed 1500 characters (1939–2364); four additional English long cases (1847–1979). In each long case the decisive closing answer begins after 85% of the current utterance.
+
+EVAL ONLY. NEVER TRAINING. Do not use this pack for training, calibration, threshold selection, example mining, or iterative tuning. All customer and assistant text is newly synthetic. Synthetic authorship shares LLM/prompt ancestry and is not blind human annotation or an IID sample. Treat the entire pack as one related authoring batch. Within each construction family, all four variants share a group; pair IDs in the manifest document the intended semantic contrast. Cross-family independence is not claimed.
+
+Exact data schema: list of {id, group, source, split, input:{current_utterance, previous_utterances:[{role,text}]}, domain_labels, domain_mask, aux_labels, aux_mask}. Source is final-sprint-independent-authored; split is EVAL. Previous roles are USER or ASSISTANT, as explicitly requested. The allowed core helper uses speaker internally; this pack follows the requested role schema. No source change or adapter was made.
+
+Domain order: proposal, dispute, correction, current_affirm, current_withdraw, uncertain, reported_third_party
+Auxiliary order: AFFIRM, NEGATE, INFORM, REQUEST
+
+Annotation policy: Targets describe the current speaker’s stated semantic acts, not bank truth. Historical self-quotes and superseded drafts are not current offers, disputes, corrections, grants, or withdrawals. Reported third party refers to an external person, not this conversation’s assistant. Current affirmative/withdrawal labels refer to expressly stated current permission scopes; separate scopes may support both. Contact or recorded-offer readback yes/no is not bank permission. A current payment offer need not permit a bank debit.
+Genuine stated indecision or explicitly unknown information receives uncertain. An unanswered permission question alone does not assert indecision: current_affirm, current_withdraw, and uncertain are masked where unanswered. A masked zero is only a storage placeholder, not evidence of a negative label. No positive bit is masked. Active correction means an expressly changed prior statement or field. A negated/retracted dispute is not a positive current dispute.
+AFFIRM and NEGATE describe the user’s own current confirmation/denial/refusal, not quoted yes/no tokens. INFORM covers directly supplied current information or current narrated history. REQUEST covers a clear explanation, time, or separation request. Ambiguous background scope-management directives in long narratives have REQUEST masked. Unknown external bank status never negates an expressly given customer permission answer.
+
+Provenance and access limitation: Authored before obtaining or generating any model predictions. No existing 96/24 packs, predictions, failure files, weights, builder artifacts, credentials, Freya operations, Git operations, training, or source edits were used. Only the two user-allowlisted modules were accessed for contract lookup. The first contextual label search unintentionally exposed surrounding implementation code in competition/finetuned_assist.py; later searches also returned isolated label-related implementation lines in minilm_ft_core.py. This exceeded the intended definitions-only read scope. The pack is therefore synthetic independent authoring with a disclosed read-scope limitation, not a blind human evaluation or a claim of perfect read isolation.
+
+Mechanical validation: PASS on the completed on-disk JSON. 64 unique IDs and current utterances; exact row/input/turn keys; 16 groups of 4; source/split exact; 7 integer domain bits + 7 boolean masks; 4 integer auxiliary bits + 4 boolean masks; masked positions carry zero placeholders; nonempty current and two prior turns per row; 12 Turkish >1500 and 4 English >1500; valid JSON.
+Distinct long Turkish narrative prefixes: 12. Maximum token-set Jaccard between the 12 Turkish prefixes: 0.2194 (families 4 and 12). This is a simple lexical diagnostic, not proof of semantic independence. Each narrative has a distinct concrete scenario; no repeated padding was used.
+Completed JSON raw-byte SHA256: 2c324020f6cda7584647d20ec394d9e463878e3d80618c49ccec3b160fe18af7
+Completed JSON byte count: 100673
+Seal the manifest only after data and this report are complete. The manifest pins raw bytes of both files; its own raw SHA256 is returned separately to avoid a self-referential digest.
+
+Label totals (positive / known negative / masked):
+proposal: 8 / 54 / 2
+dispute: 6 / 58 / 0
+correction: 12 / 52 / 0
+current_affirm: 24 / 16 / 24
+current_withdraw: 20 / 22 / 22
+uncertain: 12 / 38 / 14
+reported_third_party: 4 / 60 / 0
+AFFIRM: 30 / 34 / 0
+NEGATE: 29 / 35 / 0
+INFORM: 63 / 0 / 1
+REQUEST: 12 / 41 / 11
+
+Long-case closing-answer locations (zero-based character offsets):
+fsfresh-f01-old-grant-present-withdraw-tr-b: chars=1939; answer_start=1832; fraction=0.9448
+fsfresh-f02-old-refusal-present-grant-tr-b: chars=1959; answer_start=1861; fraction=0.95
+fsfresh-f03-four-acts-permission-toggle-tr-b: chars=2164; answer_start=1917; fraction=0.8859
+fsfresh-f04-readback-versus-bank-permission-tr-b: chars=2076; answer_start=1894; fraction=0.9123
+fsfresh-f05-grant-versus-bank-status-tr-b: chars=2010; answer_start=1887; fraction=0.9388
+fsfresh-f06-distinct-scopes-withdraw-and-grant-tr-b: chars=2023; answer_start=1869; fraction=0.9239
+fsfresh-f07-genuine-uncertainty-versus-no-tr-b: chars=2209; answer_start=2059; fraction=0.9321
+fsfresh-f08-third-party-hypothetical-versus-self-tr-b: chars=2268; answer_start=2096; fraction=0.9242
+fsfresh-f09-hypothetical-versus-active-offer-tr-b: chars=2364; answer_start=2110; fraction=0.8926
+fsfresh-f10-question-without-answer-tr-b: chars=2229; answer_start=2108; fraction=0.9457
+fsfresh-f11-last-speaker-attribution-tr-b: chars=2206; answer_start=1982; fraction=0.8985
+fsfresh-f12-contact-correction-versus-confirmation-tr-b: chars=2250; answer_start=2096; fraction=0.9316
+fsfresh-f03-four-acts-permission-toggle-en-a: chars=1979; answer_start=1789; fraction=0.904
+fsfresh-f13-conditional-grant-needs-clarification-en-b: chars=1865; answer_start=1776; fraction=0.9523
+fsfresh-f14-historical-dispute-current-retraction-en-a: chars=1849; answer_start=1723; fraction=0.9319
+fsfresh-f15-amount-update-versus-old-quote-en-a: chars=1847; answer_start=1704; fraction=0.9226
+
+Construction families and paired contrasts:
+fsfresh-f01-old-grant-present-withdraw
+  fsfresh-f01-old-grant-present-withdraw-en-a <-> fsfresh-f01-old-grant-present-withdraw-en-b
+  fsfresh-f01-old-grant-present-withdraw-tr-a <-> fsfresh-f01-old-grant-present-withdraw-tr-b
+fsfresh-f02-old-refusal-present-grant
+  fsfresh-f02-old-refusal-present-grant-en-a <-> fsfresh-f02-old-refusal-present-grant-en-b
+  fsfresh-f02-old-refusal-present-grant-tr-a <-> fsfresh-f02-old-refusal-present-grant-tr-b
+fsfresh-f03-four-acts-permission-toggle
+  fsfresh-f03-four-acts-permission-toggle-en-a <-> fsfresh-f03-four-acts-permission-toggle-en-b
+  fsfresh-f03-four-acts-permission-toggle-tr-a <-> fsfresh-f03-four-acts-permission-toggle-tr-b
+fsfresh-f04-readback-versus-bank-permission
+  fsfresh-f04-readback-versus-bank-permission-en-a <-> fsfresh-f04-readback-versus-bank-permission-en-b
+  fsfresh-f04-readback-versus-bank-permission-tr-a <-> fsfresh-f04-readback-versus-bank-permission-tr-b
+fsfresh-f05-grant-versus-bank-status
+  fsfresh-f05-grant-versus-bank-status-en-a <-> fsfresh-f05-grant-versus-bank-status-en-b
+  fsfresh-f05-grant-versus-bank-status-tr-a <-> fsfresh-f05-grant-versus-bank-status-tr-b
+fsfresh-f06-distinct-scopes-withdraw-and-grant
+  fsfresh-f06-distinct-scopes-withdraw-and-grant-en-a <-> fsfresh-f06-distinct-scopes-withdraw-and-grant-en-b
+  fsfresh-f06-distinct-scopes-withdraw-and-grant-tr-a <-> fsfresh-f06-distinct-scopes-withdraw-and-grant-tr-b
+fsfresh-f07-genuine-uncertainty-versus-no
+  fsfresh-f07-genuine-uncertainty-versus-no-en-a <-> fsfresh-f07-genuine-uncertainty-versus-no-en-b
+  fsfresh-f07-genuine-uncertainty-versus-no-tr-a <-> fsfresh-f07-genuine-uncertainty-versus-no-tr-b
+fsfresh-f08-third-party-hypothetical-versus-self
+  fsfresh-f08-third-party-hypothetical-versus-self-en-a <-> fsfresh-f08-third-party-hypothetical-versus-self-en-b
+  fsfresh-f08-third-party-hypothetical-versus-self-tr-a <-> fsfresh-f08-third-party-hypothetical-versus-self-tr-b
+fsfresh-f09-hypothetical-versus-active-offer
+  fsfresh-f09-hypothetical-versus-active-offer-en-a <-> fsfresh-f09-hypothetical-versus-active-offer-en-b
+  fsfresh-f09-hypothetical-versus-active-offer-tr-a <-> fsfresh-f09-hypothetical-versus-active-offer-tr-b
+fsfresh-f10-question-without-answer
+  fsfresh-f10-question-without-answer-en-a <-> fsfresh-f10-question-without-answer-en-b
+  fsfresh-f10-question-without-answer-tr-a <-> fsfresh-f10-question-without-answer-tr-b
+fsfresh-f11-last-speaker-attribution
+  fsfresh-f11-last-speaker-attribution-en-a <-> fsfresh-f11-last-speaker-attribution-en-b
+  fsfresh-f11-last-speaker-attribution-tr-a <-> fsfresh-f11-last-speaker-attribution-tr-b
+fsfresh-f12-contact-correction-versus-confirmation
+  fsfresh-f12-contact-correction-versus-confirmation-en-a <-> fsfresh-f12-contact-correction-versus-confirmation-en-b
+  fsfresh-f12-contact-correction-versus-confirmation-tr-a <-> fsfresh-f12-contact-correction-versus-confirmation-tr-b
+fsfresh-f13-conditional-grant-needs-clarification
+  fsfresh-f13-conditional-grant-needs-clarification-en-a <-> fsfresh-f13-conditional-grant-needs-clarification-en-b
+  fsfresh-f13-conditional-grant-needs-clarification-tr-a <-> fsfresh-f13-conditional-grant-needs-clarification-tr-b
+fsfresh-f14-historical-dispute-current-retraction
+  fsfresh-f14-historical-dispute-current-retraction-en-a <-> fsfresh-f14-historical-dispute-current-retraction-en-b
+  fsfresh-f14-historical-dispute-current-retraction-tr-a <-> fsfresh-f14-historical-dispute-current-retraction-tr-b
+fsfresh-f15-amount-update-versus-old-quote
+  fsfresh-f15-amount-update-versus-old-quote-en-a <-> fsfresh-f15-amount-update-versus-old-quote-en-b
+  fsfresh-f15-amount-update-versus-old-quote-tr-a <-> fsfresh-f15-amount-update-versus-old-quote-tr-b
+fsfresh-f16-separate-bank-permission-current-readback
+  fsfresh-f16-separate-bank-permission-current-readback-en-a <-> fsfresh-f16-separate-bank-permission-current-readback-en-b
+  fsfresh-f16-separate-bank-permission-current-readback-tr-a <-> fsfresh-f16-separate-bank-permission-current-readback-tr-b
+
+Case annotation rationale:
+fsfresh-f01-old-grant-present-withdraw-en-a: Old self-quote is background; current explicit grant is observed.
+fsfresh-f01-old-grant-present-withdraw-en-b: Old grant does not survive current explicit withdrawal.
+fsfresh-f01-old-grant-present-withdraw-tr-a: Present Turkish grant overrides time-scoped self quotation.
+fsfresh-f01-old-grant-present-withdraw-tr-b: Late Turkish withdrawal is current; historical agreement is not current assent. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f02-old-refusal-present-grant-en-a: Explicit current grant; quoted refusal is historical.
+fsfresh-f02-old-refusal-present-grant-en-b: Current refusal explicitly removes permission.
+fsfresh-f02-old-refusal-present-grant-tr-a: Present denial, not merely a quote.
+fsfresh-f02-old-refusal-present-grant-tr-b: Late current permission despite earlier dated refusal. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f03-four-acts-permission-toggle-en-a: Offer, live dispute, explicit date correction, and scoped current permission coexist. Distinct long English history with current correction late; background directive REQUEST is masked.
+fsfresh-f03-four-acts-permission-toggle-en-b: Payment offer remains active while debit permission is withdrawn.
+fsfresh-f03-four-acts-permission-toggle-tr-a: Independent offer and debit refusal with dispute and update.
+fsfresh-f03-four-acts-permission-toggle-tr-b: Late affirmative debit permission does not erase dispute or correction. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f04-readback-versus-bank-permission-en-a: Readback yes belongs only to postcode. Own bank stance unanswered; permission and uncertainty masked rather than guessed.
+fsfresh-f04-readback-versus-bank-permission-en-b: Two separately scoped affirmative answers.
+fsfresh-f04-readback-versus-bank-permission-tr-a: Explicit bank grant is separate from confirmation of address.
+fsfresh-f04-readback-versus-bank-permission-tr-b: Late readback confirmation is not a bank authorization answer. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f05-grant-versus-bank-status-en-a: Observed customer assent and explicit bank-status uncertainty; no bank truth inferred.
+fsfresh-f05-grant-versus-bank-status-en-b: Two explicit unknowns; no personal permission answer.
+fsfresh-f05-grant-versus-bank-status-tr-a: Unresolved customer stance and external status.
+fsfresh-f05-grant-versus-bank-status-tr-b: Late customer grant is observed; bank approval remains unknown. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f06-distinct-scopes-withdraw-and-grant-en-a: Distinct action scopes allow both current permission heads.
+fsfresh-f06-distinct-scopes-withdraw-and-grant-en-b: Certain withdrawal for A; unknown grant for B is masked.
+fsfresh-f06-distinct-scopes-withdraw-and-grant-tr-a: Clear A withdrawal plus unresolved B stance.
+fsfresh-f06-distinct-scopes-withdraw-and-grant-tr-b: Scoped grant and withdrawal both explicitly spoken at the end. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f07-genuine-uncertainty-versus-no-en-a: Real unresolved stance; mention of yes/no is metalinguistic.
+fsfresh-f07-genuine-uncertainty-versus-no-en-b: Clear current refusal, no uncertainty remains.
+fsfresh-f07-genuine-uncertainty-versus-no-tr-a: Definite withdrawal, not indecision.
+fsfresh-f07-genuine-uncertainty-versus-no-tr-b: Late genuine uncertainty; neither consent nor withdrawal invented. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f08-third-party-hypothetical-versus-self-en-a: Third-party hypothetical yes is not speaker permission.
+fsfresh-f08-third-party-hypothetical-versus-self-en-b: Reported hypothetical and distinct own current grant.
+fsfresh-f08-third-party-hypothetical-versus-self-tr-a: Speaker explicitly owns present grant after reported third-party example.
+fsfresh-f08-third-party-hypothetical-versus-self-tr-b: Reported hypothetical with genuinely unresolved own stance. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f09-hypothetical-versus-active-offer-en-a: Explicitly fictional language is not an observed own offer or assent; no own permission stance supplied. Explicit denial of personal-offer interpretation is a NEGATE auxiliary act.
+fsfresh-f09-hypothetical-versus-active-offer-en-b: Real own offer and separate explicit debit grant.
+fsfresh-f09-hypothetical-versus-active-offer-tr-a: Actual own offer contrasted with purely fictional example.
+fsfresh-f09-hypothetical-versus-active-offer-tr-b: Late fictional scope prevents imagined offer or permission labels. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request. Explicit denial of personal-offer interpretation is a NEGATE auxiliary act.
+fsfresh-f10-question-without-answer-en-a: Clarification question leaves permission unanswered; informational act is not compelled by the question.
+fsfresh-f10-question-without-answer-en-b: Direct current user permission answer to immediately preceding question.
+fsfresh-f10-question-without-answer-tr-a: Direct current Turkish assent.
+fsfresh-f10-question-without-answer-tr-b: Long context ends in request for clarification, not a permission answer. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f11-last-speaker-attribution-en-a: Current speaker reports assistant wording; assistant is not an external third party and quote is not user assent.
+fsfresh-f11-last-speaker-attribution-en-b: Own explicit refusal overrides quoted assistant yes.
+fsfresh-f11-last-speaker-attribution-tr-a: Quoted assistant agreement is not last user stance.
+fsfresh-f11-last-speaker-attribution-tr-b: Current user is citing prior assistant, not uttering personal permission. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f12-contact-correction-versus-confirmation-en-a: No targets email readback; correction is clear, bank stance remains unanswered.
+fsfresh-f12-contact-correction-versus-confirmation-en-b: Address confirmation is not correction or bank grant.
+fsfresh-f12-contact-correction-versus-confirmation-tr-a: Current no is scoped to email, not refusal of bank permission.
+fsfresh-f12-contact-correction-versus-confirmation-tr-b: Late email readback yes leaves bank permission unknown. Distinct long Turkish archive narrative; decisive current clause is late. REQUEST masked when narrative scope-management wording is not an unambiguous request.
+fsfresh-f13-conditional-grant-needs-clarification-en-a: Hypothetical future possibility and real uncertainty, no current decision.
+fsfresh-f13-conditional-grant-needs-clarification-en-b: Explicit update of permission condition plus unconditional current grant. Distinct long English history with current correction late; background directive REQUEST is masked.
+fsfresh-f13-conditional-grant-needs-clarification-tr-a: Future conditional possibility is not present permission.
+fsfresh-f13-conditional-grant-needs-clarification-tr-b: Explicit correction changes earlier conditional stance and grants now.
+fsfresh-f14-historical-dispute-current-retraction-en-a: Explicit retraction is correction; negated current dispute is not a positive dispute label. Distinct long English history with current correction late; background directive REQUEST is masked.
+fsfresh-f14-historical-dispute-current-retraction-en-b: Renewed present dispute and separate current withdrawal.
+fsfresh-f14-historical-dispute-current-retraction-tr-a: Current correction retracts historical dispute, grants distinct debit.
+fsfresh-f14-historical-dispute-current-retraction-tr-b: Current dispute is spoken rather than inferred from old quote.
+fsfresh-f15-amount-update-versus-old-quote-en-a: Actual amount update and active payment offer with separate debit withdrawal. Distinct long English history with current correction late; background directive REQUEST is masked.
+fsfresh-f15-amount-update-versus-old-quote-en-b: Own explicit negation of current offer; historical quote is not active proposal.
+fsfresh-f15-amount-update-versus-old-quote-tr-a: Current amount correction, offer, withdrawal coexist.
+fsfresh-f15-amount-update-versus-old-quote-tr-b: Explicit current no-offer despite strongly worded archived self quote.
+fsfresh-f16-separate-bank-permission-current-readback-en-a: Readback of old proposal is not a renewed offer; independent current withdrawal is explicit.
+fsfresh-f16-separate-bank-permission-current-readback-en-b: Own present grant is a separate answer from readback; bank processing truth unspecified.
+fsfresh-f16-separate-bank-permission-current-readback-tr-a: Record yes does not override separate bank withdrawal.
+fsfresh-f16-separate-bank-permission-current-readback-tr-b: Separate explicit present bank-permission answer; no ledger assertion.
+
+Changed paths are exclusively the .json, .manifest.json, and .txt sharing analysis/final-sprint-fresh-semantic-probes-20261011.

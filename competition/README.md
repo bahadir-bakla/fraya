@@ -285,3 +285,25 @@ yapısal kontroller C0 hata/D1 coverage belirsizliği ve C kaynak audit'i
 üç gerçek guard sorununu gösterdi. Bunlar temiz submission değildir.
 Rehberdeki yeni genel onarımlar sonraki otomatik üretim içindir.
 Yeni Modal harcaması0; önceki ihtiyatlı üst muhasebe30USD/hard35USD.
+# Portable live student experiment
+
+`--live-layer recipient` asks the builder to generate the exact pinned current
+recipient assertion helper into a code node. `--live-layer v2-student` is the
+backward-compatible CLI name for a distinct portable student, including V3;
+it does not load the full MiniLM encoder into the phone agent.
+
+Supply `--live-student DIRECTORY --live-student-sha256 MANIFEST_SHA256`.
+Default `--live-student-use shadow` records internal diagnostics only. Explicit
+`--live-student-use clarify` permits an experimental clarification suggestion
+for a verified customer and unresolved current speech; it does not qualify the
+model, change its frozen thresholds, or grant identity/consent/bank authority.
+Brief-specific limits still apply: no open amount question, repeated refused
+offer, guessed product, or invented date. The bank engine remains authoritative.
+
+Current V3 portable export is in `releases/live-v3-portable-20261011`. It is a
+33 KB quantized classifier trained on 168,821 rows, not the MiniLM encoder.
+Its CAL risk proposal precision was 91.3%, below the original 95% target.
+Experimental clarification use was explicitly requested by the user. The
+release remains default-disabled; bank/voice/platform benefit needs separate
+actual workflow testing. Original classic backups remain in
+`releases/classic-baseline`.

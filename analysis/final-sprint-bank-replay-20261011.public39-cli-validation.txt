@@ -1,0 +1,38 @@
+13 bank cases: offline conditional replay
+Three identical deterministic conditional actor replays with fresh Banks and synthetic customer IDs; not independent actor repetitions.
+NO ASR/LLM/extractor/judge/Freya/network/credentials. Sources pinned before/after and unchanged.
+Independent original-source oracle QA: all 12 PASS, no discrepancies.
+
+baseline PUB-01 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+baseline PUB-02 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=schedule_callback>close_call
+baseline PUB-03 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>verify_identity>close_call
+baseline PUB-04 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+baseline PUB-05 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>close_call
+baseline PUB-06 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+baseline PUB-07 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+baseline PUB-08 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>close_call
+baseline PUB-09 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>transfer_to_agent>close_call
+baseline PUB-10 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>create_promise>close_call
+baseline PUB-11 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>create_promise>create_promise>close_call
+baseline PUB-12 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>verify_identity>get_account>create_promise>add_note>add_note>close_call
+baseline PUB-13 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>create_promise>close_call
+candidate PUB-01 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+candidate PUB-02 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=schedule_callback>close_call
+candidate PUB-03 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>verify_identity>close_call
+candidate PUB-04 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+candidate PUB-05 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>close_call
+candidate PUB-06 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+candidate PUB-07 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+candidate PUB-08 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>close_call
+candidate PUB-09 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>transfer_to_agent>close_call
+candidate PUB-10 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>create_promise>close_call
+candidate PUB-11 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+candidate PUB-12 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+candidate PUB-13 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+
+Limitations:
+Authored contract events; NO ASR/LLM/extractor/conversation judge. No hosted or full bank pass claim.
+Original scorer compares normalized arrays and exact outcome/reason; selected chronological/spoken/confirmation audits are additional guards.
+Unsupported actor delivery, extraction grammar and raw-language code gates are separate from policy failures.
+Current-request API envelopes/hooks run on generic mockBank; actual Freya receipt semantics and transcript judgments remain untested.
+Frozen scripts, fixtures, expectations and source code are never altered to fix failures.

@@ -6,6 +6,7 @@ from semantic_assist import PROMPT_NOTICE, child_env, python_executable, validat
 from dialogue_assist import NOTICE as DIALOGUE_NOTICE, PINS as DIALOGUE_PINS, validate_result as validate_dialogue_result
 from finetuned_assist import NOTICE as FINETUNED_NOTICE, copy_runtime as copy_finetuned_runtime, prepare_request as finetuned_request, validate_result as validate_finetuned_result, child_environment as finetuned_environment, read_json as read_finetuned_json
 from finetuned_context_audit import NOTICE as CONTEXT_NOTICE, validate_audit
+import live_layer
 
 ROOT=pathlib.Path(__file__).resolve().parent
 KIT=ROOT.parent/'build-the-builder 2'
@@ -131,7 +132,7 @@ class Run:
     def elapsed(self):return max(time.monotonic()-self.start,time.time()-datetime.datetime.fromisoformat(self.status['started']).timestamp())
     def prepare(self):
         source=self.path/('builder-source-resume' if self.args.resume_run else 'builder-source');source.mkdir(exist_ok=True)
-        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py','finetuned_context_audit.py')
+        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py','finetuned_context_audit.py','live_layer.py')
         for name in source_names:
             shutil.copyfile(ROOT/name,source/name)
         self.event('builder_source',sha256={name:hashlib.sha256((source/name).read_bytes()).hexdigest() for name in source_names})
@@ -176,6 +177,14 @@ class Run:
         schema={'type':'object','properties':{key:{'type':'string'} for key in ('workflow_file','policy_file','coverage_file','summary')},'required':['workflow_file','policy_file','coverage_file','summary'],'additionalProperties':False}
         write_json(self.path/'response.schema.json',schema)
         self.event('inputs',briefs=self.sources,tool_api_sha256=hashlib.sha256((inputs/'openapi.json').read_bytes()).hexdigest())
+        self.live_layer_contract=None
+        live_mode=getattr(self.args,'live_layer','off')
+        if live_mode!='off':
+            self.live_layer_contract=live_layer.prepare(self.work,ROOT/'recipient_assertion.py',
+                getattr(self.args,'live_student',None) if live_mode=='v2-student' else None,
+                getattr(self.args,'live_student_sha256',None),getattr(self.args,'live_student_use','shadow'))
+            self.event('live_layer_input',mode=live_mode,component_sha256=self.live_layer_contract['files']['live-layer-code.py'],
+                component_bytes=self.live_layer_contract['component_bytes'],bank_authority=False,hosted_runtime_verified=False)
         self.prepare_semantic_assist()
     def prepare_semantic_assist(self):
         mode=getattr(self.args,'semantic_assist','auto')
@@ -390,6 +399,7 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
 '''
         if getattr(self,'semantic_ready',False):prompt+='\n'+PROMPT_NOTICE
         if getattr(self,'dialogue_ready',False):prompt+='\n'+DIALOGUE_NOTICE
+        if getattr(self,'live_layer_contract',None):prompt+='\n'+self.live_layer_contract['notice']
         if getattr(self,'finetuned_ready',False):prompt+='\nRead finetuned-evidence.json for the pinned observed-turn hypotheses, matching each call/message index to the failed calls. '+FINETUNED_NOTICE
         if getattr(self,'finetuned_ready',False) and getattr(self,'finetuned_context_status',None) is not None:
             if self.finetuned_context_ready:prompt+='\n'+CONTEXT_NOTICE
@@ -411,8 +421,13 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             if not target.is_relative_to(self.work.resolve()) or not target.is_file():raise RuntimeError(f'Invalid artifact path: {key}')
             if target.name!=name:shutil.copyfile(target,self.work/name)
         self.event('model_result',summary=answer.get('summary'),round=round_number)
-        return json.loads((self.work/'workflow.json').read_text())
+        workflow=json.loads((self.work/'workflow.json').read_text())
+        if getattr(self,'live_layer_contract',None):
+            evidence=live_layer.validate_embedding(workflow,self.work,self.live_layer_contract)
+            self.event('live_layer_embedding',**evidence)
+        return workflow
     def check_pinned_evidence(self):
+        if getattr(self,'live_layer_contract',None):live_layer.verify_inputs(self.work,self.live_layer_contract)
         if getattr(self,'semantic_ready',False) and any(hashlib.sha256((self.work/name).read_bytes()).hexdigest()!=digest for name,digest in self.semantic_hashes.items()):
             raise ValueError('Model changed the pinned semantic evidence')
         if getattr(self,'dialogue_ready',False) and hashlib.sha256((self.work/'dialogue-evidence.json').read_bytes()).hexdigest()!=self.dialogue_hash:
@@ -545,11 +560,17 @@ def arguments():
     parser.add_argument('--finetuned-assist',choices=['auto','off','required'],default='auto',help='Actual fine-tuned MiniLM repair hypotheses; classic semantic off disables it')
     parser.add_argument('--finetuned-version',choices=['auto','v1','v2'],default='auto',help='Select a pinned trained model; auto uses v2 only after its measured release gate')
     parser.add_argument('--finetuned-model',help='Explicit fine-tuned model directory; must match reviewed release manifest')
+    parser.add_argument('--live-layer',choices=['off','recipient','v2-student'],default='off',help='Embed pinned portable per-turn components through automatic generation')
+    parser.add_argument('--live-student',help='Reviewed portable student directory; distinct from the full MiniLM encoder')
+    parser.add_argument('--live-student-sha256',help='Explicit manifest SHA256 for a frozen portable V2 student')
+    parser.add_argument('--live-student-use',choices=['shadow','clarify'],default='shadow',help='Explicit experimental source-grounded clarification; never bank authority')
     parser.add_argument('--local-only',action='store_true',help='Generate and locally validate without credentials, Freya publication or simulation')
     parser.add_argument('--practice-repair',help='New explicitly logged practice cycle from a stopped public-brief run; never permitted for unseen briefs')
     parser.add_argument('--repair-first',action='store_true',help='With public practice repair, use the existing failed-call evidence before rerunning the candidate')
     parser.add_argument('--resume-run',help='Continue a stopped run with identical evidence and its original total time budget')
     args=parser.parse_args()
+    if args.live_layer=='v2-student' and (not args.live_student or not re.fullmatch(r'[a-f0-9]{64}',args.live_student_sha256 or '')):parser.error('V2 live student requires a directory and explicit frozen manifest SHA256')
+    if args.live_layer!='v2-student' and (args.live_student or args.live_student_sha256):parser.error('Student arguments require --live-layer v2-student')
     if args.repair_first and not args.practice_repair:parser.error('--repair-first requires --practice-repair')
     try:validate_case_scope(args.briefs,args.cases,args.skip_tests or args.local_only)
     except ValueError as error:parser.error(str(error))

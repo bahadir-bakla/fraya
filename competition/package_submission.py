@@ -149,7 +149,7 @@ def main():
     output=pathlib.Path(args.output).resolve() if args.output else ROOT/'submissions'/((ids[0] if len(ids)==1 else 'freya-hackathon-demo')+'.zip')
     output.parent.mkdir(parents=True,exist_ok=True)
     files=[];bindings={};evidence_status={}
-    for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py','finetuned_context_audit.py','setup_minilm.py','server.py','package_submission.py','README.md'):
+    for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','finetuned_assist.py','finetuned_context_audit.py','live_layer.py','recipient_assertion.py','setup_minilm.py','server.py','package_submission.py','README.md'):
         files.append((ROOT/name,'competition/'+name))
     # The optional encoder is installed separately using its exact public pins.
     for name in ('day2_pretrained_head.json','day2_pretrained_runtime.py','sgd_act_aux_runtime.py','sgd_act_aux_weights.json','sgd_act_aux_calibration.json'):

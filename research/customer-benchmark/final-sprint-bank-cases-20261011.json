@@ -1,0 +1,1031 @@
+[
+  {
+    "id": "fsbank-20261011-a01",
+    "brief": "A",
+    "family": "identity_answer_plus_purpose",
+    "level": "hard",
+    "title": "Complete answers plus separate purpose questions and a new full payment",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_a01",
+      "first_name": "Emre",
+      "last_name": "D’Arcy-Yılmaz",
+      "title": "Mr",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1987-04-16",
+      "phone_last4": "7286"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "past_due": 843.27,
+        "minimum_payment": 137.41,
+        "days_late": 5,
+        "card_last4": "6147",
+        "product_id": "p1"
+      }
+    ],
+    "script": "Speak English using long replies. You are Mr Emre D’Arcy-Yılmaz; confirm your name when asked. For birth date say: \"Sixteen April nineteen eighty-seven. I have given the whole date; what is this call about?\" For phone ending say: \"Seven two eight six. Could you explain the purpose of the call?\" Each question is independent of the complete security answer, not a refusal. After both security questions and the debt explanation, answer the payment-today question: \"I will pay the entire 843.27 for the card ending 6147 today, 21 October 2026. This is a new payment commitment; I have not already paid it.\" Only when that product, amount and complete date are read back, say \"Yes, I confirm 843.27 for that card on 21 October 2026.\" Then wait for bank acknowledgement; do not assert that anything has already been recorded. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 843.27,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "Both identity questions pass before get_account; all returned products, full arrears and days late are disclosed before asking for payment.",
+      "All final products, amounts and complete dates are read back; an explicit yes follows that final readback before any create_promise.",
+      "A recorded-promise claim follows the relevant create_promise receipt with ok=true; the agent states that a text message confirming the promise will be sent.",
+      "No add_note is called in this Brief A call.",
+      "Complete security answers and independent purpose questions in the same reply are both handled. These questions do not erase the supplied answers or count as refusal. Purpose response before verification reveals no debt."
+    ],
+    "variant_id": "fsbank-20261011-a01-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/verified-new-payment",
+      "family_id": "fsbank-20261011/identity_answer_plus_purpose",
+      "language": "English",
+      "reply_length": "long",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L24-L44 [A1-15 contact and identity]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L40-L49 [A11,16-17 security then debt]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L53-L78 [A18-29 dates, floors and full today]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L88-L92 [A34-38 final readback yes receipt SMS]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "A15 concerns a purpose question instead of answering; here complete answers are supplied. A11/16 still require verification before debt disclosure.",
+      "Full 843.27 exceeds floor 137.41; today is a business day within the early-band deadline. A34/37 gate p1 on final yes and successful receipt. A46 yields promise/null; A forbids notes."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-a02",
+    "brief": "A",
+    "family": "verified_full_today",
+    "level": "hard",
+    "title": "Short Turkish prospective full payment after an AI question",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_a02",
+      "first_name": "Selin",
+      "last_name": "O’Rourke-İnan",
+      "title": "Ms",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1991-09-23",
+      "phone_last4": "8537"
+    },
+    "products": [
+      {
+        "type": "personal_loan",
+        "past_due": 916.43,
+        "instalment_amount": 304.17,
+        "days_late": 13,
+        "product_id": "p1"
+      }
+    ],
+    "script": "Speak Turkish using short replies. You are Ms Selin O’Rourke-İnan; confirm your name when asked. Kimlik sorusunda \"Evet, benim. Siz dijital asistan mısınız?\" deyin. Sorulunca güvenlik yanıtlarını tam verin: \"23 Eylül 1991\" ve \"8537\". Borç açıklandıktan sonra \"916,43 tutarının tamamını bugün, 21 Ekim 2026 tarihinde ödeyeceğim; henüz ödemedim\" deyin. Bireysel kredi, 916,43 ve 21 Ekim 2026 birlikte geri okununca \"Evet, bu şartları onaylıyorum\" deyin. Sonra bankanın kayıt bildirimini bekleyin; kayıt yapıldığını kendiniz söylemeyin. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 916.43,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "Both identity questions pass before get_account; all returned products, full arrears and days late are disclosed before asking for payment.",
+      "All final products, amounts and complete dates are read back; an explicit yes follows that final readback before any create_promise.",
+      "A recorded-promise claim follows the relevant create_promise receipt with ok=true; the agent states that a text message confirming the promise will be sent.",
+      "No add_note is called in this Brief A call."
+    ],
+    "variant_id": "fsbank-20261011-a02-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/verified-new-payment",
+      "family_id": "fsbank-20261011/verified_full_today",
+      "language": "Turkish",
+      "reply_length": "short",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L24-L44 [A1-15 contact and identity]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L40-L49 [A11,16-17 security then debt]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L53-L78 [A18-29 dates, floors and full today]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L88-L92 [A34-38 final readback yes receipt SMS]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "A4 requires the AI question answered; complete A11 security follows. A24/28 then request full payment today.",
+      "916.43 meets floor 304.17 and today is valid for the late-band deadline. Final readback/yes and success receipt yield exactly p1=916.43/2026-10-21, promise/null, no notes."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-a03",
+    "brief": "A",
+    "family": "third_party_non_disclosure",
+    "level": "hard",
+    "title": "Explicit brother provides one valid callback without security answers",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_a03",
+      "first_name": "Aylin",
+      "last_name": "O’Malley-Öz",
+      "title": "Ms",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1985-12-18",
+      "phone_last4": "9613"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "past_due": 778.61,
+        "minimum_payment": 126.79,
+        "days_late": 7,
+        "card_last4": "5832",
+        "product_id": "p1"
+      }
+    ],
+    "script": "Speak English using short replies. You are Bora, the named customer’s brother, not Ms O’Malley-Öz. Say \"I am her brother, not Aylin. She is away.\" Never provide her security answers or confirm you are her. If asked when she is reachable say \"Today, 21 October 2026, at 18:17.\" If security or an account is raised say \"I am not her; please arrange the callback.\" Request no transfer and discuss no debt. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "not_reached",
+      "reason": "callback",
+      "promises": [],
+      "notes": [],
+      "callbacks": [
+        {
+          "date": "2026-10-21",
+          "time": "18:17"
+        }
+      ],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "No add_note is called in this Brief A call.",
+      "Actor is explicitly a third party. No verify_identity or get_account, security solicitation, account/collection disclosure, promises or product notes. Only the specified valid callback is scheduled."
+    ],
+    "variant_id": "fsbank-20261011-a03-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/third_party_non_disclosure",
+      "family_id": "fsbank-20261011/third_party_non_disclosure",
+      "language": "English",
+      "reply_length": "short",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L24-L44 [A1-15 contact and identity]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L31-L36 [A5-10 third party no security no disclosure callback]",
+      "competition-v3/build-the-builder/tools/openapi.json:L298-L353 [schedule_callback]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "A5/10: explicit third party forbids security and account disclosure. A6 allows today at 18:17, later than now 11:20 and inside 10:00-19:00. Exactly one callback and not_reached/callback; all other activity arrays empty."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed",
+    "third_party": true
+  },
+  {
+    "id": "fsbank-20261011-a04",
+    "brief": "A",
+    "family": "explicit_security_refusal",
+    "level": "hard",
+    "title": "Two short Turkish explicit security refusals",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_a04",
+      "first_name": "Koray",
+      "last_name": "D’Angelo-Şen",
+      "title": "Mr",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1979-07-28",
+      "phone_last4": "4279"
+    },
+    "products": [
+      {
+        "type": "car_loan",
+        "past_due": 1318.57,
+        "instalment_amount": 438.29,
+        "days_late": 27,
+        "product_id": "p1"
+      }
+    ],
+    "script": "Speak Turkish using short replies. You are Mr Koray D’Angelo-Şen; confirm your name when asked. Kimlik sorulunca \"Evet, Koray D’Angelo-Şen benim\" deyin. Doğum tarihi istendiğinde \"Doğum tarihimi ve telefon hanemi bu aramada vermeyi reddediyorum\" deyin. Güvenlik açıklamasından sonra \"Anladım; yine de hiçbir güvenlik sorusunu yanıtlamayacağım\" deyin. Hiçbir güvenlik bilgisi vermeyin; insan, ödeme planı veya başka işlem istemeyin. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "not_verified",
+      "reason": "declined",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "No add_note is called in this Brief A call.",
+      "Account protection is explained once after refusal; repeated refusal closes not_verified/declined without account access or product notes. No verify_identity without an answer."
+    ],
+    "variant_id": "fsbank-20261011-a04-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/explicit_security_refusal",
+      "family_id": "fsbank-20261011/explicit_security_refusal",
+      "language": "Turkish",
+      "reply_length": "short",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L24-L44 [A1-15 contact and identity]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L44-L44 [A15 explicit second security refusal]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "A15 explicit refusal, one protection explanation, second refusal gives not_verified/declined. No incorrect answer is submitted, so not failed. A16 prevents account retrieval; all activity arrays are empty."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-a05",
+    "brief": "A",
+    "family": "final_terms_correction",
+    "level": "hard",
+    "title": "One complete correction replaces both final payment terms before yes",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_a05",
+      "first_name": "Arda",
+      "last_name": "D’Amato-Kaya",
+      "title": "Mr",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1983-02-19",
+      "phone_last4": "6748"
+    },
+    "products": [
+      {
+        "type": "car_loan",
+        "past_due": 1193.63,
+        "instalment_amount": 287.19,
+        "days_late": 17,
+        "product_id": "p1"
+      }
+    ],
+    "script": "Speak English using long replies. You are Mr Arda D’Amato-Kaya; confirm your name when asked. Give the complete security answers only when asked: 19 February 1983 and 6748. After the debt explanation and today question say \"I can pay 731.57 for the car loan on 28 October 2026.\" At the FIRST readback, before any yes, say \"No, replace both terms. My final commitment is 412.83 for the car loan on 30 October 2026. The earlier 731.57 on 28 October is withdrawn. Please read the new amount and full date back.\" Give this correction in one complete reply. Only after the car loan, 412.83 and 30 October 2026 are read back together say \"Yes, I confirm 412.83 on 30 October 2026.\" If different terms are read, restate the complete final terms and withhold yes. After yes wait for bank acknowledgement and never claim registration yourself. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 412.83,
+          "date": "2026-10-30"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "Both identity questions pass before get_account; all returned products, full arrears and days late are disclosed before asking for payment.",
+      "All final products, amounts and complete dates are read back; an explicit yes follows that final readback before any create_promise.",
+      "A recorded-promise claim follows the relevant create_promise receipt with ok=true; the agent states that a text message confirming the promise will be sent.",
+      "No add_note is called in this Brief A call.",
+      "First readback is rejected. Superseded amount/date never reach create_promise; corrected amount/date are validated and read back again before yes."
+    ],
+    "variant_id": "fsbank-20261011-a05-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/final_terms_correction",
+      "family_id": "fsbank-20261011/final_terms_correction",
+      "language": "English",
+      "reply_length": "long",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L40-L49 [A11,16-17 security then debt]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L53-L78 [A18-29 dates, floors and full today]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L88-L92 [A34-38 final readback yes receipt SMS]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "Both 731.57 and final 412.83 lie between floor 287.19 and full 1193.63 (A27).",
+      "A18 late deadline is 2026-11-02: count 22,23,27,28,29,30 October and 2 November; 26 October is a holiday. Both proposed dates are business days within deadline.",
+      "A34/35: first readback receives no; final corrected full terms receive a new readback and explicit yes. Exactly one p1=412.83/2026-10-30, no superseded promise. A37 receipt before claim; promise/null and no notes."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-a06",
+    "brief": "A",
+    "family": "paid_current_single",
+    "level": "hard",
+    "title": "Long Turkish current-arrears payment claim with no new promise",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_a06",
+      "first_name": "İdil",
+      "last_name": "D’Alba-Güneş",
+      "title": "Ms",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1994-06-17",
+      "phone_last4": "3185"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "past_due": 964.53,
+        "minimum_payment": 159.67,
+        "days_late": 11,
+        "card_last4": "7493",
+        "product_id": "p1"
+      }
+    ],
+    "script": "Speak Turkish using long replies. You are Ms İdil D’Alba-Güneş; confirm your name when asked. Sorulunca tam güvenlik yanıtları verin: 17 Haziran 1994 ve 3185. Kart borcu açıklandıktan sonra \"Sonu 7493 olan kartın bu mevcut gecikmiş 964,53 tutarının tamamını bugün, 21 Ekim 2026 tarihinde zaten ödedim. Geçmişte kapanmış bir karttan söz etmiyorum; aramada söylediğiniz mevcut tutarı ödedim. Yeni ödeme sözü vermiyorum\" deyin. Yansıma açıklamasına \"Anladım, yansımasını bekleyeceğim\" deyin. Yeni ödeme için onay vermeyin ve transfer istemeyin. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "paid",
+      "reason": null,
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "No add_note is called in this Brief A call.",
+      "The paid claim is for the precise current past-due amount. Explain one-business-day posting delay and take no promise on that paid product; handle any sibling according to its separately stated intent."
+    ],
+    "variant_id": "fsbank-20261011-a06-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/paid_current_single",
+      "family_id": "fsbank-20261011/paid_current_single",
+      "language": "Turkish",
+      "reply_length": "long",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L40-L49 [A11,16-17 security then debt]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L96-L97 [A39-40 current payment versus dispute]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "A39 covers this exact current past-due 964.53 paid today, rather than historical payoff under A40. Explain one-business-day posting, take no promise, close paid/null. A never notes; other arrays empty."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-b01",
+    "brief": "B",
+    "family": "verified_full_today",
+    "level": "hard",
+    "title": "Short English joint confirmation of two full payments today",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_b01",
+      "first_name": "Deniz",
+      "last_name": "D’Aubigny-Eren",
+      "title": "Mr",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1989-08-24",
+      "phone_last4": "7952"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "past_due": 1257.49,
+        "minimum_payment": 214.37,
+        "days_late": 6,
+        "card_last4": "8327",
+        "product_id": "p1"
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 687.13,
+        "instalment_amount": 331.29,
+        "days_late": 22,
+        "product_id": "p2"
+      }
+    ],
+    "script": "Speak English using short replies. You are Mr Deniz D’Aubigny-Eren; confirm your name when asked. Give complete security answers when asked: 24 August 1989 and 7952. Wait for both debts to be stated. Answer the all-today question \"Yes. New payments today, 21 October 2026: 1257.49 for the card ending 8327 and 687.13 for the personal loan.\" After both products, amounts and full date are read back together say \"Yes, I confirm both payments for 21 October 2026.\" Withhold yes if either term is different, and repeat the complete agreed terms. Wait for bank acknowledgement; neither payment has already been made. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 1257.49,
+          "date": "2026-10-21"
+        },
+        {
+          "product_id": "p2",
+          "amount": 687.13,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "Both identity questions pass before get_account; all returned products, full arrears and days late are disclosed before asking for payment.",
+      "All final products, amounts and complete dates are read back; an explicit yes follows that final readback before any create_promise.",
+      "A recorded-promise claim follows the relevant create_promise receipt with ok=true; the agent states that a text message confirming the promise will be sent."
+    ],
+    "variant_id": "fsbank-20261011-b01-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/verified-new-payment",
+      "family_id": "fsbank-20261011/verified_full_today",
+      "language": "English",
+      "reply_length": "short",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md",
+        "competition-v3/build-the-builder/briefs/brief-b.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L40-L49 [A11,16-17 security then debt]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L53-L78 [A18-29 dates, floors and full today]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L88-L92 [A34-38 final readback yes receipt SMS]",
+      "competition-v3/build-the-builder/briefs/brief-b.md:L5-L23 [B1-11 product order, joint confirmation, notes and closing]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "B2/4: state both products then one all-today ask. B7: one joint readback/yes then one promise per product. Full amounts meet floors and today is valid for both bands.",
+      "Both products promised, so B8 requires no notes. B closing yields promise/null; callbacks/transfers empty."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-b02",
+    "brief": "B",
+    "family": "identity_answer_plus_purpose",
+    "level": "hard",
+    "title": "Long Turkish independent purpose questions and two new full payments",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_b02",
+      "first_name": "İpek",
+      "last_name": "O’Shea-Tan",
+      "title": "Ms",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1992-03-27",
+      "phone_last4": "5628"
+    },
+    "products": [
+      {
+        "type": "car_loan",
+        "past_due": 1526.81,
+        "instalment_amount": 506.39,
+        "days_late": 15,
+        "product_id": "p1"
+      },
+      {
+        "type": "credit_card",
+        "past_due": 893.47,
+        "minimum_payment": 148.73,
+        "days_late": 4,
+        "card_last4": "9264",
+        "product_id": "p2"
+      }
+    ],
+    "script": "Speak Turkish using long replies. You are Ms İpek O’Shea-Tan; confirm your name when asked. Doğum tarihi sorulunca \"27 Mart 1992. Tarihin tamamını verdim; ayrıca aramanın amacını öğrenebilir miyim?\" deyin. Telefon için \"5628. Şimdi aramanın nedenini açıklayabilir misiniz?\" deyin. Yanıtlar tamdır; ayrıca soru sormak kimlik kontrolünü reddetmek değildir. Güvenlik tamamlanıp iki ürün açıklandıktan sonra \"Taşıt kredisi için 1526,81 ve sonu 9264 olan kart için 893,47 tutarlarının tamamını bugün, 21 Ekim 2026 tarihinde ödeyeceğim. İkisi de bundan sonra yapacağım ödemeler; zaten ödediğimi söylemiyorum\" deyin. İki ürün, tutar ve tam tarih birlikte geri okununca \"Evet, her iki ödemeyi de bu şartlarla onaylıyorum\" deyin. Ardından bankanın kayıt bildirimini bekleyin; kendiniz kaydedildi demeyin. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "promise",
+      "reason": null,
+      "promises": [
+        {
+          "product_id": "p1",
+          "amount": 1526.81,
+          "date": "2026-10-21"
+        },
+        {
+          "product_id": "p2",
+          "amount": 893.47,
+          "date": "2026-10-21"
+        }
+      ],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "Both identity questions pass before get_account; all returned products, full arrears and days late are disclosed before asking for payment.",
+      "All final products, amounts and complete dates are read back; an explicit yes follows that final readback before any create_promise.",
+      "A recorded-promise claim follows the relevant create_promise receipt with ok=true; the agent states that a text message confirming the promise will be sent.",
+      "Complete security answers and independent purpose questions in the same reply are both handled. These questions do not erase the supplied answers or count as refusal. Purpose response before verification reveals no debt."
+    ],
+    "variant_id": "fsbank-20261011-b02-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/verified-new-payment",
+      "family_id": "fsbank-20261011/identity_answer_plus_purpose",
+      "language": "Turkish",
+      "reply_length": "long",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md",
+        "competition-v3/build-the-builder/briefs/brief-b.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L24-L44 [A1-15 contact and identity]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L40-L49 [A11,16-17 security then debt]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L53-L78 [A18-29 dates, floors and full today]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L88-L92 [A34-38 final readback yes receipt SMS]",
+      "competition-v3/build-the-builder/briefs/brief-b.md:L5-L23 [B1-11 product order, joint confirmation, notes and closing]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "Inherited A15 does not count independent purpose questions accompanying complete answers as decline.",
+      "B2/4/7: all debts disclosed, all-today ask, one joint readback/yes, then two full promises. Both floor/date limits pass. B8 no notes; promise/null."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-b03",
+    "brief": "B",
+    "family": "paid_current_then_refusal",
+    "level": "hard",
+    "title": "Paid current card arrears followed by refusal of both loan offers",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_b03",
+      "first_name": "Mert",
+      "last_name": "D’Orsay-Akın",
+      "title": "Mr",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1981-11-22",
+      "phone_last4": "8469"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "past_due": 1059.71,
+        "minimum_payment": 177.23,
+        "days_late": 9,
+        "card_last4": "4678",
+        "product_id": "p1"
+      },
+      {
+        "type": "car_loan",
+        "past_due": 1441.39,
+        "instalment_amount": 499.57,
+        "days_late": 19,
+        "product_id": "p2"
+      }
+    ],
+    "script": "Speak English using long replies. You are Mr Mert D’Orsay-Akın; confirm your name when asked. Give complete security answers when asked: 22 November 1981 and 8469. After both debts are stated, answer the all-today question \"The entire current 1059.71 overdue on my card ending 4678 was already paid today, 21 October 2026. This is the current arrears, not an old account closure. I will not pay the car loan.\" Acknowledge posting-time explanation. Refuse each loan offer explicitly, without suggesting a date or amount: \"No, I will not pay the car loan.\" This includes full 1441.39 on 23 October 2026 and floor 499.57 on 2 November 2026. Refuse once for each offer when asked. Do not call the loan paid or disputed, request a transfer, or confirm any prospective payment. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "refused",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p2",
+          "reason": "refused"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "The paid claim is for the precise current past-due amount. Explain one-business-day posting delay and take no promise on that paid product; handle any sibling according to its separately stated intent."
+    ],
+    "variant_id": "fsbank-20261011-b03-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/paid-current-sibling",
+      "family_id": "fsbank-20261011/paid_current_then_refusal",
+      "language": "English",
+      "reply_length": "long",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md",
+        "competition-v3/build-the-builder/briefs/brief-b.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L40-L49 [A11,16-17 security then debt]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L96-L97 [A39-40 current payment versus dispute]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L79-L82 [A30-31 permitted persuasion then refused]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L53-L78 [A18-29 dates, floors and full today]",
+      "competition-v3/build-the-builder/briefs/brief-b.md:L5-L23 [B1-11 product order, joint confirmation, notes and closing]",
+      "competition-v3/build-the-builder/tools/openapi.json:L234-L297 [add_note reasons]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "B8/9 and A39 note p1 paid, explain one-business-day posting and continue.",
+      "p2 late-band B4 starts attempt 1: full 1441.39 on last business day this week 23 October. Attempt 2: floor 499.57 on deadline 2 November. Both refused; B8 p2/refused.",
+      "B closing skips p1 paid, selects first non-paid p2/refused: no_promise/refused. No promises/callbacks/transfers."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-b04",
+    "brief": "B",
+    "family": "paid_current_then_dispute",
+    "level": "hard",
+    "title": "Short Turkish paid-current card with a never-held loan sibling",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_b04",
+      "first_name": "Ece",
+      "last_name": "O’Donnell-Ünal",
+      "title": "Ms",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1988-01-26",
+      "phone_last4": "2397"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "past_due": 1128.83,
+        "minimum_payment": 188.51,
+        "days_late": 3,
+        "card_last4": "6759",
+        "product_id": "p1"
+      },
+      {
+        "type": "personal_loan",
+        "past_due": 759.29,
+        "instalment_amount": 249.13,
+        "days_late": 28,
+        "product_id": "p2"
+      }
+    ],
+    "script": "Speak Turkish using short replies. You are Ms Ece O’Donnell-Ünal; confirm your name when asked. Sorulunca tam güvenlik yanıtları verin: 26 Ocak 1988 ve 2397. İki ürün açıklandıktan sonra \"Sonu 6759 olan kartın bu mevcut gecikmiş 1128,83 tutarını bugün, 21 Ekim 2026 tarihinde zaten ödedim. Diğer bireysel kredi bana ait değil; o krediyi hiç almadım\" deyin. Yansıma açıklamasına \"Tamam, bekleyeceğim\" deyin. Kredi tekrar sorulursa \"Kredi bana ait değil\" deyin. Kartın geçmişte kapandığını söylemeyin; yeni ödeme için onay vermeyin, transfer istemeyin. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "no_promise",
+      "reason": "dispute",
+      "promises": [],
+      "notes": [
+        {
+          "product_id": "p1",
+          "reason": "paid"
+        },
+        {
+          "product_id": "p2",
+          "reason": "dispute"
+        }
+      ],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "The paid claim is for the precise current past-due amount. Explain one-business-day posting delay and take no promise on that paid product; handle any sibling according to its separately stated intent."
+    ],
+    "variant_id": "fsbank-20261011-b04-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/paid-current-sibling",
+      "family_id": "fsbank-20261011/paid_current_then_dispute",
+      "language": "Turkish",
+      "reply_length": "short",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md",
+        "competition-v3/build-the-builder/briefs/brief-b.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L40-L49 [A11,16-17 security then debt]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L96-L97 [A39-40 current payment versus dispute]",
+      "competition-v3/build-the-builder/briefs/brief-b.md:L5-L23 [B1-11 product order, joint confirmation, notes and closing]",
+      "competition-v3/build-the-builder/tools/openapi.json:L234-L297 [add_note reasons]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "A39 current p1 arrears paid: B8/9 note paid and continue. A40 p2 never-held product: note dispute without promise.",
+      "B closing skips paid p1 and chooses p2 dispute: no_promise/dispute. Exactly two notes; no promises/callbacks/transfers."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  },
+  {
+    "id": "fsbank-20261011-b05",
+    "brief": "B",
+    "family": "third_party_non_disclosure",
+    "level": "hard",
+    "title": "Explicit Turkish spouse offers a valid next-business-day callback",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_b05",
+      "first_name": "Doruk",
+      "last_name": "O’Neill-Çelik",
+      "title": "Mr",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1984-10-29",
+      "phone_last4": "9836"
+    },
+    "products": [
+      {
+        "type": "personal_loan",
+        "past_due": 1036.67,
+        "instalment_amount": 344.59,
+        "days_late": 8,
+        "product_id": "p1"
+      },
+      {
+        "type": "credit_card",
+        "past_due": 721.93,
+        "minimum_payment": 121.37,
+        "days_late": 2,
+        "card_last4": "3584",
+        "product_id": "p2"
+      }
+    ],
+    "script": "Speak Turkish using long replies. You are Nisan, the customer’s spouse, not Mr O’Neill-Çelik. Kimlik sorusunda \"Ben Nisan, Doruk’un eşiyim. Doruk ben değilim; şu anda burada değil\" deyin. Onun adına kimlik onayı veya güvenlik yanıtı vermeyin. Ulaşma zamanı sorulunca \"Yarın, 22 Ekim 2026 tarihinde saat 10:13’te kendisi bu telefonda olabilir. Yalnızca ne zaman ulaşabileceğinizi söylüyorum\" deyin. Güvenlik veya hesap sorulursa \"Müşteri ben değilim, güvenlik bilgilerini vermeyeceğim\" deyin. Ödeme, ürün veya insan transferi istemeyin. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "not_reached",
+      "reason": "callback",
+      "promises": [],
+      "notes": [],
+      "callbacks": [
+        {
+          "date": "2026-10-22",
+          "time": "10:13"
+        }
+      ],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "Actor is explicitly a third party. No verify_identity or get_account, security solicitation, account/collection disclosure, promises or product notes. Only the specified valid callback is scheduled."
+    ],
+    "variant_id": "fsbank-20261011-b05-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/third_party_non_disclosure",
+      "family_id": "fsbank-20261011/third_party_non_disclosure",
+      "language": "Turkish",
+      "reply_length": "long",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md",
+        "competition-v3/build-the-builder/briefs/brief-b.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L24-L44 [A1-15 contact and identity]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L31-L36 [A5-10 third party no security no disclosure callback]",
+      "competition-v3/build-the-builder/briefs/brief-b.md:L5-L5 [B inherits A contact rules]",
+      "competition-v3/build-the-builder/tools/openapi.json:L298-L353 [schedule_callback]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "Inherited A5/10 explicitly prohibit third-party verification or account disclosure. A6 permits next business day 22 October at 10:13, in the valid window and later than now.",
+      "Exactly one callback; not_reached/callback. B8 product dispositions do not apply to an unreachable customer; no promises/notes/transfers."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed",
+    "third_party": true
+  },
+  {
+    "id": "fsbank-20261011-b06",
+    "brief": "B",
+    "family": "explicit_security_refusal",
+    "level": "hard",
+    "title": "Long English named customer declines security twice",
+    "variables": {
+      "customer_id": "local_fsbank_20261011_b06",
+      "first_name": "Özge",
+      "last_name": "D’Aosta-Ekin",
+      "title": "Ms",
+      "now": "2026-10-21T11:20"
+    },
+    "identity": {
+      "date_of_birth": "1990-05-21",
+      "phone_last4": "4176"
+    },
+    "products": [
+      {
+        "type": "credit_card",
+        "past_due": 1384.79,
+        "minimum_payment": 231.43,
+        "days_late": 12,
+        "card_last4": "8975",
+        "product_id": "p1"
+      },
+      {
+        "type": "car_loan",
+        "past_due": 1672.31,
+        "instalment_amount": 557.83,
+        "days_late": 31,
+        "product_id": "p2"
+      }
+    ],
+    "script": "Speak English using long replies. You are Ms Özge D’Aosta-Ekin; confirm your name when asked. For name confirmation say \"Yes, Özge D’Aosta-Ekin speaking.\" At the first security question say \"I will not provide my date of birth or phone digits on this call.\" After the bank explains account protection say \"I understand that explanation, and I still refuse to answer either security question. Please end this call.\" Give no security date/digits, request no human or payment plan, and make no payment claim or commitment. Use only spoken telephone replies, wait for the bank after each reply, and acknowledge goodbye.",
+    "expected": {
+      "outcome": "not_verified",
+      "reason": "declined",
+      "promises": [],
+      "notes": [],
+      "callbacks": [],
+      "transfers": []
+    },
+    "checks": [
+      "Opening names Freya Bank, the digital assistant and recording, and asks for the fixture customer by title and full surname; no debt/product detail before both security answers pass.",
+      "Exactly one close_call follows thanks/goodbye and is the final tool; outcome/reason and all ledger arrays equal expected exactly.",
+      "Account protection is explained once after refusal; repeated refusal closes not_verified/declined without account access or product notes. No verify_identity without an answer."
+    ],
+    "variant_id": "fsbank-20261011-b06-v1",
+    "source_provenance": {
+      "kind": "new_locally_authored_synthetic_bank_fixture",
+      "author": "Codex",
+      "authored_date": "2026-10-11",
+      "group_id": "fsbank-20261011/explicit_security_refusal",
+      "family_id": "fsbank-20261011/explicit_security_refusal",
+      "language": "English",
+      "reply_length": "long",
+      "source_case_ids": [],
+      "public_script_copied": false,
+      "policy_sources": [
+        "competition-v3/build-the-builder/briefs/brief-a.md",
+        "competition-v3/build-the-builder/briefs/brief-b.md"
+      ],
+      "oracle_validation": "manual policy derivation before seal; parent source QA pending",
+      "sampling": "purposive shared-policy families, not IID",
+      "human_gold": false
+    },
+    "oracle_rule_refs": [
+      "competition-v3/build-the-builder/briefs/brief-a.md:L24-L44 [A1-15 contact and identity]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L44-L44 [A15 explicit second security refusal]",
+      "competition-v3/build-the-builder/briefs/brief-b.md:L5-L5 [B inherits A security rules]",
+      "competition-v3/build-the-builder/briefs/brief-a.md:L106-L121 [A46-47 closing table and no A notes]",
+      "competition-v3/build-the-builder/tools/score.py:L17-L33 [exact ledger arrays outcome and close-call guards]"
+    ],
+    "oracle_derivation": [
+      "Inherited A15: customer confirmation is distinct from verified identity. Explicit first refusal, protection explanation and second refusal yield not_verified/declined, not failed or no_promise/refused.",
+      "Account is never retrieved; B8 creates no product notes for this unverified call. All activity arrays empty."
+    ],
+    "local_only": true,
+    "hosted_registered": false,
+    "execution_status": "not_executed"
+  }
+]
