@@ -1,0 +1,86 @@
+{
+  "status": "FINAL_FROZEN_BUILDER_DIAGNOSTIC_BRIDGE_HANDOFF",
+  "plan": {
+    "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_plan.json",
+    "sha256": "e774cd40a019a234fc6bef9013393a64e58d9f23520571e35d8aba3d71b49661"
+  },
+  "freeze": {
+    "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_freeze.json",
+    "sha256": "7624f5808db12624adc75b6a688d14975ed051d8ce863cd7e965326621157804"
+  },
+  "source": {
+    "absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_bridge.py",
+    "sha256": "6af6baf691791fc12674755257ed4d2c7aba18fb548842583f7f8b213e0687d8"
+  },
+  "teacher": {
+    "artifact_absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_state.teacher.safetensors",
+    "artifact_sha256": "928938806e37293cc905667a611367838d238e188ca76a92ab9d1a128e2c7a67",
+    "calibrator_absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_calibrator.teacher.json",
+    "calibrator_sha256": "6758fe47ee354da7ee015e5d3f88fc91946c9a6f55c99cab9ee235a07a9db1ee",
+    "encoder_location": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\local-runs\\customer-benchmark-day2-pretrained\\encoder\\1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "offline_local_files_only": true,
+    "encoder_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+  },
+  "students": {
+    "hard": {
+      "artifact_absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_model.hard.json",
+      "artifact_sha256": "0afcd24a4780c9c5eda47d2fb9290508c2ab36624e6037d30f48b9a98be05df2",
+      "calibrator_absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_calibrator.hard.json",
+      "calibrator_sha256": "81527f74ce110e22325bac995052120e8ca07db5e6a354dabe94839acb8cf37e",
+      "runtime_absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_runtime.py",
+      "runtime_sha256": "c896622206327a19b03f15f939ff58a1e9093a8d6d8b7a0212822729a5b3d39a",
+      "encoder_required": false
+    },
+    "distill": {
+      "artifact_absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_model.distill.json",
+      "artifact_sha256": "e645957f9b24805caea86b81cebdb1798751a8573d4a69cca84e37722da65e6d",
+      "calibrator_absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_calibrator.distill.json",
+      "calibrator_sha256": "c572175c421a44dd446c233bb60875eb11805b2232bead6fb9c1198106d84d01",
+      "runtime_absolute_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\integrations\\learned-dialogue\\repayment_runtime.py",
+      "runtime_sha256": "c896622206327a19b03f15f939ff58a1e9093a8d6d8b7a0212822729a5b3d39a",
+      "encoder_required": false
+    }
+  },
+  "encoder_gradient_updates": 0,
+  "task_teacher_parameters": 2695,
+  "student_parameters_each": 33031,
+  "task_labels": [
+    "proposal",
+    "dispute",
+    "correction",
+    "current_affirm",
+    "current_withdraw",
+    "uncertain",
+    "reported_third_party"
+  ],
+  "runtime_promotion": false,
+  "purpose": "Experimental opt-in builder-side diagnostic proposal examples only. No Freya phone deployment or financial permission.",
+  "input_schema": {
+    "current_utterance": {
+      "speaker": "USER",
+      "text": "observed current user text"
+    },
+    "previous_utterances": "chronological list of at most last2 observed {speaker:SYSTEM/ASSISTANT/USER,text:string}; no phase/labels/values inferred from annotation"
+  },
+  "APIs": {
+    "teacher": "RepaymentTaskTeacher(state_path,state_sha256,plan_path,plan_sha256,calibrator_path,calibrator_sha256).predict(list_of_inputs)",
+    "student": "RepaymentStudent(model_path,model_sha256,calibrator_path,calibrator_sha256).proposal(input_snapshot,evidence_refs=None)",
+    "student_batch": "RepaymentStudent.predict(list_of_inputs)"
+  },
+  "proof_limits": [
+    "Expected digests must come from this externally audited handoff/freeze, not an arbitrary model self-declaration.",
+    "Caller refs/input digest bind audited bytes, not authenticated speech or freshness.",
+    "Teacher all7 sigmoid scores are descriptive; compact proposals always abstain and bank_authority=false.",
+    "calibration_available describes CAL selection-direction support; threshold>1 may still close all selections. No safety qualification.",
+    "Completion/date/amount/target/identity/ledger authority remain untrained.",
+    "Existing132615-row SGD intent/act work remains separate; no AFFIRM/NEGATE to financial-label mapping."
+  ],
+  "actual_bridge_smoke": {
+    "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\repayment-model-runtime-smoke.json",
+    "sha256": "924abb43e1f681b02f359ec3de8344ac707a157e83dec0736907becd3cc7078f",
+    "real_predictions": 18,
+    "malformed_input_checks": 2,
+    "finite_and_authority_false": true,
+    "semantic_correctness_asserted": false
+  }
+}

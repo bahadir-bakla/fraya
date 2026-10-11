@@ -1,0 +1,996 @@
+{
+  "records": [
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[str, Field(description='The domain of the task.')]",
+          "default_source": null,
+          "line": 20,
+          "name": "domain"
+        },
+        {
+          "annotation_source": "Annotated[str, Field(description='The reason for the user to call the agent.')]",
+          "default_source": null,
+          "line": 21,
+          "name": "reason_for_call"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='Known information about the user.', default=None)]",
+          "default_source": null,
+          "line": 24,
+          "name": "known_info"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='Unknown information about the user.', default=None)]",
+          "default_source": null,
+          "line": 28,
+          "name": "unknown_info"
+        },
+        {
+          "annotation_source": "Annotated[str, Field(description='Instructions for the User.')]",
+          "default_source": null,
+          "line": 32,
+          "name": "task_instructions"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:StructuredUserInstructions",
+      "lines": [
+        15,
+        46
+      ],
+      "name": "StructuredUserInstructions",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description=\"User's persona. This information defines the user in general, not the specific situation they are in.\", default=None)]",
+          "default_source": null,
+          "line": 57,
+          "name": "persona"
+        },
+        {
+          "annotation_source": "Annotated[UserInstructions, Field(description='Instructions for the User. This information defines the specific situation the user is in and the tasks they are trying to complete.')]",
+          "default_source": null,
+          "line": 64,
+          "name": "instructions"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:UserScenario",
+      "lines": [
+        52,
+        78
+      ],
+      "name": "UserScenario",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='Explains what the scenario is testing.', default=None)]",
+          "default_source": null,
+          "line": 86,
+          "name": "purpose"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='The part of the policy that is relevant to the scenario.', default=None)]",
+          "default_source": null,
+          "line": 90,
+          "name": "relevant_policies"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='Any additional information about the scenario that is not covered by the other fields.', default=None)]",
+          "default_source": null,
+          "line": 97,
+          "name": "notes"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:Description",
+      "lines": [
+        81,
+        113
+      ],
+      "name": "Description",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "str",
+          "default_source": "Field(description='The unique identifier for the action within a scenario.')",
+          "line": 143,
+          "name": "action_id"
+        },
+        {
+          "annotation_source": "ToolRequestor",
+          "default_source": "Field(description='The requestor of the action.', default='assistant')",
+          "line": 146,
+          "name": "requestor"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "Field(description='The name of the action.')",
+          "line": 150,
+          "name": "name"
+        },
+        {
+          "annotation_source": "dict",
+          "default_source": "Field(description='The arguments for the action.')",
+          "line": 151,
+          "name": "arguments"
+        },
+        {
+          "annotation_source": "Optional[str]",
+          "default_source": "Field(description='Information about the action.', default=None)",
+          "line": 152,
+          "name": "info"
+        },
+        {
+          "annotation_source": "Optional[list[str]]",
+          "default_source": "Field(description='The arguments to check in tool call. If None, will check all the arguments.', default=None)",
+          "line": 155,
+          "name": "compare_args"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:Action",
+      "lines": [
+        116,
+        195
+      ],
+      "name": "Action",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[ToolRequestor, Field(description='The type of environment to call the function on.')]",
+          "default_source": null,
+          "line": 203,
+          "name": "env_type"
+        },
+        {
+          "annotation_source": "Annotated[str, Field(description='The name of the function to call.')]",
+          "default_source": null,
+          "line": 207,
+          "name": "func_name"
+        },
+        {
+          "annotation_source": "Annotated[dict, Field(description='The arguments to pass to the function.')]",
+          "default_source": null,
+          "line": 208,
+          "name": "arguments"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:EnvFunctionCall",
+      "lines": [
+        198,
+        217
+      ],
+      "name": "EnvFunctionCall",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "EnvFunctionCall"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[bool, Field(default=True, description='The value to assert on.')]",
+          "default_source": null,
+          "line": 225,
+          "name": "assert_value"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='A message to display to the user if the assertion fails.', default=None)]",
+          "default_source": null,
+          "line": 228,
+          "name": "message"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:EnvAssertion",
+      "lines": [
+        220,
+        234
+      ],
+      "name": "EnvAssertion",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "str",
+        "Enum"
+      ],
+      "fields": [
+        {
+          "enum_or_constant_value": "DB",
+          "line": 263,
+          "name": "DB"
+        },
+        {
+          "enum_or_constant_value": "ENV_ASSERTION",
+          "line": 264,
+          "name": "ENV_ASSERTION"
+        },
+        {
+          "enum_or_constant_value": "NL_ASSERTION",
+          "line": 265,
+          "name": "NL_ASSERTION"
+        },
+        {
+          "enum_or_constant_value": "ACTION",
+          "line": 266,
+          "name": "ACTION"
+        },
+        {
+          "enum_or_constant_value": "COMMUNICATE",
+          "line": 267,
+          "name": "COMMUNICATE"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:RewardType",
+      "lines": [
+        237,
+        267
+      ],
+      "name": "RewardType",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "str",
+        "Enum"
+      ],
+      "fields": [
+        {
+          "enum_or_constant_value": "open",
+          "line": 273,
+          "name": "OPEN"
+        },
+        {
+          "enum_or_constant_value": "resolved",
+          "line": 274,
+          "name": "RESOLVED"
+        },
+        {
+          "enum_or_constant_value": "wont_fix",
+          "line": 275,
+          "name": "WONT_FIX"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:TaskIssueStatus",
+      "lines": [
+        270,
+        275
+      ],
+      "name": "TaskIssueStatus",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "str",
+          "default_source": "Field(description='Unique identifier for the issue.')",
+          "line": 284,
+          "name": "id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "Field(description='Short summary of the issue.')",
+          "line": 285,
+          "name": "title"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='Detailed description of the issue or discussion point.', default=None)]",
+          "default_source": null,
+          "line": 286,
+          "name": "description"
+        },
+        {
+          "annotation_source": "Annotated[TaskIssueStatus, Field(description='Current status of the issue.', default=TaskIssueStatus.OPEN)]",
+          "default_source": null,
+          "line": 293,
+          "name": "status"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description=\"Explanation of how/why the issue was resolved or won't be fixed.\", default=None)]",
+          "default_source": null,
+          "line": 300,
+          "name": "resolution"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='ISO date (YYYY-MM-DD) when the issue was created.', default=None)]",
+          "default_source": null,
+          "line": 307,
+          "name": "created_at"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='ISO date (YYYY-MM-DD) when the issue was resolved.', default=None)]",
+          "default_source": null,
+          "line": 314,
+          "name": "resolved_at"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='Email of the person who raised this issue.', default=None)]",
+          "default_source": null,
+          "line": 321,
+          "name": "author_email"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='Link to the PR that fixes this issue.', default=None)]",
+          "default_source": null,
+          "line": 328,
+          "name": "pr_link"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description=\"Relative path to a simulation result file demonstrating the issue (e.g., 'task_issues/task_0_issue_001.json').\", default=None)]",
+          "default_source": null,
+          "line": 335,
+          "name": "simulation_file"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:TaskIssue",
+      "lines": [
+        278,
+        363
+      ],
+      "name": "TaskIssue",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[Optional[list[Action]], Field(description='One reference trajectory that solves the task. Replayed on a fresh env by `EnvironmentEvaluator` to derive the target DB hash. The agent may take any path producing an equivalent end state — these specific calls are only required when `RewardType.ACTION` is in `reward_basis`.', default=None)]",
+          "default_source": null,
+          "line": 377,
+          "name": "actions"
+        },
+        {
+          "annotation_source": "Annotated[Optional[list[EnvAssertion]], Field(description='Assertions on the predicted environment. Gates the reward only when `RewardType.ENV_ASSERTION` is in `reward_basis`.', default=None)]",
+          "default_source": null,
+          "line": 391,
+          "name": "env_assertions"
+        },
+        {
+          "annotation_source": "Annotated[Optional[list[str]], Field(description='Strings the agent must say to the user (substring match). Gates the reward only when `RewardType.COMMUNICATE` is in `reward_basis`.', default=None)]",
+          "default_source": null,
+          "line": 403,
+          "name": "communicate_info"
+        },
+        {
+          "annotation_source": "Annotated[Optional[list[str]], Field(description='Natural-language assertions judged by an LLM. Gates the reward only when `RewardType.NL_ASSERTION` is in `reward_basis` (experimental / WIP).', default=None)]",
+          "default_source": null,
+          "line": 415,
+          "name": "nl_assertions"
+        },
+        {
+          "annotation_source": "Annotated[list[RewardType], Field(description='Components that gate the final reward (their per-component rewards are multiplied). Default `[DB, COMMUNICATE]` matches the original τ-bench.', default_factory=lambda: [RewardType.DB, RewardType.COMMUNICATE])]",
+          "default_source": null,
+          "line": 427,
+          "name": "reward_basis"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:EvaluationCriteria",
+      "lines": [
+        366,
+        488
+      ],
+      "name": "EvaluationCriteria",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[Optional[dict], Field(description='Agent env update data.', default=None)]",
+          "default_source": null,
+          "line": 496,
+          "name": "agent_data"
+        },
+        {
+          "annotation_source": "Annotated[Optional[dict], Field(description='User env update data.', default=None)]",
+          "default_source": null,
+          "line": 500,
+          "name": "user_data"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:InitializationData",
+      "lines": [
+        491,
+        503
+      ],
+      "name": "InitializationData",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[Optional[InitializationData], Field(description='Initial env update data.', default=None)]",
+          "default_source": null,
+          "line": 512,
+          "name": "initialization_data"
+        },
+        {
+          "annotation_source": "Annotated[Optional[list[EnvFunctionCall]], Field(description='Initial actions to be taken on the environment.', default=None)]",
+          "default_source": null,
+          "line": 516,
+          "name": "initialization_actions"
+        },
+        {
+          "annotation_source": "Annotated[Optional[list[Message]], Field(default=None, description='Messages that have already been exchanged between the user, the agent and the environment. This will be used to set the initial state of the environment and of the orchestrator. Last messages must be from the user or the agent.')]",
+          "default_source": null,
+          "line": 522,
+          "name": "message_history"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:InitialState",
+      "lines": [
+        506,
+        557
+      ],
+      "name": "InitialState",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "str",
+          "default_source": "Field(description='The unique identifier for the task.')",
+          "line": 565,
+          "name": "id"
+        },
+        {
+          "annotation_source": "Annotated[Optional[Description], Field(description='Description of the task. This can be sent to the evaluator.', default=None)]",
+          "default_source": null,
+          "line": 566,
+          "name": "description"
+        },
+        {
+          "annotation_source": "Annotated[UserScenario, Field(description='User scenario. This information will be sent to the user simulator.')]",
+          "default_source": null,
+          "line": 573,
+          "name": "user_scenario"
+        },
+        {
+          "annotation_source": "Annotated[Optional[str], Field(description='Task in ticket format for solo agent solving.', default=None)]",
+          "default_source": null,
+          "line": 579,
+          "name": "ticket"
+        },
+        {
+          "annotation_source": "Annotated[Optional[InitialState], Field(description='Initial state of the task. This will be used to set the initial state of the environment and of the orchestrator.', default=None)]",
+          "default_source": null,
+          "line": 586,
+          "name": "initial_state"
+        },
+        {
+          "annotation_source": "Annotated[Optional[EvaluationCriteria], Field(description='Evaluation criteria for the task. This will be sent to the evaluator.', default=None)]",
+          "default_source": null,
+          "line": 593,
+          "name": "evaluation_criteria"
+        },
+        {
+          "annotation_source": "Annotated[Optional[list[TaskIssue]], Field(description='List of issues, discussions, or notes about this task.', default=None)]",
+          "default_source": null,
+          "line": 600,
+          "name": "issues"
+        },
+        {
+          "annotation_source": "Annotated[Optional[list[str]], Field(description='List of document titles required to solve the task (knowledge domain).', default=None)]",
+          "default_source": null,
+          "line": 607,
+          "name": "required_documents"
+        },
+        {
+          "annotation_source": "Annotated[Optional[list[str]], Field(description='List of user tool names available to the user simulator for this task. If None, all domain user tools are available (backward compatible). If empty list, no user tools are available.', default=None)]",
+          "default_source": null,
+          "line": 614,
+          "name": "user_tools"
+        }
+      ],
+      "id": "src/tau2/data_model/tasks.py:Task",
+      "lines": [
+        560,
+        641
+      ],
+      "name": "Task",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/data_model/tasks.py",
+      "source_sha256": "0243a6454b2e9c8a14b8364c38ff95dc1dd7512105b69fada9bf9295fc8170fa"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "str",
+          "default_source": "Field(..., description='The unique identifier of the document')",
+          "line": 13,
+          "name": "id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "Field(..., description='The title of the document')",
+          "line": 14,
+          "name": "title"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "Field(..., description='The content of the document')",
+          "line": 15,
+          "name": "content"
+        }
+      ],
+      "id": "src/tau2/domains/banking_knowledge/data_model.py:Document",
+      "lines": [
+        10,
+        15
+      ],
+      "name": "Document",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/domains/banking_knowledge/data_model.py",
+      "source_sha256": "8451829795c7cf18668b26adc2db06c10426f4e69b553824ea886c40765ee3c4"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Dict[str, Document]",
+          "default_source": "Field(default_factory=dict, description='Documents in the knowledge base')",
+          "line": 25,
+          "name": "documents"
+        }
+      ],
+      "id": "src/tau2/domains/banking_knowledge/data_model.py:KnowledgeBase",
+      "lines": [
+        18,
+        68
+      ],
+      "name": "KnowledgeBase",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/domains/banking_knowledge/data_model.py",
+      "source_sha256": "8451829795c7cf18668b26adc2db06c10426f4e69b553824ea886c40765ee3c4"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Dict[str, Dict[str, Any]]",
+          "default_source": "Field(default_factory=dict)",
+          "line": 83,
+          "name": "data"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "''",
+          "line": 84,
+          "name": "notes"
+        }
+      ],
+      "id": "src/tau2/domains/banking_knowledge/data_model.py:DatabaseTable",
+      "lines": [
+        80,
+        84
+      ],
+      "name": "DatabaseTable",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/domains/banking_knowledge/data_model.py",
+      "source_sha256": "8451829795c7cf18668b26adc2db06c10426f4e69b553824ea886c40765ee3c4"
+    },
+    {
+      "bases_source": [
+        "DB"
+      ],
+      "fields": [
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 94,
+          "name": "users"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 95,
+          "name": "accounts"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 97,
+          "name": "debit_cards"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 98,
+          "name": "referrals"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 99,
+          "name": "credit_card_applications"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 101,
+          "name": "user_discoverable_tools"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 103,
+          "name": "user_discoverable_tool_calls"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 105,
+          "name": "verification_history"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 107,
+          "name": "credit_card_transaction_history"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 111,
+          "name": "cash_back_disputes"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 113,
+          "name": "bank_account_transaction_history"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 117,
+          "name": "credit_card_accounts"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 119,
+          "name": "agent_discoverable_tools"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 121,
+          "name": "task_config"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 123,
+          "name": "human_transfer_requests"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 125,
+          "name": "transaction_disputes"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 127,
+          "name": "credit_card_orders"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 129,
+          "name": "debit_card_orders"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 131,
+          "name": "credit_card_closure_reasons"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 133,
+          "name": "credit_card_account_flags"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 135,
+          "name": "credit_limit_increase_requests"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 137,
+          "name": "payment_history"
+        },
+        {
+          "annotation_source": "DatabaseTable",
+          "default_source": "Field(default_factory=DatabaseTable)",
+          "line": 139,
+          "name": "debit_card_disputes"
+        }
+      ],
+      "id": "src/tau2/domains/banking_knowledge/data_model.py:TransactionalDB",
+      "lines": [
+        87,
+        171
+      ],
+      "name": "TransactionalDB",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/domains/banking_knowledge/data_model.py",
+      "source_sha256": "8451829795c7cf18668b26adc2db06c10426f4e69b553824ea886c40765ee3c4"
+    },
+    {
+      "bases_source": [
+        "ToolKitBase"
+      ],
+      "fields": [
+        {
+          "annotation_source": "TransactionalDB",
+          "default_source": null,
+          "line": 338,
+          "name": "db"
+        }
+      ],
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools",
+      "lines": [
+        325,
+        4131
+      ],
+      "name": "KnowledgeTools",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "bases_source": [
+        "ToolKitBase"
+      ],
+      "fields": [
+        {
+          "annotation_source": "TransactionalDB",
+          "default_source": null,
+          "line": 4141,
+          "name": "db"
+        }
+      ],
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools",
+      "lines": [
+        4134,
+        4760
+      ],
+      "name": "KnowledgeUserTools",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "bases_source": [
+        "BaseModel",
+        "ABC"
+      ],
+      "fields": [
+        {
+          "annotation_source": "str",
+          "default_source": "Field(..., description='The name of the Tool')",
+          "line": 20,
+          "name": "name"
+        }
+      ],
+      "id": "src/tau2/environment/tool.py:BaseTool",
+      "lines": [
+        17,
+        35
+      ],
+      "name": "BaseTool",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/environment/tool.py",
+      "source_sha256": "6dd74021ba95a6f8dfa0971546b768b90e15b212f8f9051156ae6bcdd24b77d3"
+    },
+    {
+      "bases_source": [
+        "BaseTool"
+      ],
+      "fields": [
+        {
+          "annotation_source": "str",
+          "default_source": "Field('', description='The short description of the Tool')",
+          "line": 44,
+          "name": "short_desc"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "Field('', description='The long description of the Tool')",
+          "line": 46,
+          "name": "long_desc"
+        },
+        {
+          "annotation_source": "type[BaseModel]",
+          "default_source": "Field(..., description='The parameters of the Tool')",
+          "line": 48,
+          "name": "params"
+        },
+        {
+          "annotation_source": "type[BaseModel]",
+          "default_source": "Field(..., description='The return of the Tool')",
+          "line": 50,
+          "name": "returns"
+        },
+        {
+          "annotation_source": "List[Dict[str, Optional[str]]]",
+          "default_source": "Field([], description='The exceptions raised by the Tool')",
+          "line": 52,
+          "name": "raises"
+        },
+        {
+          "annotation_source": "List[str]",
+          "default_source": "Field([], description='The examples of the Tool')",
+          "line": 56,
+          "name": "examples"
+        },
+        {
+          "annotation_source": "Dict",
+          "default_source": "Field({}, description='Additional information of the Tool')",
+          "line": 58,
+          "name": "info"
+        }
+      ],
+      "id": "src/tau2/environment/tool.py:Tool",
+      "lines": [
+        38,
+        182
+      ],
+      "name": "Tool",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/environment/tool.py",
+      "source_sha256": "6dd74021ba95a6f8dfa0971546b768b90e15b212f8f9051156ae6bcdd24b77d3"
+    },
+    {
+      "bases_source": [
+        "str",
+        "Enum"
+      ],
+      "fields": [
+        {
+          "enum_or_constant_value": "read",
+          "line": 58,
+          "name": "READ"
+        },
+        {
+          "enum_or_constant_value": "write",
+          "line": 59,
+          "name": "WRITE"
+        },
+        {
+          "enum_or_constant_value": "think",
+          "line": 60,
+          "name": "THINK"
+        },
+        {
+          "enum_or_constant_value": "generic",
+          "line": 61,
+          "name": "GENERIC"
+        }
+      ],
+      "id": "src/tau2/environment/toolkit.py:ToolType",
+      "lines": [
+        43,
+        61
+      ],
+      "name": "ToolType",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/environment/toolkit.py",
+      "source_sha256": "3e897891e8878c3399aec72e42eb0eb5546642420c0c902b225421fc936b924a"
+    },
+    {
+      "bases_source": [
+        "BaseModel"
+      ],
+      "fields": [
+        {
+          "annotation_source": "Annotated[str, Field(description='The name of the tool')]",
+          "default_source": null,
+          "line": 250,
+          "name": "name"
+        },
+        {
+          "annotation_source": "Annotated[str, Field(description='The documentation of the tool')]",
+          "default_source": null,
+          "line": 251,
+          "name": "doc"
+        },
+        {
+          "annotation_source": "Annotated[Optional[dict], Field(description='JSON schema of the parameters of the tool', default=None)]",
+          "default_source": null,
+          "line": 252,
+          "name": "params"
+        },
+        {
+          "annotation_source": "Annotated[Optional[dict], Field(description='JSON schema of the return of the tool', default=None)]",
+          "default_source": null,
+          "line": 256,
+          "name": "returns"
+        }
+      ],
+      "id": "src/tau2/environment/toolkit.py:ToolSignature",
+      "lines": [
+        247,
+        259
+      ],
+      "name": "ToolSignature",
+      "role": "REFERENCE_ONLY",
+      "source_path": "src/tau2/environment/toolkit.py",
+      "source_sha256": "3e897891e8878c3399aec72e42eb0eb5546642420c0c902b225421fc936b924a"
+    }
+  ],
+  "role": "REFERENCE_ONLY",
+  "source_execution": false
+}

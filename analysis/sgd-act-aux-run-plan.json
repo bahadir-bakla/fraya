@@ -1,0 +1,95 @@
+{
+  "act_labels": [
+    "AFFIRM",
+    "NEGATE",
+    "INFORM",
+    "REQUEST"
+  ],
+  "arms": [
+    "context",
+    "no_context"
+  ],
+  "authorization": "User explicitly authorized existing 135k source-aux CPU fit and parallel processing/training",
+  "calibration": "after quantized JSON weight freeze; independent thresholds per arm/act; max empirical CAL positive coverage with >=95% precision, no invented minimum support; unavailable if none",
+  "code_pins": [
+    {
+      "bytes": 27367,
+      "path": "integrations/learned-dialogue/sgd_act_aux_train.py",
+      "sha256": "ba5b2273334c9da9e336a28f6c616e4714d3e4f222797a0b2b63f5885cbbdf00"
+    },
+    {
+      "bytes": 6008,
+      "path": "integrations/learned-dialogue/sgd_act_aux_runtime.py",
+      "sha256": "a284bd9f482fc369cdc9fe207a337997f41c94d174cb6c6bb3da745c449778a9"
+    }
+  ],
+  "controls": [
+    "drop previous context on context-trained head",
+    "shuffle previous SYSTEM text fixed seed",
+    "empty current with observed context",
+    "empty all observed text",
+    "mutate all target/ancestry fields"
+  ],
+  "counts_pinned": {
+    "CAL": 16072,
+    "EVAL": 16295,
+    "TRAIN": 132615
+  },
+  "created_utc": "2026-10-11T11:15:27.482358+00:00",
+  "epochs": 3,
+  "eval": "one sealed EVAL pass after calibration freeze; all predeclared arms/controls scored together; previous EVAL exposure exists, INTERNAL DIAGNOSTIC ONLY",
+  "features": "current input.utterance plus only earlier_context[-1] when SYSTEM; role-prefixed lowercase word1-2 HashingVectorizer4096 signed L2; no frame/label/service/schema/action/bank features",
+  "fit_wall_limit_seconds": 900,
+  "job_wall_target_seconds": 1080,
+  "labels": "exact publisher USER actions, reviewed service/action masks; existential positive; negative requires all frames known; missing unknown",
+  "libraries": {
+    "numpy": "2.3.5",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "scipy": "1.17.0",
+    "sklearn": "1.8.0"
+  },
+  "optimizer": {
+    "alpha": 0.0001,
+    "average": true,
+    "batch_rows": 4096,
+    "learning_rate": "optimal",
+    "loss": "log_loss",
+    "shuffle": false
+  },
+  "scope": "MiniLM historical 90/95 describes B77 topics; this is source act supervision, not bank permission, repayment, Freya or fresh independent EVAL",
+  "seed": 20261011,
+  "selection": "fixed three epochs, no CAL/EVAL model selection or refit",
+  "source_pins": [
+    {
+      "bytes": 75549,
+      "path": "research/customer-benchmark/day2-training-data/sgd/full-v1/manifest.json",
+      "sha256": "7176ce8bf20c7e6adce899a276f7de0c042e0e33eb63999462264ca6c1843513"
+    },
+    {
+      "bytes": 3703987,
+      "path": "research/customer-benchmark/day2-training-data/sgd/full-v1/split-plan.json",
+      "sha256": "4e30601875eb6d37d3a885ab969bf32c8e55bf0b9d4a5fc01b36040cf1d3ba41"
+    },
+    {
+      "bytes": 75764,
+      "path": "research/customer-benchmark/day2-training-data/sgd/service-schema.json",
+      "sha256": "97b6c21673aa7e5c2d1ceef52aa35170c565223cdcbf33bb24c69739bda04a82"
+    },
+    {
+      "bytes": 28448,
+      "path": "research/customer-benchmark/day2-training-data/sgd/process.py",
+      "sha256": "3cc4fbdc7cc3757b7ab80998f3a3e585b97cb6c3d28e11b33ff46b618224b032"
+    },
+    {
+      "bytes": 8198,
+      "path": "integrations/learned-dialogue/day2_sgd_data.py",
+      "sha256": "eb3aaddd53e2a9e83a3877b536efd8181cf6aa0abe8ad5f035f6c548bd6954b7"
+    },
+    {
+      "bytes": 6496,
+      "path": "integrations/learned-dialogue/day2_sgd_adapter.py",
+      "sha256": "ea7d0d3069488fb5baf81b22f0f09bd1fb622d8ac445dc4532d31a90e55332a7"
+    }
+  ],
+  "weights": "TRAIN-only group-balanced rows N/(groups*dialogues_in_group*rows_in_dialogue), renormalized per known head; positive multiplier max(1, weighted negatives/weighted positives)"
+}

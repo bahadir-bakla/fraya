@@ -10,7 +10,7 @@ Son uygun hazırlık koşuları: Brief A `20261010-173717-1b9196`, Freya sürüm
 
 ## Başlatma
 
-Python 3.11+ ve giriş yapılmış Codex CLI gerekir. Ek Python paketi gerekmez. Builder mevcut Codex girişini kullanır; başka bir model anahtarı istemez. Freya anahtarı ortamdan alınır veya terminalde gizli girişle sorulur; kaynak, prompt, log ya da frontend içine yazılmaz. Sunucu kapatıldığında bellekten çıkar.
+Python 3.11+ ve giriş yapılmış Codex CLI gerekir. Klasik builder ek Python paketi istemez. İsteğe bağlı MiniLM yardımcısı, yerelde hash ile sabitlenmiş encoder ve torch/transformers içeren ayrı Python kullanır. Builder mevcut Codex girişini kullanır; başka bir model anahtarı istemez. Freya anahtarı ortamdan alınır veya terminalde gizli girişle sorulur; kaynak, prompt, log ya da frontend içine yazılmaz. Sunucu kapatıldığında bellekten çıkar.
 
 ```sh
 cd /Users/yusuf/Documents/freya
@@ -46,6 +46,94 @@ python3 competition/builder.py 'build-the-builder 2/briefs/brief-a.md' \
 # Kod kontrolleri:
 python3 -m unittest discover -s competition/tests -v
 ```
+
+## MiniLM ile belge navigasyonu ve klasik karşılaştırma
+
+`--semantic-assist auto` varsayılandır. Builder, mevcut MiniLM encoder ile bütün
+brief girdilerini satır ve karakter aralıklarını koruyarak indeksler. Kimlik,
+ürün kapsamı, ödeme teklifi, güncel onay/geri çekme, tarih, istisna ve başarılı
+araç cevabı için ilgili pasajları bulur. `work/semantic-evidence.json` ve `.txt`
+her pasajın kaynak SHA-256'sını ve sırasını içerir. Builder yine bütün belgeleri
+okur; benzerlik puanı politika önceliği veya izin anlamına gelmez.
+
+Encoder ve mevcut 77 konulu head'in tüm dosyaları hash ile doğrulanır, yalnız
+yerel safetensors yüklenir. Yardımcı alt süreç banka/diğer API anahtarlarını
+devralmaz ve en çok 60 saniye harcar; bu süre toplam builder bütçesinden düşer.
+`auto` eksik model/paket/süre durumunda bunu izde kaydedip klasik akışa döner.
+`required` eksik bağlantıda çalışmayı durdurur. `off` MiniLM çalıştırmaz.
+`MINILM_PYTHON` veya `--semantic-python` ML paketlerinin kurulu olduğu Python'u
+seçer. Encoder ağırlıkları repo'ya eklenmez; arkadaşın aynı sabit model snapshot'ını
+yereline kurmalıdır. Kaynak model/revizyon ve dosya hash'leri
+`integrations/learned-dialogue/day2_pretrained_head.json` içindedir.
+
+```sh
+python3 competition/setup_minilm.py  # yalnız sabit public model dosyalarını indirir
+python3 competition/setup_minilm.py --verify-only
+```
+
+ML Python ortamında `torch`, `transformers`, `numpy` ve `safetensors` kurulu olmalıdır.
+İndirme ayrı kurulum adımıdır; builder koşusu ağdan model indirmez.
+
+```sh
+# Platform kuyruğu boşalmasını beklerken gerçek builder üretimi + yerel doğrulama:
+python3 competition/builder.py 'build-the-builder 2/briefs/brief-a.md' \
+  'build-the-builder 2/briefs/brief-b.md' --slot minilm-comparison \
+  --local-only --semantic-assist required --semantic-python /path/to/ml-python
+
+# Bağımsız klasik üretim; aynı girdiler ve model ile karşılaştırılır:
+python3 competition/builder.py 'build-the-builder 2/briefs/brief-a.md' \
+  'build-the-builder 2/briefs/brief-b.md' --slot classic-comparison \
+  --local-only --semantic-assist off
+```
+
+`--local-only` anahtar sormaz, Freya'ya yayın/test yapmaz. Üretilen workflow
+`work/workflow.json` içindedir; `local_validation_only` sonucu platform başarısı
+veya teslim export'u değildir. Platform testinde seçenek kaldırılır; farklı
+adaylar aynı workspace'te sırayla ve sabit sürümle ölçülür. Klasik A10/B14
+yedek kaynakları `competition/releases/classic-baseline/` içinde korunur.
+
+Bu entegrasyon builder'ın kanıt okumasına yardım eder. MiniLM'in 91 MB encoder'ı
+Freya ses ajanına gömülmez; yeni ödeme konuşması modellerinin ham önerileri
+kimlik, tutar/tarih/ürün kapsamı, açık onay ve banka makbuzu kontrollerini aşamaz.
+
+Onarım turlarında `--dialogue-assist auto` gerçek `failed-calls.json` içindeki
+kullanıcı sözü ve hemen önceki asistan sözünü ayrı, 132.615 SGD TRAIN örneğiyle
+eğitilmiş kaynağa ait eylem modeline verir. `dialogue-evidence.json` dört genel
+eylem için hipotezleri, çağrı/mesaj konumunu ve kaynak/model hash'lerini taşır.
+Ham konuşma bu ek dosyaya kopyalanmaz. AFFIRM, NEGATE, INFORM ve REQUEST bir
+bankacılık izni değildir; finansal yetki daima UNKNOWN kalır. İlk üretimde hata
+çağrısı yoksa bu aşama çalışmaz. `--dialogue-assist off` kapatır;
+`--semantic-assist off` bütün bu yardımları kapatıp klasik akışı korur.
+
+Ödeme konuşmasına ait yeni MiniLM başlığı ve iki küçük öğrenci modeli ayrıca
+`integrations/learned-dialogue/repayment_API.txt` üzerinden yerelde denenebilir.
+İlk 134 sentetik örnekli deney yeterli genelleme sağlamadı; varsayılan builder
+ve ses ajanında finansal karar vermek için kullanılmaz. Kaynak konuşma eylemi
+başlıklarının iyi sonucu bu yeni görev başlığına aktarılmış başarı sayılmaz.
+
+Bu oturumdaki veri ve eğitim durumu:
+
+| Görev | Gerçekte eğitilen veri | Ölçülen sonuç ve sınırı |
+| --- | --- | --- |
+| MiniLM B77 konu başlığı | 7.943 TRAIN | Ham doğruluk %89,83; seçilmiş tahminlerde precision %95,14, coverage %89,12. Ödeme izni ölçümü değildir. |
+| Kaynağa ait genel konuşma eylemleri | 132.615 TRAIN; ayrı 16.072 CAL ve 16.295 EVAL | AFFIRM/NEGATE/INFORM/REQUEST için seçilmiş precision %94,24–96,82. Her başlığın coverage ve recall'u raporda ayrıca verilir. Bu model MiniLM gövdesi değildir. |
+| Ödeme/itiraz/düzeltme/izin prototipi | 134 toplam; 86 TRAIN, 24 CAL, 24 heldout | MiniLM başlığında macro F1 %44,76; iki küçük öğrencide %7,79. Güçlü bir ödeme modeli olarak kullanılmaz. |
+| τ kaynak planlama prototipi | 103 resmi TRAIN senaryosu; 65 FIT, 28 CAL, 10 iç tanılama | İç tanılamada macro F1 %26,69. Referans araç listesini tahmin eder; geçerli bütün işlemler veya banka yetkisi değildir. |
+
+τ paketinde ayrıca 716 politika parçası hazırlanmıştır; bu parçalar yukarıdaki
+planlama başlığının eğitim örnekleri değildir. Paket gözlenmiş τ konuşması
+içermez. Resmi TEST görevleri eğitime alınmamıştır. Politika metni, senaryo
+talimatı ve konuşma etiketi aynı hedef gibi birleştirilmez. TRAIN öğrenme,
+CAL eşik seçme, heldout/EVAL ayrı ölçüm içindir. Bu sonuçlar tek birleşik
+modelin veya Freya ajanının geçme oranı değildir.
+
+MiniLM encoder'ı bu deneylerde sabittir; görev başlıkları eğitilmiştir.
+CPU eğitimleri tamamlanmıştır ve bu oturumda GPU harcaması 0 USD'dir.
+Son yerel MiniLM ve klasik builder üretim denemeleri model süre sınırında
+başarısız kalmıştır. Kod/bağlantı kontrolleri geçmiş olsa da tamamlanmış
+üretim karşılaştırması ve yeni platform başarısı henüz gösterilmemiştir.
+Kaynak, model, veri ve başarısız koşuların özeti
+`analysis/minilm-builder-integration.json` içindedir.
 
 ## Yerel konsol
 

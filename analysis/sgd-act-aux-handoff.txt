@@ -1,0 +1,89 @@
+Completed actual SGD source USER-act CPU fit.
+INTERNAL DIAGNOSTIC ONLY: TRAIN-derived EVAL was previously exposed by other experiments.
+Official SGD TRAIN only. Official dev/test unused. AFFIRM is never financial authorization.
+Historical MiniLM 90/95 figures concern B77 topics, not these source acts or bank permission/Freya.
+
+Counts: TRAIN 132615; CAL 16072; EVAL 16295. All shard bytes/SHA/counts streamed freshly.
+TRAIN groups 9933; CAL 1614; EVAL 1614; group overlap 0.
+Fit: 3 epochs; 4 independent log-loss SGD heads per arm; context and no-context arms.
+Optimizer fit wall 1.741364s; fit CPU 1.687500s; data/fit/CAL/EVAL run wall 21.826121s.
+Features: observed current utterance + immediately preceding SYSTEM text only; role-prefixed word1-2 hashing, 4096 dimensions, signed L2.
+Weights: group-balanced; positive multipliers computed only on TRAIN; decimal JSON 7 significant digits; 359899 bytes including both arms.
+CAL: max positive coverage at empirical precision >=95%; no minimum support floor; weights already frozen.
+EVAL: one source streaming/scoring phase after CAL freeze; no selection/refit.
+
+TRAIN per-act positive/negative/unknown:
+  AFFIRM: 16625/115990/0
+  NEGATE: 9012/123603/0
+  INFORM: 50342/82273/0
+  REQUEST: 18945/113670/0
+CAL per-act positive/negative/unknown:
+  AFFIRM: 2057/14015/0
+  NEGATE: 1114/14958/0
+  INFORM: 6317/9755/0
+  REQUEST: 2321/13751/0
+EVAL per-act positive/negative/unknown:
+  AFFIRM: 2014/14281/0
+  NEGATE: 1164/15131/0
+  INFORM: 6377/9918/0
+  REQUEST: 2368/13927/0
+
+EVAL context (precision / recall / positive-proposal coverage):
+  AFFIRM: raw 72.076% / 95.482% / 16.373%; accepted 94.239% / 79.593% / 10.439%
+  NEGATE: raw 59.774% / 95.361% / 11.396%; accepted 96.822% / 68.041% / 5.020%
+  INFORM: raw 89.682% / 90.231% / 39.374%; accepted 94.958% / 82.406% / 33.961%
+  REQUEST: raw 74.571% / 97.213% / 18.944%; accepted 94.920% / 89.949% / 13.771%
+
+EVAL no_context (precision / recall / positive-proposal coverage):
+  AFFIRM: raw 47.554% / 90.268% / 23.461%; accepted 95.137% / 22.344% / 2.903%
+  NEGATE: raw 49.068% / 90.464% / 13.170%; accepted undefined / 0.000% / 0.000%
+  INFORM: raw 87.754% / 92.598% / 41.295%; accepted 94.399% / 83.252% / 34.514%
+  REQUEST: raw 88.459% / 97.424% / 16.005%; accepted 94.688% / 94.848% / 14.557%
+
+Context raises AFFIRM accepted recall 22.344% -> 79.593% and enables NEGATE accepted recall 68.041% (baseline threshold unavailable).
+INFORM/REQUEST accepted recall is slightly lower with context; 95% CAL precision does not guarantee 95% EVAL precision.
+Observed-only controls, frozen context thresholds (accepted precision / recall / coverage):
+  drop_context
+    AFFIRM: 85.794% / 38.083% / 5.486%
+    NEGATE: 82.648% / 55.241% / 4.774%
+    INFORM: 81.501% / 92.645% / 44.486%
+    REQUEST: 91.412% / 90.794% / 14.434%
+  empty_all_text
+    AFFIRM: undefined / 0.000% / 0.000%
+    NEGATE: undefined / 0.000% / 0.000%
+    INFORM: undefined / 0.000% / 0.000%
+    REQUEST: undefined / 0.000% / 0.000%
+  empty_current
+    AFFIRM: 75.326% / 80.189% / 13.157%
+    NEGATE: 62.145% / 60.223% / 6.922%
+    INFORM: 99.660% / 32.147% / 12.624%
+    REQUEST: 36.572% / 16.850% / 6.695%
+  shuffle_previous_system
+    AFFIRM: 33.892% / 21.102% / 7.696%
+    NEGATE: 52.706% / 19.244% / 2.608%
+    INFORM: 85.146% / 69.484% / 31.936%
+    REQUEST: 92.928% / 78.801% / 12.323%
+Context-only control still proposes acts: learned source dialogue priors exist. Shuffled context degrades AFFIRM/NEGATE. These are diagnostics, not evidence of bank authority.
+Stdlib runtime probability parity max error 2.5e-16 on 256 stored EVAL witnesses; site-packages-free interpreter check passed.
+
+Runtime usage:
+  from sgd_act_aux_runtime import ActProposer
+  proposer = ActProposer(weights_path, calibration_path, expected_weights_sha256, expected_calibration_sha256)
+  proposal = proposer.propose({'speaker':'USER','utterance':current_text,'earlier_context':[{'speaker':'SYSTEM','text':previous_system_text}]})
+  Nonaccepted positives remain UNKNOWN. Financial authorization always UNKNOWN; bank_authority and ledger_truth are None.
+
+Changed files and exact SHA256:
+  integrations/learned-dialogue/sgd_act_aux_calibration.json (5232 bytes) e4dbde277bd13377c60e7d09785e65e5c93baccd16705ff311b1193f573c1d49
+  integrations/learned-dialogue/sgd_act_aux_runtime.py (6008 bytes) a284bd9f482fc369cdc9fe207a337997f41c94d174cb6c6bb3da745c449778a9
+  integrations/learned-dialogue/sgd_act_aux_train.py (27367 bytes) ba5b2273334c9da9e336a28f6c616e4714d3e4f222797a0b2b63f5885cbbdf00
+  integrations/learned-dialogue/sgd_act_aux_verify.py (9329 bytes) ad918c0e163a75f5dbb2e6f10d0bfeda1ab4e981ac7fc0c29f75ab2b7f4e5be7
+  integrations/learned-dialogue/sgd_act_aux_weights.json (359899 bytes) 0c0f1b11d2e66dfeb06edc5ac57001c51616e685b5679d014f1892392e1edf46
+  analysis/sgd-act-aux-calibration-frozen.json (462 bytes) 119425ab6ff7e4bafb6a3d1d157c62a4ab0bcaa642acacd15520a0ef7afe7f8b
+  analysis/sgd-act-aux-receipt.json (2234 bytes) c9c26deef743c5eec7b67c1fef7186858790ffa038374473d19b15e9a8862725
+  analysis/sgd-act-aux-report.json (48506 bytes) c129634776ecec9e44fab4ccd13ffa40bd1fa6fe08c14352bab15de4cfe77a1f
+  analysis/sgd-act-aux-run-plan.json (3811 bytes) e70d562aed0cfed5badc1540b9078b518099ffb18195793f116e361887b49149
+  analysis/sgd-act-aux-verification.json (1166 bytes) 9371ea15b0307952ae43063ff583a96fd16a57afc695574071d4b22a0863b8ad
+  analysis/sgd-act-aux-weights-frozen.json (13766 bytes) 0846ac36fb2a9ef9bd1c5462e3de657d31317d3590f24aae418ffc531b8216ac
+
+Raw matrices/targets/scores are under ignored local-runs/customer-benchmark-sgd-act-aux/; their hashes are in the report.
+No changes made to Hooke repayment files, frozen existing files, builder/data/Freya/Git/keys/Modal.

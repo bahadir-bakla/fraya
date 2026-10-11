@@ -2,6 +2,8 @@
 import argparse, codecs, contextlib, datetime, getpass, hashlib, json, os, pathlib, queue, re, shutil, signal, subprocess, sys, threading, time, tomllib, uuid
 from validation import validate,validate_coverage
 from transcripts import compact_messages
+from semantic_assist import PROMPT_NOTICE, child_env, python_executable, validate_result
+from dialogue_assist import NOTICE as DIALOGUE_NOTICE, PINS as DIALOGUE_PINS, validate_result as validate_dialogue_result
 
 ROOT=pathlib.Path(__file__).resolve().parent
 KIT=ROOT.parent/'build-the-builder 2'
@@ -113,9 +115,11 @@ class Run:
     def elapsed(self):return max(time.monotonic()-self.start,time.time()-datetime.datetime.fromisoformat(self.status['started']).timestamp())
     def prepare(self):
         source=self.path/('builder-source-resume' if self.args.resume_run else 'builder-source');source.mkdir(exist_ok=True)
-        for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py'):
+        source_names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py')
+        for name in source_names:
             shutil.copyfile(ROOT/name,source/name)
-        self.event('builder_source',sha256={name:hashlib.sha256((source/name).read_bytes()).hexdigest() for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py')})
+        self.event('builder_source',sha256={name:hashlib.sha256((source/name).read_bytes()).hexdigest() for name in source_names})
+        self.builder_source=source
         inputs=self.work/'inputs';inputs.mkdir(exist_ok=bool(self.args.resume_run))
         self.sources=[]
         for i,source in enumerate(self.args.briefs):
@@ -152,9 +156,81 @@ class Run:
             self.feedback=[{'practice_repair_from':seed_id,'previous_status':prior,'read_files':feedback_files,'instruction':'Repair this same public practice candidate using actual call events and score failures. Read all feedback. Extractor output must provide every field consumed by code, with raw-speech fallback. If the dialogue ignores dynamic instructions, use the documented tts on_enter with a computed literal customer sentence for each state, not imperative meta-instructions. No invented bank success or debt before verified. Preserve all brief rules.'}]
             self.event('practice_seed',source_run=seed_id,artifact_sha256={name:hashlib.sha256((self.work/name).read_bytes()).hexdigest() for name in ('workflow.json','policy.json','coverage.json')},feedback_files=feedback_files)
         self.api=json.loads((inputs/'openapi.json').read_text())
+        self.api_sha256=hashlib.sha256((inputs/'openapi.json').read_bytes()).hexdigest()
         schema={'type':'object','properties':{key:{'type':'string'} for key in ('workflow_file','policy_file','coverage_file','summary')},'required':['workflow_file','policy_file','coverage_file','summary'],'additionalProperties':False}
         write_json(self.path/'response.schema.json',schema)
         self.event('inputs',briefs=self.sources,tool_api_sha256=hashlib.sha256((inputs/'openapi.json').read_bytes()).hexdigest())
+        self.prepare_semantic_assist()
+    def prepare_semantic_assist(self):
+        mode=getattr(self.args,'semantic_assist','auto')
+        self.semantic_ready=False
+        # A resumed classic build must never consume a stale enhanced index.
+        for name in ('semantic-evidence.json','semantic-evidence.txt'):
+            (self.work/name).unlink(missing_ok=True)
+        if mode=='off':
+            self.status['semantic_assist']={'mode':'off','status':'disabled'}
+            self.event('semantic_assist',**self.status['semantic_assist']);return
+        seconds=min(60,max(0,self.remaining()-120))
+        try:
+            if seconds<5:raise TimeoutError('Insufficient navigation budget')
+            repo=ROOT.parent
+            runtime=repo/'integrations/learned-dialogue/day2_pretrained_runtime.py'
+            snapshot=self.builder_source/'day2_pretrained_runtime.py'
+            shutil.copyfile(runtime,snapshot)
+            runtime_sha=hashlib.sha256(snapshot.read_bytes()).hexdigest()
+            request={'repo':str(repo),'work':str(self.work),'sources':self.sources,
+                     'head':str(repo/'integrations/learned-dialogue/day2_pretrained_head.json'),
+                     'runtime':str(snapshot),'runtime_sha256':runtime_sha,'seconds':seconds}
+            write_json(self.path/'semantic-request.json',request)
+            command=[python_executable(getattr(self.args,'semantic_python',None)),'-I','-B',
+                     str(self.builder_source/'semantic_assist.py'),'--request',str(self.path/'semantic-request.json')]
+            self.child(command,timeout=seconds,env=child_env(os.environ),log_name='semantic-assist.log',purpose='Local pinned MiniLM evidence navigation')
+            result=json.loads((self.work/'semantic-evidence.json').read_text(encoding='utf-8'))
+            head=json.loads((repo/'integrations/learned-dialogue/day2_pretrained_head.json').read_text(encoding='utf-8'))
+            validate_result(result,self.sources,work=self.work,runtime_sha256=runtime_sha,encoder_files=head['encoder']['files'])
+            self.semantic_hashes={name:hashlib.sha256((self.work/name).read_bytes()).hexdigest() for name in ('semantic-evidence.json','semantic-evidence.txt')}
+            self.semantic_ready=True
+            self.status['semantic_assist']={'mode':mode,'status':'ready','bank_authority':False,
+                                           'elapsed_seconds':result['elapsed_seconds'],'chunks':len(result['chunks']),
+                                           'head_sha256':result['head_sha256'],'runtime_sha256':runtime_sha,
+                                           'artifact_sha256':self.semantic_hashes}
+        except (OSError,ValueError,KeyError,RuntimeError,TimeoutError) as error:
+            for name in ('semantic-evidence.json','semantic-evidence.txt'):(self.work/name).unlink(missing_ok=True)
+            self.status['semantic_assist']={'mode':mode,'status':'unavailable','error_type':type(error).__name__}
+            self.event('semantic_assist',**self.status['semantic_assist'])
+            if mode=='required':raise RuntimeError('Required local MiniLM navigation is unavailable') from None
+            return
+        self.event('semantic_assist',**self.status['semantic_assist'])
+    def prepare_dialogue_assist(self):
+        self.dialogue_ready=False
+        (self.work/'dialogue-evidence.json').unlink(missing_ok=True)
+        mode=getattr(self.args,'dialogue_assist','auto')
+        if mode=='off' or getattr(self.args,'semantic_assist','auto')=='off':return
+        calls=self.work/'failed-calls.json'
+        if not calls.exists():calls=self.work/'previous-failed-calls.json'
+        if not calls.exists():return
+        try:
+            if self.remaining()<125:raise TimeoutError('Insufficient diagnostic budget')
+            bundle=self.builder_source/'source-act-model';bundle.mkdir(exist_ok=True)
+            for name,digest in DIALOGUE_PINS.items():
+                original=ROOT.parent/'integrations/learned-dialogue'/name
+                if hashlib.sha256(original.read_bytes()).hexdigest()!=digest:raise ValueError('Source-act model changed')
+                shutil.copyfile(original,bundle/name)
+            request={'calls':str(calls),'calls_sha256':hashlib.sha256(calls.read_bytes()).hexdigest(),
+                     'bundle':str(bundle),'output':str(self.work/'dialogue-evidence.json')}
+            write_json(self.path/'dialogue-request.json',request)
+            self.child([sys.executable,'-I','-B',str(self.builder_source/'dialogue_assist.py'),'--request',str(self.path/'dialogue-request.json')],
+                       timeout=5,env=child_env(os.environ),log_name='dialogue-assist.log',purpose='Observed source-act hypotheses for repair')
+            result=json.loads((self.work/'dialogue-evidence.json').read_text(encoding='utf-8'))
+            validate_dialogue_result(result,request)
+            self.dialogue_hash=hashlib.sha256((self.work/'dialogue-evidence.json').read_bytes()).hexdigest()
+            self.dialogue_ready=True
+            self.event('dialogue_assist',status='ready',turns=len(result['rows']),model_pins=DIALOGUE_PINS,
+                       source_sha256=request['calls_sha256'],artifact_sha256=self.dialogue_hash,bank_authority=False)
+        except (OSError,ValueError,KeyError,RuntimeError,TimeoutError) as error:
+            (self.work/'dialogue-evidence.json').unlink(missing_ok=True)
+            self.event('dialogue_assist',status='unavailable',error_type=type(error).__name__)
+            if mode=='required':raise RuntimeError('Required dialogue diagnostics unavailable') from None
     def child(self,command,*,timeout,env=None,stdin=None,log_name='command.jsonl',purpose='command'):
         end=time.monotonic()+min(timeout,self.remaining())
         wall_end=time.time()+min(timeout,self.remaining())
@@ -218,6 +294,10 @@ class Run:
         if proc.returncode:raise RuntimeError(f'{purpose} failed (exit {proc.returncode}): '+'\n'.join(lines[-8:])[:3000])
         return lines
     def model(self,round_number):
+        self.prepare_dialogue_assist()
+        if getattr(self,'semantic_ready',False):
+            if any(hashlib.sha256((self.work/name).read_bytes()).hexdigest()!=digest for name,digest in self.semantic_hashes.items()):
+                raise ValueError('Semantic evidence changed after its pinned generation')
         repairing=round_number!=1 or bool(getattr(self.args,'practice_repair',None))
         self.phase('model_repair' if repairing else 'model_build',round=round_number)
         purpose='Repair validation or official-case failures in generated artifacts' if repairing else 'Build the phone agent from evidence'
@@ -227,6 +307,8 @@ The output contract is workflow.json, policy.json and coverage.json in this curr
 Round {round_number}. Remaining full build budget: {int(self.remaining())} seconds. You have at most {model_seconds} seconds for this model step. Finish the artifact contract promptly after the essential checks; the host still needs time for real platform tests. Keep the graph efficient and code facts explicit. Read every evidence rule. You may generate JSON programmatically with Python but do not edit inputs. Put all helper scripts inside this workdir, not in /tmp.
 Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=False)}
 '''
+        if getattr(self,'semantic_ready',False):prompt+='\n'+PROMPT_NOTICE
+        if getattr(self,'dialogue_ready',False):prompt+='\n'+DIALOGUE_NOTICE
         (self.path/f'prompt-{round_number}.txt').write_text(prompt)
         profile=model_permissions(os.environ)
         command=['codex','exec','--ignore-user-config','--skip-git-repo-check','--ephemeral','--config','default_permissions='+profile,'--config','approval_policy=never','--json','--color','never','--output-schema',str(self.path/'response.schema.json'),'--output-last-message',str(self.path/f'answer-{round_number}.json')]
@@ -235,7 +317,9 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
         # The model process never inherits bank or API credentials.
         env={key:value for key,value in os.environ.items() if not any(word in key.upper() for word in ('API_KEY','TEAM_KEY','TOKEN','SECRET','PASSWORD'))}
         self.event('model_call',model=self.args.model or 'Codex CLI default',purpose=purpose,round=round_number,permission_profile=profile)
+        self.check_pinned_evidence()
         self.child(command,timeout=model_seconds,env=env,stdin=prompt,log_name=f'model-{round_number}.jsonl',purpose=purpose)
+        self.check_pinned_evidence()
         answer=json.loads((self.path/f'answer-{round_number}.json').read_text())
         for key,name in [('workflow_file','workflow.json'),('policy_file','policy.json'),('coverage_file','coverage.json')]:
             target=(self.work/answer[key]).resolve()
@@ -243,6 +327,15 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             if target.name!=name:shutil.copyfile(target,self.work/name)
         self.event('model_result',summary=answer.get('summary'),round=round_number)
         return json.loads((self.work/'workflow.json').read_text())
+    def check_pinned_evidence(self):
+        if getattr(self,'semantic_ready',False) and any(hashlib.sha256((self.work/name).read_bytes()).hexdigest()!=digest for name,digest in self.semantic_hashes.items()):
+            raise ValueError('Model changed the pinned semantic evidence')
+        if getattr(self,'dialogue_ready',False) and hashlib.sha256((self.work/'dialogue-evidence.json').read_bytes()).hexdigest()!=self.dialogue_hash:
+            raise ValueError('Model changed the pinned dialogue hypotheses')
+        if any(hashlib.sha256((self.work/s['path']).read_bytes()).hexdigest()!=s['sha256'] for s in self.sources):
+            raise ValueError('Model changed original brief evidence')
+        if hasattr(self,'api_sha256') and hashlib.sha256((self.work/'inputs/openapi.json').read_bytes()).hexdigest()!=self.api_sha256:
+            raise ValueError('Model changed original tool API evidence')
     def publish(self,workflow):
         import freya
         self.phase('validating')
@@ -298,10 +391,12 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             self.feedback.append({'read_file':'failed-calls.json','instruction':'Read actual tool/routing events and dialogue before repairing. Do not hardcode case identities or expected outcomes.'})
         return result
     def execute(self):
-        import freya
-        from bounded_freya import install
-        install(freya,self.remaining,self.event)
-        self.event('run_resume' if self.args.resume_run else 'run_start',model=self.args.model,phone_agent_model=freya.AGENT_LLM,maximum_minutes=self.args.minutes,remaining_seconds=round(self.remaining()))
+        local_only=getattr(self.args,'local_only',False)
+        if not local_only:
+            import freya
+            from bounded_freya import install
+            install(freya,self.remaining,self.event)
+        self.event('run_resume' if self.args.resume_run else 'run_start',model=self.args.model,phone_agent_model=None if local_only else freya.AGENT_LLM,local_only=local_only,maximum_minutes=self.args.minutes,remaining_seconds=round(self.remaining()))
         self.prepare();last_result=None;completed=False
         if self.args.resume_run:
             self.feedback=[{'resume_same_budget':'Continue these generated artifacts in the same run, with unchanged bank evidence and the original deadline. Read the latest model log and fix the actual remaining failure.'}]
@@ -311,7 +406,7 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             if (self.work/'workflow.json').exists():self.feedback.append({'local_validation':validate(json.loads((self.work/'workflow.json').read_text()),self.api)})
             if (self.work/'coverage.json').exists():self.feedback.append({'coverage_validation':validate_coverage(json.loads((self.work/'coverage.json').read_text())),'instruction':'Remove any fallback that weakens mandatory policy guards. A sandbox outage must fail closed; never substitute an unconstrained dialogue/tool model for unavailable financial enforcement. Do not tune business rules to infrastructure-failed scores.'})
         try:
-            if getattr(self.args,'practice_repair',None) and not self.args.skip_tests and not self.args.repair_first:
+            if getattr(self.args,'practice_repair',None) and not self.args.skip_tests and not self.args.repair_first and not local_only:
                 ids=self.publish(json.loads((self.work/'workflow.json').read_text()))
                 last_result=self.test(ids,0)
                 completed=last_result['passed']==last_result['total']
@@ -319,7 +414,14 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
             for number in range(first_round,self.args.rounds+1):
                 if completed or self.remaining()<90:break
                 try:
-                    workflow=self.model(number);ids=self.publish(workflow)
+                    workflow=self.model(number)
+                    if local_only:
+                        errors=validate(workflow,self.api)+validate_coverage(json.loads((self.work/'coverage.json').read_text()))
+                        if errors:raise ValueError(json.dumps({'local_validation':errors},ensure_ascii=False))
+                        self.event('local_validation',status='passed',published=False)
+                        self.status['artifacts']={'workflow':'work/workflow.json','policy':'work/policy.json','coverage':'work/coverage.json','trace':'trace.jsonl'}
+                        completed=True;break
+                    ids=self.publish(workflow)
                 except TimeoutError as error:
                     if self.remaining()<120:raise
                     self.feedback=[{'model_step_timeout':str(error),'existing_artifacts':[name for name in ('workflow.json','policy.json','coverage.json') if (self.work/name).exists()],'read_file':f'../model-{number}.jsonl','instruction':'Continue this same run automatically; inspect already generated artifacts and the last model message, finish essential repairs, then return the required artifact contract. Do not change input evidence.'}]
@@ -331,7 +433,7 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                 if self.remaining()<120:self.event('test_skipped',reason='Insufficient remaining run budget');break
                 last_result=self.test(ids,number)
                 if last_result['passed']==last_result['total']:completed=True;break
-            self.phase('completed' if completed else 'needs_attention',ended=stamp(),evaluation='not_evaluated' if self.args.skip_tests else 'official_practice' if last_result else 'incomplete',latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
+            self.phase('completed' if completed else 'needs_attention',ended=stamp(),evaluation='local_validation_only' if local_only else 'not_evaluated' if self.args.skip_tests else 'official_practice' if last_result else 'incomplete',published=False if local_only else bool(self.status.get('freya')),latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
         except Exception as error:
             self.phase('failed',ended=stamp(),error=self.clean(str(error)))
             raise
@@ -348,12 +450,16 @@ def arguments():
     parser.add_argument('--brief',help='Case group in the provided test set; public A/B groups are inferred from their exact evidence')
     parser.add_argument('--only');parser.add_argument('--style',choices=['pieces','corrects','talkative','asks_back','in_words'])
     parser.add_argument('--skip-tests',action='store_true');parser.add_argument('--model',default=os.environ.get('BUILDER_MODEL'))
+    parser.add_argument('--semantic-assist',choices=['auto','off','required'],default='auto',help='Local pinned MiniLM evidence navigation; off preserves the classic builder')
+    parser.add_argument('--semantic-python',help='Python executable containing torch/transformers; also accepts MINILM_PYTHON environment variable')
+    parser.add_argument('--dialogue-assist',choices=['auto','off','required'],default='auto',help='Generic source-act repair diagnostics; classic semantic off disables this too')
+    parser.add_argument('--local-only',action='store_true',help='Generate and locally validate without credentials, Freya publication or simulation')
     parser.add_argument('--practice-repair',help='New explicitly logged practice cycle from a stopped public-brief run; never permitted for unseen briefs')
     parser.add_argument('--repair-first',action='store_true',help='With public practice repair, use the existing failed-call evidence before rerunning the candidate')
     parser.add_argument('--resume-run',help='Continue a stopped run with identical evidence and its original total time budget')
     args=parser.parse_args()
     if args.repair_first and not args.practice_repair:parser.error('--repair-first requires --practice-repair')
-    try:validate_case_scope(args.briefs,args.cases,args.skip_tests)
+    try:validate_case_scope(args.briefs,args.cases,args.skip_tests or args.local_only)
     except ValueError as error:parser.error(str(error))
     if args.resume_run and args.practice_repair:parser.error('Use either same-budget resume or a separate public practice repair cycle')
     if not 0<args.minutes<=30:parser.error('Each build is limited to 30 minutes.')
@@ -367,8 +473,8 @@ def arguments():
 def main():
     args=arguments()
     if not os.environ.get('SSL_CERT_FILE') and pathlib.Path('/etc/ssl/cert.pem').exists():os.environ['SSL_CERT_FILE']='/etc/ssl/cert.pem'
-    if not os.environ.get('FREYA_API_KEY'):os.environ['FREYA_API_KEY']=getpass.getpass('Freya API key (hidden, session memory only): ')
-    if not os.environ.get('FREYA_BANK_TEAM_KEY'):
+    if not args.local_only and not os.environ.get('FREYA_API_KEY'):os.environ['FREYA_API_KEY']=getpass.getpass('Freya API key (hidden, session memory only): ')
+    if not args.local_only and not os.environ.get('FREYA_BANK_TEAM_KEY'):
         # Non-authenticating namespace token for synthetic practice data. Stable across runs, never serialized to traces.
         os.environ['FREYA_BANK_TEAM_KEY']='freya-practice-'+hashlib.sha256(os.environ['FREYA_API_KEY'].encode()).hexdigest()[:32]
     sys.path.insert(0,str(KIT))
@@ -380,7 +486,9 @@ def main():
             awake=subprocess.Popen(['caffeinate','-i','-t',str(int(args.minutes*60)),'-w',str(os.getpid())],stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,env={key:value for key,value in os.environ.items() if not any(word in key.upper() for word in ('KEY','TOKEN','SECRET','PASSWORD'))})
             run.event('idle_sleep_guard',scope='This builder process only; bounded by the run maximum')
         try:success=run.execute()
-        except Exception as error:print(run.clean(str(error)),file=sys.stderr);return 1
+        except Exception as error:
+            if run.status.get('phase')!='failed':run.phase('failed',ended=stamp(),error=run.clean(str(error)))
+            print(run.clean(str(error)),file=sys.stderr);return 1
         finally:
             if awake and awake.poll() is None:awake.terminate()
         return 0 if success else 2

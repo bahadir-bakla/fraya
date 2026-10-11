@@ -1,0 +1,32 @@
+{
+  "definitions": {
+    "correction": "Current speaker replaces/retracts an interpretation or prior term; not merely mentioning somebody else corrected something.",
+    "current_affirm": "Current affirmative response to an observed question/readback/request, including recipient/admin scope. It is not a financial authorization label.",
+    "current_withdraw": "Current retraction/suspension of previously expressed permission or arrangement. First refusal without a prior grant is separate and is not this label.",
+    "dispute": "Current speaker contests liability, ownership, amount or a claimed payment/account fact; may coexist with willingness to pay.",
+    "proposal": "Current speaker makes or revises an own payment intention/commitment; completion/value resolution separate. Hypothetical and solely reported commitments are not own proposals.",
+    "reported_third_party": "Speaker attributes relevant statements/intention to another person or institution rather than adopting all of them as own current intent.",
+    "uncertain": "Conditional, hypothetical, tentative, incomplete or referentially ambiguous relevant content. Does not mechanically blank complete unrelated acts."
+  },
+  "feature_allowlist": [
+    "input.previous_utterances[].speaker",
+    "input.previous_utterances[].text",
+    "input.current_utterance.speaker",
+    "input.current_utterance.text"
+  ],
+  "heads": [
+    "proposal",
+    "dispute",
+    "correction",
+    "current_affirm",
+    "current_withdraw",
+    "uncertain",
+    "reported_third_party"
+  ],
+  "multi_label": true,
+  "negative_negation": "I am not asking you to stop is not a withdrawal; scoped no/not must not blank unrelated acts.",
+  "reported_scope": "Third-party reports do not imply a current own promise or consent.",
+  "scope": "semantic proposals only; affirmative includes admin/identity and never bank permission; model scores cannot authenticate input or authorize any bank write",
+  "unknown_mask": "False means unlabelled for this head, NOT negative. Numeric/date/target resolution and authority heads remain UNKNOWN.",
+  "version": 1
+}

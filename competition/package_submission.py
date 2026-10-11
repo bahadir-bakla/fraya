@@ -11,6 +11,7 @@ def main():
         if not re.fullmatch(r'[A-Za-z0-9_-]+',ident):parser.error('Invalid run ID')
         run=ROOT/'runs'/ident;status=json.loads((run/'status.json').read_text())
         if status['phase'] not in {'completed','needs_attention'}:parser.error('Wait for every run to finish before packaging.')
+        if status.get('evaluation')=='local_validation_only' or status.get('published') is False:parser.error('Local-only builds have no platform export; select a published run.')
         if status.get('within_30_minutes') is False:parser.error('A selected run exceeds the 30-minute limit; retain it as diagnostic provenance, not as the submission run.')
         export=run/status.get('artifacts',{}).get('workflow','missing')
         if not export.is_file():parser.error('A run has no matching Freya platform export.')
@@ -18,8 +19,12 @@ def main():
     output=pathlib.Path(args.output).resolve() if args.output else ROOT/'submissions'/((ids[0] if len(ids)==1 else 'freya-hackathon-demo')+'.zip')
     output.parent.mkdir(parents=True,exist_ok=True)
     files=[]
-    for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','server.py','package_submission.py','README.md'):
+    for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','semantic_assist.py','dialogue_assist.py','setup_minilm.py','server.py','package_submission.py','README.md'):
         files.append((ROOT/name,'competition/'+name))
+    # The optional encoder is installed separately using its exact public pins.
+    for name in ('day2_pretrained_head.json','day2_pretrained_runtime.py','sgd_act_aux_runtime.py','sgd_act_aux_weights.json','sgd_act_aux_calibration.json'):
+        file=ROOT.parent/'integrations/learned-dialogue'/name
+        files.append((file,'integrations/learned-dialogue/'+name))
     for directory in ('skills','tests','web'):
         files.extend((file,'competition/'+str(file.relative_to(ROOT))) for file in (ROOT/directory).rglob('*') if file.is_file() and '__pycache__' not in file.parts)
     ancestry=[];pending=[ROOT/'runs'/ident for ident in ids];seen=set()

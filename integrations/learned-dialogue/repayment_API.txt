@@ -1,0 +1,45 @@
+Frozen repayment semantic APIs — experimental builder diagnostics only
+
+Load modules from the absolute integrations/learned-dialogue directory; pin
+repayment_bridge.py and every dependency against repayment_plan.json's source
+hashes before importing. Exact reviewed plan/freeze and artifact digests are in
+analysis/repayment-model-bridge-handoff.json. Always use the absolute paths in
+that handoff, and compare the expected SHA256 before decoding any artifact.
+
+from repayment_bridge import RepaymentTaskTeacher, RepaymentStudent
+
+Teacher constructor:
+  RepaymentTaskTeacher(state_path, state_sha256, plan_path, plan_sha256,
+                       calibrator_path, calibrator_sha256)
+  teacher.predict([input_snapshot, ...])
+This uses fresh 384->7 task weights with the pinned local MiniLM encoder. It
+loads safetensors only on CPU, local_files_only=True, token=False and
+trust_remote_code=False. The encoder has ZERO gradient updates. No old
+Banking77 classifier weights/temperature are used as task labels. The91MB
+encoder stays offline/builder-side; it is absent from portable inference.
+
+Compact student constructor:
+  RepaymentStudent(model_path, model_sha256, calibrator_path,
+                   calibrator_sha256)
+  student.proposal(input_snapshot, evidence_refs=None)
+  student.predict([input_snapshot, ...])
+Core repayment_runtime.py uses stdlib only; the student has33031 float32
+parameters. Both models+runtime are under182KB. The hard student and distilled
+student are frozen alternatives, not an ensemble or permission controller.
+
+Input snapshot, exactly:
+  {"current_utterance": {"speaker": "USER", "text": "observed user text"},
+   "previous_utterances": [{"speaker": "SYSTEM", "text": "observed question"}]}
+Use chronological observed turns, at most last2, no label/phase metadata. Values
+must be strings, never coerced dict/list/boolean fields. Caller context is not
+proof of authentic, lossless, fresh live speech. Caller evidence refs likewise
+are descriptive only. All proposals have bank_authority=false and abstain=true.
+Completion, target, canonical terms, identity, permission and receipts remain
+outside this seven-head classifier. CAL flags express support, not safety.
+
+Executed exactly once: teacher200epochs, each student400; total18.406s.
+86TRAIN rows/18canonical roots,24CAL/6roots,24heldout/6roots, one unknown TRAIN
+label element preserved. Heldout macroF1 teacher44.76%, both students7.79%.
+Students overfit TRAIN; no measured classification improvement from distillation.
+No refit, best-checkpoint selection, fresh qualification, ASR/Freya or external
+inference claim. Parent-owned builder integration should remain opt-in diagnostics.

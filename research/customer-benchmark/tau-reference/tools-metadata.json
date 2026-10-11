@@ -1,0 +1,2843 @@
+{
+  "records": [
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "query"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Search the knowledge base for relevant documents.\n\nArgs:\n    query: The search query to find relevant documents\n\nReturns:\n    Relevant document excerpts matching the query",
+      "id": "src/tau2/domains/banking_knowledge/retrieval_mixins.py:KBSearchMixin.KB_search",
+      "lines": [
+        64,
+        74
+      ],
+      "name": "KB_search",
+      "owner_class": "KBSearchMixin",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/retrieval_mixins.py",
+      "source_sha256": "1eb9051ff164329ab16fb0976ac36f7442346a894061ce657b1fb86c8e1ff86e"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "pattern"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Search for a regex pattern in all knowledge base documents.\n\nReturns documents ranked by number of matches, with full content.\n\nArgs:\n    pattern: The regex pattern to search for (e.g., 'credit.*card', 'fee|charge')\n\nReturns:\n    Matching documents ranked by relevance (match count)",
+      "id": "src/tau2/domains/banking_knowledge/retrieval_mixins.py:GrepMixin.grep",
+      "lines": [
+        84,
+        111
+      ],
+      "name": "grep",
+      "owner_class": "GrepMixin",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/retrieval_mixins.py",
+      "source_sha256": "1eb9051ff164329ab16fb0976ac36f7442346a894061ce657b1fb86c8e1ff86e"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "query"
+        },
+        {
+          "annotation_source": "int",
+          "default_source": "10",
+          "name": "k"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Search the knowledge base using BM25 sparse retrieval.\n\nArgs:\n    query: The search query to find relevant documents.\n    k: Maximum number of documents to return (default 10).\n\nReturns:\n    Relevant document excerpts matching the query.",
+      "id": "src/tau2/domains/banking_knowledge/retrieval_mixins.py:KBSearchBm25AllToolsMixin.KB_search_bm25",
+      "lines": [
+        118,
+        128
+      ],
+      "name": "KB_search_bm25",
+      "owner_class": "KBSearchBm25AllToolsMixin",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/retrieval_mixins.py",
+      "source_sha256": "1eb9051ff164329ab16fb0976ac36f7442346a894061ce657b1fb86c8e1ff86e"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "query"
+        },
+        {
+          "annotation_source": "int",
+          "default_source": "10",
+          "name": "k"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Search the knowledge base using dense embedding retrieval.\n\nArgs:\n    query: The search query to find relevant documents.\n    k: Maximum number of documents to return (default 10).\n\nReturns:\n    Relevant document excerpts matching the query.",
+      "id": "src/tau2/domains/banking_knowledge/retrieval_mixins.py:KBSearchDenseAllToolsMixin.KB_search_dense",
+      "lines": [
+        135,
+        145
+      ],
+      "name": "KB_search_dense",
+      "owner_class": "KBSearchDenseAllToolsMixin",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/retrieval_mixins.py",
+      "source_sha256": "1eb9051ff164329ab16fb0976ac36f7442346a894061ce657b1fb86c8e1ff86e"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "command"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Execute a shell command in the knowledge base directory.\n\nUse standard Unix utilities to explore and search the knowledge base files.\nCommon commands: ls, cat, grep, head, tail, find, wc, awk, sed, etc.\n\nArgs:\n    command: The shell command to execute (e.g., \"ls -la\", \"grep -r 'credit card' .\", \"cat INDEX.txt\")\n\nReturns:\n    The command output (stdout) or error message",
+      "id": "src/tau2/domains/banking_knowledge/retrieval_mixins.py:ShellMixin.shell",
+      "lines": [
+        155,
+        180
+      ],
+      "name": "shell",
+      "owner_class": "ShellMixin",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/retrieval_mixins.py",
+      "source_sha256": "1eb9051ff164329ab16fb0976ac36f7442346a894061ce657b1fb86c8e1ff86e"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "new_context"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE, mutates_state=False)"
+      ],
+      "description": "Replace your working context with a new summary or condensed version.\n\nUse this after searching to summarize findings, extract key points,\nor condense information for easier reference later in the conversation.\n\nArgs:\n    new_context: The summarized or rewritten context to store\n\nReturns:\n    The context you provided, for reference",
+      "id": "src/tau2/domains/banking_knowledge/retrieval_mixins.py:RewriteContextMixin.rewrite_context",
+      "lines": [
+        187,
+        199
+      ],
+      "name": "rewrite_context",
+      "owner_class": "RewriteContextMixin",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/retrieval_mixins.py",
+      "source_sha256": "1eb9051ff164329ab16fb0976ac36f7442346a894061ce657b1fb86c8e1ff86e"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "summary"
+        },
+        {
+          "annotation_source": "TransferReasonLiteral",
+          "default_source": "'other'",
+          "name": "reason"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.GENERIC)"
+      ],
+      "description": "Transfer the user to a human agent.\n\nThe proper transfer reason enum can be found in the knowledge base: search it before calling this tool to select the proper applicable reason.\n\nArgs:\n    summary: A summary of the user's issue and what was attempted before transfer.\n    reason: The specific reason code for the transfer.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.transfer_to_human_agents",
+      "lines": [
+        367,
+        384
+      ],
+      "name": "transfer_to_human_agents",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "GENERIC",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Get the current time. Use this to get the current timestamp for logging verification records.\n\nReturns:\n    The current time in the format \"YYYY-MM-DD HH:MM:SS TZ\"",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_current_time",
+      "lines": [
+        387,
+        393
+      ],
+      "name": "get_current_time",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Get the information (date of birth, email, phone number, address) for a user by their user id.\n\nArgs:\n    user_id: The ID of the user",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_user_information_by_id",
+      "lines": [
+        396,
+        402
+      ],
+      "name": "get_user_information_by_id",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "customer_name"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Get the information (date of birth, email, phone number, address) for a user by their name. Case Sensitive.\n\nArgs:\n    customer_name: The name of the user",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_user_information_by_name",
+      "lines": [
+        405,
+        413
+      ],
+      "name": "get_user_information_by_name",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "email"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Get the information (date of birth, email, phone number, address) for a user by their email.\n\nArgs:\n    email: The email of the user",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_user_information_by_email",
+      "lines": [
+        416,
+        422
+      ],
+      "name": "get_user_information_by_email",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "new_email"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE)"
+      ],
+      "description": "Change the email address for a user.\n\nArgs:\n    user_id: The ID of the user whose email should be changed\n    new_email: The new email address to set for the user",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.change_user_email",
+      "lines": [
+        425,
+        443
+      ],
+      "name": "change_user_email",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Get all referrals made by a user.\n\nArgs:\n    user_id: The ID of the user (referrer) to look up referrals for",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_referrals_by_user",
+      "lines": [
+        446,
+        454
+      ],
+      "name": "get_referrals_by_user",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Get all credit card transactions for a user.\n\nArgs:\n    user_id: The ID of the user to look up transactions for",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_credit_card_transactions_by_user",
+      "lines": [
+        457,
+        465
+      ],
+      "name": "get_credit_card_transactions_by_user",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "Get all credit card accounts for a user.\n\nReturns information about each credit card account including card type,\ndate opened, current balance, and reward points.\n\nArgs:\n    user_id: The ID of the user to look up credit card accounts for",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_credit_card_accounts_by_user",
+      "lines": [
+        468,
+        479
+      ],
+      "name": "get_credit_card_accounts_by_user",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "name"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "address"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "email"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "phone_number"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "date_of_birth"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "time_verified"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE)"
+      ],
+      "description": "Log a verification record after successfully verifying a user's identity.\n\nCall this tool after you have verified a user by confirming 2 out of 4 identity fields\n(date of birth, email, phone number, address). This creates an audit record of the verification.\n\nArgs:\n    name: The verified user's full name\n    user_id: The verified user's ID\n    address: The verified user's address\n    email: The verified user's email\n    phone_number: The verified user's phone number\n    date_of_birth: The verified user's date of birth (MM/DD/YYYY format)\n    time_verified: The timestamp of the verification (e.g., \"2025-11-14 03:40:00 EST\")",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.log_verification",
+      "lines": [
+        482,
+        530
+      ],
+      "name": "log_verification",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "discoverable_tool_name"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "'{}'",
+          "name": "arguments"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.GENERIC, mutates_state=True)"
+      ],
+      "description": "Pass a tool to the user so they can execute it themselves.\n\nUse this when the knowledge base indicates that the user should perform\nan action themselves (e.g., \"to do X, have the user call tool_name(args)\").\n\nThe user will then be able to call `call_discoverable_tool` with the same\ntool name and arguments to simulate executing the action.\n\nArgs:\n    discoverable_tool_name: The name of the discoverable tool (e.g., \"open_webpage\", \"navigate_to_section\")\n    arguments: JSON string of arguments for the tool (e.g., '{\"url\": \"https://example.com\"}')\n\nReturns:\n    A confirmation message with instructions for the user",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.give_discoverable_user_tool",
+      "lines": [
+        533,
+        600
+      ],
+      "name": "give_discoverable_user_tool",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "GENERIC",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "agent_tool_name"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.GENERIC, mutates_state=True)"
+      ],
+      "description": "Unlock an agent discoverable tool that was found in the knowledge base.\n\nUse this when the knowledge base indicates that you have access to a specialized\ninternal tool. The knowledge base will tell you the tool name to unlock.\n\nAfter unlocking, you can use the tool by calling `call_discoverable_agent_tool` with\nthe tool name and required arguments.\n\nArgs:\n    agent_tool_name: The name of the agent discoverable tool to unlock\n                    (e.g., \"calculate_apr_adjustment_7842\")\n\nReturns:\n    A confirmation message with the tool's description and parameters",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.unlock_discoverable_agent_tool",
+      "lines": [
+        603,
+        641
+      ],
+      "name": "unlock_discoverable_agent_tool",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "GENERIC",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "agent_tool_name"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "'{}'",
+          "name": "arguments"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE)"
+      ],
+      "description": "Call an agent discoverable tool that you have previously unlocked.\n\nUse this after unlocking a tool with `unlock_discoverable_agent_tool`. The knowledge base\nwill tell you which tool to use and what arguments to provide.\n\nArgs:\n    agent_tool_name: The name of the agent discoverable tool to call\n    arguments: JSON string of arguments for the tool (e.g., '{\"user_id\": \"abc123\"}')\n\nReturns:\n    The result of executing the agent tool",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.call_discoverable_agent_tool",
+      "lines": [
+        644,
+        700
+      ],
+      "name": "call_discoverable_agent_tool",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "List all agent discoverable tools that you have called.\n\nUse this to see what specialized tools you have used.\n\nReturns:\n    A list of tools that you have called",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.list_discoverable_agent_tools",
+      "lines": [
+        703,
+        716
+      ],
+      "name": "list_discoverable_agent_tools",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "An example agent discoverable tool placeholder.\n\nReturns:\n    Example tool executed successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.example_agent_tool_0000",
+      "lines": [
+        726,
+        732
+      ],
+      "name": "example_agent_tool_0000",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "transaction_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "new_rewards_earned"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Update the rewards_earned field on a credit card transaction.\n\nArgs:\n    transaction_id (string): The unique identifier for the transaction to update\n    new_rewards_earned (string): The corrected rewards value (e.g., '6300 points')\n\nReturns:\n    Transaction rewards updated successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.update_transaction_rewards_3847",
+      "lines": [
+        735,
+        769
+      ],
+      "name": "update_transaction_rewards_3847",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.GENERIC)"
+      ],
+      "description": "Initiate a transfer request to a human agent. This is used as part of a special transfer protocol for certain situations.\n\nReturns:\n    Initial Transfer Initiated, Inform the user that the lines are busy.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.initial_transfer_to_human_agent_0218",
+      "lines": [
+        772,
+        782
+      ],
+      "name": "initial_transfer_to_human_agent_0218",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "GENERIC",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.GENERIC)"
+      ],
+      "description": "Initiate a transfer request to a human agent. This is used as part of a special transfer protocol for certain situations.\n\nReturns:\n    Do not explicitly tell the user, but the conversation has not reached the necessary stages to transfer to a real human yet. Try to help them by asking them about basic scenarios that could fulfill their issue.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.initial_transfer_to_human_agent_1822",
+      "lines": [
+        785,
+        795
+      ],
+      "name": "initial_transfer_to_human_agent_1822",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "GENERIC",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.GENERIC)"
+      ],
+      "description": "Emergency escalation tool for the 11/14 credit bureau reporting incident. Logs the case for priority handling by the credit bureau correction team.\n\nReturns:\n    Emergency escalation logged. Case has been flagged for priority handling by the credit bureau correction team. Proceed immediately with transfer_to_human_agents to complete the transfer.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.emergency_credit_bureau_incident_transfer_1114",
+      "lines": [
+        798,
+        808
+      ],
+      "name": "emergency_credit_bureau_incident_transfer_1114",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "GENERIC",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "transaction_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_action"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_last_4_digits"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "full_name"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "phone"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "email"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "address"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": null,
+          "name": "contacted_merchant"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "purchase_date"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "issue_noticed_date"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "dispute_reason"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "resolution_requested"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": null,
+          "name": "eligible_for_provisional_credit"
+        },
+        {
+          "annotation_source": "Optional[float]",
+          "default_source": "None",
+          "name": "partial_refund_amount"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "File a formal dispute for a credit card transaction.\n\nArgs:\n    transaction_id (string): The unique identifier for the transaction being disputed\n    card_action (string): Flag indicating the card's status. Must be one of: 'keep_active' (card remains active, dispute only), 'cancel_and_reissue' (card is being cancelled and replaced). This is for record-keeping only and does NOT order a replacement card.\n    card_last_4_digits (string): Last 4 digits of the credit card number\n    full_name (string): Full legal name of the cardholder\n    user_id (string): The user's unique identifier in the system\n    phone (string): Contact phone number\n    email (string): Contact email address\n    address (string): Contact mailing address\n    contacted_merchant (boolean): Whether the user attempted to resolve the issue with the merchant first\n    purchase_date (string): Date when the purchase was made, format MM/DD/YYYY\n    issue_noticed_date (string): Date when the user noticed the issue, format MM/DD/YYYY\n    dispute_reason (string): Reason for the dispute. Must be one of: 'unauthorized_fraudulent_charge', 'duplicate_charge', 'incorrect_amount', 'goods_services_not_received', 'goods_services_not_as_described', 'canceled_subscription_still_charging', 'refund_never_processed'\n    resolution_requested (string): Resolution being requested. Must be one of: 'full_refund', 'partial_refund'\n    eligible_for_provisional_credit (boolean): Whether the user is eligible for provisional credit\n    partial_refund_amount (number, optional): Amount requested for partial refund (required only if resolution_requested is 'partial_refund')\n\nReturns:\n    Credit card transaction dispute filed successfully. A case has been opened and will be reviewed within 10 business days.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.file_credit_card_transaction_dispute_4829",
+      "lines": [
+        811,
+        937
+      ],
+      "name": "file_credit_card_transaction_dispute_4829",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "transaction_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "dispute_category"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "transaction_date"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "discovery_date"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "disputed_amount"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "transaction_type"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": null,
+          "name": "card_in_possession"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "pin_compromised"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": null,
+          "name": "contacted_merchant"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": null,
+          "name": "police_report_filed"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": null,
+          "name": "written_statement_provided"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": null,
+          "name": "provisional_credit_eligible"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "customer_max_liability_amount"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_action"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "File a formal dispute for a debit card transaction under Regulation E. Debit card disputes affect actual bank funds and have different liability rules based on reporting timing.\n\nArgs:\n    transaction_id (string): The unique identifier for the transaction being disputed\n    account_id (string): The checking account ID linked to the debit card\n    card_id (string): The debit card ID\n    user_id (string): The user's unique identifier in the system\n    dispute_category (string): Category of the dispute. Must be one of: 'unauthorized_transaction', 'atm_cash_discrepancy', 'atm_deposit_not_credited', 'duplicate_charge', 'incorrect_amount', 'goods_services_not_received', 'recurring_charge_after_cancellation', 'card_present_fraud', 'card_not_present_fraud'\n    transaction_date (string): Date when the transaction occurred, format MM/DD/YYYY\n    discovery_date (string): Date when the user first noticed the issue, format MM/DD/YYYY\n    disputed_amount (number): The dollar amount being disputed\n    transaction_type (string): Type of transaction. Must be one of: 'pin_purchase', 'signature_purchase', 'online_purchase', 'atm_withdrawal', 'atm_deposit', 'recurring_payment', 'person_to_person'\n    card_in_possession (boolean): Whether the customer still has their physical debit card in their possession\n    pin_compromised (string): Whether the customer's PIN may have been compromised. Must be one of: 'yes_shared', 'yes_observed', 'no', 'unknown'\n    contacted_merchant (boolean): Whether the user attempted to resolve the issue with the merchant first\n    police_report_filed (boolean): Whether a police report has been filed (recommended for fraud over $500)\n    written_statement_provided (boolean): Whether the customer has provided a written statement describing what happened (required for Reg E provisional credit)\n    provisional_credit_eligible (boolean): Whether the user is eligible for provisional credit based on Debit Card Provisional Credit Guidelines\n    customer_max_liability_amount (number): The maximum dollar amount the customer could be liable for based on Regulation E reporting timing rules and the disputed amount. Use -1 for unlimited liability.\n    card_action (string): Action to take on the card. Must be one of: 'keep_active', 'freeze_pending_investigation', 'close_and_reissue'\n\nReturns:\n    Debit card transaction dispute filed successfully. A case has been opened and provisional credit determination has been recorded.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.file_debit_card_transaction_dispute_6281",
+      "lines": [
+        940,
+        1140
+      ],
+      "name": "file_debit_card_transaction_dispute_6281",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": null,
+          "name": "block_recurring"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Block or unblock all recurring payments on a debit card. When blocked, all recurring/subscription charges will be declined. One-time purchases are not affected.\n\nArgs:\n    card_id (string): The debit card ID to update\n    block_recurring (boolean): True to block all recurring payments, False to unblock/allow recurring payments\n\nReturns:\n    Debit card recurring payment settings updated successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.set_debit_card_recurring_block_7382",
+      "lines": [
+        1143,
+        1185
+      ],
+      "name": "set_debit_card_recurring_block_7382",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve a user's debit card dispute history from the debit_card_disputes table. Returns all debit card disputes filed by the user, including dispute IDs, categories, amounts, statuses, and provisional credit information.\n\nArgs:\n    user_id (string): The user's unique identifier in the system\n\nReturns:\n    Debit card dispute history retrieved successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_debit_dispute_status_7483",
+      "lines": [
+        1188,
+        1221
+      ],
+      "name": "get_debit_dispute_status_7483",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "transaction_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve ATM deposit envelope/check images for a specific ATM deposit transaction.\n\nArgs:\n    transaction_id (string): The transaction ID of the ATM deposit to retrieve images for\n\nReturns:\n    ATM deposit images retrieved successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_atm_deposit_images_8473",
+      "lines": [
+        1224,
+        1393
+      ],
+      "name": "get_atm_deposit_images_8473",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "shipping_address"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "reason"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": "False",
+          "name": "expedited_shipping"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Order a replacement credit card for a customer. The old card will be automatically cancelled when the replacement is ordered.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID for the card being replaced\n    user_id (string): The user's unique identifier in the system\n    shipping_address (string): Full shipping address where the new card should be sent\n    reason (string): Reason for replacement. Must be one of: 'fraud_suspected', 'lost', 'stolen', 'damaged', 'expired', 'other'\n    expedited_shipping (boolean, optional): Whether to use expedited shipping (2-3 business days instead of 7-10)\n\nReturns:\n    Replacement credit card order placed successfully. The old card has been cancelled for security.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.order_replacement_credit_card_7291",
+      "lines": [
+        1396,
+        1496
+      ],
+      "name": "order_replacement_credit_card_7291",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve a user's credit card transaction dispute history from the transaction_disputes table. Returns all credit card transaction disputes filed by the user, including dispute IDs, transaction IDs, dispute reasons, statuses, and submission dates.\n\nArgs:\n    user_id (string): The user's unique identifier in the system\n\nReturns:\n    User transaction dispute history retrieved successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_user_dispute_history_7291",
+      "lines": [
+        1499,
+        1532
+      ],
+      "name": "get_user_dispute_history_7291",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Check if a credit card account has any pending replacement card orders.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID to check for pending replacement orders\n\nReturns:\n    Pending replacement orders check completed.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_pending_replacement_orders_5765",
+      "lines": [
+        1535,
+        1572
+      ],
+      "name": "get_pending_replacement_orders_5765",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "closure_reason"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Log the reason why a customer wants to close their credit card account.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID the customer wants to close\n    user_id (string): The user's unique identifier in the system\n    closure_reason (string): Reason for closure. Must be one of: 'annual_fee', 'not_using_card', 'found_better_card', 'unhappy_with_rewards', 'simplifying_finances', 'negative_experience', 'other'\n\nReturns:\n    Closure reason logged successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.log_credit_card_closure_reason_4521",
+      "lines": [
+        1575,
+        1624
+      ],
+      "name": "log_credit_card_closure_reason_4521",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve the closure reason history for a specific credit card account.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID to check for previous closure attempts\n\nReturns:\n    Closure reason history retrieved successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_closure_reason_history_8293",
+      "lines": [
+        1627,
+        1664
+      ],
+      "name": "get_closure_reason_history_8293",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "amount"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "reason"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Apply a statement credit to a customer's credit card account.\n\nArgs:\n    user_id (string): The user's unique identifier in the system\n    credit_card_account_id (string): The credit card account ID to apply the credit to\n    amount (number): The credit amount in dollars (e.g., 25.00 for a $25 credit)\n    reason (string): Reason for the statement credit. Must be one of: 'goodwill_adjustment', 'promotional_credit', 'annual_fee_reversal', 'late_fee_reversal', 'interest_charge_reversal', 'dispute_resolution', 'price_match', 'retention_offer', 'error_correction', 'other'\n\nReturns:\n    Statement credit applied successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.apply_statement_credit_8472",
+      "lines": [
+        1667,
+        1751
+      ],
+      "name": "apply_statement_credit_8472",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "flag_type"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "expiration_date"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "reason"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Apply a flag to a customer's credit card account. Flags can include annual fee waivers, promotional APR rates, rewards bonuses, or other account-level modifiers. Each flag has an effective date and expiration date.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID to apply the flag to\n    user_id (string): The user's unique identifier in the system\n    flag_type (string): Type of flag to apply. Must be one of: 'annual_fee_waived', 'promotional_apr', 'rewards_bonus', 'other'\n    expiration_date (string): Date when the flag expires (MM/DD/YYYY format)\n    reason (string): Reason for applying this flag. Must be one of: 'retention_offer', 'loyalty_benefit', 'promotional', 'error_correction', 'other'\n\nReturns:\n    Account flag applied successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.apply_credit_card_account_flag_6147",
+      "lines": [
+        1754,
+        1849
+      ],
+      "name": "apply_credit_card_account_flag_6147",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Close a customer's credit card account permanently.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID to close\n    user_id (string): The user's unique identifier in the system\n\nReturns:\n    Credit card account closed successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.close_credit_card_account_7834",
+      "lines": [
+        1852,
+        1899
+      ],
+      "name": "close_credit_card_account_7834",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "checking_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "amount"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Pay off a credit card balance using funds from the customer's Rho-Bank checking account. This deducts the specified amount from the checking account and reduces the credit card balance by the same amount.\n\nArgs:\n    user_id (string): The customer's unique identifier in the system\n    checking_account_id (string): The ID of the Rho-Bank checking account to debit funds from\n    credit_card_account_id (string): The ID of the credit card account to apply the payment to\n    amount (number): The payment amount in dollars. Must be a positive number.\n\nReturns:\n    Credit card payment processed successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.pay_credit_card_from_checking_9182",
+      "lines": [
+        1902,
+        1991
+      ],
+      "name": "pay_credit_card_from_checking_9182",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "int",
+          "default_source": null,
+          "name": "requested_increase_amount"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Submit a credit limit increase request for a customer's credit card.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID to request increase for\n    user_id (string): The customer's unique identifier in the system\n    requested_increase_amount (integer): The dollar amount by which to increase the credit limit (e.g., 2500 for $2,500)\n\nReturns:\n    Credit limit increase request submitted successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.submit_credit_limit_increase_request_7392",
+      "lines": [
+        1994,
+        2068
+      ],
+      "name": "submit_credit_limit_increase_request_7392",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve the credit limit increase request history for a specific credit card account. Returns all previous CLI requests including dates, amounts, and statuses.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID to check for CLI history\n\nReturns:\n    Credit limit increase history retrieved.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_credit_limit_increase_history_4829",
+      "lines": [
+        2071,
+        2110
+      ],
+      "name": "get_credit_limit_increase_history_4829",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "int",
+          "default_source": null,
+          "name": "months"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve payment history for a credit card account.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID to check payment history for\n    months (integer): Number of months of payment history to retrieve\n\nReturns:\n    Payment history retrieved.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_payment_history_6183",
+      "lines": [
+        2113,
+        2170
+      ],
+      "name": "get_payment_history_6183",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "int",
+          "default_source": null,
+          "name": "new_credit_limit"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Approve and apply a credit limit increase for a customer's credit card.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID\n    user_id (string): The customer's unique identifier in the system\n    new_credit_limit (integer): The new total credit limit in dollars (e.g., 7500 for $7,500)\n\nReturns:\n    Credit limit increase approved and applied successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.approve_credit_limit_increase_5847",
+      "lines": [
+        2173,
+        2301
+      ],
+      "name": "approve_credit_limit_increase_5847",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "denial_reason"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Deny a credit limit increase request for a customer's credit card.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID\n    user_id (string): The customer's unique identifier in the system\n    denial_reason (string): The reason for denying the request. Must be one of: 'insufficient_account_age', 'cooldown_period_active', 'pending_disputes', 'pending_replacement_card', 'past_due_balance', 'high_utilization', 'insufficient_payment_history', 'requested_amount_exceeds_limit', 'other'\n\nReturns:\n    Credit limit increase request denied.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.deny_credit_limit_increase_5848",
+      "lines": [
+        2304,
+        2370
+      ],
+      "name": "deny_credit_limit_increase_5848",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_type"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_class"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Open a new bank account for a customer.\n\nArgs:\n    user_id (string): The customer's unique identifier in the system\n    account_type (string): Type of account to open. Must be one of: 'checking' (personal checking), 'savings' (personal savings), 'business_checking', 'business_savings'\n    account_class (string): The full official account class name\n\nReturns:\n    Bank account opened successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.open_bank_account_4821",
+      "lines": [
+        2373,
+        2505
+      ],
+      "name": "open_bank_account_4821",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "'Customer requested closure'",
+          "name": "reason"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": "False",
+          "name": "waive_early_closure_fee"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Close a customer's bank account (checking or savings).\n\nArgs:\n    account_id (string): The ID of the bank account to close\n    reason (string, optional): The reason for closing the account\n    waive_early_closure_fee (boolean, optional): Whether to waive early closure fees\n\nReturns:\n    Bank account closed successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.close_bank_account_7392",
+      "lines": [
+        2508,
+        2612
+      ],
+      "name": "close_bank_account_7392",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve all accounts (checking, savings, credit cards) for a customer.\n\nArgs:\n    user_id (string): The customer's unique identifier in the system\n\nReturns:\n    User accounts retrieved successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_all_user_accounts_by_user_id_3847",
+      "lines": [
+        2615,
+        2658
+      ],
+      "name": "get_all_user_accounts_by_user_id_3847",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "source_account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "destination_account_id"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "amount"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Transfer funds from one bank account to another.\n\nArgs:\n    source_account_id (string): The account ID to transfer funds from\n    destination_account_id (string): The account ID to transfer funds to\n    amount (number): The amount to transfer in USD\n\nReturns:\n    Funds transferred successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.transfer_funds_between_bank_accounts_7291",
+      "lines": [
+        2661,
+        2727
+      ],
+      "name": "transfer_funds_between_bank_accounts_7291",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "amount"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_type"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Apply a credit to a customer's checking account.\n\nArgs:\n    account_id (string): The checking account ID to credit\n    amount (number): The positive dollar amount to credit (must be greater than 0)\n    credit_type (string): The type of credit: 'rebate_credit' for missing rebates, 'fee_refund' for incorrect fee charges\n\nReturns:\n    Credit applied to checking account successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.apply_checking_account_credit_5829",
+      "lines": [
+        2730,
+        2812
+      ],
+      "name": "apply_checking_account_credit_5829",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "amount"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_type"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Apply a credit to a customer's savings account for interest corrections, fee refunds, or goodwill adjustments.\n\nArgs:\n    account_id (string): The savings account ID to credit\n    amount (number): The positive dollar amount to credit (must be greater than 0)\n    credit_type (string): The type of credit: 'interest_correction' for APY/interest calculation errors, 'fee_refund' for incorrect fee charges, 'goodwill_credit' for customer service gestures\n\nReturns:\n    Credit applied to savings account successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.apply_savings_account_credit_6831",
+      "lines": [
+        2815,
+        2899
+      ],
+      "name": "apply_savings_account_credit_6831",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "expected_apy"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "actual_apy"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "amount_difference"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Submit a report for interest calculation discrepancies to the backend team for investigation. Use this when the interest credited to a customer's account does not match expected APY calculations.\n\nArgs:\n    account_id (string): The savings account ID with the discrepancy\n    user_id (string): The customer's unique identifier\n    expected_apy (number): The APY percentage the customer should have received (e.g., 2.775 for 2.775%)\n    actual_apy (number): The APY percentage that was actually applied (e.g., 2.5 for 2.5%)\n    amount_difference (number): The dollar amount difference between expected and actual interest credited\n\nReturns:\n    Interest discrepancy report submitted successfully. Backend team will investigate.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.submit_interest_discrepancy_report_7294",
+      "lines": [
+        2902,
+        2978
+      ],
+      "name": "submit_interest_discrepancy_report_7294",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve the transaction history for a bank account.\n\nTransactions are returned in reverse chronological order (most recent\nfirst).\n\nArgs:\n    account_id (string): The bank account ID to retrieve transactions for\n\nReturns:\n    Bank account transactions retrieved successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_bank_account_transactions_9173",
+      "lines": [
+        2981,
+        3045
+      ],
+      "name": "get_bank_account_transactions_9173",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "delivery_option"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "delivery_fee"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_design"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "design_fee"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "shipping_address"
+        },
+        {
+          "annotation_source": "Optional[float]",
+          "default_source": "None",
+          "name": "excess_replacement_fee"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Order a new debit card for a customer's checking account.\n\nArgs:\n    account_id (string): The checking account ID to link the debit card to\n    user_id (string): The customer's unique identifier\n    delivery_option (string): Shipping speed: STANDARD, EXPEDITED, or RUSH\n    delivery_fee (number): Fee to charge for delivery in dollars\n    card_design (string): Card design: CLASSIC, PREMIUM, or CUSTOM\n    design_fee (number): Fee to charge for card design in dollars\n    shipping_address (string): Full shipping address for card delivery\n    excess_replacement_fee (number, optional): Fee for exceeding replacement limit, if applicable\n\nReturns:\n    Debit card order placed successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.order_debit_card_5739",
+      "lines": [
+        3048,
+        3335
+      ],
+      "name": "order_debit_card_5739",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "last_4_digits"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "expiration_date"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "cvv"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "pin"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Activate a NEW debit card for a customer. Use ONLY for first-time cards on a checking account (issue_reason = 'new_account' or 'first_card'). For replacement or reissued cards, use the appropriate variant.\n\nArgs:\n    card_id (string): The debit card ID to activate\n    last_4_digits (string): Last 4 digits of the card number (for verification)\n    expiration_date (string): Card expiration date in MM/YY format\n    cvv (string): 3-digit CVV from the back of the card\n    pin (string): 4-digit PIN chosen by the customer\n\nReturns:\n    New debit card activated successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.activate_debit_card_8291",
+      "lines": [
+        3338,
+        3406
+      ],
+      "name": "activate_debit_card_8291",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "last_4_digits"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "expiration_date"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "cvv"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "pin"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Activate a REPLACEMENT debit card. Use ONLY for cards replacing lost, stolen, or fraud-suspected cards (issue_reason = 'lost', 'stolen', or 'fraud'). For new or reissued cards, use the appropriate variant.\n\nArgs:\n    card_id (string): The debit card ID to activate\n    last_4_digits (string): Last 4 digits of the card number (for verification)\n    expiration_date (string): Card expiration date in MM/YY format\n    cvv (string): 3-digit CVV from the back of the card\n    pin (string): 4-digit PIN chosen by the customer\n\nReturns:\n    Replacement debit card activated successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.activate_debit_card_8292",
+      "lines": [
+        3409,
+        3489
+      ],
+      "name": "activate_debit_card_8292",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "last_4_digits"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "expiration_date"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "cvv"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "pin"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Activate a REISSUED debit card. Use ONLY for cards reissued due to expiration, damage, design upgrade, or bank-initiated replacement (issue_reason = 'expired', 'damaged', 'upgrade', or 'bank_reissue'). For new or replacement cards, use the appropriate variant.\n\nArgs:\n    card_id (string): The debit card ID to activate\n    last_4_digits (string): Last 4 digits of the card number (for verification)\n    expiration_date (string): Card expiration date in MM/YY format\n    cvv (string): 3-digit CVV from the back of the card\n    pin (string): 4-digit PIN chosen by the customer\n\nReturns:\n    Reissued debit card activated successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.activate_debit_card_8293",
+      "lines": [
+        3492,
+        3574
+      ],
+      "name": "activate_debit_card_8293",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "reason"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Close or cancel a debit card permanently.\n\nArgs:\n    card_id (string): The debit card ID to close\n    reason (string): Reason for closing: lost, stolen, fraud_suspected, damaged, no_longer_needed, or account_closing\n\nReturns:\n    Debit card closed successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.close_debit_card_4721",
+      "lines": [
+        3577,
+        3649
+      ],
+      "name": "close_debit_card_4721",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Temporarily freeze a debit card. The card can be unfrozen later.\n\nArgs:\n    card_id (string): The debit card ID to freeze\n\nReturns:\n    Debit card frozen successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.freeze_debit_card_3892",
+      "lines": [
+        3652,
+        3695
+      ],
+      "name": "freeze_debit_card_3892",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Unfreeze a previously frozen debit card.\n\nArgs:\n    card_id (string): The debit card ID to unfreeze\n\nReturns:\n    Debit card unfrozen successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.unfreeze_debit_card_3893",
+      "lines": [
+        3698,
+        3742
+      ],
+      "name": "unfreeze_debit_card_3893",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "reason"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Clear a fraud alert or velocity block on a debit card.\n\nArgs:\n    card_id (string): The debit card ID to clear the alert/block for\n    reason (string): Reason for clearing: 'customer_verified' (for fraud alerts after customer verification) or 'velocity_clear' (for velocity blocks after identity verification)\n\nReturns:\n    Fraud alert/velocity block cleared successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.clear_debit_card_fraud_alert_4892",
+      "lines": [
+        3745,
+        3816
+      ],
+      "name": "clear_debit_card_fraud_alert_4892",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "last_4_digits"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "new_pin"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Reset a debit card PIN when the customer has forgotten it.\n\nArgs:\n    card_id (string): The debit card ID to reset PIN for\n    last_4_digits (string): Last 4 digits of the card number (for verification)\n    new_pin (string): The new 4-digit PIN chosen by the customer\n\nReturns:\n    Debit card PIN reset successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.reset_debit_card_pin_6284",
+      "lines": [
+        3819,
+        3876
+      ],
+      "name": "reset_debit_card_pin_6284",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "current_pin"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "new_pin"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Change a debit card PIN when the customer knows their current PIN.\n\nArgs:\n    card_id (string): The debit card ID to change PIN for\n    current_pin (string): The customer's current 4-digit PIN\n    new_pin (string): The new 4-digit PIN chosen by the customer\n\nReturns:\n    Debit card PIN changed successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.change_debit_card_pin_6285",
+      "lines": [
+        3879,
+        3933
+      ],
+      "name": "change_debit_card_pin_6285",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Retrieve all debit cards associated with a checking account. Returns card details including status, issue reason, and expiration date.\n\nArgs:\n    account_id (string): The checking account ID to retrieve debit cards for\n\nReturns:\n    Debit cards retrieved successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.get_debit_cards_by_account_id_7823",
+      "lines": [
+        3936,
+        3983
+      ],
+      "name": "get_debit_cards_by_account_id_7823",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "limit_type"
+        },
+        {
+          "annotation_source": "int",
+          "default_source": null,
+          "name": "new_limit"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Request a temporary 24-hour increase to a debit card's daily ATM or purchase limit.\n\nArgs:\n    card_id (string): The debit card ID to increase limits for\n    limit_type (string): Type of limit to increase: 'atm' for daily ATM withdrawal limit, 'purchase' for daily purchase limit\n    new_limit (integer): The requested new temporary limit amount in dollars\n\nReturns:\n    Temporary limit increase granted successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeTools.request_temporary_debit_card_limit_increase_8374",
+      "lines": [
+        3986,
+        4131
+      ],
+      "name": "request_temporary_debit_card_limit_increase_8374",
+      "owner_class": "KnowledgeTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "transaction_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Submit a cash back dispute for a specific transaction.\n\nArgs:\n    user_id (string): The user's unique identifier in the system\n    transaction_id (string): The unique identifier for the transaction with incorrect cash back\n\nReturns:\n    Cash back dispute submitted successfully. Your case has been queued for review.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.submit_cash_back_dispute_0589",
+      "lines": [
+        4185,
+        4242
+      ],
+      "name": "submit_cash_back_dispute_0589",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_name"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Generate a referral link for a specific credit card to share with friends or family.\n\nArgs:\n    user_id (string): The user's unique identifier in the system (the referrer)\n    card_name (string): The name of the credit card to create a referral for (e.g., 'Gold Rewards Card')\n\nReturns:\n    Referral link generated successfully. Share this link with the person you want to refer.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.get_referral_link",
+      "lines": [
+        4245,
+        4283
+      ],
+      "name": "get_referral_link",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_account_id"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.READ)"
+      ],
+      "description": "Look up the last 4 digits of a credit card number.\n\nArgs:\n    credit_card_account_id (string): The credit card account ID to look up (e.g., 'cc_76ad9cc60e_gold')\n\nReturns:\n    Card information retrieved successfully.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.get_card_last_4_digits",
+      "lines": [
+        4286,
+        4324
+      ],
+      "name": "get_card_last_4_digits",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_id"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "check_amount"
+        }
+      ],
+      "decorators_source": [
+        "is_discoverable_tool(ToolType.WRITE)"
+      ],
+      "description": "Deposit a check into a checking or savings account. The user takes a photo of the check and submits it through their mobile banking app.\n\nArgs:\n    account_id (string): The bank account ID to deposit the check into\n    check_amount (number): The amount of the check in USD\n\nReturns:\n    Check deposited successfully. Funds will be available according to your account's deposit policy.",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.deposit_check_3847",
+      "lines": [
+        4327,
+        4384
+      ],
+      "name": "deposit_check_3847",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "card_type"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "customer_name"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "annual_income"
+        },
+        {
+          "annotation_source": "bool",
+          "default_source": "False",
+          "name": "rho_bank_subscription"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE)"
+      ],
+      "description": "Apply for a credit card.\n\nArgs:\n    card_type: Type of credit card\n    customer_name: Full legal name\n    annual_income: Annual income in USD\n    rho_bank_subscription: Whether user has Rho-Bank+ subscription",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.apply_for_credit_card",
+      "lines": [
+        4404,
+        4465
+      ],
+      "name": "apply_for_credit_card",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "account_type"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE)"
+      ],
+      "description": "Submit a referral request to refer someone to open an account.\n\nArgs:\n    user_id: Your user ID (the referrer)\n    account_type: The type of account you are referring someone to open",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.submit_referral",
+      "lines": [
+        4468,
+        4506
+      ],
+      "name": "submit_referral",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "discoverable_tool_name"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": "'{}'",
+          "name": "arguments"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE)"
+      ],
+      "description": "Call a tool that was given to you by the agent.\n\nUse this when the agent has instructed you to perform an action using\na discoverable tool. The agent will have told you the tool name and arguments.\n\nThis simulates you performing the action in the real world (e.g., opening\na webpage, navigating to a section, clicking a button).\n\nArgs:\n    discoverable_tool_name: The name of the discoverable tool to call (e.g., \"open_webpage\")\n    arguments: JSON string of arguments for the tool (e.g., '{\"url\": \"https://example.com\"}')\n\nReturns:\n    The result of executing the discoverable tool",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.call_discoverable_user_tool",
+      "lines": [
+        4518,
+        4568
+      ],
+      "name": "call_discoverable_user_tool",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [],
+      "decorators_source": [
+        "is_tool(ToolType.READ)"
+      ],
+      "description": "List all tools that have been given to you by the agent.\n\nUse this to see what actions the agent has instructed you to perform.\n\nReturns:\n    A list of tools that have been given to you",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.list_discoverable_user_tools",
+      "lines": [
+        4571,
+        4584
+      ],
+      "name": "list_discoverable_user_tools",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "READ",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE)"
+      ],
+      "description": "Request to be transferred to a human agent for assistance.\n\nUse this when you want to speak with a real human agent instead of\nthe automated system. Each request will be logged and processed.\n\nReturns:\n    Confirmation that your transfer request has been submitted",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.request_human_agent_transfer",
+      "lines": [
+        4587,
+        4628
+      ],
+      "name": "request_human_agent_transfer",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "user_id"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "credit_card_type"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "merchant_name"
+        },
+        {
+          "annotation_source": "float",
+          "default_source": null,
+          "name": "amount"
+        },
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "category"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.WRITE)"
+      ],
+      "description": "Submit a credit card transaction.\n\nArgs:\n    user_id: Your user ID\n    credit_card_type: Type of credit card used (e.g., \"Bronze Rewards Card\", \"Gold Rewards Card\")\n    merchant_name: Name of the merchant where the purchase was made\n    amount: Transaction amount in USD (e.g., 127.43)\n    category: Transaction category (e.g., \"Groceries\", \"Dining\", \"Travel\", \"Software\", \"Entertainment\", \"Utilities\", \"Shopping\")",
+      "id": "src/tau2/domains/banking_knowledge/tools.py:KnowledgeUserTools.submit_transaction",
+      "lines": [
+        4691,
+        4760
+      ],
+      "name": "submit_transaction",
+      "owner_class": "KnowledgeUserTools",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "WRITE",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/domains/banking_knowledge/tools.py",
+      "source_sha256": "e7287dc76ab74f7c172a9b632b6ebdb067a85bbc0cb7c769f7bdf08ec18aa1c0"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "thought"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.THINK)"
+      ],
+      "description": "Use the tool to think about something. It will not obtain new information or change the database, but just append the thought to the log. Use it when complex reasoning is needed.\n\nArgs:\n    thought: A thought to think about.\n\nReturns:\n    Empty string",
+      "id": "src/tau2/environment/toolkit.py:GenericToolKit.think",
+      "lines": [
+        295,
+        305
+      ],
+      "name": "think",
+      "owner_class": "GenericToolKit",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "UNDECLARED",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/environment/toolkit.py",
+      "source_sha256": "3e897891e8878c3399aec72e42eb0eb5546642420c0c902b225421fc936b924a"
+    },
+    {
+      "arguments": [
+        {
+          "annotation_source": "str",
+          "default_source": null,
+          "name": "expression"
+        }
+      ],
+      "decorators_source": [
+        "is_tool(ToolType.GENERIC)"
+      ],
+      "description": "Calculate the result of a mathematical expression.\n\nArgs:\n    expression: The mathematical expression to calculate, such as '2 + 2'. The expression can contain numbers, operators (+, -, *, /), parentheses, and spaces.\n\nReturns:\n    The result of the mathematical expression.\n\nRaises:\n    ValueError: If the expression is invalid.",
+      "id": "src/tau2/environment/toolkit.py:GenericToolKit.calculate",
+      "lines": [
+        308,
+        323
+      ],
+      "name": "calculate",
+      "owner_class": "GenericToolKit",
+      "privacy_transform": {
+        "contact_spans": 0,
+        "long_identifier_spans": 0
+      },
+      "publisher_tool_type": "GENERIC",
+      "return_annotation_source": "str",
+      "role": "REFERENCE_ONLY",
+      "semantics": "Static publisher API metadata, not dialogue intent, human consent, or executed outcome.",
+      "source_path": "src/tau2/environment/toolkit.py",
+      "source_sha256": "3e897891e8878c3399aec72e42eb0eb5546642420c0c902b225421fc936b924a"
+    }
+  ],
+  "role": "REFERENCE_ONLY",
+  "source_execution": false
+}
