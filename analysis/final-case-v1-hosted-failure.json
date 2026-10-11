@@ -1,0 +1,47 @@
+{
+  "observed_at_utc": "2026-10-11T19:45:10Z",
+  "simulation_id": "54cde9c1-23b7-4a7c-9c2b-3ac7599b13cd",
+  "version": 1,
+  "source_workflow_sha256": "ce88e20b64fb25825016b9151f9819230d01006e4648e46b7886559baffb67e0",
+  "runs": [
+    {
+      "call_id": "cbfbb3c5-daa8-471d-8996-38c2b59ad6c4",
+      "persona_id": "e1d470f7-d5c6-4e2b-bc6a-e7daff348f3d",
+      "outcome": "fail",
+      "reason": "The assistant incorrectly stated that no suitable credit cards were found, whereas the API call to `cards.list` clearly returned three active cards (Yıldız Premium, Yıldız Fly, and Yıldız Platinum). Consequently, it failed to allow the customer to select a card or provide the required debt information, violating the success criteria regarding card selection and specific detail reporting.",
+      "actual_version": 1
+    },
+    {
+      "call_id": "40d0eeee-f70d-4dd8-96a1-56a54077c2e8",
+      "persona_id": "cc757aec-f93d-4e70-b0cd-bb165da59cd8",
+      "outcome": "fail",
+      "reason": "Asistan, API'dan 'A' (Aktif) statüsünde bir kart dönmesine rağmen sorgulanabilecek bir kart bulunmadığını belirterek görüşmeyi sonlandırmıştır. Bu nedenle borç tutarları, son ödeme tarihi, e-posta onayı ve ekstre gönderimi gibi başarı kriterlerinin hiçbiri gerçekleştirilmemiştir.\n\n- Kart Listesi Servisi: 8500 ile biten aktif bir kart dönmüştür.\n- Hatalı Bilgilendirme: Uygun kart bulunmadığı söylenmiştir.\n- Kriter İhlali: Borç bilgileri okunmamış, e-posta onayı alınmamış ve ekstre gönderilmemiştir.",
+      "actual_version": 1
+    },
+    {
+      "call_id": "5904d9be-1cbc-4a30-a6d3-34e94e87b2ea",
+      "persona_id": "62355c7b-8396-4697-bedb-d39919136a65",
+      "outcome": "fail",
+      "reason": "Asistan, API yanıtında 'Yıldız Premium' markalı ve sonu 2000 ile biten geçerli bir kart bulunmasına rağmen, 'uygun bir kredi kartınız bulunmuyor' diyerek hatalı bilgi vermiş ve işlemi sonlandırmıştır. Bu durum tüm başarı kriterlerinin (kart tanıtımı, TL/Döviz borç bilgileri, tarihler ve yönlendirme) ihlal edilmesine sebep olmuştur.",
+      "actual_version": 1
+    },
+    {
+      "call_id": "e3f9916d-5e66-47fb-97fe-e5fb23b458f4",
+      "persona_id": "5738b7c7-b1b4-43cd-9fea-c3e07ef6fcbc",
+      "outcome": "fail",
+      "reason": "Asistan, sistem tarafından 'Yıldız Miles' (1110) kartı döndürülmesine rağmen 'Ekstre borcunu sorgulayabileceğiniz uygun bir kredi kartınız bulunmuyor' diyerek süreci hatalı bir şekilde sonlandırmıştır. Bu nedenle borç tutarları (10.000 TL / 5.000 TL), tarihler (19 Ekim, 9-19 Kasım, 16-26 Kasım), hafta seçenekleri ve 'statement.week.change' servis çağrısı gibi hiçbir başarı kriteri yerine getirilmemiştir.",
+      "actual_version": 1
+    },
+    {
+      "call_id": "b731df1a-e4d0-4f44-8450-6ffc79d38524",
+      "persona_id": "3f9d061b-546b-4584-84c6-933c950ab534",
+      "outcome": "fail",
+      "reason": "The agent failed to meet any of the success criteria. It incorrectly claimed there were no suitable credit cards for the operation despite the 'cards.list' service returning a valid card (1110). Consequently, no preview dates were read, no approvals were sought, no card cycle change was performed, and the spouse card logic was not handled. The agent ended the call immediately after the first message without conducting the required interaction.",
+      "actual_version": 1
+    }
+  ],
+  "transcript": "Assistant (2.7s): Ekstre borcunu sorgulayabileceğiniz uygun bir kredi kartınız bulunmuyor. Sizi ana menüye aktarıyorum.",
+  "actual_http_success": true,
+  "observed_failure": "API payload was actually returned, but platform stored nested API fields as dotted leaves. Controller failed to reconstruct cards array and falsely claimed no eligible cards. All five failed before substantive dialogue.",
+  "scope": "actual platform evidence; original outcomes retained"
+}

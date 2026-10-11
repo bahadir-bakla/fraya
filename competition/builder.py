@@ -177,6 +177,23 @@ class Run:
             self.feedback=[{'practice_repair_from':seed_id,'previous_status':prior,'read_files':feedback_files,'instruction':'Repair this same public practice candidate using actual call events and score failures. Read all feedback. Extractor output must provide every field consumed by code, with raw-speech fallback. If the dialogue ignores dynamic instructions, use the documented tts on_enter with a computed literal customer sentence for each state, not imperative meta-instructions. No invented bank success or debt before verified. Preserve all brief rules.'}]
             self.event('practice_seed',source_run=seed_id,artifact_sha256={name:hashlib.sha256((self.work/name).read_bytes()).hexdigest() for name in ('workflow.json','policy.json','coverage.json')},feedback_files=feedback_files)
         self.api=json.loads((inputs/'openapi.json').read_text())
+        if getattr(self.args,'refine_run',None):
+            seed_id=self.args.refine_run
+            if not re.fullmatch(r'[A-Za-z0-9_-]+',seed_id):raise ValueError('Invalid refinement run ID')
+            seed=ROOT/'runs'/seed_id
+            prior=json.loads((seed/'status.json').read_text())
+            if prior.get('phase') not in {'completed','failed','needs_attention'}:raise ValueError('Refinement requires a stopped generation')
+            current={pathlib.Path(entry['path']).name:(self.work/entry['path']).read_bytes() for entry in self.sources}
+            previous={path.name:path.read_bytes() for path in (seed/'work/inputs').glob('[0-9][0-9]-*')}
+            if current!=previous or (inputs/'openapi.json').read_bytes()!=(seed/'work/inputs/openapi.json').read_bytes():raise ValueError('Refinement source documents and API must be byte-identical')
+            for name in ('workflow.json','policy.json','coverage.json'):
+                shutil.copyfile(seed/'work'/name,self.work/name)
+            for helper in (seed/'work').glob('*.py'):shutil.copyfile(helper,self.work/helper.name)
+            feedback=pathlib.Path(self.args.refinement_feedback).read_bytes()
+            json.loads(feedback)
+            (self.work/'refinement-feedback.json').write_bytes(feedback)
+            self.feedback=[{'source_refinement_from':seed_id,'read_file':'refinement-feedback.json','instruction':'Repair the existing generated artifacts through their generator helpers. Preserve every source policy and fixed platform model. Focus on actual integration failures and source-grounded review findings; do not rebuild from scratch, edit input documents, tune expected outcomes, or hardcode customer identities. Return promptly after essential CPU checks.'}]
+            self.event('source_refinement',source_run=seed_id,artifact_sha256={name:hashlib.sha256((self.work/name).read_bytes()).hexdigest() for name in ('workflow.json','policy.json','coverage.json')},feedback_sha256=hashlib.sha256(feedback).hexdigest())
         self.api_sha256=hashlib.sha256((inputs/'openapi.json').read_bytes()).hexdigest()
         schema={'type':'object','properties':{key:{'type':'string'} for key in ('workflow_file','policy_file','coverage_file','summary')},'required':['workflow_file','policy_file','coverage_file','summary'],'additionalProperties':False}
         write_json(self.path/'response.schema.json',schema)
@@ -395,7 +412,7 @@ class Run:
         repairing=round_number!=1 or bool(getattr(self.args,'practice_repair',None))
         self.phase('model_repair' if repairing else 'model_build',round=round_number)
         purpose='Repair validation or official-case failures in generated artifacts' if repairing else 'Build the phone agent from evidence'
-        model_seconds=min(660 if round_number==1 and not getattr(self.args,'practice_repair',None) else 360,max(1,int(self.remaining()-30)))
+        model_seconds=min(660 if round_number==1 and not getattr(self.args,'practice_repair',None) and not getattr(self.args,'refine_run',None) else 360,max(1,int(self.remaining()-30)))
         prompt=f'''Read BUILD_INSTRUCTIONS.md and follow it fully. Bank evidence files, in precedence order: {json.dumps([s['path'] for s in self.sources])}. Tool schema: inputs/openapi.json. Platform docs: inputs/workflow-format.md, inputs/tools-and-code.md. Base schema example: inputs/base-agent.json.
 The output contract is workflow.json, policy.json and coverage.json in this current working directory; never edit host builder sources. Produce a real bank agent for all supplied evidence, not a demo. No network calls, credentials, installations, other agents or background tasks. Finish by returning artifact paths (relative file names) and summary using the supplied response schema.
 Round {round_number}. Remaining full build budget: {int(self.remaining())} seconds. You have at most {model_seconds} seconds for this model step. Finish the artifact contract promptly after the essential checks; the host still needs time for real platform tests. Keep the graph efficient and code facts explicit. Read every evidence rule. You may generate JSON programmatically with Python but do not edit inputs. Put all helper scripts inside this workdir, not in /tmp.
@@ -633,6 +650,8 @@ def arguments():
     parser.add_argument('--self-practice',action='store_true',help='Source-grounded author/audit/test loop for compatible unseen briefs')
     parser.add_argument('--practice-repair',help='New explicitly logged practice cycle from a stopped public-brief run; never permitted for unseen briefs')
     parser.add_argument('--repair-first',action='store_true',help='With public practice repair, use the existing failed-call evidence before rerunning the candidate')
+    parser.add_argument('--refine-run',help='Fresh bounded automatic refinement of a stopped generation with identical complete source documents and API')
+    parser.add_argument('--refinement-feedback',help='Actual hosted observations and source review findings for --refine-run')
     parser.add_argument('--resume-run',help='Continue a stopped run with identical evidence and its original total time budget')
     args=parser.parse_args()
     if args.live_layer=='v2-student' and (not args.live_student or not re.fullmatch(r'[a-f0-9]{64}',args.live_student_sha256 or '')):parser.error('V2 live student requires a directory and explicit frozen manifest SHA256')
@@ -641,6 +660,8 @@ def arguments():
     try:validate_case_scope(args.briefs,args.cases,args.skip_tests or args.local_only or args.self_practice)
     except ValueError as error:parser.error(str(error))
     if args.resume_run and args.practice_repair:parser.error('Use either same-budget resume or a separate public practice repair cycle')
+    if args.refine_run and (args.resume_run or args.practice_repair or not args.refinement_feedback):parser.error('Refinement requires its own feedback and cannot combine resume or practice repair')
+    if args.refinement_feedback and not args.refine_run:parser.error('--refinement-feedback requires --refine-run')
     if not 0<args.minutes<=30:parser.error('Each build is limited to 30 minutes.')
     # Without tests a round costs only model time, so the full budget may need more than three short rounds.
     if args.self_practice and args.skip_tests:parser.error('--self-practice runs tests; do not combine it with --skip-tests')
