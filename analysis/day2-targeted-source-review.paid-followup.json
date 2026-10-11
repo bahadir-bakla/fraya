@@ -1,0 +1,208 @@
+{
+  "status": "CLOSED_FROZEN_CODEX_DAY2_TARGETED_PAID_SOURCE_FOLLOWUP",
+  "reviewer": "Codex fallback; no native or HTTP calls",
+  "closed_utc": "2026-10-11T09:02:06.437347+00:00",
+  "deadline_utc": "2026-10-11T09:05:20Z",
+  "saved_hosted_evidence": {
+    "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-a11-paid-regression.json",
+    "sha256": "32cbd0274ebfafa9fc8b3a0ecd268217ca41b5a4c4d89d7f011c270f33500b73",
+    "call_id": "719dcd9f-1c96-42a6-8785-e261098f680a",
+    "actual_agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+    "actual_version": 11,
+    "scope": "Bounded read-only actual A11 PUB08 repetition2 regression; original scorer verdict unchanged",
+    "paid_event_count": 3,
+    "source": "Parent saved read-only actual-call projection. No independent hosted calls or ledger retrieval by reviewer."
+  },
+  "candidates": {
+    "A11": {
+      "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-114646-180202\\codex-stress-a.workflow.json",
+      "sha256": "d1b55c645b6ba2b8ad61172575feef44bdbeafe4e0574b9f36b61111f23a33b3"
+    },
+    "B7": {
+      "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-115152-818e2f\\codex-stress-b-next.workflow.json",
+      "sha256": "7fe1d00e9557e9d353425db1ecdbc92d2b031edd9fdcc2018f6419d86c14f544"
+    }
+  },
+  "observations": [
+    {
+      "id": "A11-saved-paid-source/1",
+      "class": "actual_saved_raw_with_literal_guard_cpu",
+      "raw": "I actually paid it in the app this morning.",
+      "event": "k=paid;c=1;END",
+      "guard_accepts": false,
+      "expected_accept": true
+    },
+    {
+      "id": "A11-saved-paid-source/2",
+      "class": "actual_saved_raw_with_literal_guard_cpu",
+      "raw": "I already made the payment through the app today.",
+      "event": "k=paid;c=1;END",
+      "guard_accepts": false,
+      "expected_accept": true
+    },
+    {
+      "id": "A11-saved-paid-source/3",
+      "class": "actual_saved_raw_with_literal_guard_cpu",
+      "raw": "I've already processed the payment through the app this morning.",
+      "event": "k=paid;c=1;END",
+      "guard_accepts": false,
+      "expected_accept": true
+    },
+    {
+      "id": "B7-pure-guard/actually-explicit",
+      "class": "conditional_source_unit_cpu",
+      "raw": "I actually paid the credit card overdue amount in the app this morning.",
+      "row": {
+        "k": "paid",
+        "c": "1",
+        "p": "CPU-CARD-001",
+        "sub": "self",
+        "claim": "current_bank",
+        "pol": "positive",
+        "mode": "asserted",
+        "x": "I actually paid the credit card overdue amount in the app this morning"
+      },
+      "guard_accepts": false,
+      "expected_accept": true,
+      "passes_oracle": false
+    },
+    {
+      "id": "B7-pure-guard/made-explicit",
+      "class": "conditional_source_unit_cpu",
+      "raw": "I already made the payment for the credit card through the app today.",
+      "row": {
+        "k": "paid",
+        "c": "1",
+        "p": "CPU-CARD-001",
+        "sub": "self",
+        "claim": "current_bank",
+        "pol": "positive",
+        "mode": "asserted",
+        "x": "I already made the payment for the credit card through the app today"
+      },
+      "guard_accepts": true,
+      "expected_accept": true,
+      "passes_oracle": true
+    },
+    {
+      "id": "B7-pure-guard/processed-explicit",
+      "class": "conditional_source_unit_cpu",
+      "raw": "I've already processed the payment for the credit card through the app this morning.",
+      "row": {
+        "k": "paid",
+        "c": "1",
+        "p": "CPU-CARD-001",
+        "sub": "self",
+        "claim": "current_bank",
+        "pol": "positive",
+        "mode": "asserted",
+        "x": "I've already processed the payment for the credit card through the app this morning"
+      },
+      "guard_accepts": false,
+      "expected_accept": true,
+      "passes_oracle": false
+    },
+    {
+      "id": "B7-pure-guard/plain-current",
+      "class": "conditional_source_unit_cpu",
+      "raw": "I paid the credit card overdue amount this morning.",
+      "row": {
+        "k": "paid",
+        "c": "1",
+        "p": "CPU-CARD-001",
+        "sub": "self",
+        "claim": "current_bank",
+        "pol": "positive",
+        "mode": "asserted",
+        "x": "I paid the credit card overdue amount this morning"
+      },
+      "guard_accepts": true,
+      "expected_accept": true,
+      "passes_oracle": true
+    },
+    {
+      "id": "B7-pure-guard/negated",
+      "class": "forced_semantic_inconsistent_negative",
+      "raw": "I did not pay the credit card overdue amount.",
+      "row": {
+        "k": "paid",
+        "c": "1",
+        "p": "CPU-CARD-001",
+        "sub": "self",
+        "claim": "current_bank",
+        "pol": "positive",
+        "mode": "asserted",
+        "x": "I did not pay the credit card overdue amount"
+      },
+      "guard_accepts": false,
+      "expected_accept": false,
+      "passes_oracle": true
+    },
+    {
+      "id": "B7-pure-guard/historical",
+      "class": "forced_semantic_inconsistent_negative",
+      "raw": "I paid off the credit card years ago.",
+      "row": {
+        "k": "paid",
+        "c": "1",
+        "p": "CPU-CARD-001",
+        "sub": "self",
+        "claim": "current_bank",
+        "pol": "positive",
+        "mode": "asserted",
+        "x": "I paid off the credit card years ago"
+      },
+      "guard_accepts": false,
+      "expected_accept": false,
+      "passes_oracle": true
+    },
+    {
+      "id": "B7-pure-guard/third-person",
+      "class": "forced_semantic_inconsistent_negative",
+      "raw": "My sister paid the credit card overdue amount.",
+      "row": {
+        "k": "paid",
+        "c": "1",
+        "p": "CPU-CARD-001",
+        "sub": "self",
+        "claim": "current_bank",
+        "pol": "positive",
+        "mode": "asserted",
+        "x": "My sister paid the credit card overdue amount"
+      },
+      "guard_accepts": false,
+      "expected_accept": false,
+      "passes_oracle": true
+    }
+  ],
+  "counts": {
+    "source_guard_calls": 10,
+    "A11_actual_saved_paraphrases_rejected": 3,
+    "B7_explicit_current_paid_positive_rejected": 2,
+    "B7_negative_controls_rejected": 3
+  },
+  "finding": "A11 disposition_source rejects all three faithful saved paid paraphrases. B7 has a different stronger scope/span guard but shares a narrow positive verb pattern: explicit current-product I actually paid and I have already processed the payment are rejected in pure source-unit execution; made payment with explicit product passes. This is not observed B7 hosted failure and does not license ambiguous product inference.",
+  "recommendation": "Recognize current self paid claims from bounded operand/action/subject/tense/target semantics, allowing harmless adverbs and supported payment paraphrases after source scope/negation/quote/history validation. In B, retain product-specific or uniquely bound current target, positive current-bank qualifiers and exact source span. Do not weaken identity or turn paid assertions into successful payment verification. Keep old failed scores and mandatory recording disclaimer. Parent owns fresh builder fix; no active A11/B7 edits.",
+  "limits": "Pure literal-source predicate CPU checks, not a full persisted controller replay or bank-write proof. Saved A11 chronology comes from provided read-only projection; no judge/verdict or score changed. Explicit B product references avoid invented collective groundtruth.",
+  "source_hashes_before": {
+    "competition\\runs\\20261011-114646-180202\\codex-stress-a.workflow.json": "d1b55c645b6ba2b8ad61172575feef44bdbeafe4e0574b9f36b61111f23a33b3",
+    "competition\\runs\\20261011-115152-818e2f\\codex-stress-b-next.workflow.json": "7fe1d00e9557e9d353425db1ecdbc92d2b031edd9fdcc2018f6419d86c14f544",
+    "analysis\\day2-a11-paid-regression.json": "32cbd0274ebfafa9fc8b3a0ecd268217ca41b5a4c4d89d7f011c270f33500b73",
+    "analysis\\day2-targeted-source-review.json": "cd634050acfaa10bfb53df260a221918d7b8bbedc65bfb601519f22d480388bc",
+    "analysis\\day2-targeted-witnesses.json": "42d7e750689e48acf5a647e1ddd68bee2453bcb391b0478e506a693853204ee0",
+    "analysis\\day2-targeted-source-review.b7.json": "0d5255fd53108a3f7392f1ff1fd201037892c3133f0006d473d407af59705c67",
+    "analysis\\day2-targeted-witnesses.b7.json": "4c320ba9164e691def6913d8e758c8a83e4aef4d0ff1e0154a349249efdc9529",
+    "analysis\\day2-model-independent-review.json": "7286c0310b6405a527c178f6090ae69dfe8a038190404e07d640421fe45afcbf"
+  },
+  "source_hashes_after": {
+    "competition\\runs\\20261011-114646-180202\\codex-stress-a.workflow.json": "d1b55c645b6ba2b8ad61172575feef44bdbeafe4e0574b9f36b61111f23a33b3",
+    "competition\\runs\\20261011-115152-818e2f\\codex-stress-b-next.workflow.json": "7fe1d00e9557e9d353425db1ecdbc92d2b031edd9fdcc2018f6419d86c14f544",
+    "analysis\\day2-a11-paid-regression.json": "32cbd0274ebfafa9fc8b3a0ecd268217ca41b5a4c4d89d7f011c270f33500b73",
+    "analysis\\day2-targeted-source-review.json": "cd634050acfaa10bfb53df260a221918d7b8bbedc65bfb601519f22d480388bc",
+    "analysis\\day2-targeted-witnesses.json": "42d7e750689e48acf5a647e1ddd68bee2453bcb391b0478e506a693853204ee0",
+    "analysis\\day2-targeted-source-review.b7.json": "0d5255fd53108a3f7392f1ff1fd201037892c3133f0006d473d407af59705c67",
+    "analysis\\day2-targeted-witnesses.b7.json": "4c320ba9164e691def6913d8e758c8a83e4aef4d0ff1e0154a349249efdc9529",
+    "analysis\\day2-model-independent-review.json": "7286c0310b6405a527c178f6090ae69dfe8a038190404e07d640421fe45afcbf"
+  },
+  "old_reports_unchanged": true
+}

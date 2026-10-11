@@ -1,0 +1,214 @@
+{
+  "status": "CLOSED_FROZEN_CODEX_DAY2_TARGETED_SOURCE_REVIEW",
+  "reviewer": "Independent Codex fallback; native quota previously blocked. No native Opus attempt or inference claim.",
+  "start_utc": "2026-10-11T08:50:20Z",
+  "deadline_utc": "2026-10-11T09:05:20Z",
+  "closed_utc": "2026-10-11T08:56:38.157979+00:00",
+  "candidate": {
+    "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-114646-180202\\codex-stress-a.workflow.json",
+    "sha256": "d1b55c645b6ba2b8ad61172575feef44bdbeafe4e0574b9f36b61111f23a33b3",
+    "version": 11,
+    "agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+    "workflow_id": "092bb06d-a735-43b3-b411-c2c7138b0c1f",
+    "controller_sha256": "39d3211ecde1ef8b8cd63d2f078e4cd49351410834172f0aeb2165f778f8077b",
+    "controller_equals_export": true,
+    "publication_status_completed": true
+  },
+  "counts": {
+    "assertions": 143,
+    "passed": 132,
+    "failed": 11,
+    "literal_block_executions": 893,
+    "codec_checks": 32,
+    "computed_speech_forbidden_amount_questions": 0
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "priority": "P1",
+      "type": "supported_source_policy_guard_failure",
+      "title": "Non-self DOB and phone operands are promoted by raw fallback despite valid unknown primary",
+      "source": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-114646-180202\\work\\repaired_dispatch.py",
+      "lines": [
+        247,
+        275,
+        278,
+        330,
+        545,
+        639
+      ],
+      "evidence_ids": [
+        "security/conforming-unknown/dob/sister",
+        "security/conforming-unknown/dob/brother",
+        "security/conforming-unknown/dob/partner",
+        "security/conforming-unknown/dob/neighbour",
+        "security/conforming-unknown/phone/sister",
+        "security/conforming-unknown/phone/brother",
+        "security/conforming-unknown/phone/partner",
+        "security/conforming-unknown/phone/neighbour"
+      ],
+      "literal_counterexample": {
+        "phase": "dob",
+        "event": "k=unknown;c=1;END",
+        "raw": "My sister was born on 9 January 1991.",
+        "actual_route": "verify_identity",
+        "actual_security_answer": "1991-01-09"
+      },
+      "cause": "Security fallback accepts context containing my; its non-self denylist omits sibling/partner and arbitrary other-person possessives. primary_raw then replaces valid unknown with security before the ordinary comparison branch. Same defect independently executed in phone phase.",
+      "effect_limit": "A comparison request is prepared with another person's supplied operand. No real bank tool called and no identity authority established locally. A genuine current successful bank receipt is still required.",
+      "recommendation": "Require the answer operand's actual subject to be self or a bare answer bound to the current security question. Resolve possessive noun phrases before projecting date/digits; reject relatives and named third parties regardless of my. Enforce same guard for raw recovery and typed security rows. Retain current source/answer agreement and bank operation/body/token/counter gates."
+    },
+    {
+      "id": "F2",
+      "priority": "P3",
+      "type": "cache_hygiene_limitation_not_proven_authority_failure",
+      "title": "Unknown correction retains old amount cache but required-components gate blocks consumption",
+      "source": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\competition\\runs\\20261011-114646-180202\\work\\repaired_dispatch.py",
+      "lines": [
+        398,
+        402,
+        403,
+        686,
+        694,
+        706,
+        724,
+        791
+      ],
+      "evidence_ids": [
+        "partial/unknown/date-only",
+        "partial/unknown/cached-amount-not-authority"
+      ],
+      "actual": "Old amount220 remains in pending after u=unknown and a new date, but incomplete is true, completed_components includes date only, readback null, later yes produces neutral pause without write.",
+      "recommendation": "Optionally clear both cached values for unknown/both invalidation or separate cache from eligible completed operands. Do not describe the current observation as a stale-consent or financial-write failure."
+    },
+    {
+      "id": "C1",
+      "type": "positive_source_cpu_controls",
+      "title": "Recipient title/inverted-name repair and amount speech controls pass",
+      "evidence": "17 recipient positives including neutral Unicode/apostrophe names; mismatched title/given/surname, quoted, third-party, hypothetical and whole-turn contradiction controls pass. Recognition advances only to DOB with no comparison/disclosure/verified state. No forbidden amount question in 143 assertions' emitted computation or static speech scan; exact final count in counts.",
+      "scope": "CPU conditional events, not live extractor qualification."
+    },
+    {
+      "id": "C2",
+      "type": "positive_source_cpu_controls",
+      "title": "Fresh consent, completion, identity receipts, floor limits and500 retry preserved",
+      "evidence": "Partial amount/date/both/unknown gate writes until fresh pair/readback and later yes. Date-only does not finish unresolved amount. Newly spoken permitted floor offer can be explicitly accepted and read back before later yes. Stale/mismatched identity/account/promise receipts rejected. Actual-export no-posthook documented500 metadata retries once with identical body; second failure closes; unknown504/stale500 does not acknowledge or retry. Floor/persuasion/hardship/calendar controls pass."
+    }
+  ],
+  "initial_123_interpretation": {
+    "stage": "initial",
+    "assertions": 123,
+    "passed": 120,
+    "failed": 3,
+    "interpretation": "Two manifestations of third-party DOB subject flaw; one strict cache-removal oracle failure does not demonstrate authority consumption."
+  },
+  "producer_contract": {
+    "literal_examples": 28,
+    "all_examples_match_schema_and_decode": true,
+    "actual_newline_matches_pattern_and_decoder": {
+      "id": "aggregate-actual-newline",
+      "wire": "k=proposal;c=1;a=220;END\nk=proposal;c=1;d=20 October 2026;END",
+      "pattern_matches": true,
+      "decoder_accepts": true,
+      "rows": [
+        {
+          "k": "proposal",
+          "c": "1",
+          "a": "220"
+        },
+        {
+          "k": "proposal",
+          "c": "1",
+          "d": "20 October 2026"
+        }
+      ],
+      "error": null
+    },
+    "literal_backslash_n_rejected": {
+      "id": "aggregate-literal-backslash-n",
+      "wire": "k=proposal;c=1;a=220;END\\nk=proposal;c=1;d=20 October 2026;END",
+      "pattern_matches": false,
+      "decoder_accepts": false,
+      "rows": [],
+      "error": "field"
+    },
+    "nonfinite": "Regex permits alphabetic a=NaN but semantic decoder rejects; intentional validation layering, not an inferred provider fault.",
+    "fields": [
+      {
+        "name": "event",
+        "type": "string",
+        "max_retries": 1,
+        "min_confidence": 0.1
+      },
+      {
+        "name": "raw",
+        "type": "string",
+        "max_retries": null,
+        "min_confidence": 0.1
+      },
+      {
+        "name": "admin",
+        "type": "string",
+        "max_retries": 1,
+        "min_confidence": 0.1
+      }
+    ],
+    "fixed_runtime": "Export talk computes TTS from dialogue_line; bank tool actions are literal API nodes; no runtime external inference or learned model embedded by reviewer."
+  },
+  "brief_warning_assessment": {
+    "rules": [
+      24,
+      26,
+      27,
+      30,
+      34,
+      35,
+      37,
+      38
+    ],
+    "assessment": "Floor once refers to ordinary offer allowance; rule26 expressly allows floor again on late attempt2. Mandatory remaining-overdue warning may be repeated with fresh changed-term/readback safety disclosure; brief does not globally ban every repeated warning. Warning repetition alone is not a demonstrated policy violation and does not justify changing original judge/score or required disclaimer.",
+    "cpu_checks": [
+      "floor/first-offer",
+      "floor/readback-warning",
+      "floor/no-repeat-normal-offer",
+      "floor/late-attempt2",
+      "floor/exhausted"
+    ]
+  },
+  "brief_plan": [
+    "Fix security operand subject resolution through a fresh automatic builder generation; do not mutate locked A11.",
+    "Keep name/title whole-act and bank-receipt guards intact. Require new source CPU controls for non-self possessives in both security phases.",
+    "Optionally separate pending cache from completed operands; preserve neutral partial pauses and exact fresh readback/later consent.",
+    "Parent alone runs hosted regression and keeps original scores; await actual producer/channel evidence before model-frequency claims."
+  ],
+  "witness_files": {
+    "json_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-targeted-witnesses.json",
+    "json_sha256": "42d7e750689e48acf5a647e1ddd68bee2453bcb391b0478e506a693853204ee0",
+    "reusable_helper_path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-targeted-witnesses.py",
+    "helper_sha256": "febfc74ecf57f2d221dbd720f0ba7abd7062af1cabbcdfc5fc4b8362cb043e3f"
+  },
+  "protected_source_hashes": {
+    "competition/runs/20261011-114646-180202/codex-stress-a.workflow.json": "d1b55c645b6ba2b8ad61172575feef44bdbeafe4e0574b9f36b61111f23a33b3",
+    "competition/runs/20261011-114646-180202/status.json": "884c0eab74ef8566ea300c3c72637419b846746d8be77a971bc593d78e056be9",
+    "competition/runs/20261011-114646-180202/work/existing_dispatch.py": "cc75cf5e79914d8b1953b3476f0687b545f09731c1d1bb30076109ec9092fef7",
+    "competition/runs/20261011-114646-180202/work/repair_build.py": "8771cfdf540bbcefa9f390006f0c723a9acc9d9d5c826d7ba84883dbc448320a",
+    "competition/runs/20261011-114646-180202/work/repaired_dispatch.py": "79cacd90ea42adf92b0a88884e3f55386b00ba33078304c68a0744f9abfb249c",
+    "competition/runs/20261011-114646-180202/work/validate_repair.py": "9e285619f56b3b1b6c7981aae117b28eb47c3b555d4df7435c346b0b62fefece",
+    "competition/runs/20261011-114646-180202/work/inputs/01-brief-a.md": "c989bc4484c9643b0e79646c3091fe29b1792fce9972efd571815ce38fbb7573",
+    "competition/runs/20261011-114646-180202/work/inputs/base-agent.json": "77cfff8570fe762b7cb98f6adb662a2bce653a33366264cce7ff0f51063049e9",
+    "competition/runs/20261011-114646-180202/work/inputs/openapi.json": "fa5ef2aec75e41c7f0be454cde1f6ffd69c5a4735ebe364ee065b13090b74d02",
+    "competition/runs/20261011-114646-180202/work/inputs/tools-and-code.md": "c094579c4b2169427252a8cf4a32ff8bd2e0e837ff12e56ad4d5f8183980d837",
+    "competition/runs/20261011-114646-180202/work/inputs/workflow-format.md": "b5236915838b6b88196d4d1e194adc21eb45137ffe83828239213f0448c47db9",
+    "competition/runs/20261011-114646-180202/work/policy.json": "b888d3f789291691ec4fee635297e4463674649ce7912132cb04fca748cfacdb",
+    "competition/runs/20261011-114646-180202/work/coverage.json": "3374a833a2aa18be736d42c79e194fc28f498392ca80d1edd8f937994b52211f",
+    "competition/runs/20261011-114646-180202/work/workflow.json": "bb7a68439ec440be904d02917818a3bf626fa537b8b2dbdb7757aa4487e6f230",
+    "competition/runs/20261011-114646-180202/work/day2-repair-feedback.json": "d39fb8bfdd8774cdf8b9f5e87b1b8e4be5454b495422d690e1e2dff62c4846c3"
+  },
+  "protected_sources_unchanged": true,
+  "additional_protected_hash_snapshot": {
+    "competition\\skills\\build-phone-agent.md": "efb1820b900a8183225be457425866e9bbdc8c35c368cb09b0814da9946e7d36",
+    "analysis\\night-b-next6-selected-stress-triage.json": "cc106d4c5273d2ad1fb7067ed5a8300a2a7391cafc7382c65db3b638c86a2b31",
+    "analysis\\official-a-v10.json": "20f506b354a6bf62dceb261eb4bd8c593e9d79007e35ac8a234c4a74f9ce272c"
+  },
+  "boundary": "No guides/candidates/models/packs/runners/Git/platform/secrets changed. No original tests/actors/expectations/verdicts modified. Synthetic conditional API receipts and literal CPU execution are not actual bank or hosted evidence. B path not relayed before A checkpoint; B not audited here."
+}

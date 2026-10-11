@@ -1,0 +1,54 @@
+{
+  "bank_adaptation_review_steps": [
+    "A bank-domain reviewer checks corpus applicability, redaction samples, label ambiguity and language mismatch before any bank-domain use.",
+    "If an auxiliary classifier is used, its output is a linguistic hypothesis. Keep bank policy, identity state, tool permission and ledger facts in the independently reviewed bank workflow.",
+    "Create bank action labels only from separately reviewed fixture facts, conversational state and observed tool results. Support taxonomy alone supplies none of these.",
+    "Review ambiguous transfer queries individually. Domestic/international transfer, pending transfer and failed transfer support intents imply neither debt nor willingness nor a payment promise.",
+    "Any translation, paraphrase, synthetic bank adaptation or multi-turn variant must retain this corpus group_id and stay in its assigned split. Do not mix translated variants across splits.",
+    "Reserve and lock a genuinely unseen policy OOD set outside this packet before model/threshold selection. Another owner supplies it; no OOD gold or blind examples are invented here.",
+    "Parent records reviewer identity, exact artifact hashes and approved use, then separately authorizes the actual training run."
+  ],
+  "blind_policy_ood": {
+    "examples": 0,
+    "must_not_use": [
+      "publisher test already exposed",
+      "this packet's internal eval",
+      "known public policy fixtures as blind evidence"
+    ],
+    "owner": "parent / independent policy evaluation owner",
+    "status": "reserved_separately_uncollected_here"
+  },
+  "independent_bank_domain_review": {
+    "approved_mapping": null,
+    "reviewer": null,
+    "status": "pending_parent_or_domain_reviewer"
+  },
+  "local_scope_review": {
+    "checks": [
+      "Original 77 support-intent labels preserved",
+      "No policy/action/ledger targets generated",
+      "No transfer-to-debt-payment mapping",
+      "English support queries are not Turkish collection dialogue",
+      "Internal held-out data is not blind policy OOD"
+    ],
+    "method": "explicit label/target/split invariant review; not independent bank-domain approval",
+    "status": "completed"
+  },
+  "prohibited_inferences": [
+    "source intent => bank permission",
+    "source intent => ledger truth",
+    "transfer question => debt payment proposal",
+    "publisher test => fresh evaluation"
+  ],
+  "ready_training_task": {
+    "calibration": "Use calibration.jsonl only to choose source-intent confidence thresholds; do not optimize weights on it",
+    "claim_limit": "Measures internal BANKING77 source-intent recognition; provides no evidence of safe bank actions or ledger correctness",
+    "evaluation": "Freeze model/settings, then evaluate eval.jsonl with macro F1, per-intent recall and confusion matrix",
+    "input": "text",
+    "objective": "Supervised 77-class source-intent classification using only train.jsonl",
+    "target": "source_label_id in taxonomy.json publisher order"
+  },
+  "review_result": "No bank adaptation gold exists in this packet. Independent review remains required for bank adaptation.",
+  "schema_version": 1,
+  "status": "auxiliary_corpus_ready_bank_adaptation_not_approved"
+}

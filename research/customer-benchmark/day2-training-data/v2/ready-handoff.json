@@ -1,0 +1,98 @@
+{
+  "limits": {
+    "bank_adaptation_domain_review": "pending; does not block auxiliary source-head training",
+    "bank_policy_or_ledger_gold": false,
+    "heldouts": "internal grouped publisher-train-fold/shard-derived, not blind policy OOD",
+    "privacy_scrubbing": "regex plus publisher entity spans; heuristic, not a guarantee for indirect identifiers",
+    "training_executed_here": false
+  },
+  "status": "ready_verified_actual_public_source_training_data",
+  "v1_frozen": {
+    "manifest": {
+      "bytes": 8654,
+      "path": "research/customer-benchmark/day2-training-data/manifest.json",
+      "sha256": "e5c4da1d528da021aea8a1131b169ff000c8106b0955a35928405a1d55f65fb0"
+    },
+    "reproduction_command": "python research/customer-benchmark/day2-training-data/reproduce-v1.py",
+    "splits": {
+      "calibration": {
+        "bytes": 701017,
+        "path": "research/customer-benchmark/day2-training-data/calibration.jsonl",
+        "rows": 993,
+        "sha256": "cdaf6e6045e7fb13118bee7f4c3b07d2df5214b9ea3a46d5fbca4e22cf18870d"
+      },
+      "eval": {
+        "bytes": 697223,
+        "path": "research/customer-benchmark/day2-training-data/eval.jsonl",
+        "rows": 993,
+        "sha256": "3c178ba644a4f5db7d58dedb3f4ca19009c4008a7958b3afdccbe2a84cf714db"
+      },
+      "train": {
+        "bytes": 5570947,
+        "path": "research/customer-benchmark/day2-training-data/train.jsonl",
+        "rows": 7943,
+        "sha256": "cbe4f19f99e10065fb9c19c33c82b5e17fa76685c497a1f99d1c072e96692406"
+      }
+    },
+    "verification": {
+      "bytes": 2645,
+      "path": "research/customer-benchmark/day2-training-data/v1-independent-verification.json",
+      "sha256": "67e1eea771875bb2c59b3ab186cdfe103b2de32017069028cde6eee88759c8c4"
+    }
+  },
+  "v2": {
+    "independent_scan": {
+      "bytes": 1288,
+      "path": "research/customer-benchmark/day2-training-data/v2/independent-validation.json",
+      "sha256": "41a7abd0c978d2d71c4467d4319b5eb5fbed0176ca7c582b71fb6a1dec336db2"
+    },
+    "manifest": {
+      "bytes": 23722,
+      "path": "research/customer-benchmark/day2-training-data/v2/manifest.json",
+      "sha256": "8fbbd1ec7e3cefda0cbcef616bcf61ba7886d9234fee9b9ed5e23513c7cc2ba0"
+    },
+    "reproduction_commands": [
+      "python research/customer-benchmark/day2-training-data/build-v2.py --collect-only --offline",
+      "python research/customer-benchmark/day2-training-data/build-v2.py --process-only",
+      "python research/customer-benchmark/day2-training-data/build-v2.py --verify --offline"
+    ],
+    "source_counts": {
+      "banking77-publisher-train": {
+        "calibration": 993,
+        "eval": 993,
+        "train": 7943
+      },
+      "google-taskmaster3-shard00": {
+        "calibration": 126,
+        "eval": 168,
+        "train": 2053
+      },
+      "polyai-nlupp": {
+        "calibration": 261,
+        "eval": 261,
+        "train": 2088
+      }
+    },
+    "splits": {
+      "calibration": {
+        "bytes": 1534744,
+        "path": "research/customer-benchmark/day2-training-data/v2/calibration.jsonl",
+        "rows": 1380,
+        "sha256": "e2e708b9254a53712c852b26c49b2444be50d72b4f130e35599bb174df94d73d"
+      },
+      "eval": {
+        "bytes": 1610080,
+        "path": "research/customer-benchmark/day2-training-data/v2/eval.jsonl",
+        "rows": 1422,
+        "sha256": "f8bbb9dfdf89752bc71b1c5a99ea0042892e3e1dd3175a9e3b3a7dedd8bc8923"
+      },
+      "train": {
+        "bytes": 14143005,
+        "path": "research/customer-benchmark/day2-training-data/v2/train.jsonl",
+        "rows": 12084,
+        "sha256": "03707b592734838d9ad80fadaab3d87f42a5ed72c170580b86fa9cb58876e60f"
+      }
+    },
+    "training_contract": "Route targets by head_mask; apply target_element_masks for NLU++ losses. Preserve group_id for all future variants. Do not coerce NLU++/Taskmaster into BANKING77 labels."
+  }
+}

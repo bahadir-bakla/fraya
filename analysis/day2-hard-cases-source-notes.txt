@@ -1,0 +1,72 @@
+DAY 2 HARD CUSTOMER CASES - SOURCE AND VALIDATION NOTES
+Eight new synthetic customer decision scripts: 4 A on PUB-01, 4 B on PUB-11. Original public bank facts are unchanged.
+Pending separate review; parent owns the only platform test queue. No platform execution or registration occurred.
+Canonical pack SHA-256: 37ff383483a9b37874de6a5b5c54e0a7b4479b5402161b76d636a5563b7e0707
+Raw pack SHA-256: d1091df6fd75a71e2ff7bc883f911f15422ee3f82bdc6ce654b7a8de0c2e4842
+Canonical method: sha256_canonical_json_utf8_sorted_keys_compact_ensure_ascii_false
+Source pins: UTF-8 LF-normalized SHA-256, with raw source hashes retained.
+
+SCENARIOS
+PUB-01__speech_day2_fragmented_identity_pending_date | Incomplete identity then a pending consent date revision
+Expected: {"outcome":"promise","reason":null,"promises":[{"product_id":"p1","amount":240.0,"date":"2026-10-21"}],"notes":[],"callbacks":[],"transfers":[]}
+Derivation: A11 requires completion of DOB and four phone digits without invention. Initial next Tuesday is 20 October. A34/A35 require fresh confirmation after the customer changes to 21 October. Final 240 lies between card floor 126 and past_due 420, and 21 October is inside the early deadline 2 November. Shop-bill payment is not card current arrears.
+Mechanism: Fragment completion and scoped consent
+Rules: A24, A11, A16, A18, A19, A22, A25, A27, A28, A29, A34, A35, A37, A38, A39, A46, A47, A-close, O-verify_identity, O-create_promise
+PUB-01__speech_day2_hardship_subject_voluntary | Own job loss, negated restructuring and a voluntary floor promise
+Expected: {"outcome":"promise","reason":null,"promises":[{"product_id":"p1","amount":126.0,"date":"2026-10-23"}],"notes":[],"callbacks":[],"transfers":[]}
+Derivation: A32 applies to explicit own job loss and forbids persuasion, but expressly permits voluntary promises. Support is declined and restructuring is negated. 126 equals card floor; next Friday is 23 October, inside early deadline 2 November.
+Mechanism: Hardship subject and voluntary exception
+Rules: A24, A11, A16, A18, A19, A22, A25, A26, A27, A29, A32, A33, A34, A37, A38, A41, A46, A47, A-close
+PUB-01__speech_day2_colleague_death_callback_repair | Unrelated bereavement then an invalid and corrected callback slot
+Expected: {"outcome":"not_reached","reason":"callback","promises":[],"notes":[],"callbacks":[{"date":"2026-10-15","time":"11:00"}],"transfers":[]}
+Derivation: A5/A10 prohibit third-party identity/account actions. A9 does not apply to explicitly unrelated death. Under A6/A7 first slot 16 October 09:00 is invalid; the one alternative 15 October 11:00 is a valid future next-business-day slot.
+Mechanism: Third-party subject and callback alternative
+Rules: A24, A1, A2, A5, A6, A7, A8, A9, A10, A46, A47, A-calendar, A-close, O-schedule_callback
+PUB-01__speech_day2_acknowledgement_historical_dispute | Read-back acknowledgement changes into historical payoff dispute
+Expected: {"outcome":"no_promise","reason":"dispute","promises":[],"notes":[],"callbacks":[],"transfers":[]}
+Derivation: A34 prevents recording a proposal without clear current consent. The leading yes is qualified by explicit do-not-record. Old payoff/closure is A40 dispute, expressly not A39 current past-due payment. Outcome is no_promise/dispute without account mutations.
+Mechanism: Consent withdrawal and payment-time scope
+Rules: A24, A11, A16, A17, A28, A29, A34, A35, A39, A40, A46, A47, A-close, O-create_promise, O-close_call
+PUB-11__speech_day2_common_date_holiday_revision | Joint consent revises a common date to a holiday across unequal deadlines
+Expected: {"outcome":"promise","reason":null,"promises":[{"product_id":"p1","amount":220.0,"date":"2026-10-23"},{"product_id":"p2","amount":640.0,"date":"2026-10-23"},{"product_id":"p3","amount":75.0,"date":"2026-10-27"}],"notes":[],"callbacks":[],"transfers":[]}
+Derivation: B6 assigns card p1 and personal loan p2 their individual 23 October late deadlines for the revised common 26 October proposal. The car loan early deadline is 2 November, so A20 moves its in-window 26 October holiday to 27 October with explicit acceptance. A35/B7 require corrected joint confirmation before writes.
+Mechanism: Common-date revision and per-product calendar
+Rules: A24, A11, A16, A18, A19, A20, A22, A23, A29, A34, A35, A37, A38, A46, A47, A-calendar, B1, B2, B3, B4, B6, B7, B-close, O-create_promise
+PUB-11__speech_day2_scoped_paid_disputed_voluntary | One card floor promise, one historical dispute and one current loan payment
+Expected: {"outcome":"promise","reason":null,"promises":[{"product_id":"p1","amount":66.0,"date":"2026-10-15"}],"notes":[{"product_id":"p2","reason":"dispute"},{"product_id":"p3","reason":"paid"}],"callbacks":[],"transfers":[]}
+Derivation: The brother payment has no effect on Sofia card; complete voluntary 66 equals its floor and 15 October is within its deadline. Old personal-loan closure is p2 dispute (A40/B9); current car-loan arrears payment is p3 paid (A39/B9). B8 notes both, and one recorded promise wins under B-close.
+Mechanism: Corrected subject and heterogeneous product disposition
+Rules: A24, A11, A16, A19, A25, A27, A29, A34, A37, A38, A39, A40, A46, A47, B1, B2, B4, B7, B8, B9, B-close, O-create_promise, O-add_note
+PUB-11__speech_day2_reverse_report_close_precedence | Car dispute heard first but personal-loan refusal determines the close
+Expected: {"outcome":"no_promise","reason":"refused","promises":[],"notes":[{"product_id":"p1","reason":"paid"},{"product_id":"p2","reason":"refused"},{"product_id":"p3","reason":"dispute"}],"callbacks":[],"transfers":[]}
+Derivation: p1 is current paid, p2 refuses both permitted late-band attempts (640 on 16 October, then floor 213 on deadline 23 October), p3 disputes. B-close ignores spoken order and chooses p2 refused as first non-paid in account order. Negated lower instalments is not A41 and payment refusal is not A45 refusal to converse.
+Mechanism: Report order versus account-order close
+Rules: A24, A11, A16, A18, A25, A28, A30, A31, A33, A39, A40, A41, A45, A46, A47, B1, B2, B3, B4, B5, B8, B9, B-close, O-add_note, O-close_call
+PUB-11__speech_day2_pending_mixed_support_interrupt | Illness support interrupts mixed provisional decisions before joint consent
+Expected: {"outcome":"transferred","reason":"support","promises":[],"notes":[],"callbacks":[],"transfers":[{"queue":"support"}]}
+Derivation: A34 forbids both unconfirmed proposals. A32 supports illness support transfer when accepted. B10 explicitly prohibits every note before or after any transfer, so no earlier card-dispute note may be written. The yes authorizes support only. Outcome transferred/support with zero promises and notes.
+Mechanism: Support interruption and note suppression
+Rules: A24, A11, A16, A25, A27, A29, A32, A34, A35, A40, A41, A46, A47, B1, B2, B4, B7, B8, B9, B10, B-close, O-create_promise, O-add_note, O-transfer_to_agent
+
+ACTUAL LOCAL CHECKS
+8 strict schema / unchanged authoring-contract checks passed; immutable fact equality, unique IDs and rule references passed.
+8 local reference receipt replays passed original ledger scorer plus receipt/trace guards. All 8 remain non-passes without a conversation judge; none is an agent execution.
+8 unchanged actor prompt constructions preserve scripts and separate checks/oracles; third-party security is excluded.
+Independent brief calendar/amount-window checks passed. 12 malformed in-memory controls rejected.
+BoundStressCatalog raw/canonical/source/manifest checks passed. Read-only plans verified exact 4 A and 4 B selections, 3 reps each, 12 planned sessions and zero network calls per plan. No session actually created.
+Source bytes unchanged across validation. Python 3.11.9, jsonschema 4.26.0.
+No Freya/credentials/network/Git/GPU. Freya import was an inert stub; no actor/judge/scorer logic changed.
+
+RULE APPLICABILITY AND UNRESOLVED SCOPE
+A24 inherited amount proposal: Never elicit a payment amount in generic recovery. These actors volunteer complete amounts or answer explicit policy-permitted offers. Security-answer completion and legitimate date clarification remain allowed.
+Partial security answers: A11 requires readable DOB and four digits; no fragment-buffer algorithm, exact pause duration or maximum neutral clarification count is prescribed. Do not invent missing identity components.
+Subject/negation interpretation: Scripts explicitly resolve subjects, products and negated requests. Reasonable clarification is permitted; no new NLP gold labels, spans or hidden classifier policy are claimed.
+B10 notes on eventual transfer: No notes before or after any transfer; API has no note undo. Pending card-dispute writes must therefore be deferred in the support-interruption case. No cancellation or retroactive exception is invented.
+B6 plus A20 common holiday revision: Late products take their own deadline, early car product accepts next business day after its in-window holiday; all revised values are read back jointly before clear consent.
+Text interruption: Wait is the next customer text turn at confirmation, not timed barge-in, truncated ASR or audio pipeline evidence.
+
+TEXT-ONLY EVALUATION
+No audio, ASR, real timing, barge-in, model extraction, actual workflow, actor fidelity or independent judge performance measured.
+This pack is new authored data, not an official PUB score, hidden-test coverage estimate or paraphrase of observed failure traces.
+Row hosted flags describe existing base-fact eligibility only; this pack is unexecuted and unapproved for platform use.
+Full source hashes, rule lines/pointers, per-case script/expected hashes, reference programs and read-only bound plans are in the source-notes JSON.
