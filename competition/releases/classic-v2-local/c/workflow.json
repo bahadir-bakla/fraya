@@ -1,0 +1,1191 @@
+{
+  "initial_node": "initialize",
+  "system_prompt": "You are Nordhaven Savings Bank's virtual assistant. English, concise, respectful. Speak only the supplied current line exactly; never invent figures, promises, waivers, terms or backend success. No tools are available in conversation steps. Before bank identity is verified never say arrears, overdue, debt, payment, collections, balance or owe; never name a product, amount or days late. Security answers are private. Claims never replace bank receipts.",
+  "nodes": {
+    "initialize": {
+      "name": "initialize",
+      "node_type": "code",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "controller",
+      "pre_actions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "code_exec",
+            "handler": "__function__:code_exec",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "default": "vars['state']='{}'\nvars['route']='safe_end'\nvars['line']=''\nvars['farewell']='Thank you. Goodbye.'\nvars['requested_field']='phone_last4'\nvars['answer_revision']=0\nvars['phase']='opening'\nvars['offer_context']=''\nvars['receipt']=''\nvars['receipt_op']=''\nvars['receipt_seq']=''\n"
+                },
+                "timeout_ms": {
+                  "type": "number",
+                  "default": 1000
+                }
+              }
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "controller": {
+      "name": "controller",
+      "node_type": "code",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "safe_end",
+      "pre_actions": [
+        {
+          "type": "function",
+          "function": {
+            "name": "code_exec",
+            "handler": "__function__:code_exec",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "default": "import json, re, datetime\n\nHOLIDAYS = {'2026-10-16','2026-10-28','2026-11-02','2026-12-24','2026-12-25','2027-01-01'}\nKINDS = {'propose','accept','confirm','refuse','too_much','paid','dispute','hardship','fees','plan','human','stop','aside','unknown','callback','wrong','death','other','decline','purpose'}\ndef truth(x): return x is True or str(x).lower() == 'true'\ndef business(d): return d.weekday()<5 and d.isoformat() not in HOLIDAYS\ndef shift(d,n):\n    while n:\n        d += datetime.timedelta(days=1 if n>0 else -1)\n        if business(d): n += -1 if n>0 else 1\n    return d\ndef before(d):\n    while not business(d): d -= datetime.timedelta(days=1)\n    return d\ndef money(x):\n    if not re.fullmatch(r'(?:0|[1-9][0-9]*)(?:\\.[0-9]{1,2})?',str(x)): raise ValueError('amount')\n    a,b=(str(x)+'.').split('.')[:2]\n    return int(a)*100+int((b+'00')[:2])\ndef euros(n): return '%d.%02d euros'%(n//100,n%100)\ndef spoken(d): return d.strftime('%A %d %B %Y')\ndef small_number(text):\n    units=dict(zip('zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen'.split(),range(20)))\n    tens=dict(zip('twenty thirty forty fifty sixty seventy eighty ninety'.split(),range(20,100,10)))\n    tokens=text.replace('-',' ').split()\n    if len(tokens)==1 and tokens[0] in units:return units[tokens[0]]\n    if len(tokens)==1 and tokens[0] in tens:return tens[tokens[0]]\n    if len(tokens)==2 and tokens[0] in tens and tokens[1] in units and 0<units[tokens[1]]<10:return tens[tokens[0]]+units[tokens[1]]\n    raise ValueError('number words')\ndef word_year(text):\n    text=text.strip().replace('-',' ')\n    if re.fullmatch(r'\\d{4}',text):return int(text)\n    if text.startswith('two thousand'):\n        rest=text[len('two thousand'):].strip()\n        rest=re.sub(r'^and ','',rest)\n        return 2000+(small_number(rest) if rest else 0)\n    for century in ('nineteen','twenty'):\n        if text.startswith(century+' '):\n            rest=text[len(century):].strip();rest=re.sub(r'^hundred(?: and)? ?','',rest)\n            return small_number(century)*100+small_number(rest)\n    raise ValueError('year')\ndef normalize_date_words(x):\n    months='january february march april may june july august september october november december'.split()\n    ordinals={'first':'one','second':'two','third':'three','fourth':'four','fifth':'five','sixth':'six','seventh':'seven','eighth':'eight','ninth':'nine','tenth':'ten','eleventh':'eleven','twelfth':'twelve','thirteenth':'thirteen','fourteenth':'fourteen','fifteenth':'fifteen','sixteenth':'sixteen','seventeenth':'seventeen','eighteenth':'eighteen','nineteenth':'nineteen','twentieth':'twenty','thirtieth':'thirty'}\n    y=x.lower().strip().replace('-',' ')\n    # ISO tokens must remain unchanged.\n    if re.fullmatch(r'\\d{4}-\\d{2}-\\d{2}',x):return x\n    weekday=re.match(r'^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)[, ]+(.+)$',y)\n    if weekday:return weekday[1]+' '+normalize_date_words(weekday[2])\n    m=re.fullmatch(r'(?:the )?([a-z -]+)(?: of)? ('+'|'.join(months)+r')(?:,? ([a-z0-9 -]+))?[.!]?',y)\n    rev=False\n    if not m:\n        q=re.fullmatch(r'('+'|'.join(months)+r') ([a-z0-9 , -]+)[.!]?',y)\n        if q:\n            month=q[1];tail=q[2].replace(',',' ').split();daytext='';yeartext=''\n            for width in (2,1):\n                try:\n                    small_number(' '.join(ordinals.get(t,t) for t in tail[:width]))\n                    if len(tail)<width:continue\n                    daytext=' '.join(tail[:width]);yeartext=' '.join(tail[width:]);break\n                except ValueError:pass\n            if not daytext:return x\n            rev=True\n        else:return x\n    else:daytext=m[1];month=m[2];yeartext=m[3]\n    if daytext.endswith(' of'):daytext=daytext[:-3]\n    tokens=[ordinals.get(t,t) for t in daytext.split()]\n    try:day=small_number(' '.join(tokens))\n    except ValueError:return x\n    year=' '+str(word_year(yeartext)) if yeartext else ''\n    return str(day)+' '+month+year\ndef security_span(raw,field):\n    x=raw.lower().replace('’',\"'\").strip()\n    x=re.split(r'[;?]|,\\s*(?:why|what|how|is|are|can|does|do)\\b|\\s+(?:and|but)\\s+(?:why|what|how|is|are|can|does|do)\\b',x)[0]\n    if field=='phone_last4':\n        x=re.sub(r'^.*?(?:ends? in|last four digits(?: of (?:my |the )?phone(?: number)?)? (?:are|is)|(?:my |the )?phone(?: number)? (?:is|ends in))\\s*','',x)\n    else:\n        x=re.sub(r'^(?:(?:my |the )?(?:date of birth|birth date|birthday)(?: of mine)? (?:is|was)|i was born(?: on)?)\\s*','',x)\n    return x.strip(' .,')\ndef date_value(x,today,offer=''):\n    x=str(x).strip().lower()\n    x=normalize_date_words(x)\n    if re.fullmatch(r'\\d{4}-\\d{2}-\\d{2}',x): return datetime.date.fromisoformat(x)\n    if x in ('today','tomorrow','yesterday'): return today+datetime.timedelta(days={'today':0,'tomorrow':1,'yesterday':-1}[x])\n    days=['monday','tuesday','wednesday','thursday','friday','saturday','sunday']\n    m=re.fullmatch(r'(?:(this|next|last) )?('+ '|'.join(days)+r')(?: (of next week|the week after))?[.!]?',x)\n    if m:\n        w=days.index(m[2])\n        if m[3]: return today+datetime.timedelta(days=7-today.weekday()+w)\n        if m[1]=='last': return today-datetime.timedelta(days=(today.weekday()-w)%7 or 7)\n        return today+datetime.timedelta(days=(w-today.weekday())%7 or 7)\n    m=re.fullmatch(r'(?:the )?(\\d{1,2})(?:st|nd|rd|th)?[.!]?',x)\n    if m:\n        day=int(m[1])\n        if offer and datetime.date.fromisoformat(offer).day==day: return datetime.date.fromisoformat(offer)\n        y,mo=today.year,today.month\n        if day<today.day: mo+=1\n        if mo==13: mo=1;y+=1\n        return datetime.date(y,mo,day)\n    months='january february march april may june july august september october november december'.split()\n    wd='(?:'+ '|'.join(days)+')'\n    m=re.fullmatch(r'(?:(('+ '|'.join(days)+r'))[, ]+)?(?:the )?(\\d{1,2})(?:st|nd|rd|th)? (?:of )?('+ '|'.join(months)+r')(?:,? (\\d{4}))?[.!]?',x)\n    if not m:\n        q=re.fullmatch(r'('+ '|'.join(months)+r') (\\d{1,2})(?:st|nd|rd|th)?(?:,? (\\d{4}))?[.!]?',x)\n        if q: return datetime.date(int(q[3] or today.year),months.index(q[1])+1,int(q[2]))\n        raise ValueError('date')\n    d=datetime.date(int(m[5] or today.year),months.index(m[4])+1,int(m[3]))\n    if m[2] and days[d.weekday()]!=m[2]: raise ValueError('weekday conflict')\n    return d\ndef decode(payload):\n    if not isinstance(payload,str) or not payload.endswith('END') or payload.count('END')!=1: raise ValueError('terminator')\n    body=payload[:-3]\n    if not body or not body.endswith(';'): raise ValueError('rows')\n    rows=[]\n    for row in body[:-1].split(';'):\n        d={}\n        for pair in row.split('|'):\n            if pair.count('=')!=1: raise ValueError('pair')\n            k,v=pair.split('=')\n            if k not in ('k','p','c','a','d','t','u','s') or k in d or not v or any(z in v for z in '{}[]\"\\n'): raise ValueError('field')\n            d[k]=v\n        if not {'k','c'}.issubset(d) or d['k'] not in KINDS or d['c'] not in ('0','1'): raise ValueError('kind')\n        if 'a' in d: money(d['a'])\n        if 'u' in d and d['u'] not in ('amount','date','both','intent'): raise ValueError('unfinished')\n        rows.append(d)\n    return rows\ndef recipient(raw,act,v):\n    x=raw.lower().replace('’',\"'\")\n    if re.search(r'wrong (?:number|person)|do not know|don.t know|not (?:here|available)|(?:he|she).?s (?:not here|at work)|(?:this is|i am|i.m) (?:his|her|their|the) (?:wife|husband|son|daughter|mother|father)|(?:has |is )died|passed away|not me|i.m not',x): return False\n    names=[str(v.get('first_name','')).lower(),str(v.get('last_name','')).lower()]\n    named=re.search(r\"(?:this is|i am|i'm) ([^,.!?]+)\",x)\n    if named and not re.search(r'^(?:me|the |his |her |their )',named[1]):\n        first=named[1].strip().split()[0]\n        accepted=set(' '.join(names).split())|{str(v.get('title','')).lower().strip('.')}\n        if first not in accepted: return False\n    if re.search(r'\\b(?:yes|speaking)\\b|that.s me|it.s me',x): return True\n    has=any(n and re.search(r'(?<!\\w)'+re.escape(n)+r'(?!\\w)',x) for n in names)\n    if has and not re.search(r'\\b(?:if|would|pretend)\\b',x): return True\n    return act=='self'\ndef source_safe(raw):\n    return bool(raw.strip()) and not re.search(r'[\"“”]|\\b(?:my|his|her) (?:wife|husband|son|daughter|friend|partner|brother|sister|neighbour)|\\b(?:if i|suppose|hypothetically|someone said)\\b',raw.lower())\ndef consent(raw):\n    x=raw.lower().replace('’',\"'\")\n    if not source_safe(raw) or re.search(r'\\b(?:but|except|instead|change|wait|withdraw|cancel|never|not correct|don.t agree|do not agree|won.t|cannot|can.t)\\b|\\.\\.\\.|[—-]$',x): return False\n    x=x.replace('no problem','').replace(\"i don't mind\",'yes')\n    if re.search(r'\\bno\\b|\\bnot\\b',x): return False\n    return bool(re.search(r'\\b(?:yes|correct|agree|confirmed|right|absolutely|okay|ok)\\b',x))\ndef resolve(ref,p):\n    allowed={'current','all',p['product_id'],p['type'],p['type'].replace('_',' ')}\n    allowed.add('car finance agreement' if p['type']=='car_loan' else 'personal loan' if p['type']=='personal_loan' else 'credit card ending '+p.get('card_last4',''))\n    if ref not in allowed: raise ValueError('target')\n    return p['product_id']\n\ndef run(v):\n    s=json.loads(v.get('state','{}'))\n    initializing=not s\n    today=datetime.date.fromisoformat(str(v['now'])[:10])\n    s['ticks']=s.get('ticks',0)+1\n    v['route']='safe_end'\n    prefix=''\n    def say(text,phase=None):\n        if phase: s['phase']=phase\n        v['line']=prefix+text;v['route']='opening' if s['phase']=='opening' else 'security' if s['phase']=='security' else 'dialogue'\n    def finish(out,reason='',note='',text=''):\n        s.update(outcome=out,reason=reason,note=note,phase='done')\n        v['farewell']=prefix+text+' Thank you. Goodbye.'\n        if note and s.get('verified') and s.get('product'):\n            action('add_note',dict(product_id=s['product']['product_id'],reason=note,text='Nordhaven '+reason))\n        else: v['route']='farewell'\n    def action(op,b):\n        b['customer_id']=str(v['customer_id']);s['pending']=op;s['body']=b\n        s['pending_prefix']=prefix\n        s['op_seq']=s.get('op_seq',0)+1\n        v['receipt']='';v['receipt_op']='';v['receipt_seq']=''\n        v['request_body']=json.dumps(b);v['operation']=op;v['operation_seq']=s['op_seq'];v['route']=op\n    def question():\n        return 'Please tell me the last four digits of the phone number on file.' if s.get('field')=='phone_last4' else 'Please tell me your date of birth, including the year.'\n    def readback():\n        s['revision']=s.get('revision',0)+1;s['readback']=s['revision']\n        extra='The remaining amount stays overdue. ' if s['amount']<s['full'] else ''\n        say(extra+'For your '+s['label']+', '+euros(s['amount'])+' on '+spoken(datetime.date.fromisoformat(s['date']))+'. Is that correct?','confirm')\n    def offer(a,d,mode):\n        key=str(a)+'/'+d\n        if key in s.get('refused_offers',[]): finish('no_promise','NOP-RTP','refused');return\n        s.update(amount=a,date=d,offer_mode=mode,offer_key=key)\n        warning='The remaining amount stays overdue. ' if a<s['full'] else ''\n        say(warning+'Can you pay '+euros(a)+' on '+spoken(datetime.date.fromisoformat(d))+'?','offer')\n    def refuse():\n        if s.get('offer_key'): s.setdefault('refused_offers',[]).append(s['offer_key'])\n        if s.get('offer_mode')=='low': finish('no_promise','NOP-LOW','refused');return\n        n=s.get('attempts',0)\n        if n>=s['max_attempts'] or s.get('attempt_floor'): finish('no_promise','NOP-RTP','refused');return\n        n+=1;s['attempts']=n\n        a=s['floor'] if n==2 or s.get('too_much') else s['full']\n        s['attempt_floor']=a==s['floor']\n        offer(a,s['deadline'],'persuasion')\n    if initializing:\n        s=dict(phase='opening',field='phone_last4',wrong=0,purpose=0,unclear=0,format=0,ticks=1,verified=False)\n        v['route']='opening';v['line']='Hello, this is the virtual assistant of Nordhaven Savings Bank. This call is recorded for quality and training. May I speak with '+str(v['first_name'])+' '+str(v['last_name'])+'?';v['farewell']='Thank you. Goodbye.'\n    elif s['ticks']>150:\n        finish('no_promise' if s.get('verified') else 'not_verified','NOP-SYS' if s.get('verified') else 'NVF-FAIL','service_error' if s.get('verified') else '', 'I could not continue this call. Please use online banking.')\n    elif s.get('pending'):\n        prefix=s.get('pending_prefix','');s['pending_prefix']=''\n        op=s['pending'];receipt=v.get('receipt','');seq=v.get('receipt_seq','')\n        if v.get('receipt_op')!=op or str(seq)!=str(s['op_seq']): data={};good=False\n        else:\n            try: env=json.loads(receipt) if isinstance(receipt,str) else receipt;data=env.get('data',{});good=env.get('status')=='success' and truth(data.get('ok'))\n            except Exception: data={};good=False\n        s['pending']='';v['receipt']='';v['receipt_op']='';v['receipt_seq']=''\n        if op=='verify_identity':\n            if good and truth(data.get('verified')):\n                s['buffer']='';s['security_revision']=s.get('security_revision',0)+1\n                if s['field']=='phone_last4': s['field']='date_of_birth';say(question(),'security')\n                elif truth(data.get('all_verified')): s['verified']=True;action('get_account',{})\n                else: finish('not_verified','NVF-FAIL',text=\"I'm sorry, I can't continue without verifying your identity. Please call us on the number in your online banking or on the back of your card.\")\n            elif good and data.get('hint')=='day_month_swapped': s['buffer']='';say('Please say the month as a word.','security')\n            elif good:\n                s['wrong']+=1;s['buffer']=''\n                if s['wrong']>=2: finish('not_verified','NVF-FAIL',text=\"I'm sorry, I can't continue without verifying your identity. Please call us on the number in your online banking or on the back of your card.\")\n                else: say('That did not match. '+question(),'security')\n            else: finish('not_verified','NVF-FAIL',text='I could not complete the check. Please call us on the number in your online banking or on the back of your card.')\n        elif op=='get_account':\n            p=data.get('products')\n            if isinstance(p,str):\n                try:p=json.loads(p)\n                except Exception:p=[]\n            if not good or not isinstance(p,list) or len(p)!=1: finish('not_verified','NVF-FAIL',text='I could not access the account. Please contact Nordhaven through online banking.')\n            else:\n                p=p[0];s['product']=p;s['full']=money(p['past_due']);late=int(p['days_late'])\n                if p['type'] not in ('credit_card','personal_loan','car_loan') or not 1<=late<=60: raise ValueError('account scope')\n                s['label']='credit card ending '+p['card_last4'] if p['type']=='credit_card' else 'personal loan' if p['type']=='personal_loan' else 'car finance agreement'\n                delta=14 if late<=9 else 10 if late<=19 else 5;s['max_attempts']=1 if late<=9 else 2\n                s['deadline']=before(today+datetime.timedelta(days=delta)).isoformat()\n                s['floor']=money(p['minimum_payment']) if p['type']=='credit_card' and late<=9 else ((s['full']*(50 if p['type']=='credit_card' else 40)+9999)//10000)*100\n                s.update(amount=s['full'],date=today.isoformat(),attempts=0,offer_mode='initial',offer_key=str(s['full'])+'/'+today.isoformat())\n                say('Thank you, '+str(v.get('title',''))+' '+str(v.get('last_name',''))+'. I am calling about an overdue amount on your '+s['label']+': '+euros(s['full'])+', '+str(late)+' days late. Missed payments can affect your credit record. Can you pay the full amount today?','offer')\n        elif op=='create_promise':\n            if good: s['recorded']=True;finish('promise',text='The arrangement is recorded. We will email you a confirmation of this arrangement.')\n            else: finish('no_promise','NOP-SYS','service_error','I could not record the arrangement. You can make the payment in online banking.')\n        elif op=='add_note':\n            s['note_receipt']='successful' if good else 'failed_or_unknown';v['route']='farewell'\n        elif op=='transfer_to_agent':\n            if good: finish('transferred',s['transfer_reason'],text='I will connect you to the team now.')\n            else: finish('no_promise','NOP-SYS','service_error','I could not connect you. Please contact Nordhaven through online banking.')\n        elif op=='schedule_callback':\n            finish('not_reached','NRC-CB' if good else 'NRC-NOCB',text='The callback is booked.' if good else 'I could not book a callback.')\n    else:\n        raw=str(v.get('raw_speech','')).strip();admin=str(v.get('admin','')).split(',');act=str(v.get('recipient_act',''))\n        if 'ai' in admin or re.search(r'\\b(?:robot|virtual assistant|are you an ai)\\b',raw.lower()): prefix+=\"I am Nordhaven's virtual assistant. \"\n        if 'scam' in admin: prefix+='You can hang up and call Nordhaven on the number on the back of your card or in online banking. '\n        phase=s['phase'];x=raw.lower().replace('’',\"'\")\n        if phase=='opening':\n            if source_safe(raw) and not re.search(r'\\b(?:if|would|maybe)\\b|\\.\\.\\.|[—-]$',x) and (act=='death' or re.search(r'\\b(?:died|passed away)\\b',x)): finish('not_reached','NRC-DECD',text='I am very sorry to hear that.')\n            elif act=='wrong' or re.search(r'wrong number|do not know|don.t know',x): finish('not_reached','NRC-WRONG',text='I am sorry for the inconvenience.')\n            elif recipient(raw,act,v): say(question(),'security')\n            elif act=='other' or re.search(r'\\b(?:wife|husband|son|daughter)\\b|not here|at work|unavailable',x): say('Nordhaven would like to speak with '+str(v['first_name'])+' '+str(v['last_name'])+' personally. When can they be reached?','callback')\n            else:\n                s['unclear']+=1\n                if s['unclear']>=2: finish('not_reached','NRC-UNCL')\n                else: say('May I speak with '+str(v['first_name'])+' '+str(v['last_name'])+'?')\n        elif phase=='security':\n            if 'human' in admin: prefix+='A person can be reached on the number in online banking. '\n            if re.search(r\"don.t want to talk|do not want to talk\",x):\n                s['stops']=s.get('stops',0)+1\n                if s['stops']>=2: finish('not_verified','NVF-DECL')\n                else: say(question())\n            elif re.search(r\"(?:won.t|will not|refuse|not comfortable|don.t want to|do not want to) (?:answer|give|say)|i decline\",x): finish('not_verified','NVF-DECL')\n            else:\n                answer=str(v.get('security_answer','')).strip();part=str(v.get('security_part','')).strip()\n                safe=source_safe(raw) and not re.search(r'\\b(?:not my|his birthday|her birthday|their birthday|his phone|her phone|someone else|not sure|maybe)\\b',x)\n                if not safe: answer='';part=''\n                if s['field']=='phone_last4' and safe:\n                    words={'zero':'0','oh':'0','one':'1','two':'2','three':'3','four':'4','five':'5','six':'6','seven':'7','eight':'8','nine':'9'}\n                    neutral=security_span(raw,s['field'])\n                    tokens=re.findall(r'\\b\\d+\\b|\\b(?:zero|oh|one|two|three|four|five|six|seven|eight|nine)\\b',neutral)\n                    digits=''.join(words.get(t,t) for t in tokens)\n                    if re.fullmatch(r'\\d{1,4}',digits):\n                        prior=s.get('buffer','')\n                        total=digits if len(digits)==4 else prior+digits\n                        if len(total)==4 and (not answer or answer==total): answer=total;part=''\n                        elif len(total)<4: s['buffer']=total;answer='';part=total\n                        else: answer='';part=''\n                    elif answer: answer=''\n                if s['field']=='date_of_birth' and safe and not answer and not part:\n                    try:\n                        span=security_span(raw,s['field']);operand=(s.get('buffer','')+' '+span).strip()\n                        normalized=normalize_date_words(operand)\n                        if re.search(r'\\b\\d{4}\\b',normalized) and not re.search(r'\\.\\.\\.|[—-]$',raw):answer=date_value(normalized,today).isoformat()\n                    except Exception:pass\n                if answer and safe:\n                    try:\n                        if s['field']=='phone_last4' and not re.fullmatch(r'\\d{4}',answer): raise ValueError('phone')\n                        if s['field']=='date_of_birth':\n                            if not re.fullmatch(r'\\d{4}-\\d{2}-\\d{2}',answer): raise ValueError('dob')\n                            datetime.date.fromisoformat(answer)\n                            if re.search(r'\\.\\.\\.|[—-]$',raw): raise ValueError('incomplete')\n                            span=security_span(raw,s['field'])\n                            operand=(s.get('buffer','')+' '+span).strip() if s.get('buffer') else span\n                            normalized=normalize_date_words(operand)\n                            if not re.search(r'\\b\\d{4}\\b',normalized): raise ValueError('missing year')\n                            if date_value(normalized,today).isoformat()!=answer: raise ValueError('source conflict')\n                        s['buffer']='';action('verify_identity',dict(field=s['field'],answer=answer))\n                        if 'purpose' in admin or 'balance' in admin: s['pending_prefix']=prefix+'I can explain right after the security questions. '\n                    except Exception: say(question())\n                elif part and safe:\n                    if s['field']=='date_of_birth':\n                        old=s.get('buffer','');span=security_span(raw,s['field'])\n                        if not span: raise ValueError('missing part source')\n                        s['buffer']=(old+' '+span).strip()\n                        try:\n                            combined=date_value(s['buffer'],today)\n                            if re.search(r'\\b\\d{4}\\b',normalize_date_words(s['buffer'])): action('verify_identity',dict(field=s['field'],answer=combined.isoformat()));s['buffer']=''\n                            else: say('Please tell me the year.')\n                        except Exception: say('Please continue with the missing part of your date of birth.')\n                    else: say('Please continue with the remaining digits.')\n                elif 'purpose' in admin or 'balance' in admin:\n                    s['purpose']+=1\n                    if s['purpose']>=2: finish('not_verified','NVF-DECL')\n                    else: say('I can explain right after the security questions. '+question())\n                elif v.get('security_act')=='decline': finish('not_verified','NVF-DECL')\n                else:\n                    s['format']+=1\n                    if s['format']>3: finish('not_verified','NVF-FAIL',text='I could not complete the check. Please call us on the number in your online banking or on the back of your card.')\n                    else: say(question())\n        else:\n            try:\n                rows=decode(v.get('event',''))\n                for r in rows:\n                    if s.get('product') and 'p' in r: resolve(r['p'],s['product'])\n                    if 'd' in r and r.get('u') not in ('date','both') and r['d']!='vague': date_value(r['d'],today,s.get('date',''))\n                vals={}\n                for r in rows:\n                    for k in ('a','d','t'):\n                        if k in r and r.get('u') not in (k, 'both'):\n                            if k in vals and vals[k]!=r[k]: raise ValueError('conflicting components')\n                            vals[k]=r[k]\n                for r in rows:\n                    span=r.get('s',raw)\n                    if 's' in r and span.lower() not in raw.lower(): raise ValueError('source span')\n                    if r['c']=='1' and (not source_safe(span) or re.search(r'\\b(?:if i|if he|if she|hypothetically|suppose|would like to pretend)\\b|\\.\\.\\.|[—-]$',span.lower())): raise ValueError('unsupported assertion')\n                complete=[r for r in rows if r['c']=='1'];kinds={r['k'] for r in complete}\n                s['format']=0\n            except Exception:\n                rows=[];complete=[];kinds=set();vals={};s['format']+=1\n            if not rows:\n                if s['format']>3:\n                    finish('no_promise' if s.get('verified') else 'not_reached','NOP-SYS' if s.get('verified') else 'NRC-NOCB','service_error' if s.get('verified') else '', 'I could not understand the arrangement, so nothing has been recorded. Please use online banking.')\n                elif phase=='callback': say('Please give the day and time when the customer can be reached.')\n                elif phase=='confirm': say('Please confirm whether the arrangement I just read back is correct.')\n                else: say('Please clarify your request. I have not recorded an arrangement.')\n            elif any(r['c']=='0' for r in rows):\n                s['readback']=0\n                if 'a' in vals: s['amount']=money(vals['a'])\n                if 'd' in vals and vals['d']!='vague': s['date']=date_value(vals['d'],today,s.get('date','')).isoformat()\n                needs={r.get('u','intent') for r in rows if r['c']=='0'}\n                if 'both' in needs: needs.remove('both');needs.update(['amount','date'])\n                s['needs']=list(needs)\n                if 'amount' in needs or 'both' in needs: say('Take your time; I am listening.')\n                elif 'date' in needs: say('Please continue with the date.')\n                else: say('Please finish your request.')\n            elif phase=='callback':\n                if 'refuse' in kinds or 'decline' in kinds: finish('not_reached','NRC-NOCB')\n                elif 'death' in kinds and source_safe(raw): finish('not_reached','NRC-DECD',text='I am very sorry to hear that.')\n                elif 'wrong' in kinds: finish('not_reached','NRC-WRONG',text='I am sorry for the inconvenience.')\n                elif 'accept' in kinds and s.get('callback_offer'): action('schedule_callback',dict(date=shift(today,1).isoformat(),time='10:00'))\n                elif 'd' in vals and 't' in vals:\n                    d=date_value(vals['d'],today);t=vals['t']\n                    if not re.fullmatch(r'\\d{2}:\\d{2}',t): raise ValueError('time')\n                    if shift(today,1)<=d<=shift(today,3) and business(d) and '09:00'<=t<='17:30': action('schedule_callback',dict(date=d.isoformat(),time=t))\n                    elif not s.get('callback_offer'): s['callback_offer']=True;say('Could Nordhaven call on '+spoken(shift(today,1))+' at 10:00?')\n                    else: finish('not_reached','NRC-NOCB')\n                else: say('Please give the day and time when the customer can be reached.')\n            elif s.get('verified') and re.search(r'no time|have to go|must go|call me later',x): finish('no_promise','NOP-RTP','refused','I understand you need to leave.')\n            elif 'human' in kinds or 'plan' in kinds:\n                s['transfer_reason']='TRF-HUM' if 'human' in kinds else 'TRF-RST';action('transfer_to_agent',dict(queue='general' if 'human' in kinds else 'restructuring'))\n            elif 'dispute' in kinds:\n                if source_safe(raw) and re.search(r'not mine|never had|closed|settled|disput|not my',x): finish('no_promise','NOP-DSP','dispute','I will have this investigated.')\n                else: say('Are you saying this product is not yours, or asking about its charges?')\n            elif 'paid' in kinds or phase=='paid_date':\n                supported=phase=='paid_date' or (source_safe(raw) and re.search(r'\\bi\\b|\\bi.ve\\b',x) and re.search(r'\\bpaid\\b|made (?:the |a )?payment|processed (?:the |a )?payment',x) and not re.search(r'haven.t paid|have not paid|didn.t pay|not paid|bounced|reversed|rent|invoice|parcel|might have|not sure|will pay',x))\n                if not supported: say('Are you saying you already paid this overdue amount?')\n                elif 'd' not in vals: say('On which date did you pay?','paid_date')\n                else:\n                    d=date_value(vals['d'],today)\n                    if d in (today,shift(today,-1)): finish('paid',note='paid',text='A payment can take up to two business days to show.')\n                    elif d<shift(today,-1): finish('no_promise','NOP-DSP','dispute','The payment does not show on the account and will be investigated.')\n                    else: say('Please confirm the date you already paid.','paid_date')\n            elif 'fees' in kinds: s['resume_phase']=phase;say('Would you like me to transfer you to the support team, who can explain the charges?','support')\n            elif phase=='support':\n                if kinds & {'accept','confirm'} and consent(raw): s['transfer_reason']='TRF-FEE';action('transfer_to_agent',dict(queue='support'))\n                elif kinds & {'refuse','decline'}:\n                    s['phase']=s.get('resume_phase','offer')\n                    if s['phase']=='confirm': readback()\n                    else: say('Let us continue with the arrangement. Is the last proposal acceptable?')\n                else: say('Would you like a transfer to the support team?')\n            elif 'stop' in kinds:\n                s['stops']=s.get('stops',0)+1\n                if s['stops']>=2: finish('no_promise','NOP-RTP','refused')\n                else: say('I understand. Do you want to end this conversation?')\n            elif 'hardship' in kinds and not ('a' in vals and 'd' in vals): finish('no_promise','NOP-HSH','hardship','I am sorry you are going through this. Our hardship team will write to you within five business days.')\n            elif kinds & {'propose','accept','confirm','too_much'}:\n                if phase=='confirm' and kinds=={'confirm'} and not vals and consent(raw) and s.get('readback')==s.get('revision') and not s.get('needs'):\n                    action('create_promise',dict(product_id=s['product']['product_id'],amount=s['amount']/100,date=s['date']));s['readback']=0\n                else:\n                    if phase=='confirm': s['readback']=0\n                    if 'confirm' in kinds and not vals and not consent(raw): say('Please confirm whether the readback is correct.')\n                    else:\n                        if 'too_much' in kinds:\n                            s['too_much']=True\n                            if s.get('floor_offered'): refuse()\n                            else: s['floor_offered']=True;offer(s['floor'],s.get('date',s['deadline']),'floor')\n                        else:\n                            if 'a' in vals: s['amount']=money(vals['a']);s['needs']=[n for n in s.get('needs',[]) if n not in ('amount','both')]\n                            if 'd' in vals:\n                                s['needs']=[n for n in s.get('needs',[]) if n not in ('date','both')]\n                                if vals['d']=='vague': offer(s['amount'],s['deadline'],'deadline')\n                                else:\n                                    d=date_value(vals['d'],today,s.get('date',''));s['date']=d.isoformat()\n                            if v['route']=='safe_end':\n                                a=s.get('amount');d=datetime.date.fromisoformat(s['date']) if s.get('date') else None\n                                if s.get('needs'): say('Take your time; I am listening.' if 'amount' in s['needs'] else 'Please continue with the date.')\n                                elif a<s['floor']: s['floor_offered']=True;offer(s['floor'],s['date'],'low')\n                                elif a>s['full']: offer(s['full'],s['date'],'amount_limit')\n                                elif d is None: say('On which date can you pay this amount?','proposal')\n                                elif d>datetime.date.fromisoformat(s['deadline']): offer(a,s['deadline'],'deadline')\n                                elif d<today: say('That date has passed. On which date can you pay this amount?','proposal')\n                                elif not business(d):\n                                    alt=before(d)\n                                    if alt<today: alt=shift(d,1)\n                                    prefix+='That day is not possible. ';offer(a,alt.isoformat(),'calendar')\n                                else: readback()\n            elif kinds & {'refuse','decline','unknown'}: refuse()\n            elif 'aside' in kinds: say('I am here. '+('Is the readback correct?' if phase=='confirm' else 'Is the last proposal acceptable?'))\n            else: say('Please clarify your request.')\n    v['state']=json.dumps(s)\n    v['phase']=s['phase'];v['requested_field']=s.get('field','');v['answer_revision']=s.get('security_revision',0)\n    v['offer_context']=json.dumps({k:s.get(k,'') for k in ('label','amount','date','deadline','phase','revision')})\n    for k in ('event','raw_speech','recipient_act','security_answer','security_part','security_act','admin'): v[k]=''\n\nif isinstance(vars,dict):\n    try:\n        run(vars)\n    except Exception as e:\n        vars['route']='safe_end'\n        vars['controller_error']=str(e)\n"
+                },
+                "timeout_ms": {
+                  "type": "number",
+                  "default": 1000
+                }
+              }
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "opening",
+          "description": "opening",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "opening"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "security",
+          "description": "security",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "security"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "dialogue",
+          "description": "dialogue",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "dialogue"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "farewell",
+          "description": "farewell",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "farewell"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "verify_identity",
+          "description": "verify_identity",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "verify_identity"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "get_account",
+          "description": "get_account",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "get_account"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "create_promise",
+          "description": "create_promise",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "create_promise"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "add_note",
+          "description": "add_note",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "add_note"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "schedule_callback",
+          "description": "schedule_callback",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "schedule_callback"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "transfer_to_agent",
+          "description": "transfer_to_agent",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "transfer_to_agent"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "close_call",
+          "description": "close_call",
+          "condition": {
+            "logic": "or",
+            "conditions": [
+              {
+                "variable": "route",
+                "operator": "equals",
+                "operand": "close_call"
+              }
+            ]
+          }
+        },
+        {
+          "target_node": "safe_end",
+          "description": "safe_end",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "opening": {
+      "name": "opening",
+      "node_type": "conversation",
+      "on_enter": {
+        "type": "tts",
+        "text": "{{line}}"
+      },
+      "on_enter_first_entry_only": false,
+      "task_message": "No tool call is allowed. Speak the current line exactly: {{line}}",
+      "extraction_schema": [
+        {
+          "name": "recipient_act",
+          "type": "string",
+          "description": "Current recipient response for {{title}} {{first_name}} {{last_name}}: self (complete yes/speaking/self-name), other (relative/unavailable), wrong (wrong number/unknown person), death (actual death assertion), unclear. Quoted/hypothetical/unfinished assertions are unclear.",
+          "min_confidence": 0.55,
+          "max_retries": 1,
+          "enum_values": [
+            "self",
+            "other",
+            "wrong",
+            "death",
+            "unclear"
+          ]
+        },
+        {
+          "name": "raw_speech",
+          "type": "string",
+          "description": "Exact current caller utterance, verbatim; never older speech.",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        },
+        {
+          "name": "admin",
+          "type": "string",
+          "description": "Comma-separated current independent question/request tokens only: ai,scam,purpose,balance,human; or none. Do not include a surrounding object.",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        }
+      ],
+      "tools": [],
+      "max_node_turns": 60,
+      "max_turn_transition": "safe_end",
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ],
+      "loop_prompt": "No tool call allowed. Speak the current line: {{line}}"
+    },
+    "security": {
+      "name": "security",
+      "node_type": "conversation",
+      "on_enter": {
+        "type": "tts",
+        "text": "{{line}}"
+      },
+      "on_enter_first_entry_only": false,
+      "task_message": "No tool call is allowed. Speak the current line exactly: {{line}}",
+      "extraction_schema": [
+        {
+          "name": "security_answer",
+          "type": "string",
+          "description": "Only the complete current self answer to {{requested_field}}, revision {{answer_revision}}: four digits for phone_last4; YYYY-MM-DD for date_of_birth. Normalize spoken numbers/dates. Preserve actual year, never guess missing parts. Independent questions do not erase the answer. Empty if incomplete/quoted/third party.",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        },
+        {
+          "name": "security_part",
+          "type": "string",
+          "description": "Only supplied incomplete components of current requested {{requested_field}} answer. Phone: digit fragment; DOB: supplied day month or year, e.g. 14 March or 1985. Never import incidental question numbers. Empty if complete.",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        },
+        {
+          "name": "security_act",
+          "type": "string",
+          "description": "Current security act: answer,partial,decline,unknown. A question plus answer remains answer.",
+          "min_confidence": 0.55,
+          "max_retries": 1,
+          "enum_values": [
+            "answer",
+            "partial",
+            "decline",
+            "unknown"
+          ]
+        },
+        {
+          "name": "raw_speech",
+          "type": "string",
+          "description": "Exact current caller utterance, verbatim; never older speech.",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        },
+        {
+          "name": "admin",
+          "type": "string",
+          "description": "Comma-separated current independent question/request tokens only: ai,scam,purpose,balance,human; or none. Do not include a surrounding object.",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        }
+      ],
+      "tools": [],
+      "max_node_turns": 60,
+      "max_turn_transition": "safe_end",
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "dialogue": {
+      "name": "dialogue",
+      "node_type": "conversation",
+      "on_enter": {
+        "type": "tts",
+        "text": "{{line}}"
+      },
+      "on_enter_first_entry_only": false,
+      "task_message": "No tool call is allowed. Speak the current line exactly: {{line}}",
+      "extraction_schema": [
+        {
+          "name": "event",
+          "type": "string",
+          "description": "One compact scalar string of tagged rows. Grammar: key=value pairs separated by |; rows end ; then final END with nothing after. Required each row k,c. Keys only k,p,c,a,d,t,u,s; no duplicate/empty keys. k one of accept,aside,callback,confirm,death,decline,dispute,fees,hardship,human,other,paid,plan,propose,purpose,refuse,stop,too_much,unknown,wrong. c=1 complete positively asserted self act; c=0 unfinished, quoted, hypothetical or ambiguous (u=amount,date,both,intent). p optional current,all,actual product ID,API enum,spaced type or exact spoken label. a decimal euros digits with optional dot and 1-2 decimals, never exponent/NaN. d complete verbatim date (ISO,today,tomorrow,yesterday,weekday,this/next/last weekday,weekday of next week,the 19th,19 October 2026,Monday 19 October,October 19); d=vague for vague periods, never invent a day. t=HH:MM (afternoon three=15:00,half past five=17:30). s optional short exact source span. Values may include spaces, commas, periods, apostrophes, hyphens but never | ; = newline quotes braces brackets; unrepresentable value produces k=unknown|c=0|u=intent;END. No escaping. Complete independent amount/date rows for same target may be separate. Emit all current clauses; do not repeat whole utterance per row. confirm only clear current readback yes with no correction; accept adopts exact spoken offer, never consent to a new readback. paid is already-paid current arrears, dispute is ownership/historical closed/settled claim, too_much is full amount unaffordable, plan is new monthly plan, fees is a charges question, stop is no desire to talk, refuse is flat no/non-answer. Latest explicit correction replaces earlier value: emit final component only. Context now={{now}}, phase={{phase}}, spoken offer={{offer_context}}. Literal examples: k=propose|c=1|p=current|a=125.00|d=2026-10-19;END k=confirm|c=1;END k=propose|c=0|p=current|a=125.00|u=date;END k=callback|c=1|d=tomorrow|t=15:00;END k=paid|c=1|p=current|d=today;END k=refuse|c=1|p=personal loan;END",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        },
+        {
+          "name": "raw_speech",
+          "type": "string",
+          "description": "Exact current caller utterance, verbatim; never older speech.",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        },
+        {
+          "name": "admin",
+          "type": "string",
+          "description": "Comma-separated current independent question/request tokens only: ai,scam,purpose,balance,human; or none. Do not include a surrounding object.",
+          "min_confidence": 0.55,
+          "max_retries": 1
+        }
+      ],
+      "tools": [],
+      "max_node_turns": 60,
+      "max_turn_transition": "safe_end",
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "verify_identity": {
+      "name": "verify_identity",
+      "node_type": "api_request",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "controller",
+      "pre_actions": [
+        {
+          "type": "function",
+          "config": {
+            "timeoutMs": 10000,
+            "maxRetries": 0
+          },
+          "function": {
+            "name": "verify_identity",
+            "handler": "__function__:api_call",
+            "description": "Check one security answer. Three wrong answers in total end the check.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/verify_identity"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{body_customer_id}}",
+                      "description": "Validated controller customer_id"
+                    },
+                    "field": {
+                      "type": "string",
+                      "enum": [
+                        "date_of_birth",
+                        "phone_last4"
+                      ],
+                      "default": "{{body_field}}",
+                      "description": "Validated controller field"
+                    },
+                    "answer": {
+                      "type": "string",
+                      "description": "For date_of_birth: the date as YYYY-MM-DD. Callers say dates in words, the agent converts. An unreadable value is rejected with ok=false and is not counted as a wrong answer. For phone_last4: four digits.",
+                      "default": "{{body_answer}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "field",
+                    "answer"
+                  ]
+                }
+              }
+            }
+          },
+          "pre_process_code": "import json\ns=json.loads(vars.get('state','{}'))\nassert s.get('pending')=='verify_identity' and not s.get('closed'), 'operation gate'\nconfig['body']=s['body']\n",
+          "post_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    env=dict(result) if isinstance(result,dict) else dict(status='error',data=dict(ok=False))\n    receipt=json.dumps(env)\n    if not isinstance(result.get('data'),dict): result['data']=dict(ok=False)\n    result['data']['receipt_payload']=receipt\n    result['data']['receipt_op']='verify_identity'\n    result['data']['receipt_seq']=str(s.get('op_seq',''))\nexcept Exception:\n    pass\n"
+        }
+      ],
+      "response_mapping": [
+        {
+          "path": "data.receipt_payload",
+          "variable": "receipt"
+        },
+        {
+          "path": "data.receipt_op",
+          "variable": "receipt_op"
+        },
+        {
+          "path": "data.receipt_seq",
+          "variable": "receipt_seq"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "get_account": {
+      "name": "get_account",
+      "node_type": "api_request",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "controller",
+      "pre_actions": [
+        {
+          "type": "function",
+          "config": {
+            "timeoutMs": 10000,
+            "maxRetries": 0
+          },
+          "function": {
+            "name": "get_account",
+            "handler": "__function__:api_call",
+            "description": "The late products. Refused until both questions are passed.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/get_account"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{body_customer_id}}",
+                      "description": "Validated controller customer_id"
+                    }
+                  },
+                  "required": [
+                    "customer_id"
+                  ]
+                }
+              }
+            }
+          },
+          "pre_process_code": "import json\ns=json.loads(vars.get('state','{}'))\nassert s.get('pending')=='get_account' and not s.get('closed'), 'operation gate'\nconfig['body']=s['body']\nassert s.get('verified') is True, 'identity gate'\n",
+          "post_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    env=dict(result) if isinstance(result,dict) else dict(status='error',data=dict(ok=False))\n    receipt=json.dumps(env)\n    if not isinstance(result.get('data'),dict): result['data']=dict(ok=False)\n    result['data']['receipt_payload']=receipt\n    result['data']['receipt_op']='get_account'\n    result['data']['receipt_seq']=str(s.get('op_seq',''))\nexcept Exception:\n    pass\n"
+        }
+      ],
+      "response_mapping": [
+        {
+          "path": "data.receipt_payload",
+          "variable": "receipt"
+        },
+        {
+          "path": "data.receipt_op",
+          "variable": "receipt_op"
+        },
+        {
+          "path": "data.receipt_seq",
+          "variable": "receipt_seq"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "create_promise": {
+      "name": "create_promise",
+      "node_type": "api_request",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "controller",
+      "pre_actions": [
+        {
+          "type": "function",
+          "config": {
+            "timeoutMs": 10000,
+            "maxRetries": 0
+          },
+          "function": {
+            "name": "create_promise",
+            "handler": "__function__:api_call",
+            "description": "Record a payment promise. One per product.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/create_promise"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{body_customer_id}}",
+                      "description": "Validated controller customer_id"
+                    },
+                    "product_id": {
+                      "type": "string",
+                      "default": "{{body_product_id}}",
+                      "description": "Validated controller product_id"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "default": "{{body_amount}}",
+                      "description": "Validated controller amount"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "default": "{{body_date}}",
+                      "description": "Validated controller date"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "product_id",
+                    "amount",
+                    "date"
+                  ]
+                }
+              }
+            }
+          },
+          "pre_process_code": "import json\ns=json.loads(vars.get('state','{}'))\nassert s.get('pending')=='create_promise' and not s.get('closed'), 'operation gate'\nconfig['body']=s['body']\nassert s.get('verified') is True, 'identity gate'\nassert not s.get('recorded') and s.get('phase')=='confirm' and s.get('readback')==0 and not s.get('needs'), 'consent gate'\n",
+          "post_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    env=dict(result) if isinstance(result,dict) else dict(status='error',data=dict(ok=False))\n    receipt=json.dumps(env)\n    if not isinstance(result.get('data'),dict): result['data']=dict(ok=False)\n    result['data']['receipt_payload']=receipt\n    result['data']['receipt_op']='create_promise'\n    result['data']['receipt_seq']=str(s.get('op_seq',''))\nexcept Exception:\n    pass\n"
+        }
+      ],
+      "response_mapping": [
+        {
+          "path": "data.receipt_payload",
+          "variable": "receipt"
+        },
+        {
+          "path": "data.receipt_op",
+          "variable": "receipt_op"
+        },
+        {
+          "path": "data.receipt_seq",
+          "variable": "receipt_seq"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "add_note": {
+      "name": "add_note",
+      "node_type": "api_request",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "controller",
+      "pre_actions": [
+        {
+          "type": "function",
+          "config": {
+            "timeoutMs": 10000,
+            "maxRetries": 0
+          },
+          "function": {
+            "name": "add_note",
+            "handler": "__function__:api_call",
+            "description": "Brief B: record why a product ended without a promise.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/add_note"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{body_customer_id}}",
+                      "description": "Validated controller customer_id"
+                    },
+                    "product_id": {
+                      "type": "string",
+                      "default": "{{body_product_id}}",
+                      "description": "Validated controller product_id"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "enum": [
+                        "refused",
+                        "hardship",
+                        "dispute",
+                        "paid",
+                        "service_error"
+                      ],
+                      "default": "{{body_reason}}",
+                      "description": "Validated controller reason"
+                    },
+                    "text": {
+                      "type": "string",
+                      "default": "{{body_text}}",
+                      "description": "Validated controller text"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "product_id",
+                    "reason"
+                  ]
+                }
+              }
+            }
+          },
+          "pre_process_code": "import json\ns=json.loads(vars.get('state','{}'))\nassert s.get('pending')=='add_note' and not s.get('closed'), 'operation gate'\nconfig['body']=s['body']\nassert s.get('verified') is True, 'identity gate'\n",
+          "post_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    env=dict(result) if isinstance(result,dict) else dict(status='error',data=dict(ok=False))\n    receipt=json.dumps(env)\n    if not isinstance(result.get('data'),dict): result['data']=dict(ok=False)\n    result['data']['receipt_payload']=receipt\n    result['data']['receipt_op']='add_note'\n    result['data']['receipt_seq']=str(s.get('op_seq',''))\nexcept Exception:\n    pass\n"
+        }
+      ],
+      "response_mapping": [
+        {
+          "path": "data.receipt_payload",
+          "variable": "receipt"
+        },
+        {
+          "path": "data.receipt_op",
+          "variable": "receipt_op"
+        },
+        {
+          "path": "data.receipt_seq",
+          "variable": "receipt_seq"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "schedule_callback": {
+      "name": "schedule_callback",
+      "node_type": "api_request",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "controller",
+      "pre_actions": [
+        {
+          "type": "function",
+          "config": {
+            "timeoutMs": 10000,
+            "maxRetries": 0
+          },
+          "function": {
+            "name": "schedule_callback",
+            "handler": "__function__:api_call",
+            "description": "Book a callback.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/schedule_callback"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{body_customer_id}}",
+                      "description": "Validated controller customer_id"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "default": "{{body_date}}",
+                      "description": "Validated controller date"
+                    },
+                    "time": {
+                      "type": "string",
+                      "description": "HH:MM",
+                      "default": "{{body_time}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "date",
+                    "time"
+                  ]
+                }
+              }
+            }
+          },
+          "pre_process_code": "import json\ns=json.loads(vars.get('state','{}'))\nassert s.get('pending')=='schedule_callback' and not s.get('closed'), 'operation gate'\nconfig['body']=s['body']\n",
+          "post_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    env=dict(result) if isinstance(result,dict) else dict(status='error',data=dict(ok=False))\n    receipt=json.dumps(env)\n    if not isinstance(result.get('data'),dict): result['data']=dict(ok=False)\n    result['data']['receipt_payload']=receipt\n    result['data']['receipt_op']='schedule_callback'\n    result['data']['receipt_seq']=str(s.get('op_seq',''))\nexcept Exception:\n    pass\n"
+        }
+      ],
+      "response_mapping": [
+        {
+          "path": "data.receipt_payload",
+          "variable": "receipt"
+        },
+        {
+          "path": "data.receipt_op",
+          "variable": "receipt_op"
+        },
+        {
+          "path": "data.receipt_seq",
+          "variable": "receipt_seq"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "transfer_to_agent": {
+      "name": "transfer_to_agent",
+      "node_type": "api_request",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "controller",
+      "pre_actions": [
+        {
+          "type": "function",
+          "config": {
+            "timeoutMs": 10000,
+            "maxRetries": 0
+          },
+          "function": {
+            "name": "transfer_to_agent",
+            "handler": "__function__:api_call",
+            "description": "Hand the call to a person.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/transfer_to_agent"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{body_customer_id}}",
+                      "description": "Validated controller customer_id"
+                    },
+                    "queue": {
+                      "type": "string",
+                      "enum": [
+                        "restructuring",
+                        "general",
+                        "support"
+                      ],
+                      "default": "{{body_queue}}",
+                      "description": "Validated controller queue"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "queue"
+                  ]
+                }
+              }
+            }
+          },
+          "pre_process_code": "import json\ns=json.loads(vars.get('state','{}'))\nassert s.get('pending')=='transfer_to_agent' and not s.get('closed'), 'operation gate'\nconfig['body']=s['body']\nassert s.get('verified') is True, 'identity gate'\n",
+          "post_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    env=dict(result) if isinstance(result,dict) else dict(status='error',data=dict(ok=False))\n    receipt=json.dumps(env)\n    if not isinstance(result.get('data'),dict): result['data']=dict(ok=False)\n    result['data']['receipt_payload']=receipt\n    result['data']['receipt_op']='transfer_to_agent'\n    result['data']['receipt_seq']=str(s.get('op_seq',''))\nexcept Exception:\n    pass\n"
+        }
+      ],
+      "response_mapping": [
+        {
+          "path": "data.receipt_payload",
+          "variable": "receipt"
+        },
+        {
+          "path": "data.receipt_op",
+          "variable": "receipt_op"
+        },
+        {
+          "path": "data.receipt_seq",
+          "variable": "receipt_seq"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "controller",
+          "description": "controller",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "close_call": {
+      "name": "close_call",
+      "node_type": "api_request",
+      "on_enter": {
+        "type": "silent"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "end",
+      "pre_actions": [
+        {
+          "type": "function",
+          "config": {
+            "timeoutMs": 10000,
+            "maxRetries": 0
+          },
+          "function": {
+            "name": "close_call",
+            "handler": "__function__:api_call",
+            "description": "End the call. Always the last tool call. Nothing is accepted after it.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "default": "https://freya-bank-mock.freyavoice.workers.dev/v1/close_call"
+                },
+                "method": {
+                  "type": "string",
+                  "default": "POST"
+                },
+                "connect_retries": {
+                  "type": "number",
+                  "default": 0
+                },
+                "headers": {
+                  "type": "object",
+                  "properties": {
+                    "Content-Type": {
+                      "type": "string",
+                      "default": "application/json"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "customer_id": {
+                      "type": "string",
+                      "default": "{{body_customer_id}}",
+                      "description": "Validated controller customer_id"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "promise",
+                        "paid",
+                        "transferred",
+                        "no_promise",
+                        "not_verified",
+                        "not_reached"
+                      ],
+                      "default": "{{body_outcome}}",
+                      "description": "Validated controller outcome"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "description": "Required for every outcome except promise and paid. See the table in the brief.",
+                      "default": "{{body_reason}}"
+                    }
+                  },
+                  "required": [
+                    "customer_id",
+                    "outcome"
+                  ]
+                }
+              }
+            }
+          },
+          "pre_process_code": "import json\ns=json.loads(vars.get('state','{}'))\nassert s.get('phase')=='done' and not s.get('closed'), 'close gate'\nb=dict(customer_id=str(vars['customer_id']),outcome=s['outcome'])\nif s['outcome'] not in ('promise','paid'): b['reason']=s['reason']\nconfig['body']=b\ns['closed']=True\nvars['state']=json.dumps(s)\n",
+          "post_process_code": "import json\ntry:\n    s=json.loads(vars.get('state','{}'))\n    env=dict(result) if isinstance(result,dict) else dict(status='error',data=dict(ok=False))\n    receipt=json.dumps(env)\n    if not isinstance(result.get('data'),dict): result['data']=dict(ok=False)\n    result['data']['receipt_payload']=receipt\n    result['data']['receipt_op']='close_call'\n    result['data']['receipt_seq']=str(s.get('op_seq',''))\nexcept Exception:\n    pass\n"
+        }
+      ],
+      "response_mapping": [
+        {
+          "path": "data.receipt_payload",
+          "variable": "receipt"
+        },
+        {
+          "path": "data.receipt_op",
+          "variable": "receipt_op"
+        },
+        {
+          "path": "data.receipt_seq",
+          "variable": "receipt_seq"
+        }
+      ],
+      "transitions": [
+        {
+          "target_node": "end",
+          "description": "end",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "farewell": {
+      "name": "farewell",
+      "node_type": "conversation",
+      "on_enter": {
+        "type": "tts",
+        "text": "{{farewell}}"
+      },
+      "passthrough": true,
+      "passthrough_default_transition": "close_call",
+      "tools": [],
+      "task_message": "No tools allowed. The final goodbye has been spoken.",
+      "transitions": [
+        {
+          "target_node": "close_call",
+          "description": "close_call",
+          "condition": {
+            "operator": "always"
+          }
+        }
+      ]
+    },
+    "safe_end": {
+      "name": "safe_end",
+      "node_type": "end_call",
+      "on_enter": {
+        "type": "silent"
+      },
+      "disable_inactivity_monitor": true,
+      "transitions": [],
+      "terminal": {
+        "type": "function",
+        "function": {
+          "name": "safe_unresolved",
+          "handler": "__function__:end_call",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "message_mode": {
+                "type": "string",
+                "default": "custom"
+              },
+              "spoken_message": {
+                "type": "string",
+                "default": "I cannot continue this call. Please contact Nordhaven through online banking. Thank you. Goodbye."
+              }
+            }
+          }
+        }
+      }
+    },
+    "end": {
+      "name": "end",
+      "node_type": "end_call",
+      "on_enter": {
+        "type": "silent"
+      },
+      "disable_inactivity_monitor": true,
+      "transitions": [],
+      "terminal": {
+        "type": "function",
+        "function": {
+          "name": "completed",
+          "handler": "__function__:end_call",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "message_mode": {
+                "type": "string",
+                "default": "none"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "global_nodes": {},
+  "test_variables": {}
+}

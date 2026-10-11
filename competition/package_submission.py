@@ -6,16 +6,24 @@ KIT=ROOT.parent/'build-the-builder 2'
 def finetuned_files(repo):
     """Include the verified optional trained encoder and its offline runtime."""
     from finetuned_assist import read_json, sha, verify_manifest
-    base=repo/'integrations/learned-dialogue';release=base/'minilm_ft_v1/release.json'
+    base=repo/'integrations/learned-dialogue'
+    entries=[]
+    for version in ('v1','v2'):entries.extend(_finetuned_release_files(repo,base,version))
+    return entries
+
+def _finetuned_release_files(repo,base,version):
+    from finetuned_assist import read_json, sha, verify_manifest
+    release=base/f'minilm_ft_{version}/release.json'
     if not release.exists():return []
     pins=read_json(release)
-    request={'schema':'builder.finetuned_proposals.v1','calls':str((repo/'unused-calls.json').resolve()),'calls_sha256':'0'*64,'model_directory':str((base/'minilm_ft_v1/model').resolve()),'manifest_sha256':pins['manifest_sha256'],'runtime_directory':str(base.resolve()),'runtime_sha256':pins['runtime_sha256'],'seconds':60}
+    runtime=base/'minilm_ft_v2/runtime' if version=='v2' else base
+    request={'schema':'builder.finetuned_proposals.v1','calls':str((repo/'unused-calls.json').resolve()),'calls_sha256':'0'*64,'model_directory':str((release.parent/'model').resolve()),'manifest_sha256':pins['manifest_sha256'],'runtime_directory':str(runtime.resolve()),'runtime_sha256':pins['runtime_sha256'],'seconds':60}
     model=verify_manifest(request)
-    files=[release,base/'minilm_ft_v1/model/manifest.json']
-    files.extend(base/'minilm_ft_v1/model'/name for name in model['files'])
+    files=[release,release.parent/'model/manifest.json']
+    files.extend(release.parent/'model'/name for name in model['files'])
     for name,digest in pins['runtime_sha256'].items():
-        if sha(base/name)!=digest:raise ValueError('Fine-tuned runtime pin mismatch: '+name)
-        files.append(base/name)
+        if sha(runtime/name)!=digest:raise ValueError('Fine-tuned runtime pin mismatch: '+name)
+        files.append(runtime/name)
     return [(file,file.relative_to(repo).as_posix()) for file in files]
 
 def main():

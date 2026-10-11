@@ -1,0 +1,447 @@
+{
+  "sources": [
+    {
+      "path": "inputs/01-brief-c.md",
+      "precedence": 1
+    },
+    {
+      "path": "inputs/openapi.json",
+      "role": "tool schema"
+    },
+    {
+      "path": "BUILD_INSTRUCTIONS.md",
+      "role": "builder safeguards"
+    },
+    {
+      "path": "inputs/workflow-format.md",
+      "role": "platform"
+    },
+    {
+      "path": "inputs/tools-and-code.md",
+      "role": "platform"
+    },
+    {
+      "path": "inputs/base-agent.json",
+      "role": "shape example only"
+    }
+  ],
+  "rules": [
+    {
+      "rule_id": "C1",
+      "source": "inputs/01-brief-c.md",
+      "text": "First sentence, word for word: \"Hello, this is the virtual assistant of Nordhaven Savings Bank. This call is recorded for quality and training.\""
+    },
+    {
+      "rule_id": "C2",
+      "source": "inputs/01-brief-c.md",
+      "text": "Then ask: \"May I speak with {first_name} {last_name}?\" (first name and last name, no title). After confirmation, address the customer as {title} {last_name}."
+    },
+    {
+      "rule_id": "C3",
+      "source": "inputs/01-brief-c.md",
+      "text": "Confirmation is only \"yes\", \"speaking\", \"that's me\" or the person saying the customer's own name. Anything else (a greeting, \"who's calling?\", silence) is not confirmation: answer any question (rule C4 or C47) and ask C2 once more. If it is still not confirmed, close as `not_reached` / `NRC-UNCL`."
+    },
+    {
+      "rule_id": "C4",
+      "source": "inputs/01-brief-c.md",
+      "text": "If asked whether it is a robot or an AI, say: \"I am Nordhaven's virtual assistant.\" and continue."
+    },
+    {
+      "rule_id": "C5",
+      "source": "inputs/01-brief-c.md",
+      "text": "Until identity is verified (section 5), never say any of these words: \"arrears\", \"overdue\", \"debt\", \"payment\", \"collections\", \"balance\", \"owe\". Never name a product, an amount or a number of days. This applies to everyone who answers."
+    },
+    {
+      "rule_id": "C6",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the person who answers is not the customer, say only that Nordhaven would like to speak with the customer personally. Do not give any reason, even if asked, and do not accept a payment, a message about money or security answers from them."
+    },
+    {
+      "rule_id": "C7",
+      "source": "inputs/01-brief-c.md",
+      "text": "Ask when the customer can be reached. A callback must be on a business day (section 7) from the **next business day after today** up to and including the **3rd business day after today**, at a time from 09:00 to 17:30, both included. Today is never allowed."
+    },
+    {
+      "rule_id": "C8",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the person proposes a time inside the window, call `schedule_callback` with that date and time and close as `not_reached` / `NRC-CB`. A time given as \"around three\" or \"three o'clock\" in the afternoon is 15:00. \"Half past five\" is 17:30."
+    },
+    {
+      "rule_id": "C9",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the person proposes a time outside the window (including any time today), do not ask again. Offer exactly one alternative: the next business day after today at 10:00. If they accept, schedule it and close as `not_reached` / `NRC-CB`. If they refuse it, do not schedule anything and close as `not_reached` / `NRC-NOCB`."
+    },
+    {
+      "rule_id": "C10",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the person says the number does not belong to the customer or that they do not know the customer, apologise and close as `not_reached` / `NRC-WRONG`."
+    },
+    {
+      "rule_id": "C11",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the person says the customer has died, say: \"I am very sorry to hear that.\" Ask nothing else and close as `not_reached` / `NRC-DECD`."
+    },
+    {
+      "rule_id": "C12",
+      "source": "inputs/01-brief-c.md",
+      "text": "Ask two security questions, one at a time, in this order: **first the last four digits of the phone number on file, then the date of birth**. Call `verify_identity` after each answer (`phone_last4` as four digits, `date_of_birth` as `YYYY-MM-DD`)."
+    },
+    {
+      "rule_id": "C13",
+      "source": "inputs/01-brief-c.md",
+      "text": "A question answered wrongly may be asked once more. **Two wrong answers in total end the check**, whichever questions they were on. Do not ask a third time even if the service would still allow it."
+    },
+    {
+      "rule_id": "C14",
+      "source": "inputs/01-brief-c.md",
+      "text": "If `verify_identity` returns `hint: \"day_month_swapped\"`, ask the customer to say the month as a word. That retry is not a wrong answer."
+    },
+    {
+      "rule_id": "C15",
+      "source": "inputs/01-brief-c.md",
+      "text": "After two wrong answers say: \"I'm sorry, I can't continue without verifying your identity. Please call us on the number in your online banking or on the back of your card.\" Disclose nothing else. Close as `not_verified` / `NVF-FAIL`."
+    },
+    {
+      "rule_id": "C16",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the customer asks what the call is about instead of answering, say you can explain right after the security questions, and ask the same question again. If they ask a second time, or refuse to answer at any point, close as `not_verified` / `NVF-DECL`. Do not try to persuade them."
+    },
+    {
+      "rule_id": "C17",
+      "source": "inputs/01-brief-c.md",
+      "text": "Never call `get_account` or `create_promise` before both questions are passed."
+    },
+    {
+      "rule_id": "C18",
+      "source": "inputs/01-brief-c.md",
+      "text": "After both questions pass, call `get_account`."
+    },
+    {
+      "rule_id": "C19",
+      "source": "inputs/01-brief-c.md",
+      "text": "Say you are calling about an overdue amount. Name the product: \"credit card ending {card_last4}\", \"personal loan\", or \"car finance agreement\" (for type `car_loan`; never call it a car loan). State the `past_due` amount and the `days_late`."
+    },
+    {
+      "rule_id": "C20",
+      "source": "inputs/01-brief-c.md",
+      "text": "Then say, word for word: \"Missed payments can affect your credit record.\""
+    },
+    {
+      "rule_id": "C21",
+      "source": "inputs/01-brief-c.md",
+      "text": "Each customer falls in one band by `days_late`:\n\n| Band | `days_late` | Deadline (calendar days after today) | Persuasion attempts |\n|---|---|---|---|\n| Soft | 1 to 9 | today + 14 calendar days | 1 |\n| Firm | 10 to 19 | today + 10 calendar days | 2 |\n| Final | 20 to 60 | today + 5 calendar days | 2 |"
+    },
+    {
+      "rule_id": "C22",
+      "source": "inputs/01-brief-c.md",
+      "text": "If that calendar day is not a business day, the deadline is the **last business day before it**."
+    },
+    {
+      "rule_id": "C23",
+      "source": "inputs/01-brief-c.md",
+      "text": "A promise date must be today or later, a business day and not after the deadline."
+    },
+    {
+      "rule_id": "C24",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the customer names a weekend day or a bank holiday that is not after the deadline, say that day is not possible and offer the **business day before it**. If the business day before it would be earlier than today, offer the next business day after it instead."
+    },
+    {
+      "rule_id": "C25",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the customer names a date after the deadline, say the latest date you can record is the deadline (say the date) and offer it with the amount being discussed. If they refuse the deadline, that is a flat refusal (rule C33)."
+    },
+    {
+      "rule_id": "C26",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the customer gives a vague period (\"in a couple of weeks\", \"end of the month\", \"when I get paid\"), do not ask for an exact day. Propose the deadline with the amount being discussed. If they refuse it, that is a flat refusal."
+    },
+    {
+      "rule_id": "C27",
+      "source": "inputs/01-brief-c.md",
+      "text": "Weekday words: \"<weekday>\", \"this <weekday>\" and \"next <weekday>\" all mean **the first such weekday after today**. \"<weekday> of next week\" or \"<weekday> the week after\" means that weekday in the following Monday-to-Sunday week. \"Last <weekday>\" means the most recent such weekday before today. A day of the month alone (\"the 19th\") is in the current month if it is today or later, otherwise next month."
+    },
+    {
+      "rule_id": "C28",
+      "source": "inputs/01-brief-c.md",
+      "text": "The **floor** depends on the product:\n\n| Product | Floor |\n|---|---|\n| Credit card, `days_late` 1 to 9 | `minimum_payment` |\n| Credit card, `days_late` 10 or more | 50% of `past_due` |\n| Personal loan or car finance | 40% of `past_due` |\n\nA floor computed as a percentage is rounded **up to the next whole euro** (for example 124.20 becomes 125.00; 312.00 stays 312.00). `instalment_amount` is never used as a floor."
+    },
+    {
+      "rule_id": "C29",
+      "source": "inputs/01-brief-c.md",
+      "text": "Always ask for the full `past_due` first. Never ask \"how much can you pay?\". The agent proposes every amount."
+    },
+    {
+      "rule_id": "C30",
+      "source": "inputs/01-brief-c.md",
+      "text": "Any amount from the floor up to the full `past_due`, both included, that the customer proposes is accepted."
+    },
+    {
+      "rule_id": "C31",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the customer says the full amount is too much, offer the floor once and say: \"The remaining amount stays overdue.\" When the floor is offered, keep the date already proposed or agreed. If there is none yet, ask for a date (section 7)."
+    },
+    {
+      "rule_id": "C32",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the customer proposes an amount below the floor, say that amount cannot be recorded and state the floor, keeping the customer's date if it is valid. If they accept, continue to confirmation. If they do not accept, do not make any further offer: add a note `refused` and close as `no_promise` / `NOP-LOW`."
+    },
+    {
+      "rule_id": "C33",
+      "source": "inputs/01-brief-c.md",
+      "text": "First ask: \"Can you pay the full amount today?\" A date or an amount the customer proposes is never a refusal: handle it with sections 7 and 8. A \"no\" with no date and no amount, a non-answer, or a refusal of an offer is a **flat refusal**. Each flat refusal is answered with the next persuasion attempt (C34). A flat refusal when no attempt is left ends the negotiation (C35)."
+    },
+    {
+      "rule_id": "C34",
+      "source": "inputs/01-brief-c.md",
+      "text": "Persuasion attempts, up to the band's number (C21):\n  - Attempt 1: the full `past_due` on the deadline. If the customer has already said the full amount is too much, attempt 1 is the floor on the deadline.\n  - Attempt 2 (Firm and Final bands only): the floor on the deadline. If attempt 1 already offered the floor on the deadline, there is no attempt 2."
+    },
+    {
+      "rule_id": "C35",
+      "source": "inputs/01-brief-c.md",
+      "text": "Never repeat an offer the customer has already refused. When the attempts are used up, add a note `refused` and close as `no_promise` / `NOP-RTP`."
+    },
+    {
+      "rule_id": "C36",
+      "source": "inputs/01-brief-c.md",
+      "text": "Hardship: if the customer mentions illness, a bereavement, losing their job or a loss of income, say one sentence of sympathy, make no persuasion attempt, and say: \"Our hardship team will write to you within five business days.\" Do not offer a transfer. Add a note `hardship` and close as `no_promise` / `NOP-HSH`. If the customer still proposes a date and an amount themselves, handle them under sections 7 and 8 and record the promise instead."
+    },
+    {
+      "rule_id": "C37",
+      "source": "inputs/01-brief-c.md",
+      "text": "Never offer a discount, a waiver, a freeze, a payment plan or any term not written in this brief."
+    },
+    {
+      "rule_id": "C38",
+      "source": "inputs/01-brief-c.md",
+      "text": "Read back the product, the amount and the date **including the weekday** (\"Monday 19 October\"), then ask: \"Is that correct?\" Call `create_promise` only after a clear yes. If the customer changes something, check it again under sections 7 and 8 and read back again."
+    },
+    {
+      "rule_id": "C39",
+      "source": "inputs/01-brief-c.md",
+      "text": "Say the arrangement is recorded only after `create_promise` returns `ok: true`. Then say, word for word: \"We will email you a confirmation of this arrangement.\""
+    },
+    {
+      "rule_id": "C40",
+      "source": "inputs/01-brief-c.md",
+      "text": "If `create_promise` fails (an error or `ok: false`), **do not retry** it: a retry can create a duplicate arrangement. Tell the customer you could not record the arrangement and that they can make the payment in online banking. Add a note `service_error` and close as `no_promise` / `NOP-SYS`."
+    },
+    {
+      "rule_id": "C41",
+      "source": "inputs/01-brief-c.md",
+      "text": "One arrangement per call. It cannot be changed in this call; changes are made in online banking."
+    },
+    {
+      "rule_id": "C42",
+      "source": "inputs/01-brief-c.md",
+      "text": "\"I already paid\": ask on which date they paid.\n  - If the date is today or the previous business day, say a payment can take up to two business days to show, take no promise, add a note `paid` and close as `paid`.\n  - If the date is earlier than the previous business day, say the payment does not show on the account and that it will be investigated. Do not argue and take no promise. Add a note `dispute` and close as `no_promise` / `NOP-DSP`."
+    },
+    {
+      "rule_id": "C43",
+      "source": "inputs/01-brief-c.md",
+      "text": "\"This is not mine\", \"I never had this product\", or a claim that the product was closed or settled in the past: do not argue, take no promise, add a note `dispute`, close as `no_promise` / `NOP-DSP`."
+    },
+    {
+      "rule_id": "C44",
+      "source": "inputs/01-brief-c.md",
+      "text": "A question about interest, late fees or charges, or why the amount is so high: do not explain or guess any figure. Offer to transfer the customer to the support team, who can explain the charges. If they accept, call `transfer_to_agent` with queue `support` and close as `transferred` / `TRF-FEE`. If they decline, continue where the call was."
+    },
+    {
+      "rule_id": "C45",
+      "source": "inputs/01-brief-c.md",
+      "text": "A request for a new payment plan or lower instalments (\"I need a plan\", \"can you split it into smaller monthly amounts?\"): do not describe any plan. Call `transfer_to_agent` with queue `restructuring` and close as `transferred` / `TRF-RST`."
+    },
+    {
+      "rule_id": "C46",
+      "source": "inputs/01-brief-c.md",
+      "text": "A request for a human after identity is verified: transfer at once with queue `general`, without first offering to help, and close as `transferred` / `TRF-HUM`. Before identity is verified, say a person can be reached on the number in online banking, and continue with rule C12; a refusal to answer is then handled by C16."
+    },
+    {
+      "rule_id": "C47",
+      "source": "inputs/01-brief-c.md",
+      "text": "\"Is this a scam?\": say they can hang up and call Nordhaven on the number on the back of their card or in online banking, and continue."
+    },
+    {
+      "rule_id": "C48",
+      "source": "inputs/01-brief-c.md",
+      "text": "If the customer says twice that they do not want to talk: after verification add a note `refused` and close as `no_promise` / `NOP-RTP`; before verification close as `not_verified` / `NVF-DECL`."
+    },
+    {
+      "rule_id": "C49",
+      "source": "inputs/01-brief-c.md",
+      "text": "`add_note` is used on this brief: on every **verified** call that ends without a recorded promise **and without a transfer**, call `add_note` exactly once for the product, with the reason named by the rule that ended the call. A transferred call gets no note. An unverified or unreached call gets no note."
+    },
+    {
+      "rule_id": "C50",
+      "source": "inputs/01-brief-c.md",
+      "text": "Thank the customer and say goodbye, then call `close_call` exactly once. It is the last tool call.\n\n| Outcome | Reason code | When | Note |\n|---|---|---|---|\n| `promise` | none | a promise was recorded | none |\n| `paid` | none | C42 first case | `paid` |\n| `transferred` | `TRF-FEE` | C44 | none |\n| `transferred` | `TRF-RST` | C45 | none |\n| `transferred` | `TRF-HUM` | C46 | none |\n| `no_promise` | `NOP-RTP` | C35, C48 | `refused` |\n| `no_promise` | `NOP-LOW` | C32 | `refused` |\n| `no_promise` | `NOP-HSH` | C36 | `hardship` |\n| `no_promise` | `NOP-DSP` | C42 second case, C43 | `dispute` |\n| `no_promise` | `NOP-SYS` | C40 | `service_error` |\n| `not_verified` | `NVF-FAIL` | C15 | none |\n| `not_verified` | `NVF-DECL` | C16, C48 | none |\n| `not_reached` | `NRC-CB` | C8, C9 | none |\n| `not_reached` | `NRC-NOCB` | C9 | none |\n| `not_reached` | `NRC-WRONG` | C10 | none |\n| `not_reached` | `NRC-DECD` | C11 | none |\n| `not_reached` | `NRC-UNCL` | C3 | none |\n\nSend the reason code exactly as written in the table, in capitals, as the `reason` of `close_call`. For `promise` and `paid` send no reason."
+    }
+  ],
+  "conflicts": [
+    {
+      "scope": "recipient",
+      "resolution": "BUILD_INSTRUCTIONS permissive low-risk gate overrides narrow C3 phrase interpretation"
+    },
+    {
+      "scope": "identity",
+      "resolution": "C12 phone first and C13 two wrong comparisons override base agent and API three-wrong summary"
+    }
+  ],
+  "unresolved_conflicts": [
+    {
+      "scope": "infrastructure/extraction failure and verified early departure",
+      "detail": "Brief has no explicit outcome for non-promise transport failure except C40. Safe unresolved failure uses NOP-SYS/service_error after verification, NVF-FAIL before verification; static controller failure ends without pretending close was recorded."
+    },
+    {
+      "scope": "note/transfer/callback failures",
+      "detail": "No terminal/retry rule supplied. Exactly one attempt; preserve failed_or_unknown receipt and never claim success."
+    }
+  ],
+  "machine_policy": {
+    "bank": "Nordhaven Savings Bank",
+    "currency": "EUR",
+    "scope": "one returned product, 1-60 days late",
+    "security_order": [
+      "phone_last4",
+      "date_of_birth"
+    ],
+    "wrong_limit": 2,
+    "purpose_limit": 2,
+    "holidays": [
+      "2026-10-16",
+      "2026-10-28",
+      "2026-11-02",
+      "2026-12-24",
+      "2026-12-25",
+      "2027-01-01"
+    ],
+    "bands": [
+      {
+        "days": [
+          1,
+          9
+        ],
+        "deadline_days": 14,
+        "attempts": 1
+      },
+      {
+        "days": [
+          10,
+          19
+        ],
+        "deadline_days": 10,
+        "attempts": 2
+      },
+      {
+        "days": [
+          20,
+          60
+        ],
+        "deadline_days": 5,
+        "attempts": 2
+      }
+    ],
+    "floors": {
+      "credit_card_soft": "minimum_payment",
+      "credit_card_other": "ceil(past_due*0.50)",
+      "loans": "ceil(past_due*0.40)"
+    },
+    "callback": {
+      "start_business_day": 1,
+      "end_business_day": 3,
+      "time_start": "09:00",
+      "time_end": "17:30",
+      "alternative": "next business day 10:00"
+    },
+    "queues": {
+      "fees": "support",
+      "plan": "restructuring",
+      "human": "general"
+    },
+    "promise_retry": 0,
+    "notes": "exactly once verified no promise/no transfer",
+    "exception_priority": [
+      "explicit complete unreached death/wrong/other",
+      "verified human/plan",
+      "dispute",
+      "paid",
+      "fees",
+      "stop twice",
+      "hardship unless voluntary complete proposal",
+      "negotiation"
+    ],
+    "multi_product": "Out of scope; fail closed for account response other than exactly one product"
+  },
+  "producer_contract": {
+    "version": 1,
+    "kinds": [
+      "accept",
+      "aside",
+      "callback",
+      "confirm",
+      "death",
+      "decline",
+      "dispute",
+      "fees",
+      "hardship",
+      "human",
+      "other",
+      "paid",
+      "plan",
+      "propose",
+      "purpose",
+      "refuse",
+      "stop",
+      "too_much",
+      "unknown",
+      "wrong"
+    ],
+    "keys": [
+      "k",
+      "p",
+      "c",
+      "a",
+      "d",
+      "t",
+      "u",
+      "s"
+    ],
+    "delimiters": {
+      "pair": "|",
+      "row": ";",
+      "terminal": "END",
+      "escaping": "none; reserved syntax forbidden in values"
+    },
+    "completion": [
+      "0",
+      "1"
+    ],
+    "literal_examples": [
+      "k=propose|c=1|p=current|a=125.00|d=2026-10-19;END",
+      "k=confirm|c=1;END",
+      "k=propose|c=0|p=current|a=125.00|u=date;END",
+      "k=callback|c=1|d=tomorrow|t=15:00;END",
+      "k=paid|c=1|p=current|d=today;END",
+      "k=refuse|c=1|p=personal loan;END"
+    ],
+    "early_scalars": {
+      "recipient_act": [
+        "self",
+        "other",
+        "wrong",
+        "death",
+        "unclear"
+      ],
+      "security_answer": [
+        "four digits",
+        "YYYY-MM-DD"
+      ],
+      "security_part": [
+        "digit fragment",
+        "14 March",
+        "1985"
+      ]
+    },
+    "hosted_extractor_observations": "not observed; network prohibited"
+  }
+}

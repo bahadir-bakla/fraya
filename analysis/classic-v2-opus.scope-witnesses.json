@@ -1,0 +1,163 @@
+{
+  "status": "CLOSED_SELECTED_OPERATION_SCOPE_CPU_PROOFS",
+  "finished_utc": "2026-10-11T12:54:46.421264+00:00",
+  "candidate_sha256": "4db038772a5484a3915187b3c8514971cfe71020c8c63d23229eddd1515c55a3",
+  "observations": [
+    {
+      "id": "paid_claim_control",
+      "expected": "Current card paid disposition retained; no payment promise authorization.",
+      "actual": {
+        "route": "listen",
+        "phase": "offer",
+        "verified": true,
+        "op": {},
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "paid",
+            "amount": null,
+            "date": null,
+            "attempts": 0,
+            "needs": [],
+            "noted": false
+          },
+          {
+            "id": "cpu-loan",
+            "status": "open",
+            "amount": null,
+            "date": null,
+            "attempts": 0,
+            "needs": [],
+            "noted": false
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "offer",
+          "line": "Payments can take one business day to appear. For personal loan, can you accept 600.00 on 2026-10-14?",
+          "op": {},
+          "verified": true
+        }
+      ]
+    },
+    {
+      "id": "withdraw_promise_does_not_erase_paid_note_basis",
+      "expected": "Policy-required paid note basis retained; withdrawal removes payment permission only; no create_promise.",
+      "actual": {
+        "route": "listen",
+        "phase": "offer",
+        "verified": true,
+        "op": {},
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "open",
+            "amount": null,
+            "date": null,
+            "attempts": 0,
+            "needs": [],
+            "noted": false
+          },
+          {
+            "id": "cpu-loan",
+            "status": "open",
+            "amount": null,
+            "date": null,
+            "attempts": 0,
+            "needs": [],
+            "noted": false
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "offer",
+          "line": "For credit card ending 2718, can you accept 400.00 on 2026-10-14?",
+          "op": {},
+          "verified": true
+        }
+      ]
+    },
+    {
+      "id": "note_assent_is_not_payment_confirmation",
+      "expected": "Deliberately wrong financial producer row must not turn note assent into promise authorization.",
+      "actual": {
+        "route": "api_create_promise",
+        "phase": "confirm",
+        "verified": true,
+        "op": {
+          "name": "create_promise",
+          "body": {
+            "product_id": "cpu-card",
+            "amount": 400.0,
+            "date": "2026-10-14"
+          },
+          "success": 0,
+          "failure": 0,
+          "tries": 1
+        },
+        "products": [
+          {
+            "id": "cpu-card",
+            "status": "pending",
+            "amount": 40000,
+            "date": "2026-10-14",
+            "attempts": 0,
+            "needs": [],
+            "noted": false
+          },
+          {
+            "id": "cpu-loan",
+            "status": "pending",
+            "amount": 60000,
+            "date": "2026-10-14",
+            "attempts": 0,
+            "needs": [],
+            "noted": false
+          }
+        ]
+      },
+      "trace": [
+        {
+          "route": "listen",
+          "phase": "confirm",
+          "line": "Please confirm: credit card ending 2718, 400.00 on 2026-10-14; personal loan, 600.00 on 2026-10-14. Do you confirm?",
+          "op": {},
+          "verified": true
+        },
+        {
+          "route": "api_create_promise",
+          "phase": "confirm",
+          "line": "",
+          "op": {
+            "name": "create_promise",
+            "body": {
+              "product_id": "cpu-card",
+              "amount": 400.0,
+              "date": "2026-10-14"
+            },
+            "success": 0,
+            "failure": 0,
+            "tries": 1
+          },
+          "verified": true
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "paid_control_retained": true,
+    "mixed_loses_paid_basis": true,
+    "mixed_no_promise_write": true,
+    "wrong_note_confirm_dispatches_promise": true
+  },
+  "adjudication": "Earlier unknown/no-attempt assertion is not established as a Brief A policy failure: rule30 permits a genuine non-answer attempt. Preserve the literal observed counter but do not count it as proven bank-policy failure. Note-assent forced-confirm fault is already covered by current guide different-operation consent. Mixed promise withdrawal versus paid-note basis warrants explicit operation-scope guidance.",
+  "limits": [
+    "Authored semantic rows and synthetic receipts against unchanged failed unpublished source, not hosted evidence.",
+    "Paid claim establishes customer assertion and required note basis, not confirmed bank payment.",
+    "No customer confirmation added as a requirement for mandatory notes; the input policy decides every effect."
+  ]
+}

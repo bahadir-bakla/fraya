@@ -1,0 +1,59 @@
+{
+  "all_unknown_row_policy": "Reference-only: exclude from supervised minibatches unless a separately specified unsupervised objective is introduced.",
+  "aux_labels": [
+    "AFFIRM",
+    "NEGATE",
+    "INFORM",
+    "REQUEST"
+  ],
+  "dimensions": {
+    "aux_labels": 4,
+    "aux_mask": 4,
+    "domain_labels": 7,
+    "domain_mask": 7
+  },
+  "domain_labels": [
+    "proposal",
+    "dispute",
+    "correction",
+    "current_affirm",
+    "current_withdraw",
+    "uncertain",
+    "reported_third_party"
+  ],
+  "input": {
+    "current_utterance": "observed current USER text",
+    "previous_utterances": "zero to two observed turns, chronological order; role USER/ASSISTANT only"
+  },
+  "long_text": "Lexical token counts use Unicode words and punctuation, not MiniLM WordPiece. Tail preservation must be addressed by trainer; head truncation can erase the correction.",
+  "mask": "False = unknown, stored label must be zero; never treat unknown as a negative.",
+  "reference_only_files": [
+    "lexical-unknown.jsonl"
+  ],
+  "row_keys": [
+    "aux_labels",
+    "aux_mask",
+    "domain_labels",
+    "domain_mask",
+    "group",
+    "id",
+    "input",
+    "source",
+    "split"
+  ],
+  "runtime_projection": "input only; never id/group/source/labels/masks or row-provenance",
+  "schema_version": "minilm-finetune-v2-data",
+  "semantic_scope": {
+    "correction": "current explicit repair of earlier text/interpretation",
+    "current_affirm": "own current affirmative response, including administrative assent; NEVER payment authority",
+    "current_withdraw": "own current withdrawal of previously granted permission; first refusal is not withdrawal",
+    "dispute": "own contest of liability, charge or payment record",
+    "proposal": "own payment offer, including explicitly conditional proposals",
+    "reported_third_party": "reports another speaker; a quotation does not automatically imply own assent",
+    "uncertain": "expressed uncertainty or explicitly hypothetical/counterfactual condition"
+  },
+  "supervised_files": [
+    "train.jsonl",
+    "cal.jsonl"
+  ]
+}

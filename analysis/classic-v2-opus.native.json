@@ -1,0 +1,197 @@
+{
+  "status": "COMPLETED_VERIFIED_NATIVE_OPUS_SOURCE_REVIEW",
+  "started_utc": "2026-10-11T12:48:56.215378+00:00",
+  "requested_model": "claude-opus-5-5",
+  "actual_opus_inference_verified": true,
+  "native_inference_attempts": 1,
+  "timeout_seconds": 180,
+  "source_hashes": {
+    "competition/skills/build-phone-agent.md": "a670c60a80688ab2e599877574661baf9d7160865c5d8c2ea67347df8c39260d",
+    "competition/runs/20261011-141710-d6397a/work/workflow.json": "4db038772a5484a3915187b3c8514971cfe71020c8c63d23229eddd1515c55a3",
+    "competition/runs/20261011-141710-d6397a/status.json": "2fa44011b995907b69e71e71d36229c1f324560ec1e4f2abe2f2f13ca1768056",
+    "analysis/classic-merged-hardening.json": "a0c8a8c8e6e40d56789565361f37482425f3b159a00f58fa759304aa2381023f",
+    "analysis/classic-next-review.friend.json": "4901b97767a746efc1806419fd2e1b57f41ecfc12ecda4231f0281592260aaa4",
+    "competition-v3/build-the-builder/briefs/brief-a.md": "d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7",
+    "competition-v3/build-the-builder/briefs/brief-b.md": "c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550",
+    "competition-v3/build-the-builder/tools/openapi.json": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+    "competition-v3/build-the-builder/docs/tools-and-code.md": "56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711",
+    "analysis/mock-final-20261011/results-v1/C-corrects.json": "edda0092f5551a001c5c8ffcf3b9d56f0d00736178ea2759e7f114195594b5ff",
+    "analysis/mock-final-20261011/results-v1/C-pieces.json": "70a0abd5050632083d515def05d2687348b11b21e5fc784aa967b280c1e16e84",
+    "analysis/mock-final-20261011/results-v1/C-talkative.json": "63e51bf24a75fec5d048b20d93dd1e74ac304011210e0a2341e1f532da1e5c09",
+    "analysis/mock-final-20261011/results-v1/D-corrects.json": "be7e9e312dcc55377562aa1c476a2bfe0cb6eb9fa5dc98e959b57a872186da85",
+    "analysis/mock-final-20261011/results-v1/D-talkative.json": "7bbf1d2c713dcfb079c96cc4242427afa12b9140a96c6ce6e305efaf4057e303",
+    "analysis/mock-final-20261011/results-v1/rescored.json": "ce20617217e3376c8bfb45fb7d29a769bf60f946ff0d5cef68fb13a333895dc1",
+    "analysis/mock-final-20261011/README.md": "feea1093d0789a77c48b1d6bb3a94d35cc03dc6705661fc34e3cbecd3b3f640d",
+    "analysis/mock-final-20261011/audit.md": "7f9edec435e75870220ba987d270eb619cc2f3bf913e51312ff81275d8bfe54b"
+  },
+  "scope": "Current classic guide plus unchanged failed unpublished pre-merge controller; historical friend mock evidence, no current hosted qualification",
+  "branch_provenance": "Parent says ca1565bd35ab4773ecd8afd13ee23a729c1b169d merged into HEAD6706017; no Git commands by this reviewer",
+  "raw_scores": {
+    "C": {
+      "pass": 5,
+      "calls": 30
+    },
+    "D": {
+      "pass": 0,
+      "calls": 26
+    }
+  },
+  "unofficial_adjusted_scores": {
+    "C": {
+      "pass": 8,
+      "calls": 30
+    },
+    "D": {
+      "pass": 0,
+      "calls": 26
+    }
+  },
+  "score_limits": "Friend mock cases; directly bound candidate version not verified. Adjusted scores are unofficial, not official passing evidence.",
+  "raw_prompt_stream_thinking_saved": false,
+  "credential_files_read": false,
+  "new_hosted_calls": 0,
+  "model_claims": {
+    "assessments": [
+      {
+        "id": "A1",
+        "priority": 1,
+        "title": "Recipient and security-subject gates: the consumer's exact-token-set match contradicts the permissive guide, and the producer never sees the call's names",
+        "source_pointers": [
+          "workflow.json controller recipient(): sorted(tokens)==sorted(given+family) | [title]+given+family | [title]+family; return norm(s)=='' on empty tokens",
+          "workflow.json selfsubject(): relative list only after my/his/her; global if/would/maybe/quote veto",
+          "workflow.json security_operand(): selfsubject(raw) runs before the question split",
+          "workflow.json listen.extraction_schema.event description: includes {{phase}}, {{now}}, {{account_facts}}; no title/first_name/last_name",
+          "guide 'Low-risk gates are permissive' and the recipient/possessive-subject paragraphs",
+          "brief-a rules 3, 10, 11"
+        ],
+        "evidence": "recipient() rejects a first name alone ('Yes, this is <first>.', '<first> here.') because the token set must equal every configured name. It also rejects punctuated bare affirmatives: stripping 'Speaking.' leaves '.', and norm('.')!='' so the function returns False. On the typed path, recipient(e.get('s',raw)) is applied to s='That's me, what is this about?' and 'I just said, that's me', so leftover tokens or the would/no veto reject them. A typed complete k=recipient row is never sufficient on its own. On security, selfsubject excludes only listed relatives after a possessive. 'Her date of birth is <date>', 'his phone ends in <4 digits>' and 'my cousin's birthday…' therefore pass as self and are submitted to verify_identity. Conversely, '<date>, but why would you need that?' trips the global 'would' veto before the question is split off, so a complete self answer becomes a clarification. Format clarifications share one st['format'] counter across all phases, and format>3 in dob/phone closes not_verified/failed with no bank comparison. The extractor cannot judge 'this is <other given name>' because the configured names are absent from its prompt.",
+        "producer_conformance": "Conforming source units that fail: k=recipient|c=1|p=current|s=Yes, this is <first>; s=Speaking.; s=That's me, what is this about? (admin=purpose); and k=security with a canonical d plus s carrying a trailing question that contains 'would'. Forced wrong producer row: k=security|c=1|d=<date>|s=her date of birth is <date> must be rejected by the consumer's subject check whatever its confidence. Proposed fragment contract: no separate security fragment rows exist today; any added fragment row must carry a field identifier and an answer revision.",
+        "conditional_cpu_plan": "Local only, with no hosted claim. Build vars from synthetic title/first/last values drawn from a generator, not from fixtures. Run the guide's nine must-advance and four must-not-advance utterances through the literal controller with a persistent merged store, once with the typed event present and once with event=''. Assert phase=='dob' and recipient_asks unchanged for each advance case, and a close or re-ask for each exclusion. For security, run self-possessive, bare and third-party-pronoun operands, plus self-answer-plus-question cases. Assert that no api_verify_identity dispatch occurs for third-party subjects and that st['format'] does not decide not_verified/failed.",
+        "positive_control": "'<title> <last> speaking.' advances; 'No, this is his wife.' does not advance; a bare '<day> <month word> <year>' in the dob phase dispatches verify_identity with the canonical ISO date.",
+        "generic_guide_fix": "Add a clause stating that the recipient consumer accepts any configured name component as a subset match, never an exact token-set match, and ignores trailing punctuation. The producer prompt for the recipient variable must receive the call's title, given name and family name so it can tell self from other. Third-person pronoun subjects (he/she/they/her/his followed by a security field) are non-self, whatever the possessive list. Split independent question clauses before applying subject and modal vetoes. Exhausting format retries before verification must use a recorded policy-gap outcome and must never be labelled a failed bank comparison."
+      },
+      {
+        "id": "A2",
+        "priority": 2,
+        "title": "Latest-scope and correction semantics across targets: no ordering or retarget primitive; 'unknown' rows consumed as refusals; the collective deadline clamp is bound to the literal p=all",
+        "source_pointers": [
+          "workflow.json payments(): 'if e['k'] in ['refuse','unknown']: refusals.update(inds)'",
+          "payments(): 'if len(set(u['a']))>1 or len(set(u['d']))>1 ... raise ValueError('conflicting components')'",
+          "payments(): 'if updates.get(i,{}).get('collective'): p['d']=p['deadline']' set only when e['p']=='all'",
+          "readback(): no mention of deadline substitution",
+          "'withdraw' in kinds: whole-turn short circuit",
+          "brief-b rules 4, 5, 6, 7; brief-a rules 29, 30, 35"
+        ],
+        "evidence": "The advertised grammar says quoted, hypothetical or negated acts are k=unknown, but the consumer counts unknown as a flat refusal. This consumes a persuasion attempt and can mark a product refused. Two same-target rows with different amounts or dates raise a conflict, so an explicit self-correction ('200, sorry, 250') can never resolve, because the grammar has no order or supersede marker. Retargeting ('not the personal loan, the car loan') has no representation, so the old target keeps its pending terms and is read back. A single date for every product, expressed as a comma list naming all returned ids, is not flagged collective. That product gets a deadline counteroffer instead of the rule-6 clamp, and when the clamp does apply, the readback does not say it happened. A withdraw row in the same turn as a sibling proposal discards that proposal.",
+        "producer_conformance": "Conforming source units that fail: k=unknown|c=1|p=current|s=<quoted refusal> (must not consume an attempt); k=proposal|c=1|p=credit card|d=<date beyond the deadline> with p listing every returned label (should clamp); withdraw for product X plus proposal for product Y in the same turn. Forced wrong producer row: a duplicate amount for the same target with no correction marker should clarify, as it does today. Proposed fragment contract: an optional ordinal correction field (for example o=1,2) and a retarget row k=proposal with an explicit 'from' target, both version-paired with the decoder.",
+        "conditional_cpu_plan": "Use a persistent store with three synthetic products in different bands. (a) An unknown row in the offer phase: assert attempts unchanged and a clarification with no refusal. (b) An ordered correction pair: assert the later value is retained and fresh readback text is produced. (c) A retarget across turns: assert the old target has no pending terms and the readback lists only the new target. (d) A comma list covering all products with one late date: assert the clamped product's deadline appears in the readback. (e) Withdraw plus a sibling proposal: assert the sibling terms are retained. Assert zero create_promise dispatches at every step before a later confirm.",
+        "positive_control": "k=refuse|c=1|p=car loan consumes exactly one attempt for the car loan only; p=all with one in-window business date produces a joint readback with no clamp sentence.",
+        "generic_guide_fix": "State that 'unknown' or non-asserted kinds never enter the refusal set. A collective scope is semantic: any target list that covers every returned product carries the same single-date semantics as 'all'. A clamp or substitution must be spoken in the readback. Explicit corrections need a producer-declared order key; without one, clarify. Retargeting must clear the prior target's uncommitted terms. A scoped withdraw must not short-circuit sibling rows in the same turn."
+      },
+      {
+        "id": "A3",
+        "priority": 3,
+        "title": "Note reason provenance and close reason derived from intended status instead of receipts; misclassified ok:false retries",
+        "source_pointers": [
+          "workflow.json finalize(): reason=p['status'] if in list else 'service_error'; p['status']=reason set before dispatch",
+          "clarification(): verified and format>3 -> finalize()",
+          "invocations>120 -> finalize()",
+          "op completion: guaranteed_failure includes data.ok=='false' for every op, and op['tries']<2 triggers a retry",
+          "finalize(): close reason from p['status'], not from note receipts",
+          "openapi verify_identity.answer: 'unreadable value is rejected with ok=false and is not counted'",
+          "brief-b rules 8, 10, 11; brief-a rule 37"
+        ],
+        "evidence": "After verification, format exhaustion or the invocation cap sends open, pending or vague products to finalize. There the reason falls back to 'service_error' even though the bank never failed, or to 'refused' after a stop even though the customer agreed terms that were never recorded. The guide itself requires a supported reason. Status is overwritten with the reason before the note receipt arrives, and the close reason reads that status, so it reflects intent, not a successful add_note. The generic ok:false retry also hits verify_identity: an unreadable-answer rejection is resent unchanged and then closes not_verified/failed, against the API semantics that it is not counted. Transfer and callback also get an unsourced retry. Note text is fixed today and copies no speech, but no guard prevents a regenerated producer from passing caller or security text into 'text'.",
+        "producer_conformance": "Conforming source units: a malformed-event sequence after verification that reaches the format cap. Expected: a note reason derived from a recorded policy interpretation, not 'service_error'. Synthetic API rows: verify_identity {ok:false,error:...} should give a clarification, not a resend and not failed. Forced wrong producer row: a note text candidate containing DOB or phone digits or caller quotes must be rejected or replaced with a generated reason string.",
+        "conditional_cpu_plan": "Persistent store with synthetic receipts. (1) Format cap after one product was disposed paid and one is open: assert the open product's reason is the documented interpretation, and the close reason is computed only from products with ok:true note receipts. (2) A verify_identity ok:false receipt: assert no second dispatch with the same body and no not_verified close. (3) Note failure: assert the status remains unresolved rather than claimed. (4) Note body inspection: assert text matches a whitelist template with no digits from security answers.",
+        "positive_control": "Two products: one recorded promise plus one refused with an ok:true note close as promise. All products noted paid with ok:true close as paid.",
+        "generic_guide_fix": "Note reasons must come from a supported per-product disposition. Termination caused by format or interpretation exhaustion is a recorded policy gap, never a bank service_error, unless the source says so. Keep intended reason and receipt state separate, and derive close reasons from receipts. Retry on ok:false only where the source grants it, per operation; identity ok:false for an unreadable answer means clarify. Note text is a generated template and never copies security operands or caller speech."
+      }
+    ],
+    "architectural_recommendations": [
+      "Pass non-sensitive call variables (title, first and last name) into the opening-phase producer contract, version-paired with the consumer's subset-name matcher.",
+      "Use separate counters per phase: recipient unclear count, security format count, financial format count; a reset per requested field; a policy-gap close mapping recorded in policy.json.",
+      "Add a per-operation retry policy table derived from the brief and API (create_promise: one retry; verify_identity ok:false: clarify; others: recorded interpretation).",
+      "Add a correction-order and retarget primitive in the event grammar, with a manifest and literal decode tests.",
+      "Maintain a receipt ledger in state (op, target, intended, receipt) from which close reason and farewell are computed."
+    ],
+    "already_covered": [
+      "dispute ownership-denial polarity",
+      "per-target payment corrections and fragment completion",
+      "security fragment provenance and split-answer accumulation",
+      "pause/continuation consent separation",
+      "sibling note retry after a failed note",
+      "unknown semantic channel is not refusal (guide text exists; candidate violates it)",
+      "collective exclusions for paid/dispute"
+    ],
+    "limits": [
+      "Static reading of a frozen, failed pre-regeneration candidate; no execution, no hosted extractor observations, no platform test.",
+      "Results quoted from classic-merged-hardening.json (one inconsistent-producer row and one CPU check) are not re-verified here.",
+      "Historical friend evidence: raw C 5/30, D 0/26; unofficial adjusted C 8/30. No verified candidate version or official pass; no claim of a score effect.",
+      "Policy interpretations for format-exhaustion outcomes are gaps in briefs A and B and must be recorded, not invented."
+    ]
+  },
+  "cli_sha256": "76de74f7694a5bdc03378a5f837c9e132827bf004c98c276bc4e9094ff06769a",
+  "cli_version": "2.1.296 (Claude Code)",
+  "auth_status": {
+    "loggedIn": true,
+    "authMethod": "claude.ai",
+    "apiProvider": "firstParty",
+    "subscriptionType": "pro"
+  },
+  "prompt_sha256": "86ee4575ffe046831e32aeee6c513d303c7ad33448a751743df6f4a80aa0f907",
+  "prompt_bytes": 182265,
+  "elapsed_seconds": 107.297,
+  "exit_code": 0,
+  "rate_limit_status": [
+    {
+      "status": "allowed",
+      "resetsAt": 1791727800,
+      "rateLimitType": "five_hour",
+      "isUsingOverage": false
+    }
+  ],
+  "inference_evidence": {
+    "assistant_response_models": [
+      "claude-opus-5-5",
+      "claude-opus-5-5"
+    ],
+    "result_model_usage_keys": [
+      "claude-opus-5-5"
+    ],
+    "model_usage": {
+      "claude-opus-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 9696,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 63201,
+        "webSearchRequests": 0,
+        "costUSD": 0.6995359999999999,
+        "canonicalModel": "claude-opus-5-5",
+        "provider": "firstParty"
+      }
+    },
+    "tool_calls": 0
+  },
+  "final_answer_sha256": "28021e4a6a1293c3084ae3b8c50119779cde655cf8837f9b4b47628d4a4be62a",
+  "finished_utc": "2026-10-11T12:50:45.459675+00:00",
+  "protected_hashes_unchanged": {
+    "competition/skills/build-phone-agent.md": true,
+    "competition/runs/20261011-141710-d6397a/work/workflow.json": true,
+    "competition/runs/20261011-141710-d6397a/status.json": true,
+    "analysis/classic-merged-hardening.json": true,
+    "analysis/classic-next-review.friend.json": true,
+    "competition-v3/build-the-builder/briefs/brief-a.md": true,
+    "competition-v3/build-the-builder/briefs/brief-b.md": true,
+    "competition-v3/build-the-builder/tools/openapi.json": true,
+    "competition-v3/build-the-builder/docs/tools-and-code.md": true,
+    "analysis/mock-final-20261011/results-v1/C-corrects.json": true,
+    "analysis/mock-final-20261011/results-v1/C-pieces.json": true,
+    "analysis/mock-final-20261011/results-v1/C-talkative.json": true,
+    "analysis/mock-final-20261011/results-v1/D-corrects.json": true,
+    "analysis/mock-final-20261011/results-v1/D-talkative.json": true,
+    "analysis/mock-final-20261011/results-v1/rescored.json": true,
+    "analysis/mock-final-20261011/README.md": true,
+    "analysis/mock-final-20261011/audit.md": true
+  }
+}

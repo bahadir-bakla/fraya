@@ -318,19 +318,25 @@ class Run:
         if not calls.exists():return
         try:
             if self.remaining()<125:raise TimeoutError('Insufficient fine-tuned diagnostic budget')
-            repo=ROOT.parent;default=repo/'integrations/learned-dialogue/minilm_ft_v1/model'
+            repo=ROOT.parent;base=repo/'integrations/learned-dialogue'
+            version=getattr(self.args,'finetuned_version','auto')
+            if version=='auto':
+                newest=base/'minilm_ft_v2/release.json'
+                version='v2' if newest.exists() and json.loads(newest.read_text(encoding='utf8')).get('default_enabled') is True else 'v1'
+            release=base/f'minilm_ft_{version}/release.json'
+            default=release.parent/'model'
             model=pathlib.Path(getattr(self.args,'finetuned_model',None) or default).resolve()
             # The release pin is created only after actual training/evaluation/export checks.
-            release=repo/'integrations/learned-dialogue/minilm_ft_v1/release.json'
             if not release.exists():
                 if mode=='required':raise ValueError('Fine-tuned release unavailable')
                 return
             pin=json.loads(release.read_text(encoding='utf8'))
+            runtime_source=base/'minilm_ft_v2/runtime' if version=='v2' else base
             runtime=self.builder_source/'finetuned-runtime'
             if runtime.exists():
                 for name,digest in pin['runtime_sha256'].items():
                     if hashlib.sha256((runtime/name).read_bytes()).hexdigest()!=digest:raise ValueError('Fine-tuned runtime changed')
-            else:copy_finetuned_runtime(repo/'integrations/learned-dialogue',runtime,pin['runtime_sha256'])
+            else:copy_finetuned_runtime(runtime_source,runtime,pin['runtime_sha256'])
             seconds=min(60,self.remaining()-120)
             request=finetuned_request(calls=calls,model_directory=model,manifest_sha256=pin['manifest_sha256'],runtime_directory=runtime,runtime_sha256=pin['runtime_sha256'],seconds=seconds,mode=mode)
             if request is None:return
@@ -339,7 +345,7 @@ class Run:
             self.child(command,timeout=seconds,env=finetuned_environment(os.environ),log_name='finetuned-assist.log',purpose='Actual fine-tuned MiniLM observed semantic proposals')
             result=json.loads(output.read_text(encoding='utf8'));validate_finetuned_result(result,request)
             self.finetuned_hash=hashlib.sha256(output.read_bytes()).hexdigest();self.finetuned_ready=True
-            self.event('finetuned_assist',status='ready',turns=len(result['rows']),manifest_sha256=pin['manifest_sha256'],bank_authority=False,artifact_sha256=self.finetuned_hash)
+            self.event('finetuned_assist',status='ready',version=version,turns=len(result['rows']),manifest_sha256=pin['manifest_sha256'],bank_authority=False,artifact_sha256=self.finetuned_hash)
         except (OSError,ValueError,KeyError,RuntimeError,TimeoutError) as error:
             output.unlink(missing_ok=True);self.event('finetuned_assist',status='unavailable',error_type=type(error).__name__)
             if mode=='required':raise RuntimeError('Required fine-tuned semantic model unavailable') from None
@@ -508,6 +514,7 @@ def arguments():
     parser.add_argument('--semantic-python',help='Python executable containing torch/transformers; also accepts MINILM_PYTHON environment variable')
     parser.add_argument('--dialogue-assist',choices=['auto','off','required'],default='auto',help='Generic source-act repair diagnostics; classic semantic off disables this too')
     parser.add_argument('--finetuned-assist',choices=['auto','off','required'],default='auto',help='Actual fine-tuned MiniLM repair hypotheses; classic semantic off disables it')
+    parser.add_argument('--finetuned-version',choices=['auto','v1','v2'],default='auto',help='Select a pinned trained model; auto uses v2 only after its measured release gate')
     parser.add_argument('--finetuned-model',help='Explicit fine-tuned model directory; must match reviewed release manifest')
     parser.add_argument('--local-only',action='store_true',help='Generate and locally validate without credentials, Freya publication or simulation')
     parser.add_argument('--practice-repair',help='New explicitly logged practice cycle from a stopped public-brief run; never permitted for unseen briefs')

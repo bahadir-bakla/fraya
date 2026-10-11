@@ -1,0 +1,185 @@
+{
+  "schema": "minilm-v2-architecture-review.v2-linear-source",
+  "created_utc": "2026-10-11T12:53:20.575273+00:00",
+  "status": "SOURCE_REVIEW_ONLY_NO_FIT_NO_SEALED_EVAL_READ",
+  "scope": {
+    "writes": [
+      "analysis/minilm-v2-architecture-review.json",
+      "analysis/minilm-v2-architecture-review.txt"
+    ],
+    "cloud_calls": 0,
+    "model_inference": 0,
+    "model_or_data_edits": 0,
+    "sealed96_opened": false,
+    "old32_used": "aggregate diagnostic only; no case text opened",
+    "new_v2_training_metrics": "not observed"
+  },
+  "source_sha256": {
+    "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_core.py": "60c2a51d487ce6f6c9b24410593c469aa986415d7694f59d0ab19b7c4192d97b",
+    "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_eval.py": "e13e4b2bc5262a436b092a38dd5df35cc4f99e29be1dbdd6fcce89948f318c94",
+    "integrations/learned-dialogue/minilm_v2_train.py": "d1c44ee074459862a601643a18fb264414208b66204be204a3fd13b4231d5947",
+    "integrations/learned-dialogue/minilm_ft_core.py": "560deaa6344b88b893b0105b48204725e578a0a0fa3acab7fa2f4bdc7173f00f",
+    "competition/finetuned_assist.py": "2b035b04f63f45e0b3186088193fd15149661eeef29a99802aa734a7f2a70f34",
+    "analysis/minilm-ft-results.json": "58baf7de24e127b28d422c0207f74445845d4bd493b61fa69c57acd35efa544b",
+    "research/customer-benchmark/minilm-finetune-v1/manifest.json": "72d18162f5b56ff34c65bf7944fb39b3bd77fd41bab54b8cc5b58c5e9b5cab32",
+    "research/customer-benchmark/minilm-finetune-v1/schema.json": "f0ea69e81d634de96cdee43d0a9bec182136fe6d63e11507a1961a6070fb0476",
+    "integrations/learned-dialogue/minilm_ft_v1/release.json": "b373a20d1357d8a7d21594ab8906b55a87713712b18ad5b4d11c389ecf8343fb"
+  },
+  "actual_v1": {
+    "TRAIN": 156341,
+    "SGD_aux": 132615,
+    "domain": 23726,
+    "domain_tau_synthetic": 22520,
+    "tau_share_of_domain": 0.9491696872629183,
+    "fresh_authored_domain_TRAIN": 1120,
+    "old_engineered_domain_TRAIN": 86,
+    "real_encoder_updates": true,
+    "finetuned_seconds": 89.27577968099999,
+    "fresh384_raw_macro_F1": 0.8311996247118838,
+    "diagnostic32_raw_macro_F1": 0.5860744297719087,
+    "diagnostic32_joint_correct": 12,
+    "interpretation": "83.12% is domain macroF1 on engineered384, not accuracy/general robustness. Independent32 result58.61%macroF1 and12/32known joint expose failure; no hosted causal claim."
+  },
+  "actual_v2": {
+    "head": "linear1152->11",
+    "features": [
+      "current_global_mean384",
+      "current_last_overflow_window384",
+      "last2_observed_context_mean384"
+    ],
+    "warmstart": "actualv1encoder; old head.5global+.5tail and0context; old bias copied",
+    "full_encoder_trainable": true,
+    "requested_epochs": 2,
+    "encoder_lr": 1e-05,
+    "head_lr": 0.001,
+    "warmup_fraction": 0.05,
+    "head_dropout": "none in current linear implementation; encoder has its normal dropout",
+    "deployment": "builder-side proposal only; fixedLLM/banktools/classic retained",
+    "full_current": "overflow coverage within16384codepoints, not a single256token truncation"
+  },
+  "actionable_findings": [
+    {
+      "id": "F1",
+      "priority": "apply_before_fit",
+      "source": "integrations/learned-dialogue/minilm_v2_train.py",
+      "line": 69,
+      "observed": "Active-head denominator cancels .25 on aux-only batches. All4 aux eligible: numerator=.25*sum BCE_j, denominator=1; result=mean4 BCE, not.25*mean4 BCE. This is still present in the source snapshot.",
+      "present": true,
+      "minimal_change": "Compute L_D=mean of known domain-head means and L_A=mean of known aux-head means; total=L_D+.25*L_A; empty task contributes0. Never divide total by active task weights. Keep unknown masks zero. Log separate losses and actual source exposures; preserve all old156341 rows in planned passes.",
+      "check": "With identical unit BCE, aux-only returns.25, domain-only returns1, both return1.25, no-known returns0. Masked target mutation changes neither loss nor gradient."
+    },
+    {
+      "id": "F2",
+      "priority": "apply_before_fit",
+      "source": "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_core.py",
+      "line": 85,
+      "observed": "One forward encodes all overflow windows from current and both prior turns. A16-row cap is not a window/activation-memory cap; current16384 plus two16384 contexts can expand sharply. No runtime memory result observed here.",
+      "minimal_change": "Batch by measured tokenizer overflow-window count/token mass. Use a small row microbatch and gradient accumulation for stable effective batch; enable encoder/checkpointed pooled-window recomputation when necessary. If chunking forward, preserve all windows, sample mapping, gradients and RNG state; do not detach means or truncate to fit. Bound/record maximum windows per update before launching full pass.",
+      "check": "Two long rows must yield complete window coverage and nonzero gradients on early/global and last/tail windows under the same budget. Compare chunked vs unchunked small TRAIN fixture in eval mode; dropout-enabled training need not have identical sample logits.",
+      "timing": "Two passes through old156341 at batch16 require at least19544 updates;2400s requires>8.14updates/s before startup/CAL/export. With10000 extra rows it is20794updates,>8.66/s. Use first actual100 updates for ETA; no inference that3070Ti meets this from H10089.28s."
+    },
+    {
+      "id": "F3",
+      "priority": "apply_before_builder_use",
+      "source": "competition/finetuned_assist.py",
+      "line": null,
+      "observed": "Existing adapter accepts one immediate ASSISTANT, v2 accepts up to2 prior USER/ASSISTANT/SYSTEM and maps SYSTEM to ASSISTANT. Mismatch is source-verified; v2 bank authority remainsfalse.",
+      "minimal_change": "Version the observed-input contract; producer and validator emit the same last2 genuine observed speech turns in order, respecting call and invalid/event boundaries. Convert SGD publisher SYSTEM speech to ASSISTANT only at known dataset ingestion, not arbitrary runtime system/policy payloads. Pin context semantics together with architecture/runtime/model hashes; never inject phase, receipts, labels, actor profile or gold state.",
+      "check": "Appending future speech cannot change earlier input; call boundary resets context; swap USER/ASSISTANT role is visible; tool/policy/system metadata never becomes speech. Missing context gives an exact zero384 channel, not an encoded empty/special-token vector."
+    },
+    {
+      "id": "F4",
+      "priority": "representation_limit_not_blocking",
+      "source": "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_core.py",
+      "line": 72,
+      "observed": "Actual v2 is LINEAR1152->11, not128MLP. Separately encoded current/context plus linear head gives z(u,v)=a(u)+b(v)+bias, so every current/context2x2 logit mixed difference is0. It cannot express arbitrary context-conditioned polarity/XOR; whether current labels need it must be checked on TRAIN contrasts.",
+      "minimal_change": "Keep the requested linear pilot. If a known TRAIN contrast requires such interaction and fails, smallest next slice is one128MLP or low-rank current/context product adapter with the same observed inputs,11heads and masks. Do not claim context capability just because context weights become nonzero; do not expand heads tonight.",
+      "check": "Balanced same-current/different-prior and same-prior/different-current contrast family, including a negated question. Report semantic target policy explicitly; do not impose XOR on labels that merely mean linguistic yes/admin agreement."
+    },
+    {
+      "id": "F5",
+      "priority": "pin_before_fit_and_export",
+      "source": "integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_core.py",
+      "line": 92,
+      "observed": "Tail is actual last tokenizer overflow window, not guaranteed final254-token suffix. Its content length ranges roughly33..254 after a boundary, and global mean averages window means with overlap/special tokens repeated. Head initialized.5global+.5tail, context0 is exact old-current-only behavior only for one current window, not old context-conditioned v1.",
+      "minimal_change": "Pin this exact pooling in architecture and diagnostics; do not rename it lossless. Consider fixed final254-token current suffix only if TRAIN boundary contrasts expose material instability, and make train/inference identical. No unreviewed pooling switch after fit. v2 thresholds must be recalibrated; old context-v1 thresholds are not inherited.",
+      "check": "Padding/batch position must not change eval features beyond measured tolerance. Tail must never select a context window. One-window current-only warmstart logits match old current-only logits within dtype tolerance. Irrelevant prefix may change global; exact tail invariance only applies when tail token sequence is actually identical."
+    }
+  ],
+  "minimal_controls": {
+    "dropout_and_dtype": "predict/load_model correctly set encoder+head.eval() in source. Keep that. Do not cache training features across encoder updates. Context-channel dropout on context-dependent known labels introduces supervision noise; do not add it blindly. Local trainer hardcodesBF16: verify actual device/torch capability before fit, else explicit FP16+GradScaler or measuredFP32; never silently claim BF16 performance. Log per-layer finite gradient/weightdelta and source loss.",
+    "balanced_retention": "Old auxiliary is84.82% of old rows; old domain94.92%tau-context synthetic. Random row shuffle plus 2epochs is retention, not proof of new-context balance. Keep all old examples, but report new engineered/Turkish, old domain andSGD processed known-head masses separately; spread new-domain batches through replay rather than exhaust them first. One fixed per-task loss normalization is necessary. Optional group-balanced new-domain batch sampler must disclose bounded repeat counts and never count repeats as roots.",
+    "public_Turkish": "Publisher topical labels are not financial consent. Map only exact compatible source-act semantics; otherwise11masks UNKNOWN. Such rows provide no BCE gradient if all masksfalse; disclose whether used for an explicit text-only objective or excluded from this supervised pilot. Audit TRAIN wordpiece fragmentation/UNK/truncation by language; English-baseMiniLM is not proven multilingual by adding Turkish labels.",
+    "output_semantics": "All11scores are simultaneous proposals. current_affirm includes admin/name agreement; reported thirdparty/quoted agreement cannot authenticate current-user permission. proposal+correction andaffirm+withdraw can legitimately co-occur on separate scoped clauses. No global veto or forced mutually exclusive act. Target/component/offer freshness stay deterministic and UNKNOWN if unavailable.",
+    "calibration": "Current source sweeps7thresholds on combined old/new CAL; threshold precision is adaptive descriptive CAL quality, not a95%risk proof. Old CAL is exposed. Freeze pooling/weights first; reserve independent new CAL roles where available, threshold then once-only sealed96root assessment by parent. MacroF1/joint-known/positive precision/coverage with exact denominators and root errors; no selecting a repair against96."
+  },
+  "split_closure": "Before fit freeze hashes of new TRAIN/CAL and canonical union roots across old generator/scenario, paraphrase/translation, shared Turkish source dialogue and transformed descendants. Old32and384used here are diagnostics; any derivatives share exposed ancestry and cannot reappear as fresh96. Do not pretend nominal source/group IDs alone establish closure. Custodian can verify sealed root disjointness without exposing96text/labels to trainer or designer. No human-gold/20root gate blocks actual engineering fit.",
+  "small_counterexample_checks": [
+    {
+      "id": "C1",
+      "input": "Current administrative yes followed by explicit withdrawal of earlier payment permission; prior utterance is only a name-confirmation question.",
+      "expected": "current_affirm and current_withdraw may both be positive; financial authorization alwaysUNKNOWN. No write from either score.",
+      "kind": "new synthetic diagnostic, not qualification"
+    },
+    {
+      "id": "C2",
+      "input": "Long neutral prefix then current-speaker correction; counterpart same prefix ends with a quoted thirdparty correction.",
+      "expected": "Tail channel covers both; output must distinguish current ownership using observed text. reported_third_party is not a financial proposal/consent shortcut. Inspect TRAIN masks, not assume all unmentioned heads negative.",
+      "kind": "diagnostic parent control"
+    },
+    {
+      "id": "C3",
+      "input": "Two same-current responses under observed positive versus negated questions; include Turkish variants and short English counterparts.",
+      "expected": "Only label meanings actually requiring governed polarity are contrast targets. Linear interaction limitation above applies if target table is XOR. SourceAFFIRM does not become money consent.",
+      "kind": "TRAIN contrast/policy check"
+    },
+    {
+      "id": "C4",
+      "input": "Correction just before versus just after a tokenizer overflow boundary; repeat with benign quoted yes at the tail.",
+      "expected": "No promise of exact logit invariance across changed windows; report target-axis failures/boundary sensitivity. Tail feature source must always current.",
+      "kind": "TRAIN/runtime structural control"
+    },
+    {
+      "id": "C5",
+      "input": "No prior context,2validprior turns,intervening tool event,and different call containing identical yes.",
+      "expected": "Versioned adapter and model agree on exact observed-input snapshots/reset; no gold phase/identity injection.",
+      "kind": "structural contract check"
+    }
+  ],
+  "execution": {
+    "executed": "four tiny stdlib algebra assertions only; source reads/hash calculation; no imports of model runtime",
+    "algebra_observations": [
+      {
+        "property": "aux coefficient cancellation",
+        "old_formula": 1.0,
+        "specified_aux_only": 0.25
+      },
+      {
+        "property": "one-window/current-only warmstart",
+        "old": 7.0,
+        "new": 7.0
+      },
+      {
+        "property": "linear2x2 interaction",
+        "mixed_difference": 0
+      },
+      {
+        "property": "8window symbolic late feature",
+        "old_global_mass": 0.125,
+        "initialized_tail_boost": 0.5625,
+        "not_a_probability_or_model_result": true
+      }
+    ],
+    "candidate_checks_unexecuted": [
+      "v2actualfeatureparity",
+      "CUDAcapability/memory/throughput",
+      "source-gradient/losschecks",
+      "training",
+      "CALthresholdquality",
+      "sealed96assessment",
+      "builder2turnadapterchecks"
+    ],
+    "new_model_quality_claim": false
+  },
+  "handoff": "FixF1loss and establishF2window budget/F3context contract first. Keep actual linear pilot and full2epoch old+new retention; F4is a measured-later capacity hypothesis, not a requirement to redesign before the authorized fit. No fourth cloud job."
+}

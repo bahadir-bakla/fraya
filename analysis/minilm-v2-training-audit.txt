@@ -1,0 +1,55 @@
+Independent V2 training source audit
+NO_CONCRETE_TRAINING_BLOCKER_FOUND
+17 PASS / 0 FAIL mechanical/source tests; two initial fixture failures corrected and rerun, preserved in JSON.
+UTC 2026-10-11T13:10:52.409563+00:00
+
+No concrete correctness blocker or required parent implementation repair identified. No active trainer/runtime/model/process changes. No CAL, EVAL, sealed probes or prediction payloads opened or hashed.
+
+TESTS
+PASS independent_v2_context_tests.V2ContextTests.test_invalid_turn_cannot_retain_old_self_answer
+PASS independent_v2_context_tests.V2ContextTests.test_only_last_two_utterances_and_no_oracle_fields
+PASS independent_v2_context_tests.V2ContextTests.test_self_answer_and_question_retained_only_v2
+PASS independent_v2_context_tests.V2ContextTests.test_tool_and_call_boundaries_reset_two_turn_context
+PASS source_objective_independent_domain_plus_quarter_aux
+PASS actual_source_masked_objective_gradient_finite_difference
+PASS source_microbatch_objective_equals_full_logical_batch
+PASS source_48_window_partition_preserves_large_single_row
+PASS actual_wordpiece_overflow_tail_and_cost_boundaries
+PASS observed_projection_and_targets_reject_oracle_and_bad_masks
+PASS producer_consumer_two_turn_contract_without_inference
+PASS encoder_chunk_checkpoint_tail_context_static_controls
+PASS stream_all_permitted_TRAIN_counts_hashes_masks_inputs
+PASS threshold_abstention_masks_and_CAL_after_fit
+PASS evaluator_final_seal_before_payload_and_prediction_static
+PASS runtime_boundary_environment_builder_package_controls
+PASS freeze_metadata_hashes_ancestry_recipe_digest_split_closure
+
+SOURCE REVIEW
+All168821TRAIN records and both frozen TRAIN hashes independently verified. SGD132615rows have zero known domain masks; no allunknown supervised rows; augmentation unknown stored labels0; all12480new rows have two prior turns; exact old/new TRAIN input collisions0.
+Actual source independent mean domain+.25mean aux loss and microbatch logical denominators pass CPU finite-difference/equivalence tests. Encoder trainable/in optimizer, encode no detach; overflow global/tail/context channels, chunks48 and nonreentrant checkpoint inspected statically.
+Maximum scanned TRAIN observed projection4849characters. Full TRAIN row dictionaries/arrays and original encoder CPU clone remain in RAM; single row can exceed48 total windows, encoder calls remain48. Dynamic GPU memory/autograd not run.
+Thresholds chosen on CAL after epochs; unsupported1.01abstains. Eval source admits final declared04c69c seal before payload/prediction and completed168821x2 fit; no optimizer/threshold search. Sealed cohort bytes not checked by this audit.
+Model/runtime/architecture pins, local offline FP32 loading, builder source/evidence hash binding and package V2 paths reviewed; hypotheses remain bank_authorityfalse/financialUNKNOWN.
+Metadata harness initially assumed ancestry.json and string recipes; actual ancestry.jsonl contains recipe dictionaries. Corrected metadata check passes; these were audit fixture assumptions, not parent defects.
+
+EXACT SHA256
+2529ed744c35415c1e31fe3fea72a6ca76db04005740fc49c4f7e6f89b82459a  integrations/learned-dialogue/minilm_v2_train.py
+ca0683849ae7b4d4f761797dd2300e1c9221be6e09630fde84a84e7754ae10c4  integrations/learned-dialogue/minilm_v2_evaluate.py
+3b90bfb29389732c730cde4035bb881880ab53e21d9c2ab6915ead51469e4423  integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_core.py
+e13e4b2bc5262a436b092a38dd5df35cc4f99e29be1dbdd6fcce89948f318c94  integrations/learned-dialogue/minilm_ft_v2/runtime/minilm_ft_eval.py
+2b035b04f63f45e0b3186088193fd15149661eeef29a99802aa734a7f2a70f34  competition/finetuned_assist.py
+7386819cb3e04f0fae8930e8bead2559d4a482cdc10410cb406ccb356aa17729  competition/builder.py
+6c193573d3a75d84ca5f32d47b802730de98f418a99fd4f31b4c568e2e27c7de  competition/package_submission.py
+ebb61e4dec9a0ff279d7051f89b5e5e6ea870be9d76985d709da0ad0d597c078  competition/tests/test_finetuned_v2_context.py
+25536803c52dfd670522789486ee3f5c30b273431eb69139a1631870ee450305  research/customer-benchmark/minilm-finetune-v2-data/freeze.json
+2512c0e84062284b239a687d925cd05689c391d01b7a65d84d9c66b2b724936d  research/customer-benchmark/minilm-finetune-v2-data/manifest.json
+e7b64418dc650315a577b6311e5022c2e83ebffe8628d8acd2c0f5a1a0575cb1  research/customer-benchmark/minilm-finetune-v2-data/schema.json
+abe2dcef3d3f2ac0d6102b994503b1501d934675215293cd889db329f1a2c030  analysis/minilm-v2-plan.json
+
+LIMITATIONS
+No GPU, fit, model inference, subprocess child, platform, Git, credential or environment file inspection performed.
+No original v1 EVAL, CAL payload, predictions or sealed independent probe file opened or hashed.
+Actual encoder autograd/checkpoint behavior and GPU peak memory were not executed by this audit; user separately reports 8 CUDA checks passed on88overflowwindows.
+No natural-data accuracy or model-quality conclusion. Full active fit result not read; no claim that the active fit completed.
+Ancestry/freeze metadata can establish declared roots and hashes; no independent sealed EVAL or CAL text collision audit was authorized.
+Source receipt hashes are final observed file bytes; active process loaded-source identity is not independently attested. If source changes after fit launch, preserve original identity and record a separate diagnostic fix.

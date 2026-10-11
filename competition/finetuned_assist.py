@@ -80,7 +80,7 @@ def read_json(path):
                       parse_constant=invalid_constant)
 
 
-def observed_turns(calls):
+def observed_turns(calls, *, context_turns=1):
     """Literal message adjacency; intervening system/tool/invalid turns reset it.
 
     Gold/scorer/case metadata is never passed to the encoder. Oversized or blank
@@ -88,36 +88,45 @@ def observed_turns(calls):
     """
     if type(calls) is not list or len(calls) > 512:
         raise ValueError('Invalid call collection')
+    if context_turns not in (1,2):raise ValueError('Unsupported observed context length')
     rows, skipped, count, total = [], [], 0, 0
     for ci, call in enumerate(calls):
         if type(call) is not dict or type(call.get('messages')) is not list:
             raise ValueError('Invalid message collection')
         previous = None
+        history = []
         for mi, message in enumerate(call['messages']):
             count += 1
             if count > MAX_MESSAGES:
                 raise ValueError('Message overflow')
             old_previous, previous = previous, None
             if type(message) is not dict:
+                history=[]
                 continue
             role, text = message.get('role'), message.get('message')
             if type(role) is not str:
+                history=[]
                 continue
             role = role.lower()
             valid = type(text) is str and bool(text.strip()) and len(text) <= MAX_TEXT
             if role == 'assistant':
                 if valid:
                     previous = text
+                    history=(history+[{'speaker':'ASSISTANT','text':text}])[-2:]
+                else:history=[]
                 continue
             if role != 'user':
+                history=[]
                 continue
             if not valid:
                 reason = 'malformed' if type(text) is not str else 'oversized' if len(text) > MAX_TEXT else 'blank'
                 skipped.append({'call_index': ci, 'message_index': mi, 'reason': reason})
+                history=[]
                 continue
-            inp = {'current_utterance': text, 'previous_utterances':
-                   [{'speaker': 'ASSISTANT', 'text': old_previous}] if old_previous is not None else []}
-            total += len(text) + (len(old_previous) if old_previous is not None else 0)
+            context=history[-2:] if context_turns==2 else ([{'speaker': 'ASSISTANT', 'text': old_previous}] if old_previous is not None else [])
+            inp = {'current_utterance': text, 'previous_utterances':context}
+            history=(history+[{'speaker':'USER','text':text}])[-2:]
+            total += len(text) + sum(len(turn['text']) for turn in context)
             if len(rows) >= MAX_ROWS or total > 2_000_000:
                 raise ValueError('Observed input overflow; no partial result')
             rows.append({'call_index': ci, 'message_index': mi,
@@ -185,7 +194,8 @@ def verify_manifest(request):
 def _source(request):
     if sha(request['calls']) != request['calls_sha256']:
         raise ValueError('Changed call source')
-    return observed_turns(read_json(request['calls']))
+    manifest=verify_manifest(request)
+    return observed_turns(read_json(request['calls']),context_turns=2 if 'architecture.json' in manifest['files'] else 1)
 
 
 def copy_runtime(source_directory, destination, expected_sha256):
@@ -287,11 +297,12 @@ class FinetunedModel:
             current, previous = inp['current_utterance'], inp['previous_utterances']
             if type(current) is not str or not current.strip() or len(current) > MAX_TEXT:
                 raise ValueError('Invalid observed USER speech')
-            if type(previous) is not list or len(previous) > 1:
-                raise ValueError('Only immediate assistant context allowed')
+            v2='architecture.json' in self.manifest['files']
+            if type(previous) is not list or len(previous) > (2 if v2 else 1):
+                raise ValueError('Observed context exceeds the pinned model contract')
             for turn in previous:
                 _keys(turn, ('speaker', 'text'))
-                if turn['speaker'] != 'ASSISTANT' or type(turn['text']) is not str or not turn['text'].strip() or len(turn['text']) > MAX_TEXT:
+                if turn['speaker'] not in (('ASSISTANT','USER') if v2 else ('ASSISTANT',)) or type(turn['text']) is not str or not turn['text'].strip() or len(turn['text']) > MAX_TEXT:
                     raise ValueError('Invalid assistant context')
         logits = self.model.predict([{'input': inp} for inp in inputs], batch_size=16, deadline=self.deadline)
         if hasattr(logits, 'tolist'):
