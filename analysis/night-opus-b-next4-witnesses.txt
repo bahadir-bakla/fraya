@@ -1,0 +1,278 @@
+B-next4 frozenliteralCPUwitnesses
+Export SHA256 f352d08efd0c0fd46d817d475280c45ffd630a0eb828e3ba159a5b1f64411199
+58 observations; exact assignmentpatchstore, syntheticbankreceipts, no liveextractor/HTTP/platform.
+
+recipient/period-admin | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=question|c=1|q=ai\nk=confirm|c=1\nEND", "raw_speech": "Sofia Almeida. Are you a robot?", "admin": "none"}
+route=speak speech=I am Freya Bank's digital assistant. What is your date of birth? Please say the month as a word.
+Recipient yes advances DOB only; negatives never verify.
+
+recipient/speaking | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=confirm|c=1\nEND", "raw_speech": "Yes, this is Sofia Almeida speaking.", "admin": "none"}
+route=speak speech=What is your date of birth? Please say the month as a word.
+Recipient yes advances DOB only; negatives never verify.
+
+recipient/that-is-me | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=yes|c=1\nEND", "raw_speech": "Yes, that is me.", "admin": "none"}
+route=speak speech=What is your date of birth? Please say the month as a word.
+Recipient yes advances DOB only; negatives never verify.
+
+recipient/greeting | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=confirm|c=1\nk=question|c=1|q=purpose\nEND", "raw_speech": "Hello, I am Sofia Almeida. Why are you calling?", "admin": "none"}
+route=speak speech=I can explain after the security check. What is your date of birth? Please say the month as a word.
+Recipient yes advances DOB only; negatives never verify.
+
+recipient/title-punctuation | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=confirm|c=1\nk=question|c=1|q=purpose\nEND", "raw_speech": "Yes, Ms. Almeida speaking! Could you explain why?", "admin": "none"}
+route=speak speech=I can explain after the security check. What is your date of birth? Please say the month as a word.
+Recipient yes advances DOB only; negatives never verify.
+
+recipient/Unicode-quote | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=unknown|c=1\nEND", "raw_speech": "“Sofia Almeida”.", "admin": "none"}
+route=speak speech=Am I speaking with Ms Almeida?
+Recipient yes advances DOB only; negatives never verify.
+
+recipient/third-person | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=third|c=1\nEND", "raw_speech": "Sofia Almeida is my sister.", "admin": "none"}
+route=speak speech=When can the customer be reached, today or the next business day between 10:00 and 19:00?
+Recipient yes advances DOB only; negatives never verify.
+
+recipient/wrong | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=unknown|c=1\nEND", "raw_speech": "Marta Costa.", "admin": "none"}
+route=speak speech=Am I speaking with Ms Almeida?
+Recipient yes advances DOB only; negatives never verify.
+
+recipient/hypothetical | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=unknown|c=1\nEND", "raw_speech": "If I were Sofia Almeida, I would say yes.", "admin": "none"}
+route=speak speech=Am I speaking with Ms Almeida?
+Recipient yes advances DOB only; negatives never verify.
+
+paired-security | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=answer|c=1|v=1988-04-17\nk=question|c=1|q=security\nEND", "raw_speech": "17 April1988. Why do you need my birth date?", "admin": "none"}
+route=verify_identity speech=
+Complete security retained alongside question.
+
+paired-phone | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=answer|c=1|v=1234\nk=question|c=1|q=security\nEND", "raw_speech": "1234. Why do you need those?", "admin": "none"}
+route=verify_identity speech=
+Phone prepares API only; identity not granted from local copy.
+
+atomic-invalid-total/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=credit card|a=50|d=tomorrow\nk=proposal|c=1|p=personal loan,car loan|a=total:1|d=tomorrow\nEND", "raw_speech": "Card50 tomorrow and total1 for loan and car tomorrow.", "admin": "none"}
+route=speak speech=Please allocate that total to each named product, with its exact date.
+Invalid aggregate rejects all product mutations.
+
+atomic-invalid-total/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=personal loan,car loan|a=total:1|d=tomorrow\nk=proposal|c=1|p=credit card|a=50|d=tomorrow\nEND", "raw_speech": "Card50 tomorrow and total1 for loan and car tomorrow.", "admin": "none"}
+route=speak speech=Please allocate that total to each named product, with its exact date.
+Invalid aggregate rejects all product mutations.
+
+overlap-conflicting-amount/0 | structurally_valid_overlapping_decisions_ambiguity_control
+{"event": "k=proposal|c=1|p=all|a=100|d=16 October\nk=proposal|c=1|p=personal loan|a=213|d=16 October\nEND", "raw_speech": "100 on16October for everything, but loan213 on16October.", "admin": "none"}
+route=speak speech=Please clarify the conflicting amount for personal loan.
+Overlapping contradictory same-turn facts require clarification; no write.
+
+overlap-conflicting-amount/1 | structurally_valid_overlapping_decisions_ambiguity_control
+{"event": "k=proposal|c=1|p=personal loan|a=213|d=16 October\nk=proposal|c=1|p=all|a=100|d=16 October\nEND", "raw_speech": "100 on16October for everything, but loan213 on16October.", "admin": "none"}
+route=speak speech=Please clarify the conflicting amount for personal loan.
+Overlapping contradictory same-turn facts require clarification; no write.
+
+overlap-equivalent/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=all|a=full|d=16 October\nk=proposal|c=1|p=personal loan|a=540|d=16 October\nEND", "raw_speech": "Full amounts October16, including personal loan540 October16.", "admin": "none"}
+route=speak speech=Please confirm: credit card ending 4821, 250.00 on 2026-10-16; personal loan, 540.00 on 2026-10-16; car loan, 300.00 on 2026-10-16. Do you confirm?
+Equivalent overlap yields each own full amount once and combined readback.
+
+overlap-equivalent/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=personal loan|a=540|d=16 October\nk=proposal|c=1|p=all|a=full|d=16 October\nEND", "raw_speech": "Full amounts October16, including personal loan540 October16.", "admin": "none"}
+route=speak speech=Please confirm: credit card ending 4821, 250.00 on 2026-10-16; personal loan, 540.00 on 2026-10-16; car loan, 300.00 on 2026-10-16. Do you confirm?
+Equivalent overlap yields each own full amount once and combined readback.
+
+partial-plus-complete/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=partial|c=0|p=personal loan|a=213|d=16|u=date\nk=proposal|c=1|p=personal loan|d=16 October\nk=paid|c=1|p=car loan\nEND", "raw_speech": "Loan213 on the sixteenth... October16. Car loan paid.", "admin": "none"}
+route=speak speech=Payments can take one business day to appear.  Can you pay 250.00 for your credit card ending 4821 on 2026-10-16?
+Both orders preserve213/Oct16 and paid sibling.
+
+partial-plus-complete/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=personal loan|d=16 October\nk=partial|c=0|p=personal loan|a=213|d=16|u=date\nk=paid|c=1|p=car loan\nEND", "raw_speech": "Loan213 on the sixteenth... October16. Car loan paid.", "admin": "none"}
+route=speak speech=Payments can take one business day to appear.  Can you pay 250.00 for your credit card ending 4821 on 2026-10-16?
+Both orders preserve213/Oct16 and paid sibling.
+
+fragment/setup/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=partial|c=0|p=personal loan|u=both\nEND", "raw_speech": "For the loan I can pay...", "admin": "none"}
+route=speak speech=Please finish the amount and exact date for your personal loan.
+No premature readback/write.
+
+fragment/completion/0/a | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=personal loan|a=213\nEND", "raw_speech": "213.", "admin": "none"}
+route=speak speech=Please finish the date for your personal loan.
+Retain completed sibling until both components known; then exact readback.
+
+fragment/completion/0/d | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=personal loan|d=16 October\nEND", "raw_speech": "16 October.", "admin": "none"}
+route=speak speech=For your personal loan, the rest stays overdue. Please confirm: personal loan, 213.00 on 2026-10-16. Do you confirm?
+Retain completed sibling until both components known; then exact readback.
+
+fragment/setup/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=partial|c=0|p=personal loan|u=both\nEND", "raw_speech": "For the loan I can pay...", "admin": "none"}
+route=speak speech=Please finish the amount and exact date for your personal loan.
+No premature readback/write.
+
+fragment/completion/1/d | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=personal loan|d=16 October\nEND", "raw_speech": "16 October.", "admin": "none"}
+route=speak speech=Please finish the amount for your personal loan.
+Retain completed sibling until both components known; then exact readback.
+
+fragment/completion/1/a | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=personal loan|a=213\nEND", "raw_speech": "213.", "admin": "none"}
+route=speak speech=For your personal loan, the rest stays overdue. Please confirm: personal loan, 213.00 on 2026-10-16. Do you confirm?
+Retain completed sibling until both components known; then exact readback.
+
+scoped-withdraw-and-sibling-refusal | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=consent|c=1|v=withdraw|p=credit card\nk=no|c=1|p=personal loan\nk=paid|c=1|p=car loan\nEND", "raw_speech": "Do not record the card; no for the personal loan; car loan already paid.", "admin": "none"}
+route=speak speech=Payments can take one business day to appear.  Can you pay 540.00 for your personal loan on 2026-10-16?
+Permission withdrawal must not blank separate refusal or paid sibling.
+
+permission-barrier/c0 | structural_conflicting_permission_vs_financial_affirmation_control
+{"event": "k=consent|c=0|v=withdraw|u=answer\nk=confirm|c=1|p=all\nEND", "raw_speech": "Hold on, yes those are the amounts.", "admin": "none"}
+route=speak speech=For your personal loan, the rest stays overdue. Please confirm: personal loan, 213.00 on 2026-10-16. Do you confirm?
+Any permission row blocks write and clears consent.
+
+permission-barrier/c1 | structural_conflicting_permission_vs_financial_affirmation_control
+{"event": "k=consent|c=1|v=withdraw\nk=confirm|c=1|p=all\nEND", "raw_speech": "Hold on, yes those are the amounts.", "admin": "none"}
+route=speak speech=For your personal loan, the rest stays overdue. Please confirm: personal loan, 213.00 on 2026-10-16. Do you confirm?
+Any permission row blocks write and clears consent.
+
+qualified-consent/28 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=confirm|c=1|p=all\nEND", "raw_speech": "Yes, no problem.", "admin": "none"}
+route=create_promise speech=
+Exact fresh affirmative only; qualified/withdrawn terms cannot write.
+
+qualified-consent/29 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=confirm|c=1|p=all\nEND", "raw_speech": "Yes, I don’t mind; go ahead.", "admin": "none"}
+route=create_promise speech=
+Exact fresh affirmative only; qualified/withdrawn terms cannot write.
+
+qualified-consent/30 | forced_semantic_negative_confirm_control
+{"event": "k=confirm|c=1|p=all\nEND", "raw_speech": "Yes, but only if my salary arrives.", "admin": "none"}
+route=speak speech=For your personal loan, the rest stays overdue. Please confirm: personal loan, 213.00 on 2026-10-16. Do you confirm?
+Exact fresh affirmative only; qualified/withdrawn terms cannot write.
+
+qualified-consent/31 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=consent|v=withdraw|c=1|p=all\nEND", "raw_speech": "Do not record this promise.", "admin": "none"}
+route=speak speech=For your personal loan, the rest stays overdue. Please confirm: personal loan, 213.00 on 2026-10-16. Do you confirm?
+Exact fresh affirmative only; qualified/withdrawn terms cannot write.
+
+deferred-refusal | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=no|c=1|p=personal loan\nk=partial|c=0|p=credit card|a=100|u=date\nk=paid|c=1|p=car loan\nEND", "raw_speech": "No forloan. Card100 on... Car paid.", "admin": "none"}
+route=speak speech=Payments can take one business day to appear. Please finish the date for your credit card ending 4821.
+Keep refusal pending and independent complete100.
+
+changed-terms | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=personal loan|a=213|d=16 October\nEND", "raw_speech": "Actually loan213 October16.", "admin": "none"}
+route=speak speech=Please finish the date for your credit card ending 4821.
+Fresh terms clear refusal.
+
+finish-independent-date | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=credit card|d=16 October\nEND", "raw_speech": "Card October16.", "admin": "none"}
+route=speak speech=For your credit card ending 4821, the rest stays overdue. For your personal loan, the rest stays overdue. Please confirm: credit card ending 4821, 100.00 on 2026-10-16; personal loan, 213.00 on 2026-10-16. Do you confirm?
+No stale refusal replay;100+213 combined and car paid.
+
+finite/nan | caller_numeric_codec_violation_negative_control
+{"event": "k=proposal|c=1|p=personal loan|a=nan|d=16 October\nEND", "raw_speech": "Loan amountOctober16.", "admin": "none"}
+route=speak speech=Please clarify your latest decision for the named product.
+Bad codec cannot write.
+
+finite/inf | caller_numeric_codec_violation_negative_control
+{"event": "k=proposal|c=1|p=personal loan|a=inf|d=16 October\nEND", "raw_speech": "Loan amountOctober16.", "admin": "none"}
+route=speak speech=Please clarify your latest decision for the named product.
+Bad codec cannot write.
+
+finite/1e2 | caller_numeric_codec_violation_negative_control
+{"event": "k=proposal|c=1|p=personal loan|a=1e2|d=16 October\nEND", "raw_speech": "Loan amountOctober16.", "admin": "none"}
+route=speak speech=Please clarify your latest decision for the named product.
+Bad codec cannot write.
+
+finite/999999999999 | caller_numeric_codec_violation_negative_control
+{"event": "k=proposal|c=1|p=personal loan|a=9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999|d=16 October\nEND", "raw_speech": "Loan amountOctober16.", "admin": "none"}
+route=speak speech=Please clarify your latest decision for the named product.
+Bad codec cannot write.
+
+primary/human | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=human|c=1|x=could you please connect me to a human\nEND", "raw_speech": "Could you please connect me to a human?", "admin": "none"}
+route=speak speech=May I help you first, or do you still want a human?
+Completed polite primary applies its original policy before security.
+
+primary-c0/human | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=human|c=0|u=answer\nEND", "raw_speech": "Could you please connect me to a human...", "admin": "none"}
+route=speak speech=Please finish that last statement.
+Unfinished primary gets no action.
+
+primary/plan | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=plan|c=1|x=could you offer lower instalments\nEND", "raw_speech": "Could you offer lower instalments?", "admin": "none"}
+route=transfer_to_agent speech=
+Completed polite primary applies its original policy before security.
+
+primary-c0/plan | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=plan|c=0|u=answer\nEND", "raw_speech": "Could you offer lower instalments...", "admin": "none"}
+route=speak speech=Please finish that last statement.
+Unfinished primary gets no action.
+
+primary/stop | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=stop|c=1|x=do not contact me again\nEND", "raw_speech": "Do not contact me again.", "admin": "none"}
+route=speak speech=I understand. What is your date of birth? Please say the month as a word.
+Completed polite primary applies its original policy before security.
+
+primary-c0/stop | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=stop|c=0|u=answer\nEND", "raw_speech": "Do not contact me again...", "admin": "none"}
+route=speak speech=Please finish that last statement.
+Unfinished primary gets no action.
+
+transport/fresh500 | conditional_CPU_prior_error_metadata_shape_not_new_hosted
+route=create_promise speech=
+Fresh500 retry identicalbody only; stale metadata not authorized; documented500 means nothingrecorded.
+
+transport/unchanged-counter500 | conditional_CPU_prior_error_metadata_shape_not_new_hosted
+route=safe_exit speech=
+Fresh500 retry identicalbody only; stale metadata not authorized; documented500 means nothingrecorded.
+
+transport/stale-receipt500 | conditional_CPU_prior_error_metadata_shape_not_new_hosted
+route=speak speech=Please confirm all the payment terms I just read back, or give the correction.
+Fresh500 retry identicalbody only; stale metadata not authorized; documented500 means nothingrecorded.
+
+applicationFalse/first500 | synthetic_posthook_applicationFalse_not_actual_error_delivery
+route=create_promise speech=
+
+applicationFalse/retry-success | synthetic_receipt_CPU_no_HTTP
+route=farewell speech=Your payment promise is recorded. You will receive a text message confirming this promise. Thank you for your time. Goodbye.
+
+note-receipt/{} | synthetic_service_receipt_negative_control
+route=safe_exit speech=
+Failure cannot mark notedtrue or claim paid final ledger.
+
+note-receipt/{'ok': False} | synthetic_service_receipt_negative_control
+route=safe_exit speech=
+Failure cannot mark notedtrue or claim paid final ledger.
+
+note-success/0 | synthetic_service_receipt_positive_control
+route=add_note speech=
+One successful receipt per correctproduct before final paid close.
+
+note-success/1 | synthetic_service_receipt_positive_control
+route=add_note speech=
+One successful receipt per correctproduct before final paid close.
+
+note-success/2 | synthetic_service_receipt_positive_control
+route=farewell speech=Thank you for your time. Goodbye.
+One successful receipt per correctproduct before final paid close.
+
+native/mixed-deadline | advertised_conforming_conditional_CPU
+{"event": "k=proposal|c=1|p=all|a=full|d=30 October\nEND", "raw_speech": "All in full on30 October."}
+route=speak speech=Please confirm: credit card ending 4821, 250.00 on 2026-10-30; personal loan, 540.00 on 2026-10-23. Do you confirm?
+Early card keepsOct30; late loan clampsOct23 and both amounts/dates appear in combined readback.
+
+native/fragment-loop-bound | literal_controller_repetition_CPU_no_graph_nodecap_execution
+Incomplete component never guessed or written; controller turncap is finite. Native claim61 exits cannot be inferred from literal code, max_node_turns belongs to actual graph.
+
+native/recorded-sibling-note-failure | synthetic_receipts_and_literal_close_hook_not_real_HTTP
+route=safe_exit speech=
+Retain actual synthetic successmarked card; loan not falselynoted; closehook promise wins if prior recorded; no overall paid/no_promise false claim.

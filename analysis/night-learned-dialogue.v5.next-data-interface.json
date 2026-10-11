@@ -1,0 +1,717 @@
+{
+  "schema_version": "next_data_collection_interface.v5.1",
+  "utc": "2026-10-11T03:34:50.218949+00:00",
+  "status": "interface_only_no_collection_labels_admission_fit_or_gpu",
+  "owner_scope": "Only these two new analysis reports; frozen code/data/reports unchanged",
+  "baseline_sha256": {
+    "analysis/night-learned-dialogue.v5.freeze.json": "58a61c867fa62f0fcc625fd4ba3c0d206f4c9969a7cd0b6a6ed1e9a605e3f1c9",
+    "analysis/night-learned-dialogue.v5.primary-readiness.json": "68e9fe630ebc50199e06e015b6a2600a238a4f1ce57a7c645aa51224cff6524f",
+    "analysis/night-learned-dialogue.v5.alignment.json": "7dd80313d4a549c710cff01396fd6271b89a1cb196976a6199b88dc95ac0217c",
+    "integrations/learned-dialogue/detector_r4.py": "1451f161bfb40fc1c2091e96b3802d9665f3ecfb04eed14c18fb3c14acc2a3c0",
+    "integrations/learned-dialogue/window_r4.py": "ef1e8c75ba1a587467825cd77469e1de1fabd4080dfc32459b957d979e3cc8a4",
+    "integrations/learned-dialogue/primary_cpu_v5.py": "65dbc4ff692568ffb8c017bbbef60f26743907042547bd5ddea80321c95bbcd5",
+    "integrations/learned-dialogue/narrow_review_v4_1.py": "a0ad8167f422c02d1b7f4f3007b7f272c45bd8fe2c6dcbdcfa7dc4673bd3d12d"
+  },
+  "current_support": {
+    "primary": {
+      "privacy_eligible_rows": 103,
+      "positive_canonical_groups": 27,
+      "additional_negative_canonical_groups": 19,
+      "required_floor_per_class": 20
+    },
+    "date": {
+      "eligible_complete_canonical_groups": 20,
+      "eligible_unfinished_canonical_groups": 16,
+      "required_floor_per_class": 20
+    }
+  },
+  "minimum_additional_eligible_canonical_groups": {
+    "primary_other_primary_act": 1,
+    "date_linguistically_unfinished": 4,
+    "condition": "Each new root remains distinct after transitive source-neutral alias union, is fully reviewed/adjudicated and exactly actual-detector/feature/privacy eligible. Union/masking can increase this minimum. Counts are lower bounds, not a guaranteed collection size."
+  },
+  "collection_json_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:fraya:next-fictional-train-collection:v5",
+    "title": "Label-free fictional TRAIN supplement; no author supervision",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "const": "label_free_train_supplement.v5"
+      },
+      "collection_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "author_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "split": {
+        "const": "train"
+      },
+      "license": {
+        "const": "fictional_internal_research_source; no third-party corpus copied"
+      },
+      "records": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "example_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "declared_lineage_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "collection_axis": {
+              "enum": [
+                "primary_other_act",
+                "date_open_complement"
+              ]
+            },
+            "author_provenance": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "author_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "fictional_origin": {
+                  "const": true
+                },
+                "recipe_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "template_skeleton_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "scenario_family_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source_family_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contrast_parent_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "author_id",
+                "fictional_origin",
+                "recipe_id",
+                "template_skeleton_id",
+                "scenario_family_id",
+                "source_family_id",
+                "contrast_parent_id"
+              ]
+            },
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "schema_version": {
+                  "const": "semantic_input.v1"
+                },
+                "call_local_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "turn_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "state_revision": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "policy_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "api_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "phase": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "utterance": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    "source": {
+                      "const": "authored_fixture"
+                    },
+                    "source_turn_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "complete_transport": {
+                      "const": true
+                    },
+                    "offset_unit": {
+                      "const": "python_unicode_codepoints"
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "source",
+                    "source_turn_id",
+                    "complete_transport",
+                    "offset_unit"
+                  ]
+                },
+                "question": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "question_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "role": {
+                      "enum": [
+                        "payment",
+                        "date",
+                        "amount",
+                        "offer",
+                        "readback",
+                        "callback",
+                        "recipient",
+                        "support",
+                        "security",
+                        "none"
+                      ]
+                    },
+                    "spoken_turn_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "target_indices": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "uniqueItems": true
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "security_field": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "question_id",
+                    "role",
+                    "spoken_turn_id",
+                    "target_indices",
+                    "text"
+                  ]
+                },
+                "targets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "index": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "type": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "product_id": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "index",
+                      "type",
+                      "label",
+                      "product_id"
+                    ]
+                  },
+                  "minItems": 0
+                },
+                "pending": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "target_index": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "components": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "amount": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "status": {
+                                "enum": [
+                                  "absent",
+                                  "complete",
+                                  "unfinished",
+                                  "ambiguous"
+                                ]
+                              },
+                              "revision": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "value": {
+                                "type": [
+                                  "null",
+                                  "string",
+                                  "number"
+                                ]
+                              },
+                              "evidence_refs": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                },
+                                "minItems": 0
+                              }
+                            },
+                            "required": [
+                              "status",
+                              "revision",
+                              "value",
+                              "evidence_refs"
+                            ]
+                          },
+                          "date": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "status": {
+                                "enum": [
+                                  "absent",
+                                  "complete",
+                                  "unfinished",
+                                  "ambiguous"
+                                ]
+                              },
+                              "revision": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "value": {
+                                "type": [
+                                  "null",
+                                  "string",
+                                  "number"
+                                ]
+                              },
+                              "evidence_refs": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                },
+                                "minItems": 0
+                              }
+                            },
+                            "required": [
+                              "status",
+                              "revision",
+                              "value",
+                              "evidence_refs"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "amount",
+                          "date"
+                        ]
+                      },
+                      "unresolved_components": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "amount",
+                            "date",
+                            "time",
+                            "unknown"
+                          ]
+                        },
+                        "minItems": 0
+                      }
+                    },
+                    "required": [
+                      "target_index",
+                      "components",
+                      "unresolved_components"
+                    ]
+                  },
+                  "minItems": 0
+                },
+                "spoken_offers": {
+                  "type": "array",
+                  "maxItems": 0
+                },
+                "active_readback": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "schema_version",
+                "call_local_id",
+                "turn_id",
+                "state_revision",
+                "policy_hash",
+                "api_hash",
+                "phase",
+                "utterance",
+                "question",
+                "targets",
+                "pending",
+                "spoken_offers",
+                "active_readback"
+              ]
+            }
+          },
+          "required": [
+            "example_id",
+            "declared_lineage_id",
+            "collection_axis",
+            "author_provenance",
+            "input"
+          ]
+        },
+        "minItems": 1
+      }
+    },
+    "required": [
+      "schema_version",
+      "collection_id",
+      "author_id",
+      "split",
+      "license",
+      "records"
+    ]
+  },
+  "independent_review_json_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:fraya:next-source-review:v5",
+    "$defs": {
+      "SourceSpan": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "raw_field_path": {
+            "type": "string",
+            "pattern": "^/records/[0-9]+/input/utterance/text$"
+          },
+          "offset_unit": {
+            "const": "python_unicode_codepoints"
+          },
+          "char_start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "char_end": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "utf8_byte_start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "utf8_byte_end": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "raw_field_path",
+          "offset_unit",
+          "char_start",
+          "char_end",
+          "text",
+          "utf8_byte_start",
+          "utf8_byte_end"
+        ]
+      }
+    },
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "const": "independent_source_review_supplement.v5"
+      },
+      "reviewer_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "source_packet_raw_sha256": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "source_packet_path": {
+        "type": "string",
+        "minLength": 1
+      },
+      "records": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "example_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_record_json_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "source_input_json_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "source_record_path": {
+              "type": "string",
+              "pattern": "^/records/[0-9]+$"
+            },
+            "primary_label": {
+              "enum": [
+                "positive",
+                "negative",
+                "ambiguous",
+                "unassessed"
+              ]
+            },
+            "primary_observed": {
+              "type": "boolean"
+            },
+            "privacy_surface_eligible": {
+              "type": "boolean"
+            },
+            "privacy_reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "date_candidates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "source_span": {
+                    "$ref": "#/$defs/SourceSpan"
+                  },
+                  "candidate_role": {
+                    "enum": [
+                      "current",
+                      "superseded",
+                      "uncertain"
+                    ]
+                  },
+                  "presence": {
+                    "enum": [
+                      "present",
+                      "absent",
+                      "ambiguous"
+                    ]
+                  },
+                  "completion": {
+                    "enum": [
+                      "complete",
+                      "unfinished",
+                      "ambiguous",
+                      "unassessed"
+                    ]
+                  },
+                  "completion_observed": {
+                    "type": "boolean"
+                  },
+                  "target_indices": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "uniqueItems": true
+                  },
+                  "target_scope_observed": {
+                    "type": "boolean"
+                  },
+                  "maximal_boundary_observed": {
+                    "type": "boolean"
+                  },
+                  "polarity": {
+                    "enum": [
+                      "asserted",
+                      "negated",
+                      "conditional",
+                      "question",
+                      "quoted",
+                      "ambiguous",
+                      "unassessed"
+                    ]
+                  },
+                  "reference_status": {
+                    "enum": [
+                      "not_required",
+                      "unresolved",
+                      "verified",
+                      "unassessed"
+                    ]
+                  },
+                  "normalization_status": {
+                    "enum": [
+                      "not_assessed",
+                      "unresolved",
+                      "invalid",
+                      "verified"
+                    ]
+                  },
+                  "rationale": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "source_span",
+                  "candidate_role",
+                  "presence",
+                  "completion",
+                  "completion_observed",
+                  "target_indices",
+                  "target_scope_observed",
+                  "maximal_boundary_observed",
+                  "polarity",
+                  "reference_status",
+                  "normalization_status",
+                  "rationale"
+                ]
+              },
+              "minItems": 0
+            },
+            "evidence_spans": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SourceSpan"
+              },
+              "minItems": 1
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "example_id",
+            "source_record_json_sha256",
+            "source_input_json_sha256",
+            "source_record_path",
+            "primary_label",
+            "primary_observed",
+            "privacy_surface_eligible",
+            "privacy_reason",
+            "date_candidates",
+            "evidence_spans",
+            "rationale"
+          ]
+        },
+        "minItems": 1
+      }
+    },
+    "required": [
+      "schema_version",
+      "reviewer_id",
+      "source_packet_raw_sha256",
+      "source_packet_path",
+      "records"
+    ]
+  },
+  "semantic_schema_checks": [
+    "Unique example_id across all supplied TRAIN packets; no labels/y/expected predictions/judge output in author packet.",
+    "Author IDs/template IDs/scenario IDs/record IDs are provenance only; never model features.",
+    "utterance.source_turn_id equals turn_id; fictional question/targets/pending are already-spoken local state only.",
+    "Pending target and question target indices must refer to declared targets; no real account/security details or policy facts.",
+    "Raw offsets and UTF8 bounds must reproduce exact text in immutable packet; end>start; preserve original Unicode without cleaning or normalization.",
+    "For observed primary, positive means payment_proposal is PRIMARY; negative means another known PRIMARY act. Negative says nothing about secondary payment, refusal, consent or policy. Ambiguous/unassessed => primary_observed=false.",
+    "For observed completion, presence=present, completion in complete/unfinished, maximal boundary observed and target scope observed. Ambiguous/unassessed/incompatible type is masked, never coerced into unfinished.",
+    "Target-scope-observed requires nonempty exact requested known target set; uncertain/current/superseded roles remain distinct. Superseded spans do not add current support.",
+    "Reference verified and normalization verified require independent evidence references in a future binding extension; these schemas alone cannot verify them. Default both unassessed, no normalized value emitted.",
+    "Primary surface remains masked for security phase OR security role OR nonnull question.security_field OR current unchanged sensitive-keyword/privacy predicate. Reviewer true cannot override runtime false.",
+    "This narrow supplement deliberately has no offers/readback: spoken_offers empty and active_readback null. Additional reference contexts need a separately versioned schema, not hidden fields."
+  ],
+  "independent_review_requirements": {
+    "author": "Separate fresh source author; source-only fictional inputs and lineage recipes, no labels or detector outputs supplied as author guidance.",
+    "two_reviewers": "Parent verifies distinct isolated source-only reviewers, neither author; both receive every member of each full canonical closure and immutable raw packet. Do not supply model predictions, current candidate spans, old holdout answers or each other annotations.",
+    "adjudicator": "Distinct source adjudicator reads original two reviews and exact source; isolated adjudication, NOT falsely called blind review. Retain every original annotation/hash and adjudicate disagreements; undecidable labels/boundaries/targets stay masked.",
+    "freeze": "Freeze raw packet, full review records, adjudication decisions, source vectors, canonical registry/alias overlay and parser/boundary contract before any join or fit.",
+    "full_group_review": "Every member including contextual contrasts, positive or ambiguous members must be retained and reviewed; no cherry-picked negative-only members.",
+    "admission": "Existing narrow_review_v4_1 is exact-pinned to old five inputs and does not admit supplements. Parent requires NEW versioned admission and exact out-of-band hash grant binding supplement/reviews/adjudication/aliases/split declarations/detector/features/candidate vector; no reuse of current grant."
+  },
+  "source_neutral_alias_rules": {
+    "group_id": "Opaque root IDs assigned by registry, not labels, correctness, split desirability, reviewer, source file or desired floor.",
+    "union_evidence": [
+      "Shared actual template skeleton/carrier recipe with fictional slots renamed",
+      "Direct rewrite, augmentation, paraphrase from same source exemplar or generation recipe",
+      "Context/scoped sibling/correction/permutation/quoted carrier contrast derived from one semantic scenario",
+      "Duplicate utterance plus same underlying context recipe, even across authors/files/names",
+      "Shared declared source/scenario family that constitutes the same construction lineage"
+    ],
+    "operations": "Parent freezes explicit alias edges with evidence and transitive union BEFORE labels are counted or folds assigned. Compare supplied existing TRAIN inputs/provenance to supplement source-only; future unknown edges remain unknown. Never split a previous canonical root to improve support.",
+    "scope": "No new DEV or holdout contents read. Parent supplies identifier-only external split/alias declarations; cross-split alias conflicts block admission. Global registry outside supplied packets remains unknown.",
+    "recount": "Canonical positive set includes every observed positive member. Additional negative support = observed negative canonical set MINUS positive canonical set after all unions and feature masks. DATE paired same root may support both classes. New source/author IDs alone never imply independent groups."
+  },
+  "candidate_target_and_boundary_contract": {
+    "unit": "One maximal temporal expression at original half-open Unicode span; include dependent of/before/after/to/or operands or explicit open tail. R4 source fixed; child anchor is sidecar, never a second independent training example.",
+    "boundary_disagreement": "Annotate original full semantic boundary independently. If actual R4 offsets differ, retain boundary_mismatch and no completion loss. No nearest span, punctuation trimming, carrier clipping, rewrite or mask override to manufacture alignment.",
+    "target_join": "Exact example/source pointer/start/end/text AND exact target set. Current R4 vector provides singleton question-target hypotheses only. Multi-target spans may be annotated but remain ineligible until separately implemented/audited source target binding. Do not union targets or borrow target identities from reviewed labels into detector vector.",
+    "unfinished_axis": "Genuinely open temporal complement/operand/range endpoint; missing year, vague next week, impossible calendar, negated/quoted/conditional dates and unresolved anaphors are not automatically unfinished. Linguistic completeness independent of act completion/polarity/value normalization.",
+    "feature_join": "Use fixed R4 48-codepoint clause-local extractor on actual candidates. Boundary ambiguity, unsupported cross-clause dependency, window clipping, privacy/source problems and overflow mask completion loss; no label-dependent window expansion.",
+    "absence": "No candidate does not establish semantic absence. Unmatched detections need independent absent-region review before validity-negative supervision; absence regions cannot overlap reviewed presence.",
+    "minimum_eligibility": "New DATE root counts only if independently observed unfinished at exact actual R4 maximal boundary/current singleton target set and unchanged source/privacy/window feature eligibility. No guarantee hypothetical author expression passes parser."
+  },
+  "next_actions": "Separate author collects inputs; parent coordinates source-neutral closure and fresh reviews/adjudication. Designer11 resolves architecture. This implementer iteration closes; no more fit/data or GPU work.",
+  "new_DEV_read": false,
+  "qualified": false,
+  "payment_authority": false,
+  "gpu_authorized": false
+}

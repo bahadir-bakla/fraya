@@ -1,0 +1,410 @@
+A8literalCPUwitnesses; nativeA8UNVERIFIED
+ExportSHA256 8470bd1fa1085bcaabc3e12a014c2d6b6845fd00eba5fe67b62e79eed4488a75
+84observations exactpublishedsnippets/persistentassignmentstore, handauthoredextraction/syntheticreceipts. No hostedpass orplatformsimulation.
+
+recipient/0 | advertised_current_recipient_plus_question_CPU
+{"event": "k=recipient;c=1;END", "raw": "Yes, this is Sofia Almeida speaking.", "admin": "none"}
+route=talk phase=dob verified=False speech=Please tell me your date of birth, with the month as a word.
+Whole current recipient should advanceDOB only; independent admin answered.
+
+recipient/1 | advertised_current_recipient_plus_question_CPU
+{"event": "k=recipient;c=1;END", "raw": "Yes, that is me.", "admin": "none"}
+route=talk phase=dob verified=False speech=Please tell me your date of birth, with the month as a word.
+Whole current recipient should advanceDOB only; independent admin answered.
+
+recipient/2 | advertised_current_recipient_plus_question_CPU
+{"event": "k=recipient;c=1;END", "raw": "Sofia Almeida. Are you a robot?", "admin": "none"}
+route=talk phase=dob verified=False speech=I am Freya Bank's digital assistant. Please tell me your date of birth, with the month as a word.
+Whole current recipient should advanceDOB only; independent admin answered.
+
+recipient/3 | advertised_current_recipient_plus_question_CPU
+{"event": "k=recipient;c=1;END", "raw": "Yes, Ms. Sofia Almeida speaking!", "admin": "none"}
+route=talk phase=dob verified=False speech=Please tell me your date of birth, with the month as a word.
+Whole current recipient should advanceDOB only; independent admin answered.
+
+recipient/4 | advertised_current_recipient_plus_question_CPU
+{"event": "k=recipient;c=1;END", "raw": "Speaking. Are you a robot?", "admin": "none"}
+route=talk phase=dob verified=False speech=I am Freya Bank's digital assistant. Please tell me your date of birth, with the month as a word.
+Whole current recipient should advanceDOB only; independent admin answered.
+
+recipient/5 | advertised_current_recipient_plus_question_CPU
+{"event": "k=recipient;c=1;END", "raw": "Sofia Almeida; why are you calling?", "admin": "none"}
+route=talk phase=dob verified=False speech=I can explain after the security check. Please tell me your date of birth, with the month as a word.
+Whole current recipient should advanceDOB only; independent admin answered.
+
+recipient/6 | advertised_current_recipient_plus_question_CPU
+{"event": "k=recipient;c=1;END", "raw": "Sofia Almeida, are you a robot?", "admin": "none"}
+route=talk phase=dob verified=False speech=I am Freya Bank's digital assistant. Please tell me your date of birth, with the month as a word.
+Whole current recipient should advanceDOB only; independent admin answered.
+
+recipient-negative/7 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=unknown;c=1;END", "raw": "\"Sofia Almeida\".", "admin": "none"}
+route=talk phase=recipient verified=False speech=Am I speaking with Ms Almeida?
+Never verify identity or disclose account facts.
+
+recipient-negative/8 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=third_party;c=1;END", "raw": "Sofia Almeida is my sister.", "admin": "none"}
+route=talk phase=callback verified=False speech=When can the customer be reached, today or the next business day between 10:00 and 19:00?
+Never verify identity or disclose account facts.
+
+recipient-negative/9 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=unknown;c=1;END", "raw": "If I were Sofia Almeida I would say yes.", "admin": "none"}
+route=talk phase=recipient verified=False speech=Am I speaking with Ms Almeida?
+Never verify identity or disclose account facts.
+
+recipient-negative/10 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=unknown;c=1;END", "raw": "I am not Sofia Almeida.", "admin": "none"}
+route=talk phase=recipient verified=False speech=Am I speaking with Ms Almeida?
+Never verify identity or disclose account facts.
+
+recipient-negative/11 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=unknown;c=1;END", "raw": "Marta Costa.", "admin": "none"}
+route=talk phase=recipient verified=False speech=Am I speaking with Ms Almeida?
+Never verify identity or disclose account facts.
+
+security/dob/plain | advertised_complete_security_plus_independent_admin_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "I was born on April seventeenth nineteen eighty eight.", "admin": "none"}
+route=verify_identity phase=dob verified=False speech=
+Complete current security answer plus independentadmin prepares mandatoryverify_identity only; never local identity.
+
+security/dob/allowed-admin | advertised_complete_security_plus_independent_admin_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988. Are you a robot?", "admin": "none"}
+route=verify_identity phase=dob verified=False speech=
+Complete current security answer plus independentadmin prepares mandatoryverify_identity only; never local identity.
+
+security/dob/comma-admin | advertised_complete_security_plus_independent_admin_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988, are you a robot?", "admin": "none"}
+route=talk phase=dob verified=False speech=I am Freya Bank's digital assistant. Please finish your complete date of birth, including the year.
+Complete current security answer plus independentadmin prepares mandatoryverify_identity only; never local identity.
+
+security/dob/security-question | advertised_complete_security_plus_independent_admin_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988. Why do you need my birth date?", "admin": "none"}
+route=talk phase=dob verified=False speech=These questions protect your account. I can explain after the security check. Please finish your complete date of birth, including the year.
+Complete current security answer plus independentadmin prepares mandatoryverify_identity only; never local identity.
+
+security/dob/missing-event | producer_omission_or_malformed_negative_control
+{"event": "", "raw": "I was born on April seventeenth nineteen eighty eight.", "admin": "none"}
+route=verify_identity phase=dob verified=False speech=
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/dob/missing-v | producer_omission_or_malformed_negative_control
+{"event": "k=security;c=1;END", "raw": "I was born on April seventeenth nineteen eighty eight.", "admin": "none"}
+route=verify_identity phase=dob verified=False speech=
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/dob/malformed-row | producer_omission_or_malformed_negative_control
+{"event": "k=security;c=1;v=1988-04-17;;END", "raw": "I was born on April seventeenth nineteen eighty eight.", "admin": "none"}
+route=verify_identity phase=dob verified=False speech=
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/dob/empty-missing | producer_omission_or_malformed_negative_control
+{"event": "", "raw": "", "admin": "none"}
+route=talk phase=dob verified=False speech=Please repeat that clearly. Please tell me your date of birth, with the month as a word.
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/dob/incomplete-year-digits | advertised_unfinished_security_control
+{"event": "k=security;c=0;END", "raw": "17 April nineteen...", "admin": "none"}
+route=talk phase=dob verified=False speech=Please finish the year of birth.
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/dob/year-only-or-3digits | advertised_unfinished_security_control
+{"event": "k=security;c=0;END", "raw": "1988", "admin": "none"}
+route=talk phase=dob verified=False speech=Please finish your complete date of birth, including the year.
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/dob/qualified-answer | advertised_unfinished_security_control
+{"event": "k=security;c=0;END", "raw": "17 April 1988, actually wait...", "admin": "none"}
+route=talk phase=dob verified=False speech=Please finish your complete date of birth, including the year.
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/phone/plain | advertised_complete_security_plus_independent_admin_CPU
+{"event": "k=security;c=1;v=0123;END", "raw": "The last four digits are zero one two three.", "admin": "none"}
+route=verify_identity phase=phone verified=False speech=
+Complete current security answer plus independentadmin prepares mandatoryverify_identity only; never local identity.
+
+security/phone/allowed-admin | advertised_complete_security_plus_independent_admin_CPU
+{"event": "k=security;c=1;v=0123;END", "raw": "0123. Are you a robot?", "admin": "none"}
+route=verify_identity phase=phone verified=False speech=
+Complete current security answer plus independentadmin prepares mandatoryverify_identity only; never local identity.
+
+security/phone/comma-admin | advertised_complete_security_plus_independent_admin_CPU
+{"event": "k=security;c=1;v=0123;END", "raw": "0123, are you a robot?", "admin": "none"}
+route=talk phase=phone verified=False speech=I am Freya Bank's digital assistant. Please finish all four digits of the phone number on file.
+Complete current security answer plus independentadmin prepares mandatoryverify_identity only; never local identity.
+
+security/phone/security-question | advertised_complete_security_plus_independent_admin_CPU
+{"event": "k=security;c=1;v=0123;END", "raw": "0123. Why do you need my phone digits?", "admin": "none"}
+route=talk phase=phone verified=False speech=These questions protect your account. I can explain after the security check. Please finish all four digits of the phone number on file.
+Complete current security answer plus independentadmin prepares mandatoryverify_identity only; never local identity.
+
+security/phone/missing-event | producer_omission_or_malformed_negative_control
+{"event": "", "raw": "The last four digits are zero one two three.", "admin": "none"}
+route=verify_identity phase=phone verified=False speech=
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/phone/missing-v | producer_omission_or_malformed_negative_control
+{"event": "k=security;c=1;END", "raw": "The last four digits are zero one two three.", "admin": "none"}
+route=verify_identity phase=phone verified=False speech=
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/phone/malformed-row | producer_omission_or_malformed_negative_control
+{"event": "k=security;c=1;v=0123;;END", "raw": "The last four digits are zero one two three.", "admin": "none"}
+route=verify_identity phase=phone verified=False speech=
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/phone/empty-missing | producer_omission_or_malformed_negative_control
+{"event": "", "raw": "", "admin": "none"}
+route=talk phase=phone verified=False speech=Please repeat that clearly. Please tell me the last four digits of the phone number on file.
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/phone/incomplete-year-digits | advertised_unfinished_security_control
+{"event": "k=security;c=0;END", "raw": "zero one two...", "admin": "none"}
+route=talk phase=phone verified=False speech=Please finish all four digits of the phone number on file.
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/phone/year-only-or-3digits | advertised_unfinished_security_control
+{"event": "k=security;c=0;END", "raw": "012", "admin": "none"}
+route=talk phase=phone verified=False speech=Please finish all four digits of the phone number on file.
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+security/phone/qualified-answer | advertised_unfinished_security_control
+{"event": "k=security;c=0;END", "raw": "0123, actually wait...", "admin": "none"}
+route=talk phase=phone verified=False speech=Please finish all four digits of the phone number on file.
+Recover only complete whole current rawsyntax; incomplete/missing never infer year/digits, no localverification.
+
+wrong-answer/input/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988.", "admin": "none"}
+route=verify_identity phase=dob verified=False speech=
+Prepare comparison, never assume verified from answer.
+
+wrong-answer/result/0 | synthetic_authoritative_comparison_negative_CPU
+route=talk phase=dob verified=False speech=That answer did not match. Please tell me your date of birth, with the month as a word.
+Three wronganswers terminatefailed with app/branch alternatives.
+
+wrong-answer/input/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988.", "admin": "none"}
+route=verify_identity phase=dob verified=False speech=
+Prepare comparison, never assume verified from answer.
+
+wrong-answer/result/1 | synthetic_authoritative_comparison_negative_CPU
+route=talk phase=dob verified=False speech=That answer did not match. Please tell me your date of birth, with the month as a word.
+Three wronganswers terminatefailed with app/branch alternatives.
+
+wrong-answer/input/2 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988.", "admin": "none"}
+route=verify_identity phase=dob verified=False speech=
+Prepare comparison, never assume verified from answer.
+
+wrong-answer/result/2 | synthetic_authoritative_comparison_negative_CPU
+route=farewell phase=dob verified=False speech=Please use the mobile app or a branch. Thank you. Goodbye.
+Three wronganswers terminatefailed with app/branch alternatives.
+
+day-month-swapped | synthetic_comparison_hint_CPU
+route=talk phase=dob verified=False speech=Please say the month as a word. Please tell me your date of birth, with the month as a word.
+Monthwordclarification notwronganswerincrement.
+
+terminal-alternatives/incomplete/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=security;c=0;END", "raw": "zero one two...", "admin": "none"}
+route=talk phase=phone verified=False speech=Please finish all four digits of the phone number on file.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/incomplete/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=security;c=0;END", "raw": "zero one two...", "admin": "none"}
+route=talk phase=phone verified=False speech=Please finish all four digits of the phone number on file.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/incomplete/2 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=security;c=0;END", "raw": "zero one two...", "admin": "none"}
+route=farewell phase=phone verified=False speech=I could not complete the security check. Please use the mobile app or a branch. Thank you. Goodbye.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/missing/0 | producer_omission_negative_control
+{"event": "", "raw": "", "admin": "none"}
+route=talk phase=phone verified=False speech=Please repeat that clearly. Please tell me the last four digits of the phone number on file.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/missing/1 | producer_omission_negative_control
+{"event": "", "raw": "", "admin": "none"}
+route=talk phase=phone verified=False speech=Please repeat that clearly. Please tell me the last four digits of the phone number on file.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/missing/2 | producer_omission_negative_control
+{"event": "", "raw": "", "admin": "none"}
+route=farewell phase=phone verified=False speech=I could not understand the answer clearly. Please use the mobile app or a branch. Thank you. Goodbye.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/app-refusal/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=decline;c=1;END", "raw": "I prefer to use the mobile app.", "admin": "none"}
+route=talk phase=dob verified=False speech=These questions protect your account. I can explain the purpose after verification. Please tell me your date of birth, with the month as a word.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/app-refusal/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=decline;c=1;END", "raw": "I prefer to use the mobile app.", "admin": "none"}
+route=farewell phase=dob verified=False speech=Please use the mobile app or a branch. Thank you. Goodbye.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/app-refusal/2 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=decline;c=1;END", "raw": "I prefer to use the mobile app.", "admin": "none"}
+route=farewell phase=dob verified=False speech=Please use the mobile app or a branch. Thank you. Goodbye.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/call-purpose/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=purpose;c=1;END", "raw": "What is this call about?", "admin": "none"}
+route=talk phase=dob verified=False speech=I can explain after the security check. These questions protect your account. I can explain the purpose after verification. Please tell me your date of birth, with the month as a word.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/call-purpose/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=purpose;c=1;END", "raw": "What is this call about?", "admin": "none"}
+route=farewell phase=dob verified=False speech=I can explain after the security check. Please use the mobile app or a branch. Thank you. Goodbye.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+terminal-alternatives/call-purpose/2 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=purpose;c=1;END", "raw": "What is this call about?", "admin": "none"}
+route=farewell phase=dob verified=False speech=I can explain after the security check. Please use the mobile app or a branch. Thank you. Goodbye.
+Truthful notverified exit gives mobileapp/branch; incomplete/missing notwrong bank answer.
+
+identity/DOB-only-allverified | contradictory_authoritative_sequence_negative_CPU
+route=talk phase=phone verified=False speech=Please tell me the last four digits of the phone number on file.
+DOB receipt alone stilldoesnotcompletephone orloadaccount.
+
+identity/okfalse-allverified | contradictory_API_receipt_negative_CPU
+route=talk phase=phone verified=False speech=I could not read that answer. Please tell me the last four digits of the phone number on file.
+okfalsecannotverify.
+
+ordinal/current-offer | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=agree;c=1;d=the twenty-seventh;END", "raw": "The twenty-seventh.", "admin": "none"}
+route=talk phase=readback verified=True speech=For your credit card ending 5792, you will pay 420.0 on 27 October 2026. Do you confirm?
+CurrentofferedholidayadjustmentOct27, notdeadlineNov2.
+
+ordinal/fresh-no-problem | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=confirm;c=1;END", "raw": "Yes, no problem.", "admin": "none"}
+route=create_promise phase=readback verified=True speech=
+Onlyfreshlaterexactterms permitswrite.
+
+ordinal/receipt-SMS | synthetic_API_receipt_CPU
+route=farewell phase=recorded verified=True speech=Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye.
+Exact420/Oct27body and requiredSMS onlyafteroktrue.
+
+ordinal/contrary/the twenty-sixth | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=agree;c=1;d=the twenty-sixth;END", "raw": "the twenty-sixth.", "admin": "none"}
+route=talk phase=offer verified=True speech=What exact day will you pay that amount?
+Never inherit inconsistent currentoffer.
+
+ordinal/contrary/the twenty-eighth | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=agree;c=1;d=the twenty-eighth;END", "raw": "the twenty-eighth.", "admin": "none"}
+route=talk phase=offer verified=True speech=What exact day will you pay that amount?
+Never inherit inconsistent currentoffer.
+
+monthfirst/complete | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal;c=1;a=220;d=October twenty-seventh;END", "raw": "220 October twenty-seventh.", "admin": "none"}
+route=talk phase=readback verified=True speech=The rest stays overdue. For your credit card ending 5792, you will pay 220.0 on 27 October 2026. Do you confirm?
+Complete monthfirstwordsnormalizeOct27 only.
+
+both-pending/0 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=change;c=0;u=both;END", "raw": "Actually I want to change both...", "admin": "none"}
+route=talk phase=offer verified=True speech=Are you changing the amount, the date, or both? Please finish the changed details.
+Bothcomponentsunresolved; no readback.
+
+both-completion/0/a | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal;c=1;a=220;END", "raw": "220.", "admin": "none"}
+route=talk phase=offer verified=True speech=What exact day will you pay that amount?
+Onlyactual newlycompletecomponent resolvesneed; latestvalidretained.
+
+both-completion/0/d | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal;c=1;d=October twenty-seventh;END", "raw": "October twenty-seventh.", "admin": "none"}
+route=talk phase=readback verified=True speech=The rest stays overdue. For your credit card ending 5792, you will pay 220.0 on 27 October 2026. Do you confirm?
+Onlyactual newlycompletecomponent resolvesneed; latestvalidretained.
+
+both-pending/1 | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=change;c=0;u=both;END", "raw": "Actually I want to change both...", "admin": "none"}
+route=talk phase=offer verified=True speech=Are you changing the amount, the date, or both? Please finish the changed details.
+Bothcomponentsunresolved; no readback.
+
+both-completion/1/d | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal;c=1;d=October twenty-seventh;END", "raw": "October twenty-seventh.", "admin": "none"}
+route=talk phase=offer verified=True speech=Please finish the amount you want to pay for credit card ending 5792.
+Onlyactual newlycompletecomponent resolvesneed; latestvalidretained.
+
+both-completion/1/a | advertised_grammar_and_meaning_conforming_conditional_CPU
+{"event": "k=proposal;c=1;a=220;END", "raw": "220.", "admin": "none"}
+route=talk phase=readback verified=True speech=The rest stays overdue. For your credit card ending 5792, you will pay 220.0 on 27 October 2026. Do you confirm?
+Onlyactual newlycompletecomponent resolvesneed; latestvalidretained.
+
+HTTP500/fresh-no-posthook500 | conditional_actual_prior_error_metadata_shape_literal_no_posthook_NEW_A8
+route=create_promise phase=readback verified=True speech=
+Onlyfreshbounddocumented500 retriesonceidentically365/Oct27, others failclosed; no realHTTP.
+
+HTTP500/retry-success | synthetic_API_receipt_CPU
+route=farewell phase=recorded verified=True speech=Your promise is recorded. You will receive a text message confirming this promise. Thank you. Goodbye.
+oktrueboundfresh receipt then recorded+SMS.
+
+HTTP500/missing-counter500 | conditional_actual_prior_error_metadata_shape_literal_no_posthook_NEW_A8
+route=farewell phase=readback verified=True speech=I could not record your promise. Thank you. Goodbye.
+Onlyfreshbounddocumented500 retriesonceidentically365/Oct27, others failclosed; no realHTTP.
+
+HTTP500/unknown503 | conditional_actual_prior_error_metadata_shape_literal_no_posthook_NEW_A8
+route=farewell phase=readback verified=True speech=I could not record your promise. Thank you. Goodbye.
+Onlyfreshbounddocumented500 retriesonceidentically365/Oct27, others failclosed; no realHTTP.
+
+HTTP500/body-mismatch500 | conditional_actual_prior_error_metadata_shape_literal_no_posthook_NEW_A8
+route=farewell phase=readback verified=True speech=I could not record your promise. Thank you. Goodbye.
+Onlyfreshbounddocumented500 retriesonceidentically365/Oct27, others failclosed; no realHTTP.
+
+permission/negative/72 | inconsistent_semantic_producer_confirm_negative_control
+{"event": "k=confirm;c=1;END", "raw": "Yes, but only if my salary arrives.", "admin": "none"}
+route=talk phase=readback verified=True speech=Are you changing the amount, the date, or both? Please finish the changed details.
+Forcedbareconfirmnegativecontrol mustnotwrite.
+
+permission/negative/73 | inconsistent_semantic_producer_confirm_negative_control
+{"event": "k=confirm;c=1;END", "raw": "Do not record this promise.", "admin": "none"}
+route=talk phase=readback verified=True speech=Are you changing the amount, the date, or both? Please finish the changed details.
+Forcedbareconfirmnegativecontrol mustnotwrite.
+
+permission/negative/74 | inconsistent_semantic_producer_confirm_negative_control
+{"event": "k=confirm;c=1;END", "raw": "I withdraw permission to record it.", "admin": "none"}
+route=talk phase=readback verified=True speech=Are you changing the amount, the date, or both? Please finish the changed details.
+Forcedbareconfirmnegativecontrol mustnotwrite.
+
+financial/no-security-raw-fallback | missing_event_phase_isolation_control
+{"event": "", "raw": "0123.", "admin": "none"}
+route=talk phase=offer verified=True speech=Please repeat that clearly. Please finish the amount you want to pay for credit card ending 5792.
+Phone digits outsidephone cannot createfinancialfallback.
+
+paired-complete/repeated-dob/0 | advertised_complete_security_plus_independent_question_conditional_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988, are you a robot?"}
+route=talk phase=dob verified=False speech=I am Freya Bank's digital assistant. Please finish your complete date of birth, including the year.
+Complete valid security answer shouldprepare API, notconsume incompleteclarificationcount; reproduces source availabilityfailure, no new extractor/hostedfrequency.
+
+paired-complete/repeated-dob/1 | advertised_complete_security_plus_independent_question_conditional_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988, are you a robot?"}
+route=talk phase=dob verified=False speech=I am Freya Bank's digital assistant. Please finish your complete date of birth, including the year.
+Complete valid security answer shouldprepare API, notconsume incompleteclarificationcount; reproduces source availabilityfailure, no new extractor/hostedfrequency.
+
+paired-complete/repeated-dob/2 | advertised_complete_security_plus_independent_question_conditional_CPU
+{"event": "k=security;c=1;v=1988-04-17;END", "raw": "17 April 1988, are you a robot?"}
+route=farewell phase=dob verified=False speech=I am Freya Bank's digital assistant. I could not complete the security check. Please use the mobile app or a branch. Thank you. Goodbye.
+Complete valid security answer shouldprepare API, notconsume incompleteclarificationcount; reproduces source availabilityfailure, no new extractor/hostedfrequency.
+
+paired-complete/repeated-phone/0 | advertised_complete_security_plus_independent_question_conditional_CPU
+{"event": "k=security;c=1;v=0123;END", "raw": "0123. Why do you need my phone digits?"}
+route=talk phase=phone verified=False speech=These questions protect your account. I can explain after the security check. Please finish all four digits of the phone number on file.
+Complete valid security answer shouldprepare API, notconsume incompleteclarificationcount; reproduces source availabilityfailure, no new extractor/hostedfrequency.
+
+paired-complete/repeated-phone/1 | advertised_complete_security_plus_independent_question_conditional_CPU
+{"event": "k=security;c=1;v=0123;END", "raw": "0123. Why do you need my phone digits?"}
+route=talk phase=phone verified=False speech=These questions protect your account. I can explain after the security check. Please finish all four digits of the phone number on file.
+Complete valid security answer shouldprepare API, notconsume incompleteclarificationcount; reproduces source availabilityfailure, no new extractor/hostedfrequency.
+
+paired-complete/repeated-phone/2 | advertised_complete_security_plus_independent_question_conditional_CPU
+{"event": "k=security;c=1;v=0123;END", "raw": "0123. Why do you need my phone digits?"}
+route=farewell phase=phone verified=False speech=These questions protect your account. I can explain after the security check. I could not complete the security check. Please use the mobile app or a branch. Thank you. Goodbye.
+Complete valid security answer shouldprepare API, notconsume incompleteclarificationcount; reproduces source availabilityfailure, no new extractor/hostedfrequency.
+
+missing-channel/financial-yes | producer_event_omission_recovery_control_not_conforming_event
+{"event": "", "raw": "Yes, I confirm."}
+route=talk phase=readback verified=True speech=The rest stays overdue. For your credit card ending 5792, you will pay 365.0 on 27 October 2026. Do you confirm?
+Missing event distinct from refusal: retain365/Oct27, re-read/clarify, never authorize from model raw copy.
+
+missing-channel/fresh-corrected-confirm | advertised_later_fresh_confirmation_after_missing_event_CPU
+route=create_promise phase=readback verified=True speech=
+Later complete properevent prepares exact365/Oct27; no earlier raw-only authority.

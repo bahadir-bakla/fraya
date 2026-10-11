@@ -1,0 +1,793 @@
+{
+  "status": "CLOSED_FROZEN_CODEX_ACTUAL_SAVED_EVIDENCE_AND_CPU_ONLY",
+  "reviewer": "Codex current assistant fallback; no verified Opus inthistriage",
+  "started_at_utc": "2026-10-11T04:55:25Z",
+  "deadline_utc": "2026-10-11T05:05:25Z",
+  "closed_at_utc": "2026-10-11T05:00:05.958639+00:00",
+  "native_attempts": 0,
+  "actual_opus_inference_verified": false,
+  "prior_native_B4_review_proof": "Separatepreviousverified48.734secondsourceaudit; notinferenceforthisnewtriage. Threepriorquotablocks unchanged,notretried.",
+  "expired_run_resumed": false,
+  "original_run_deadline_utc": "2026-10-11T04:53:52Z",
+  "run_manifest_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/manifest.json",
+  "run_status_at_snapshot": "timeout",
+  "original_score_summary": {
+    "combined": "4/15",
+    "bank": "12/15",
+    "all3_reported": "0/6",
+    "complete_three_rep_groups": 3,
+    "all3_pass_among_complete_groups": 0,
+    "unobserved": 3,
+    "unobserved_scored_as_failed_or_passed": false,
+    "scores_or_expectations_changed": false
+  },
+  "original_B4_public_score_unchanged": "5/9combined,9/9bank,0/3allthree",
+  "candidate": {
+    "path": "competition/runs/20261011-065519-ade4a6/codex-stress-b-next.workflow.json",
+    "sha256": "f352d08efd0c0fd46d817d475280c45ffd630a0eb828e3ba159a5b1f64411199",
+    "version": 4,
+    "agent_id": "fcb7d8ec-e69b-46a9-8b19-166091663cc5",
+    "workflow_id": "65e78ac8-8697-4b87-b072-4981f3c256f2",
+    "engine_sha256": "feee94dfa803b7db5dc9e6bed44794eaa8d906e53c5caddc18bbaf6163713b2b",
+    "engine_equals_export": true,
+    "before_after_export_match": true
+  },
+  "actual_bank_failure_cases": [
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0006.json",
+      "variant": "PUB-11__speech_night_ordinal_calendar_scope",
+      "rep": 1,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": false,
+        "transcript_pass": false,
+        "failed": [
+          "outcome ('not_verified', 'failed'), expected ('promise', None)",
+          "promises [], expected [('p1', 220.0, '2026-10-16'), ('p2', 640.0, '2026-10-16'), ('p3', 75.0, '2026-10-16')]",
+          "conversation: The call failed because the agent could not successfully verify the customer's identity, which prevented all subsequent success criteria (product disclosure, negotiation, and promise creation) from being met. Although the customer provided the correct date of birth ('Third of June, nineteen eighty-seven') in messages 3, 5, and 7, the system events show the agent repeatedly sent an incorrect year ("
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      }
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0007.json",
+      "variant": "PUB-11__speech_night_fulls_not_floors",
+      "rep": 2,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": false,
+        "transcript_pass": false,
+        "failed": [
+          "outcome (None, None), expected ('promise', None)",
+          "promises [], expected [('p1', 220.0, '2026-10-16'), ('p2', 640.0, '2026-10-16'), ('p3', 75.0, '2026-10-16')]",
+          "the call was not closed with close_call",
+          "A46: exactly one terminal close_call required",
+          "conversation: The call failed due to several issues: 1. The customer failed to deliver the complete scripted aggregate answer in Message 7, stopping mid-sentence. 2. The assistant interrupted the customer's turn in Message 8. 3. No promises were created for the three products (p1=220, p2=640, p3=75 on 2026-10-16). 4. No grouped read-back or confirmation occurred. 5. No close_call was executed before the call en"
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      }
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0011.json",
+      "variant": "PUB-11__speech_night_unrelated_paid_language",
+      "rep": 2,
+      "result": {
+        "pass": false,
+        "ledger_and_trace_pass": false,
+        "transcript_pass": false,
+        "failed": [
+          "outcome ('paid', None), expected ('promise', None)",
+          "promises [], expected [('p1', 220.0, '2026-10-16'), ('p2', 640.0, '2026-10-16'), ('p3', 75.0, '2026-10-16')]",
+          "notes [('p1', 'paid'), ('p2', 'paid'), ('p3', 'paid')], expected []",
+          "policy: note attempt contradicts product disposition",
+          "policy: note attempt contradicts product disposition",
+          "policy: note attempt contradicts product disposition",
+          "conversation: The assistant failed on multiple levels. First, it submitted an incorrect/unrelated year ('0106') for the date of birth verification twice before correctly submitting '1987', violating the security submission rule. Second, it failed to allow the customer to deliver the authored aggregate answer, instead interpreting snippets of the response ('already paid') as actual payments. This led to the assi"
+        ],
+        "execution_status": "evidence_scored",
+        "modality": "text_only_approximation",
+        "voice_asr_certified": false
+      }
+    }
+  ],
+  "scope_label_correction": "Bankfailedcases areordinalrep1,fullsrep2,unrelatedpaidrep2. Security-scope scoredreps1-2bankpass butconversationfail; security-scope rep3unobserved. Ordinalrep1neverreachespaymentdates.",
+  "findings": [
+    {
+      "id": "B4S-01",
+      "priority": "P1",
+      "classification": "actual_source_normalizer_defect_triggered_by_producer_envelope_contamination",
+      "evidence": "evidence/0006.json ordinal_calendar_scope rep1, users16/34/52; actualverify_identity0106-06-03three times; not_verified/failed afterthirdwrong receipt",
+      "actor": "DOB delivery matches authored ThirdofJune,nineteeneighty-seven. No paymentstage/ordinalnegotiation wasreached; thiscase isnot evidenceofordinaldatefailure.",
+      "producer": "Eachstructured event starts withcorrectcanonicalv1987-06-03 butleaksraw/adminafterEND. Strictdecoderrejects it.",
+      "controller": "security_raw fallback runs on faithfulwholeDOBraw. Yearsplit uses spaces, so nineteen eighty-seven is2tokens andmisses len>=3 century path. spoken_number then replaceshyphen andadds19+80+7=106; datevalaccepts0106-06-03 andAPIcall consumeswronganswerbudget.",
+      "source_refs": [
+        "work/repaired_engine.py:62-96",
+        "work/repaired_engine.py:505-513",
+        "work/repaired_engine.py:601-617"
+      ],
+      "CPU": [
+        "Actualsavedpre-enginevalues replayexactly.",
+        "DOB-missing-event/hyphen prepares0106; spaces andcanonical prepare1987. Correctcompletevframe prepares1987 with identityfalse. Missingevent control is conditional,not observedomission inthisrun."
+      ],
+      "effects": "Bankauthoritativecomparison preventsidentitybypass anddebt disclosure, butlegitimatecustomer isincorrectlyrejected. The sameyear106submission appearsin0002,0011,0013,0015evenwhenthefinalbankledgerpasses."
+    },
+    {
+      "id": "B4S-02",
+      "priority": "P1",
+      "classification": "actor_adherence_failure_plus_actual_producer_semantic_error_and_controller_disposition_scope_gap",
+      "evidence": "evidence/0011.json unrelated_paid_language rep2 users97,118,148; exactpaidnotes p1,p2,p3; close_callpaid; nopromises",
+      "actor": "Insteadofcompleteauthoredunrelated-receipt exclusions andproposals, actorrepeatsquotedprefixes suchas No,nottoday;'alreadypaidtwohundredtwenty'. Actoromitsauthorednot-paidbankclaims andfinalcompleteproposals. Thisis materiallydifferentdelivery, preservedfailedscore.",
+      "producer": "Grammaticallyvalid c1paidrows attach quoted220firsttocard, then1320loan and75car bycurrent-question scope. c0paidfragments alsooccur; onepayloadmalformed. The quotedphrases aresemanticallynot assertedcurrentbankpaymentclaims.",
+      "controller": "asserted handlesprimaryactsbutreturnstrueforpaid/dispute. Financialapplication setsstatuspaidandclears pending solelyfromk/c/target, withoutquote/negative/currentbanksubject validation. All3become paid andreceipt-boundadd_note persistswrongdispositions. APIreceipts confirmwriteeffect,notsemantictruth.",
+      "source_refs": [
+        "work/repaired_engine.py:126-143",
+        "work/repaired_engine.py:178-186",
+        "work/repaired_engine.py:707-710"
+      ],
+      "CPU": [
+        "Allactualtables match; fullauthoredraw pluscorrectproposalframe preservesall3agreed/readback.",
+        "Forcedpaidallframe withfullrawexplicitlynegatingbankpayment stillpreparespaidnotes. Quotedandnegatedpaidframecontrols aredeliberately semanticinconsistent,notverifiedliveextractoroutputs. PositiveIalreadypaidcard control demonstratespreservationrequirement."
+      ],
+      "effects": "Actualsavedledger has3wrongpaidnotes; bothactorandproducererrorexist. Do notcallcontrollerpolicyalone orreinterpretquotedasrealpayment."
+    },
+    {
+      "id": "B4S-03",
+      "priority": "P1 lifecycle diagnostic",
+      "classification": "actual_actor_cutoff_plus_malformed_producer_and_customer_disconnect_no_proven_transportfault",
+      "evidence": "evidence/0007.json fulls_not_floors rep2 user61 ends notthe; assistant70genericclarification; customer-ended-call; ledgeronlyDOB,phone,get_account,no close_call",
+      "actor": "Didnotfinishauthoredaggregateorstatecompletepaymentdate. Userendedafterclarification; nofinalconsent. A promiseisnotauthorized.",
+      "producer": "Theeventcontains independentlycomplete220/640/75facts,partialcaru=date,thenextra raw/adminafterEND, so wholepayloadis malformed. Strictrejectionleavesproductsopeninstead ofusinga partialprefix.",
+      "controller": "Literalinput preparesclarification/speak,notwrite orfinalclose. Syntacticallycorrectedconditionalpayload retainsall3amounts; independentlyaddedOct16completion reachescombinedreadback. Neithercompletionnorcustomerhangupfinalizerexecutedintheactualfailedcall.",
+      "source_refs": [
+        "work/repaired_engine.py:144-177",
+        "work/repaired_engine.py:505-533",
+        "work/repaired_engine.py:668-706",
+        "workflow.nodes.end:terminal and empty pre_actions",
+        "workflow.nodes.close_call:pre_actions"
+      ],
+      "effects": "Missingpromises/unclosedledger remainactualbankfailedscore. No savedHTTP500/provider-error evidence establishes infra cause. Missingterminalbankclose isalifecyclecoveragegap observation, notproofwhichplatformdisconnecthookfailed. Do notguessdates orforcepromisetomatch expectation."
+    },
+    {
+      "id": "B4S-04",
+      "priority": "P1 producer reliability",
+      "classification": "actual_security_scope_and_confirmation_repetition_with_actor_fragmentation_and_partial_judge_chronology_error",
+      "evidence": "0004security_scoperep1phoneuser35; 0010security_scoperep2DOBuser16; 0008reversalrestorerep2confirmuser328",
+      "conclusion": "0004firstphoneframecanonical2288plusENDsuffix ismalformed; security_raw cannotparse the wholeunrelatedparcel+phoneclause, so noAPIcall occursuntilnewphoneuser46. Judgesaying successfulphoneAPIprecededthereask conflateslaterAPIwith earlierturn; repetitionitselfisrealproducer/consumeravailabilityproblem. 0010completecorrectDOBframe likewisefailsdueENDsuffix plus rawmultiplesubject; lateractorfragmentationandthinking-likewords exacerbateloop,properframe77succeeds. 0008clearYesIconfirm328 hasENDsuffix andisre-read; proper338records. No missingeventchannel observedamong309savedinputtables; malformed andsemanticwrongoutputs areseparate.",
+      "source_refs": [
+        "workflow.nodes.speak.extraction_schema.event",
+        "work/repaired_engine.py:144-177",
+        "work/repaired_engine.py:505-533"
+      ],
+      "limits": "Rawextractedcopy isnotplatformattestation. Judgefalse scores remainfalse; thisfindingdoesnotrewritecriteria ordiscardalljudgereasoning."
+    },
+    {
+      "id": "B4S-05",
+      "priority": "preserve",
+      "classification": "actual_supported_permission_calendar_and_latestterms_controls",
+      "evidence": "0009provisionalrep2 and0015provisionalrep3completewithdrawal+newterms+laterYes; 0012ordinalrep2fullfinalproposal; 0014reversalrep3restoredvalues",
+      "conclusion": "Completeorthogonalwithdrawal+finalproposalframes preserve220/640/75Oct16,thenfreshcombinedYes precedes3actualsuccesswrites. Provisionalwithdrawaldoesnotcreatepaymentrefusal orwriteauthority. 0012completefullscript excludes unrelatedOct14/23/30 andactualledgerrecordsall3Oct16; priorpartialactor/framerowsstillrequireclarification. 0014latecompletecorrectionsrestorefullvaluesafterfragmentloops. Actorcutoff-inducedloops arenotallcontrollerpolicyfailures; preserve pendingfacts,perproductdeadline/floor,actualidentityauthority andreceipt-beforeSMS. A qualifyinglaterfinalyes doesnot retroactivelyprovepriorcutoffs werecomplete."
+    }
+  ],
+  "generic_guide_recommendations": [
+    {
+      "priority": "P1",
+      "action": "For fresh automaticbuilds normalize word-year punctuation/hyphens before both token count and century parsing. Parse completeyears by an explicit supportedgrammar; never substitute a small additiveyear for nineteeneighty-seven. If subject/value remainsambiguous, askclarification withoutsubmittingaguessedsecurityanswer. Mandatoryverify_identity stayssoleauthority."
+    },
+    {
+      "priority": "P1",
+      "action": "Make each phasecodec scalar-specific, keepraw/adminseparate and remove envelope-outputinstructionsfromevent-onlyprompt. Distinguish malformed,missing,unfinished andsemanticuncertain channels. Preservewholepayloadstrictvalidation: no arbitraryEND-prefixsalvage orfinancialrawfallback; reaskforfreshvalidconfirmation whilekeepingexactterms."
+    },
+    {
+      "priority": "P1",
+      "action": "Require paid/dispute dispositions to bind apositivelyassertedcompleteclaim aboutthecurrentreturnedbankproduct. Carry subjectscope,quoted/negated/hypothetical status andsource span in the fixedAGENT_LLMproposalcontract, then deterministicallyvalidate thosequalifiers. Neutralclarificationforuncertainty,neverdefaultpaid/dispute/refusal; preservegenuinealready-paidclaims andsiblings."
+    },
+    {
+      "priority": "P1 lifecycle",
+      "action": "Cover documentedcustomer-disconnect,transporterror andterminalbranches withone bankclosefinalizer ifthehostruntime supportsit; conservativelypreserveobservedreceipt-ledgeroutcome andexactly-onceclosure. Actualhookinvocation mustbe checkedbyparent-ownedhostedevidence,notCPU simulation. Neverwritepromise afteractorcutoff orforgeconsent."
+    },
+    {
+      "priority": "P2",
+      "action": "Separate incompletecomponentneeds from unresolvedspeech/correction qualifiers; retainlatestindependentlycompletefacts and boundedclarification. Measureactorfullturndelivery versus producerframefailure versus controllertransition, ratherthanlabelingallrepeatedloopsaspolicyfault. Keep fixedAGENT_LLM/banktools; nolearnedmodel/training/externaltool substitution."
+    }
+  ],
+  "actor_delivery_comparisons": [
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0001.json",
+      "variant_id": "PUB-11__speech_night_fulls_not_floors",
+      "rep": 1,
+      "assessment": "initialaggregate_incomplete_or_differs_later_exact_delivery",
+      "first_financial_user_index": 61,
+      "exact_authored_aggregate_indices": [
+        353
+      ],
+      "authored_aggregate": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/c40a4c52-cfae-47b3-816c-73dd3a4fcba0.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0002.json",
+      "variant_id": "PUB-11__speech_night_reversal_restore",
+      "rep": 1,
+      "assessment": "initialaggregate_incomplete_or_differs_no_exact_full_delivery_observed",
+      "first_financial_user_index": 78,
+      "exact_authored_aggregate_indices": [],
+      "authored_aggregate": "No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore six hundred forty; for the car loan, twenty-five--no, seventy-five, all verbal slips rather than requests for smaller payments. The date is next Friday--sorry, this Friday, not the twenty-third; my final proposal is credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/62a442b8-a11c-46dc-bad6-7c33cb3d08f1.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0003.json",
+      "variant_id": "PUB-11__speech_night_provisional_consent",
+      "rep": 1,
+      "assessment": "initialaggregate_incomplete_or_differs_later_exact_delivery",
+      "first_financial_user_index": 61,
+      "exact_authored_aggregate_indices": [
+        493
+      ],
+      "authored_aggregate": "No, not today; yes, but only provisionally to paying on Friday, and I am not saying I will not pay, yet neither phrase authorizes recording; I withdraw that provisional agreement before anything is recorded. I now propose, without authorizing recording yet, the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/149fe71d-e4f0-42aa-84de-c117033b87eb.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0004.json",
+      "variant_id": "PUB-11__speech_night_security_scope",
+      "rep": 1,
+      "assessment": "initialaggregate_incomplete_or_differs_later_exact_delivery",
+      "first_financial_user_index": 72,
+      "exact_authored_aggregate_indices": [
+        133
+      ],
+      "authored_aggregate": "No, not today; a cousin answering is purely hypothetical, since I am Sofia Almeida speaking for myself; two two eight eight identifies the credit card, not a payment amount. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/37d3536c-95a8-4aaa-9975-d720d2d0e205.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0005.json",
+      "variant_id": "PUB-11__speech_night_unrelated_paid_language",
+      "rep": 1,
+      "assessment": "initialaggregate_incomplete_or_differs_no_exact_full_delivery_observed",
+      "first_financial_user_index": 61,
+      "exact_authored_aggregate_indices": [],
+      "authored_aggregate": "No, not today; 'already paid two hundred twenty' on an unrelated shop receipt, 'six hundred forty paid' on an unrelated supplier receipt and seventy-five on another unrelated receipt refer to none of these bank products, and I have not paid any of these bank arrears. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/73013d5c-538f-4001-973c-2ed7fe872236.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0006.json",
+      "variant_id": "PUB-11__speech_night_ordinal_calendar_scope",
+      "rep": 1,
+      "assessment": "no_payment_stage_reached",
+      "first_financial_user_index": null,
+      "exact_authored_aggregate_indices": [],
+      "authored_aggregate": "No, not today; the third Friday of October twenty twenty-six means this Friday, the sixteenth; the fourteenth on an unrelated diary entry, next Friday the twenty-third on an unrelated appointment note and the thirtieth on an unrelated reminder are not payment dates. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/f05b7ef6-8c5e-4b64-af5d-05ad95922bef.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0007.json",
+      "variant_id": "PUB-11__speech_night_fulls_not_floors",
+      "rep": 2,
+      "assessment": "initialaggregate_incomplete_or_differs_no_exact_full_delivery_observed",
+      "first_financial_user_index": 61,
+      "exact_authored_aggregate_indices": [],
+      "authored_aggregate": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/8d01ae0c-ec1e-4257-9f69-e6558010ce44.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0008.json",
+      "variant_id": "PUB-11__speech_night_reversal_restore",
+      "rep": 2,
+      "assessment": "initialaggregate_incomplete_or_differs_no_exact_full_delivery_observed",
+      "first_financial_user_index": 61,
+      "exact_authored_aggregate_indices": [],
+      "authored_aggregate": "No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore six hundred forty; for the car loan, twenty-five--no, seventy-five, all verbal slips rather than requests for smaller payments. The date is next Friday--sorry, this Friday, not the twenty-third; my final proposal is credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/14941a2f-20b8-4868-9133-f45bf2ebacef.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0009.json",
+      "variant_id": "PUB-11__speech_night_provisional_consent",
+      "rep": 2,
+      "assessment": "firstaggregate_exact_authored_delivery",
+      "first_financial_user_index": 61,
+      "exact_authored_aggregate_indices": [
+        61
+      ],
+      "authored_aggregate": "No, not today; yes, but only provisionally to paying on Friday, and I am not saying I will not pay, yet neither phrase authorizes recording; I withdraw that provisional agreement before anything is recorded. I now propose, without authorizing recording yet, the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/e58ae7fd-563f-4e25-a584-f57190d77f90.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0010.json",
+      "variant_id": "PUB-11__speech_night_security_scope",
+      "rep": 2,
+      "assessment": "firstaggregate_exact_authored_delivery",
+      "first_financial_user_index": 121,
+      "exact_authored_aggregate_indices": [
+        121
+      ],
+      "authored_aggregate": "No, not today; a cousin answering is purely hypothetical, since I am Sofia Almeida speaking for myself; two two eight eight identifies the credit card, not a payment amount. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/30bf73c7-8674-40a9-ac95-360e735777f3.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0011.json",
+      "variant_id": "PUB-11__speech_night_unrelated_paid_language",
+      "rep": 2,
+      "assessment": "initialaggregate_incomplete_or_differs_no_exact_full_delivery_observed",
+      "first_financial_user_index": 97,
+      "exact_authored_aggregate_indices": [],
+      "authored_aggregate": "No, not today; 'already paid two hundred twenty' on an unrelated shop receipt, 'six hundred forty paid' on an unrelated supplier receipt and seventy-five on another unrelated receipt refer to none of these bank products, and I have not paid any of these bank arrears. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/11a2b3a4-1e9f-4d6a-accf-5eaa7f759339.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0012.json",
+      "variant_id": "PUB-11__speech_night_ordinal_calendar_scope",
+      "rep": 2,
+      "assessment": "initialaggregate_incomplete_or_differs_later_exact_delivery",
+      "first_financial_user_index": 61,
+      "exact_authored_aggregate_indices": [
+        111
+      ],
+      "authored_aggregate": "No, not today; the third Friday of October twenty twenty-six means this Friday, the sixteenth; the fourteenth on an unrelated diary entry, next Friday the twenty-third on an unrelated appointment note and the thirtieth on an unrelated reminder are not payment dates. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/43e093d6-6314-418b-82e5-8fd64fd73b6d.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0013.json",
+      "variant_id": "PUB-11__speech_night_fulls_not_floors",
+      "rep": 3,
+      "assessment": "initialaggregate_incomplete_or_differs_later_exact_delivery",
+      "first_financial_user_index": 79,
+      "exact_authored_aggregate_indices": [
+        300
+      ],
+      "authored_aggregate": "No, not today; two twenty means two hundred twenty for the credit card, not two pounds twenty or sixty-six; six forty means six hundred forty for the personal loan, not six pounds forty or two hundred thirteen; seventy-five for the car loan is not the twenty-five instalment. I propose the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/127a9037-cdbb-4b34-83d3-7f79ae99fff8.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0014.json",
+      "variant_id": "PUB-11__speech_night_reversal_restore",
+      "rep": 3,
+      "assessment": "initialaggregate_incomplete_or_differs_later_exact_delivery",
+      "first_financial_user_index": 61,
+      "exact_authored_aggregate_indices": [
+        489
+      ],
+      "authored_aggregate": "No, not today; for the credit card, sixty-six--no, two hundred twenty; for the personal loan, six hundred forty--two hundred thirteen--no, restore six hundred forty; for the car loan, twenty-five--no, seventy-five, all verbal slips rather than requests for smaller payments. The date is next Friday--sorry, this Friday, not the twenty-third; my final proposal is credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/1509f85d-ac36-41ef-a462-c683ba70457d.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    },
+    {
+      "evidence": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0015.json",
+      "variant_id": "PUB-11__speech_night_provisional_consent",
+      "rep": 3,
+      "assessment": "firstaggregate_exact_authored_delivery",
+      "first_financial_user_index": 79,
+      "exact_authored_aggregate_indices": [
+        79
+      ],
+      "authored_aggregate": "No, not today; yes, but only provisionally to paying on Friday, and I am not saying I will not pay, yet neither phrase authorizes recording; I withdraw that provisional agreement before anything is recorded. I now propose, without authorizing recording yet, the full credit card two hundred twenty, personal loan six hundred forty and car loan seventy-five, all on this Friday, sixteen October twenty twenty-six.",
+      "authoring_path": "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/dbc77651-1d05-4d2e-a75c-c273ab6729ed.json",
+      "limit": "Conservative normalized exactmatch, not an independent semantic actor grade; mismatchalone doesnotprove semanticnonadherence. Literalcutoffs/omittedexclusions in highlightedcases are separately traced."
+    }
+  ],
+  "CPU_proof": {
+    "saved_pre_engine_table_replays": 309,
+    "mismatches": [],
+    "conditional_controls": 11,
+    "all_matching_selected_state_route_line": true,
+    "not_a_benchmark_pass_rate": true,
+    "persistent_store": "Onlyexplicitvarsassignmentspatchtheexternalstore; whole-stateJSONassignmentcapturesnestedstate,omissions/deletionsnotassumedclear."
+  },
+  "source_hashes_before_after": {
+    "competition/runs/20261011-065519-ade4a6/codex-stress-b-next.workflow.json": {
+      "before_sha256": "f352d08efd0c0fd46d817d475280c45ffd630a0eb828e3ba159a5b1f64411199",
+      "after_sha256": "f352d08efd0c0fd46d817d475280c45ffd630a0eb828e3ba159a5b1f64411199",
+      "unchanged": true
+    },
+    "competition/runs/20261011-065519-ade4a6/status.json": {
+      "before_sha256": "13aecb769cdfad7d592a1cac83e87fe7829052cb8b27fcec4c14acf2372f6bf9",
+      "after_sha256": "13aecb769cdfad7d592a1cac83e87fe7829052cb8b27fcec4c14acf2372f6bf9",
+      "unchanged": true
+    },
+    "competition/runs/20261011-065519-ade4a6/work/repaired_engine.py": {
+      "before_sha256": "a40ad6acc08268e11239e77f1c1feaff9d5e498f412b77eed0bc8077f8985a3e",
+      "after_sha256": "a40ad6acc08268e11239e77f1c1feaff9d5e498f412b77eed0bc8077f8985a3e",
+      "unchanged": true
+    },
+    "competition/runs/20261011-065519-ade4a6/work/event-contract.json": {
+      "before_sha256": "7e70ef4c2d3c6bdaac648ff5e24f35494ceda389fdb8299527b23dc227028fb1",
+      "after_sha256": "7e70ef4c2d3c6bdaac648ff5e24f35494ceda389fdb8299527b23dc227028fb1",
+      "unchanged": true
+    },
+    "competition/runs/20261011-065519-ade4a6/work/policy.json": {
+      "before_sha256": "9f9705b399c5750d3c216df3ae1966a645b721bbe7c619f6129a60ac6fb03db9",
+      "after_sha256": "9f9705b399c5750d3c216df3ae1966a645b721bbe7c619f6129a60ac6fb03db9",
+      "unchanged": true
+    },
+    "competition-v3/build-the-builder/tools/openapi.json": {
+      "before_sha256": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+      "after_sha256": "9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8",
+      "unchanged": true
+    },
+    "competition-v3/build-the-builder/docs/api.md": {
+      "before_sha256": "6003c0ba733f33b5981822d3418c20e042d29107fbb1045213b35dad6bf95157",
+      "after_sha256": "6003c0ba733f33b5981822d3418c20e042d29107fbb1045213b35dad6bf95157",
+      "unchanged": true
+    },
+    "competition-v3/build-the-builder/briefs/brief-a.md": {
+      "before_sha256": "d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7",
+      "after_sha256": "d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7",
+      "unchanged": true
+    },
+    "competition-v3/build-the-builder/docs/workflow-format.md": {
+      "before_sha256": "4ff70b5a37b647122e6a6f3ca1a523b207dbcdf6afb32058de8451a8c7d1dcfc",
+      "after_sha256": "4ff70b5a37b647122e6a6f3ca1a523b207dbcdf6afb32058de8451a8c7d1dcfc",
+      "unchanged": true
+    },
+    "competition-v3/build-the-builder/briefs/brief-b.md": {
+      "before_sha256": "c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550",
+      "after_sha256": "c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550",
+      "unchanged": true
+    },
+    "competition-v3/build-the-builder/docs/tools-and-code.md": {
+      "before_sha256": "56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711",
+      "after_sha256": "56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711",
+      "unchanged": true
+    },
+    "competition-v3/build-the-builder/public-test-set.json": {
+      "before_sha256": "fb7f4c0082eecb724a6faab771b4339bc62655627e49251e6bb2a0cf59a72fcb",
+      "after_sha256": "fb7f4c0082eecb724a6faab771b4339bc62655627e49251e6bb2a0cf59a72fcb",
+      "unchanged": true
+    },
+    "analysis/official-b-next-v4.json": {
+      "before_sha256": "c55f925e12c70ea5baf70ec7b3b43a2cc0b4dd119f58eceb9d94a4c1da61aa25",
+      "after_sha256": "c55f925e12c70ea5baf70ec7b3b43a2cc0b4dd119f58eceb9d94a4c1da61aa25",
+      "unchanged": true
+    },
+    "analysis/official-b-next-v4.txt": {
+      "before_sha256": "15803e0407ad03f7ad8bcc469ecc31fdaf2f41624f4253ac5f7c140fad21d0ec",
+      "after_sha256": "15803e0407ad03f7ad8bcc469ecc31fdaf2f41624f4253ac5f7c140fad21d0ec",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next2-review.json": {
+      "before_sha256": "7857257c85424653fa9921a911fc8f5534a312501b5feee0008f5a4526bbc210",
+      "after_sha256": "7857257c85424653fa9921a911fc8f5534a312501b5feee0008f5a4526bbc210",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next2-review.txt": {
+      "before_sha256": "e4e2dcf88049b8435763b3d4e03927453d29d5a01c670ef1fe46d7e857b96d6b",
+      "after_sha256": "e4e2dcf88049b8435763b3d4e03927453d29d5a01c670ef1fe46d7e857b96d6b",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next2-witnesses.json": {
+      "before_sha256": "c3ef03fc7f1961774dfb30894894ea30655f2e68a8f63e05dbb93c37006947a3",
+      "after_sha256": "c3ef03fc7f1961774dfb30894894ea30655f2e68a8f63e05dbb93c37006947a3",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next2-witnesses.txt": {
+      "before_sha256": "7245aaae86671c1ece61d5d88d34ad2b7e0acd2a8fd0f1af6b88620900538623",
+      "after_sha256": "7245aaae86671c1ece61d5d88d34ad2b7e0acd2a8fd0f1af6b88620900538623",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next3-review.json": {
+      "before_sha256": "a64a93fe0df35cee44b52c5c42a6214b5c8664be6685db637bdc9d30c8b0cee4",
+      "after_sha256": "a64a93fe0df35cee44b52c5c42a6214b5c8664be6685db637bdc9d30c8b0cee4",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next3-review.txt": {
+      "before_sha256": "494627be2861720e9a954ad3de2caa26d03c0f4cdce9ba9ec875ab472476389e",
+      "after_sha256": "494627be2861720e9a954ad3de2caa26d03c0f4cdce9ba9ec875ab472476389e",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next3-witnesses.json": {
+      "before_sha256": "110a871cb006b6ba07dbae1bf0afe2c4e0bf4ef79edee1780a345076b6e3c25f",
+      "after_sha256": "110a871cb006b6ba07dbae1bf0afe2c4e0bf4ef79edee1780a345076b6e3c25f",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next3-witnesses.txt": {
+      "before_sha256": "54e89c3e07c1a28d0ead76bccca8074cced908b761a10f4f09d4bb3ba5473c43",
+      "after_sha256": "54e89c3e07c1a28d0ead76bccca8074cced908b761a10f4f09d4bb3ba5473c43",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next4-review.json": {
+      "before_sha256": "7b2ac9401cea1bceb558a6445c1df038ccc094b70eac0e8511798374b5a5c8fb",
+      "after_sha256": "7b2ac9401cea1bceb558a6445c1df038ccc094b70eac0e8511798374b5a5c8fb",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next4-review.txt": {
+      "before_sha256": "5adcad5908cd8e55fe3ba5aea6fd0edc87fc8dae2c4a8af4a1efe4fc082f0cb7",
+      "after_sha256": "5adcad5908cd8e55fe3ba5aea6fd0edc87fc8dae2c4a8af4a1efe4fc082f0cb7",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next4-witnesses.json": {
+      "before_sha256": "54cf607d5bb12b3ec6d351dc93a768d6a0823aec7e82418cf28aaa565761edbc",
+      "after_sha256": "54cf607d5bb12b3ec6d351dc93a768d6a0823aec7e82418cf28aaa565761edbc",
+      "unchanged": true
+    },
+    "analysis/night-opus-b-next4-witnesses.txt": {
+      "before_sha256": "1f9222d17e9bb215a70a69221cfefa5158ac132427ddd1408dba2519970985a0",
+      "after_sha256": "1f9222d17e9bb215a70a69221cfefa5158ac132427ddd1408dba2519970985a0",
+      "unchanged": true
+    },
+    "analysis/night-opus-b10-review.json": {
+      "before_sha256": "836d784582ac6f74be703491c6ad68ea73c3f05b4b449adf5002bc8e66e3f5c5",
+      "after_sha256": "836d784582ac6f74be703491c6ad68ea73c3f05b4b449adf5002bc8e66e3f5c5",
+      "unchanged": true
+    },
+    "analysis/night-opus-b10-review.txt": {
+      "before_sha256": "3cafc0dc23af3543b508930f1d454bb617466020ad25c16848632bc0df8dd5f7",
+      "after_sha256": "3cafc0dc23af3543b508930f1d454bb617466020ad25c16848632bc0df8dd5f7",
+      "unchanged": true
+    },
+    "analysis/night-opus-b10-witnesses.json": {
+      "before_sha256": "af418f051dc9922eb18730ec9354edadc890df94803cb3938e77a5da578c8163",
+      "after_sha256": "af418f051dc9922eb18730ec9354edadc890df94803cb3938e77a5da578c8163",
+      "unchanged": true
+    },
+    "analysis/night-opus-b10-witnesses.txt": {
+      "before_sha256": "e5b133420e31e4b9c42164e5a4e3f6349a2ac4723cf6513056812aa0f8fac59f",
+      "after_sha256": "e5b133420e31e4b9c42164e5a4e3f6349a2ac4723cf6513056812aa0f8fac59f",
+      "unchanged": true
+    },
+    "analysis/night-opus-b11-review.json": {
+      "before_sha256": "8249e476157d46481b9ce519147a75f72bd65a8a9818558b325369da9f401628",
+      "after_sha256": "8249e476157d46481b9ce519147a75f72bd65a8a9818558b325369da9f401628",
+      "unchanged": true
+    },
+    "analysis/night-opus-b11-review.txt": {
+      "before_sha256": "685a18551b1d354c1aa211a5d612b05fddf0cc07e4a72e095142afe66b2ad912",
+      "after_sha256": "685a18551b1d354c1aa211a5d612b05fddf0cc07e4a72e095142afe66b2ad912",
+      "unchanged": true
+    },
+    "analysis/night-opus-b11-witnesses.json": {
+      "before_sha256": "1ca56215b13aa6b79ac79630c9d5e383d9688e5f5814cc6b9c4f20e5cd2ddd3d",
+      "after_sha256": "1ca56215b13aa6b79ac79630c9d5e383d9688e5f5814cc6b9c4f20e5cd2ddd3d",
+      "unchanged": true
+    },
+    "analysis/night-opus-b11-witnesses.txt": {
+      "before_sha256": "0df97b7a73e2bc8c97d6298fd9731335925821f67a61f8f6a91b2dd0f143c186",
+      "after_sha256": "0df97b7a73e2bc8c97d6298fd9731335925821f67a61f8f6a91b2dd0f143c186",
+      "unchanged": true
+    },
+    "analysis/night-opus-b4-hosted-review.json": {
+      "before_sha256": "c8e27ef91d3eecb15ba848594ede8540e4164a74dcd7cc8ef0ecb2222681c343",
+      "after_sha256": "c8e27ef91d3eecb15ba848594ede8540e4164a74dcd7cc8ef0ecb2222681c343",
+      "unchanged": true
+    },
+    "analysis/night-opus-b4-hosted-review.txt": {
+      "before_sha256": "809203f8d98ea298ae02f29c5c5eb86c308ac8520ac812a5a9aa92741cb120b6",
+      "after_sha256": "809203f8d98ea298ae02f29c5c5eb86c308ac8520ac812a5a9aa92741cb120b6",
+      "unchanged": true
+    },
+    "analysis/night-opus-b4-hosted-witnesses.json": {
+      "before_sha256": "bd46737350a515a2f373f9a4d3e892f51f9bd96a39c9a2fb2c85a65f869cf0c8",
+      "after_sha256": "bd46737350a515a2f373f9a4d3e892f51f9bd96a39c9a2fb2c85a65f869cf0c8",
+      "unchanged": true
+    },
+    "analysis/night-opus-b4-hosted-witnesses.txt": {
+      "before_sha256": "7bc0927978c6bd233100ff3085e8f36969b9a5a81b40f12671e373d30671bc57",
+      "after_sha256": "7bc0927978c6bd233100ff3085e8f36969b9a5a81b40f12671e373d30671bc57",
+      "unchanged": true
+    },
+    "analysis/night-opus-b9-review.json": {
+      "before_sha256": "11509ac94fcdf84649ea26e70991aaa6527bd0e25734ce8458e8418b377077fb",
+      "after_sha256": "11509ac94fcdf84649ea26e70991aaa6527bd0e25734ce8458e8418b377077fb",
+      "unchanged": true
+    },
+    "analysis/night-opus-b9-review.txt": {
+      "before_sha256": "14fa1352398d5ca5acd97b42f3b680d402c868566f319a3d2ec1c3cef5fb4217",
+      "after_sha256": "14fa1352398d5ca5acd97b42f3b680d402c868566f319a3d2ec1c3cef5fb4217",
+      "unchanged": true
+    },
+    "analysis/night-opus-b9-witnesses.json": {
+      "before_sha256": "3dc7eb86ccf32ca2146b9861ec9b2741e78f3122e7be23c5589eec7dee56bc30",
+      "after_sha256": "3dc7eb86ccf32ca2146b9861ec9b2741e78f3122e7be23c5589eec7dee56bc30",
+      "unchanged": true
+    },
+    "analysis/night-opus-b9-witnesses.txt": {
+      "before_sha256": "025caa2e4a9f5676b972ff034d46d8275070c0d83baa02e5d2787fa740f7850f",
+      "after_sha256": "025caa2e4a9f5676b972ff034d46d8275070c0d83baa02e5d2787fa740f7850f",
+      "unchanged": true
+    }
+  },
+  "all_protected_sources_old_reports_unchanged": true,
+  "runtime_snapshot_hashes": {
+    "before_manifest_sha256": "9086426501add4e53cdaa06294989ea0d011b8533ba14ae48a8ac063b211367c",
+    "after_manifest_sha256": "9086426501add4e53cdaa06294989ea0d011b8533ba14ae48a8ac063b211367c",
+    "manifest_unchanged": true,
+    "evidence_checks": {
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0001.json": {
+        "before_sha256": "82199ae25a64d42ff0146516d7b8b4847e1f012eefbc922cb1438c2a141e1aec",
+        "after_sha256": "82199ae25a64d42ff0146516d7b8b4847e1f012eefbc922cb1438c2a141e1aec",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0002.json": {
+        "before_sha256": "032b516528e60e3838ba203d7ac5a5345477324231a34826c365b26140ac7655",
+        "after_sha256": "032b516528e60e3838ba203d7ac5a5345477324231a34826c365b26140ac7655",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0003.json": {
+        "before_sha256": "8d0a6bef2e8f24c27653b0990bf444f3b36f9d1df554763e87ef96c1771cd7fa",
+        "after_sha256": "8d0a6bef2e8f24c27653b0990bf444f3b36f9d1df554763e87ef96c1771cd7fa",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0004.json": {
+        "before_sha256": "2d3e1ae858af6d73416f78036b37aaf71e565ac44009c24fe4e83327dfd8de44",
+        "after_sha256": "2d3e1ae858af6d73416f78036b37aaf71e565ac44009c24fe4e83327dfd8de44",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0005.json": {
+        "before_sha256": "56cbedb7e99a4d7360d9f509450cd9bcff884beecd80e2ab5c887e353de5e895",
+        "after_sha256": "56cbedb7e99a4d7360d9f509450cd9bcff884beecd80e2ab5c887e353de5e895",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0006.json": {
+        "before_sha256": "819ad82328dcf7e9de0ae31affdd82cd304f610f444578ee7781c16d5a17c9e6",
+        "after_sha256": "819ad82328dcf7e9de0ae31affdd82cd304f610f444578ee7781c16d5a17c9e6",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0007.json": {
+        "before_sha256": "6fe0f06ee0dd52d7886bca0e63628aaab2f9fc3f38267dcd2ef2ddb7019a1b29",
+        "after_sha256": "6fe0f06ee0dd52d7886bca0e63628aaab2f9fc3f38267dcd2ef2ddb7019a1b29",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0008.json": {
+        "before_sha256": "454f641297f8e396eeffce556972f4471a6e9db3e08c126ae5d51bf8f5ab9edd",
+        "after_sha256": "454f641297f8e396eeffce556972f4471a6e9db3e08c126ae5d51bf8f5ab9edd",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0009.json": {
+        "before_sha256": "ec778c099362d2d2d3ab164e8a9133b53712c7f5d54cc89464425dda4417538a",
+        "after_sha256": "ec778c099362d2d2d3ab164e8a9133b53712c7f5d54cc89464425dda4417538a",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0010.json": {
+        "before_sha256": "a37d80ca63b7f8b932f9e6079035be3b4b3492088ed09d1fd4ee739ee7d30c8e",
+        "after_sha256": "a37d80ca63b7f8b932f9e6079035be3b4b3492088ed09d1fd4ee739ee7d30c8e",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0011.json": {
+        "before_sha256": "a984ca90b32382c25e2e1a17139bb074e66277b709fc4defc8243aa105b8bf7d",
+        "after_sha256": "a984ca90b32382c25e2e1a17139bb074e66277b709fc4defc8243aa105b8bf7d",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0012.json": {
+        "before_sha256": "24b8664a2bafe37fff51dacf7ac2554de2a3c2b7ad14f1bc45a095ed366ad317",
+        "after_sha256": "24b8664a2bafe37fff51dacf7ac2554de2a3c2b7ad14f1bc45a095ed366ad317",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0013.json": {
+        "before_sha256": "f2b71c5d0a8011173c6996d34b099b292946ca888de645b5447b04bf0e69069a",
+        "after_sha256": "f2b71c5d0a8011173c6996d34b099b292946ca888de645b5447b04bf0e69069a",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0014.json": {
+        "before_sha256": "46380036d3e625b8c60e09d7a35e5efd1eaa813d15af65f754956b6c0eaa444a",
+        "after_sha256": "46380036d3e625b8c60e09d7a35e5efd1eaa813d15af65f754956b6c0eaa444a",
+        "unchanged": true
+      },
+      "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/evidence/0015.json": {
+        "before_sha256": "1e38e698a7c774420c6b0aad7e9071bd5e5113438c588361ccf1fca61e1486ab",
+        "after_sha256": "1e38e698a7c774420c6b0aad7e9071bd5e5113438c588361ccf1fca61e1486ab",
+        "unchanged": true
+      }
+    },
+    "scope": "Only initiallyscored15 reviewed; any laterparentcollection is external anddoesnotexpandthisscope."
+  },
+  "authoring_hashes": {
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/c40a4c52-cfae-47b3-816c-73dd3a4fcba0.json": {
+      "sha256": "22cc38783ace7c11aea55dd44aedfc644d029fdba92ab12e6e6c47f9c1d9e4cd",
+      "bytes": 8188,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/62a442b8-a11c-46dc-bad6-7c33cb3d08f1.json": {
+      "sha256": "efa1afdb44e83aced37f1f4405fba55ff78ecf3d73d09da6b9cd13b1335bb35e",
+      "bytes": 8328,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/149fe71d-e4f0-42aa-84de-c117033b87eb.json": {
+      "sha256": "422fe7e9b3b2827afc60beb84f271e96475efa5240e4b109fec8c362ae86bd3b",
+      "bytes": 8145,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/37d3536c-95a8-4aaa-9975-d720d2d0e205.json": {
+      "sha256": "d3b26a7c49329e45489556c5c6ea29f374747f62e8890749e4f396b524cb7986",
+      "bytes": 8372,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/73013d5c-538f-4001-973c-2ed7fe872236.json": {
+      "sha256": "2999d095f5281e16b0f9ea591b19a7cceb0591894584e09ccea0d61815f25a4c",
+      "bytes": 8238,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/f05b7ef6-8c5e-4b64-af5d-05ad95922bef.json": {
+      "sha256": "21f0415777549f151dbae72dffc7f27854f02e0447a531d7ba0b20e03a34545e",
+      "bytes": 8264,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/8d01ae0c-ec1e-4257-9f69-e6558010ce44.json": {
+      "sha256": "3f37f896ec37dbd6770c994e6a4854236692ffd5ae86543d0c7b8fb4723c3b25",
+      "bytes": 8188,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/14941a2f-20b8-4868-9133-f45bf2ebacef.json": {
+      "sha256": "fa4f7125e798001b1f8b3491d4ca40b5eb2a706a77affd9acbc45eec0de8d5dc",
+      "bytes": 8328,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/e58ae7fd-563f-4e25-a584-f57190d77f90.json": {
+      "sha256": "ee43bf43e820982e7bcf9dbee0f1b220af26c0841d194dbe9aeed0e192f185ed",
+      "bytes": 8145,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/30bf73c7-8674-40a9-ac95-360e735777f3.json": {
+      "sha256": "0fc0188b9b04677cf1cf21e4582e5317eaaefb67b109c4f8d694e8ee04951cc4",
+      "bytes": 8372,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/11a2b3a4-1e9f-4d6a-accf-5eaa7f759339.json": {
+      "sha256": "fe713f5df1a3f1b6813fd5d7190e758ac38b98531bebc9bc5b478e294ace5a76",
+      "bytes": 8238,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/43e093d6-6314-418b-82e5-8fd64fd73b6d.json": {
+      "sha256": "00b3fd7b85f9427e5162282f6c56406d03dc4375c196453663ec72775a3b08ae",
+      "bytes": 8264,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/127a9037-cdbb-4b34-83d3-7f79ae99fff8.json": {
+      "sha256": "f527b3114151e69dbc1344cad87cb16cb4658ee3b2286bce0ab2fafa98b1c2df",
+      "bytes": 8188,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/1509f85d-ac36-41ef-a462-c683ba70457d.json": {
+      "sha256": "9e2d4c459115bf3d1a9cf6d5c40597006ad7325c73905c4335a0e4b70ab506f0",
+      "bytes": 8328,
+      "capture": "handoff_readonly_authoring_hash"
+    },
+    "local-runs/customer-benchmark/20261011T043442Z-1e3cc3bc7e6a/personas/dbc77651-1d05-4d2e-a75c-c273ab6729ed.json": {
+      "sha256": "69128e3b88ad8bf5128fbe74fe5118161da8dde0e64b8e189f4e60287e2e46fe",
+      "bytes": 8145,
+      "capture": "handoff_readonly_authoring_hash"
+    }
+  },
+  "unobserved_jobs": [
+    {
+      "variant_id": "PUB-11__speech_night_security_scope",
+      "rep": 3,
+      "state": "simulation_started",
+      "classification": "unobserved_not_failed_or_passed"
+    },
+    {
+      "variant_id": "PUB-11__speech_night_unrelated_paid_language",
+      "rep": 3,
+      "state": "simulation_started",
+      "classification": "unobserved_not_failed_or_passed"
+    },
+    {
+      "variant_id": "PUB-11__speech_night_ordinal_calendar_scope",
+      "rep": 3,
+      "state": "simulation_started",
+      "classification": "unobserved_not_failed_or_passed"
+    }
+  ],
+  "new_native_HTTP_hosted_cloud_GPU_Git_calls": 0,
+  "B12_status": "Notreviewed/not-yet-testedinthistask; nofixclaimfromB4CPU",
+  "limits": [
+    "Authoredtextonlystress,notaudio/ASRcertification. Savedactual15callsatv4;currentserverbatchnotpolled/resumedbythisrole.",
+    "Sourceclaimsshouldfollowliteralinputqualifications. Synthetic/forced semanticcontrolsarenotliveextractorfrequency orB12passes.",
+    "Originalresultscore,judge,actor,pack,guide,candidate,bankAPI,weights,ML/devsourcesremainunchanged. Latejudgesupplementonly.",
+    "Savedcallterminalreasonprovesobservedclosurestate,notthataparticularruntimefinalizerwasdelivered/omitted. No platformsimulation orbankHTTP here."
+  ],
+  "helper_sha256": "acd479a39b9f4c1b5690c308979e3241d48bbaeadc2d9cbfae5ad27da1c2fd90",
+  "witnesses_json_sha256": "1c2e78dc6d20a120e1048fa774f34a5b5952b791e21c9871419b99698f5ba883"
+}

@@ -1,0 +1,465 @@
+{
+  "status": "CLOSED_FROZEN_CODEX_B_NEXT5_SOURCE_CPU_REVIEW",
+  "source_completion": "completed within fixed eight-minute budget",
+  "bounded_verdict": "FAIL: two retained B12 defects, one DOB availability defect, one conditional paid-disposition scope/write guard failure",
+  "reviewer": "Inherited Codex workhorse fallback; no Opus identity or inference claim",
+  "started_at_utc": "2026-10-11T05:14:22Z",
+  "completed_at_utc": "2026-10-11T05:20:33.939168+00:00",
+  "deadline_utc": "2026-10-11T05:22:22Z",
+  "elapsed_seconds": 371.939168,
+  "within_eight_minutes": true,
+  "candidate": {
+    "path": "competition/runs/20261011-080334-10abb9/codex-stress-b-next.workflow.json",
+    "sha256": "769de4a52dcf60acf6d31792fec1b391a487b58d687d5ef9cfb2361496bebaaa",
+    "export_sha256": "769de4a52dcf60acf6d31792fec1b391a487b58d687d5ef9cfb2361496bebaaa",
+    "version": 5,
+    "agent": "fcb7d8ec-e69b-46a9-8b19-166091663cc5",
+    "workflow": "65e78ac8-8697-4b87-b072-4981f3c256f2",
+    "export_updated_at": "2026-10-11T05:10:52.581Z",
+    "published_at_utc_user_reported": "2026-10-11T05:10:55Z",
+    "hosted_tested": false,
+    "published_identity_provenance": "local export agent/workflow plus user-reported version/publication; no platform check"
+  },
+  "actual_export_unchanged": true,
+  "export_sha256_before": "769de4a52dcf60acf6d31792fec1b391a487b58d687d5ef9cfb2361496bebaaa",
+  "export_sha256_after": "769de4a52dcf60acf6d31792fec1b391a487b58d687d5ef9cfb2361496bebaaa",
+  "guard_admission": {
+    "status": "NOT_UNQUALIFIED_CLEAN",
+    "no_financial_authority_critical_guard_failure": false,
+    "unauthorized_create_promise_breach_observed": false,
+    "conditional_paid_disposition_write_guard_breach_observed": true,
+    "explanation": "No critical monetary promise-write breach was detected in the checked scalar/consent/receipt/correction/pending/transfer probes. A wrong producer scope nevertheless authorizes paid notes for unnamed products; no blanket no-financial-authority-guard-failure assertion is made."
+  },
+  "counts": {
+    "main_scenarios": 91,
+    "main_passed": 83,
+    "main_failed": 8,
+    "minimal_confirmation_scenarios": 5,
+    "minimal_confirmation_passed": 2,
+    "minimal_confirmation_failed": 3,
+    "financial_guard_scenarios": 11,
+    "financial_guard_passed": 10,
+    "financial_guard_failed": 1,
+    "all_scenarios": 107,
+    "all_passed": 95,
+    "all_failed": 12,
+    "distinct_defects": 4,
+    "actual_counted_engine_executions_across_runs": 268,
+    "distinct_input_states_per_run": [
+      94,
+      12,
+      25
+    ],
+    "union_distinct_inputs": "not claimed; sets overlap across runs",
+    "direct_decoder_literal_checks": 24,
+    "actual_regex_literal_checks": {
+      "B12": "21/21",
+      "B_next5": "24/24",
+      "doubled_escape_control": "0/21 and 0/24"
+    },
+    "new_hosted_calls": 0,
+    "new_HTTP_calls": 0,
+    "native_quota_attempts": 0,
+    "Git_commands": 0,
+    "platform_calls": 0,
+    "spawned_agents": 0,
+    "builder_local_tests_used": 0
+  },
+  "source_CPU_run_hashes": {
+    "export_sha256": "769de4a52dcf60acf6d31792fec1b391a487b58d687d5ef9cfb2361496bebaaa",
+    "engine_source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd",
+    "main_program_sha256": "f480a4d556a9ea71fa4be5b007ab09298f44b1363eef2c55dcd3b744580ed744",
+    "minimal_confirmation_program_sha256": "57db6932f86088a1626465ef5a96d9c44550ec282fa871740b149cb9b628aa79",
+    "guard_regex_program_sha256": "7c6a7779707c526d8f1cdb0f97baf40e20e9e4fbb996e2eb1407612bb5860cf9",
+    "shared_independent_helper_sha256": "f99f274b7bcffd0296d8c469829d5679455ed1f393e1dd94d4983e7d5eae9bf1"
+  },
+  "findings": [
+    {
+      "id": "BN5CPU-01",
+      "priority": "P2",
+      "status": "retained_from_B12",
+      "title": "Valid fractional aggregate still fails binary-float equality",
+      "provenance": [
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            163,
+            166
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        },
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            280,
+            282
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        }
+      ],
+      "prior_finding": "analysis/night-codex-b12-review.json:B12CPU-01",
+      "witness_ids": [
+        "B12-fractional-total-1970.60",
+        "B12-fractional-total-600.60",
+        "fractional-full-control-1970.60",
+        "fractional-full-control-600.60"
+      ],
+      "detail": "Correct total:1970.60 for bank amounts 510.10+1320.20+140.30 is rejected; Python sum is 1970.6000000000001. The independent 600.60 fixture also fails. Both full controls reach joint readback. No promise is dispatched. The exact new export retains the identical float comparison, so this is an availability fault, not a fixed B12 finding.",
+      "suggestion": "Use exact decimal or minor-unit reconciliation without relaxing allocation, scalar validation or consent."
+    },
+    {
+      "id": "BN5CPU-02",
+      "priority": "P2",
+      "status": "retained_from_B12",
+      "title": "Format exhaustion still omits required Brief B disposition notes",
+      "provenance": [
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            623,
+            625
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        },
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.farewell.transitions -> workflow.nodes.close_call.pre_actions[0].pre_process_code"
+        }
+      ],
+      "prior_finding": "analysis/night-codex-b12-review.json:B12CPU-02",
+      "brief_rule": "Original Brief B rule 8",
+      "witness_ids": [
+        "B12-format-exhaustion-notes"
+      ],
+      "detail": "Four END-plus-admin contaminated scalars after verification/get_account route to farewell. The actual source close pre-hook emits no_promise/service_error; all products remain open, notes dispatched is zero, and source close transitions to end. The stop is bounded and fail closed for promises but still violates required per-product notes. No HTTP close occurred.",
+      "suggestion": "Preserve recorded promises and evidence; use guarded service_error dispositions and successful note receipts before ordinary verified closure. Preserve no notes on any transfer."
+    },
+    {
+      "id": "BN5CPU-03",
+      "priority": "P2",
+      "status": "newly_demonstrated_in_this_review",
+      "title": "DOB punctuation causes complete canonical answers to be discarded",
+      "provenance": [
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            82,
+            89
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        },
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            113,
+            139
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        },
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            720,
+            734
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        }
+      ],
+      "witness_ids": [
+        "DOB-complete-9",
+        "DOB-complete-10",
+        "DOB-complete-11",
+        "minimal-DOB-bang",
+        "minimal-DOB-dotted",
+        "minimal-DOB-questionmark",
+        "minimal-DOB-period-control",
+        "minimal-DOB-slash-control"
+      ],
+      "detail": "With a correct canonical v=1987-04-17 scalar and complete supplied raw DOB, standalone 17 April nineteen eighty-seven!, 17.04.1987, and 1987-04-17? stay in dob and make no verify_identity call. The source replaces the valid extracted value with security_raw whenever raw is nonempty. self_answer does not strip final ! or ?, and numeric parsing excludes dotted separators. Minimal answer-only confirmations reproduce all three failures without administrative question rows. Trailing period/slash controls pass. Missing years, wrong subjects and hypothetical input remain blocked; hyphenated century grammar and complete independent-question examples pass.",
+      "suggestion": "Normalize unambiguous terminal sentence punctuation and complete numeric DOB separators while retaining explicit-year, subject and quote checks; never invent a year."
+    },
+    {
+      "id": "BN5CPU-04",
+      "priority": "P1 disposition authority",
+      "status": "conditional_guard_failure_requires_semantically_wrong_producer_scope",
+      "title": "A claimed span naming one product can authorize paid notes for siblings",
+      "provenance": [
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            233,
+            261
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        },
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            579,
+            583
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        },
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            283,
+            291
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        },
+        {
+          "export_path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+          "json_path": "workflow.nodes.engine.pre_actions[0].function.parameters.properties.code.default",
+          "embedded_source_lines": [
+            413,
+            415
+          ],
+          "source_sha256": "91d9d4ef95c92fccae50dd743a44dcab8e4394bff9c0505d9bb44168861656dd"
+        }
+      ],
+      "witness_ids": [
+        "paid-span-overbroad-scope-all",
+        "paid-span-overbroad-scope-p2,p3",
+        "paid-overbroad-scope-note-receipts-and-close"
+      ],
+      "detail": "A deliberately scope-contaminated paid row with sub=self/claim=current_bank/pol=positive/mode=asserted, p=all and exact x=I already paid my credit card passes bank_claim. explicit uses any matching target, then accumulate expands to all targets. All three products become paid. The follow-up runs actual source add_note hooks with three synthetic successful receipts, recording paid notes for all products and closing paid. Likewise a p2,p3 row naming only car loan marks both loans paid. Producer instructions prohibit this wrong scope; this is a negative guard witness, not a conforming customer-policy failure or observed hosted extraction. It is an actual source disposition-write guard gap, so an unqualified clean financial-authority admission is not supported.",
+      "suggestion": "Require the asserted claim span to support every resolved target, or explicit collective bank-product scope, before expanding a paid/dispute row. Preserve sibling facts and neutral clarification rather than importing raw numeric financial terms."
+    }
+  ],
+  "actual_regex_validation": {
+    "documentation": "build-the-builder 2/docs/workflow-format.md:561,570-571 requires matching validation_pattern and retries failures; no regex runtime is specified in the inspected text",
+    "method": "Standard Python re.fullmatch using the JSON-decoded exported pattern against each actual scalar literal; separately compare canonical single-level and literally doubled patterns",
+    "results": [
+      {
+        "path": "competition/runs/20261011-074925-89ec4f/codex-stress-b.workflow.json",
+        "export_sha256": "615aa51e6e77987abe70930ead87a4d54cfeb083ba03d1377c366e72538e0d40",
+        "actual_pattern": "\\Ak=[\\s\\S]{1,3990}\\nEND\\Z",
+        "actual_python_repr": "'\\\\Ak=[\\\\s\\\\S]{1,3990}\\\\nEND\\\\Z'",
+        "actual_length": 25,
+        "actual_backslash_count": 5,
+        "slash_run_lengths": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "codepoints": [
+          92,
+          65,
+          107,
+          61,
+          91,
+          92,
+          115,
+          92,
+          83,
+          93,
+          123,
+          49,
+          44,
+          51,
+          57,
+          57,
+          48,
+          125,
+          92,
+          110,
+          69,
+          78,
+          68,
+          92,
+          90
+        ],
+        "canonical_single_level": "\\Ak=[\\s\\S]{1,3990}\\nEND\\Z",
+        "literal_doubled_level": "\\\\Ak=[\\\\s\\\\S]{1,3990}\\\\nEND\\\\Z",
+        "examples": 21,
+        "actual_python_fullmatch_count": 21,
+        "canonical_python_fullmatch_count": 21,
+        "doubled_python_fullmatch_count": 0,
+        "backend_regex_semantics": "unknown; no platform/backend checks"
+      },
+      {
+        "path": "competition/runs/20261011-080334-10abb9/codex-stress-b-next.workflow.json",
+        "export_sha256": "769de4a52dcf60acf6d31792fec1b391a487b58d687d5ef9cfb2361496bebaaa",
+        "actual_pattern": "\\Ak=[\\s\\S]{1,3990}\\nEND\\Z",
+        "actual_python_repr": "'\\\\Ak=[\\\\s\\\\S]{1,3990}\\\\nEND\\\\Z'",
+        "actual_length": 25,
+        "actual_backslash_count": 5,
+        "slash_run_lengths": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "codepoints": [
+          92,
+          65,
+          107,
+          61,
+          91,
+          92,
+          115,
+          92,
+          83,
+          93,
+          123,
+          49,
+          44,
+          51,
+          57,
+          57,
+          48,
+          125,
+          92,
+          110,
+          69,
+          78,
+          68,
+          92,
+          90
+        ],
+        "canonical_single_level": "\\Ak=[\\s\\S]{1,3990}\\nEND\\Z",
+        "literal_doubled_level": "\\\\Ak=[\\\\s\\\\S]{1,3990}\\\\nEND\\\\Z",
+        "examples": 24,
+        "actual_python_fullmatch_count": 24,
+        "canonical_python_fullmatch_count": 24,
+        "doubled_python_fullmatch_count": 0,
+        "backend_regex_semantics": "unknown; no platform/backend checks"
+      }
+    ],
+    "conclusion": "Both exact frozen exports contain five single-backslash runs and equal the canonical Python pattern. Every literal matches. The displayed doubled slashes are repr/JSON escaping, not two backslashes in the decoded value. An actually doubled pattern matches no literals. Actual backend language/normalization and live extraction validation remain unknown; decoder acceptance alone is not treated as schema parity."
+  },
+  "preserved_guard_checks": [
+    "Scalar-only instructions and exact END guard; all 24 actual literal examples independently decoded and matched against actual exported regex in Python.",
+    "Mixed product facts and per-product offer chronology; global ask not charged as product persuasion.",
+    "Partial joint consent, pause/withdrawal, incomplete correction, pending sibling, missing scalar and stale success fields cannot dispatch a promise.",
+    "Corrections require fresh readback and later consent; recorded promise remains immutable.",
+    "Source API success is accepted only under receipt binding. One same-term retry follows an explicit failure or exact fresh no-post-hook HTTP 500 counter frame; stale counters/success deltas/wrong status/unknown outcome/stale receipts block retries.",
+    "Success notes require synthetic success receipts; source transfers add no notes and preserve already recorded promises.",
+    "Eight quote/diary/hypothetical/negation/other-subject/unrelated/missing-span/duplicate-span paid negative controls remain neutral. Positive paid/dispute spans and independent tail questions preserve siblings."
+  ],
+  "limits": [
+    "All executions are local conditional CPU work with persistent Python vars[state] and exact exported source hooks; no hosted producer inference or real API success was tested.",
+    "The paid-scope negative frame deliberately violates producer semantics. Its source guard failure is separate from conforming consumer availability defects.",
+    "The main DOB tests include administrative rows; minimal answer-only follow-ups confirm the same punctuation defect without them.",
+    "This review reuses its own prior independent Runner/fixture helper and authors new B-next5 probes; no builder local tests were used.",
+    "No numeric raw financial fallback or candidate repair was added. No full export, tool headers, keys, model content or credential data was written to outputs.",
+    "Parent platform queue and A event-production work were untouched; no stage2 shortpack wording or DEV/model content was read.",
+    "Protected scope is these 15 exact inputs/frozen prior reports, not all files in the parallel shared workspace."
+  ],
+  "protected_hashes": [
+    {
+      "path": "competition\\runs\\20261011-080334-10abb9\\codex-stress-b-next.workflow.json",
+      "before_sha256": "769de4a52dcf60acf6d31792fec1b391a487b58d687d5ef9cfb2361496bebaaa",
+      "after_sha256": "769de4a52dcf60acf6d31792fec1b391a487b58d687d5ef9cfb2361496bebaaa",
+      "unchanged": true
+    },
+    {
+      "path": "competition\\runs\\20261011-074925-89ec4f\\codex-stress-b.workflow.json",
+      "before_sha256": "615aa51e6e77987abe70930ead87a4d54cfeb083ba03d1377c366e72538e0d40",
+      "after_sha256": "615aa51e6e77987abe70930ead87a4d54cfeb083ba03d1377c366e72538e0d40",
+      "unchanged": true
+    },
+    {
+      "path": "competition\\runs\\b12-independent-20261011-045557\\audit.py",
+      "before_sha256": "f99f274b7bcffd0296d8c469829d5679455ed1f393e1dd94d4983e7d5eae9bf1",
+      "after_sha256": "f99f274b7bcffd0296d8c469829d5679455ed1f393e1dd94d4983e7d5eae9bf1",
+      "unchanged": true
+    },
+    {
+      "path": "analysis\\night-codex-b12-review.json",
+      "before_sha256": "34e6dd8efb7ae42a8d9658404895e0fe3e2dd8f73857708cafb394510bdab4c9",
+      "after_sha256": "34e6dd8efb7ae42a8d9658404895e0fe3e2dd8f73857708cafb394510bdab4c9",
+      "unchanged": true
+    },
+    {
+      "path": "analysis\\night-codex-b12-review.txt",
+      "before_sha256": "ac751235a6a4baa2a6c82fefffef52e8b27ab4befd4c1f08600dd30c8c005cc3",
+      "after_sha256": "ac751235a6a4baa2a6c82fefffef52e8b27ab4befd4c1f08600dd30c8c005cc3",
+      "unchanged": true
+    },
+    {
+      "path": "analysis\\night-codex-b12-witnesses.json",
+      "before_sha256": "f44cefe80a2eb4f217a604c29d33f0c33c1dcf971d12895dc5ae38718a3d2299",
+      "after_sha256": "f44cefe80a2eb4f217a604c29d33f0c33c1dcf971d12895dc5ae38718a3d2299",
+      "unchanged": true
+    },
+    {
+      "path": "analysis\\night-codex-b12-witnesses.txt",
+      "before_sha256": "54476bc379fefa211717959cd7c64d0a8860fc67bbae8803c579bd0a39956284",
+      "after_sha256": "54476bc379fefa211717959cd7c64d0a8860fc67bbae8803c579bd0a39956284",
+      "unchanged": true
+    },
+    {
+      "path": "analysis\\night-opus-b4-hosted-review.json",
+      "before_sha256": "c8e27ef91d3eecb15ba848594ede8540e4164a74dcd7cc8ef0ecb2222681c343",
+      "after_sha256": "c8e27ef91d3eecb15ba848594ede8540e4164a74dcd7cc8ef0ecb2222681c343",
+      "unchanged": true
+    },
+    {
+      "path": "analysis\\night-opus-b4-hosted-review.txt",
+      "before_sha256": "809203f8d98ea298ae02f29c5c5eb86c308ac8520ac812a5a9aa92741cb120b6",
+      "after_sha256": "809203f8d98ea298ae02f29c5c5eb86c308ac8520ac812a5a9aa92741cb120b6",
+      "unchanged": true
+    },
+    {
+      "path": "analysis\\night-opus-b4-hosted-witnesses.json",
+      "before_sha256": "bd46737350a515a2f373f9a4d3e892f51f9bd96a39c9a2fb2c85a65f869cf0c8",
+      "after_sha256": "bd46737350a515a2f373f9a4d3e892f51f9bd96a39c9a2fb2c85a65f869cf0c8",
+      "unchanged": true
+    },
+    {
+      "path": "analysis\\night-opus-b4-hosted-witnesses.txt",
+      "before_sha256": "7bc0927978c6bd233100ff3085e8f36969b9a5a81b40f12671e373d30671bc57",
+      "after_sha256": "7bc0927978c6bd233100ff3085e8f36969b9a5a81b40f12671e373d30671bc57",
+      "unchanged": true
+    },
+    {
+      "path": "build-the-builder 2\\briefs\\brief-a.md",
+      "before_sha256": "c989bc4484c9643b0e79646c3091fe29b1792fce9972efd571815ce38fbb7573",
+      "after_sha256": "c989bc4484c9643b0e79646c3091fe29b1792fce9972efd571815ce38fbb7573",
+      "unchanged": true
+    },
+    {
+      "path": "build-the-builder 2\\briefs\\brief-b.md",
+      "before_sha256": "1661a57f3da8bffa2b8d03a8213f6db61f8b3ed8cd2d819767ebaea2d6068742",
+      "after_sha256": "1661a57f3da8bffa2b8d03a8213f6db61f8b3ed8cd2d819767ebaea2d6068742",
+      "unchanged": true
+    },
+    {
+      "path": "build-the-builder 2\\docs\\api.md",
+      "before_sha256": "9a8da0756e5cd2a0dd846051fd61036f49d978d9ee23d6145aa23b634aba570a",
+      "after_sha256": "9a8da0756e5cd2a0dd846051fd61036f49d978d9ee23d6145aa23b634aba570a",
+      "unchanged": true
+    },
+    {
+      "path": "build-the-builder 2\\tools\\openapi.json",
+      "before_sha256": "fa5ef2aec75e41c7f0be454cde1f6ffd69c5a4735ebe364ee065b13090b74d02",
+      "after_sha256": "fa5ef2aec75e41c7f0be454cde1f6ffd69c5a4735ebe364ee065b13090b74d02",
+      "unchanged": true
+    }
+  ],
+  "protected_hash_summary": {
+    "total": 15,
+    "unchanged": 15,
+    "all_unchanged": true
+  },
+  "owned_new_outputs": [
+    "analysis/night-codex-b-next5-review.json",
+    "analysis/night-codex-b-next5-review.txt",
+    "analysis/night-codex-b-next5-witnesses.json",
+    "analysis/night-codex-b-next5-witnesses.txt"
+  ]
+}

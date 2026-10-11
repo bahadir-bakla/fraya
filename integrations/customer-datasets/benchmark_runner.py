@@ -545,10 +545,15 @@ def execute(rows, adapter, *, agent_id, brief, only, reps=3, batch_size=5,
     except RunnerError as error:
         manifest["error_code"] = str(error)
         manifest["status"] = 'stopped_on_failure' if str(error)=='diagnostic_stopped_on_failure' else "timeout" if str(error) == "total_budget_exhausted" else "incomplete"
-    except Exception:
+    except Exception as error:
         # Error bodies, environment values and arbitrary adapter exception text
         # are deliberately withheld. Allocated resources are never canceled.
-        manifest.update(status="incomplete", error_code="execution_failed")
+        safe_types = {"TimeoutError", "URLError", "ConnectionResetError", "RemoteDisconnected",
+                      "JSONDecodeError", "TypeError", "KeyError", "ValueError", "RuntimeError",
+                      "OSError", "SSLError", "IncompleteRead", "HTTPException"}
+        error_type = type(error).__name__
+        manifest.update(status="incomplete", error_code="execution_failed",
+                        error_type=error_type if error_type in safe_types else "unexpected_exception")
     manifest["finished_at"] = datetime.now(timezone.utc).isoformat()
     persist()
     result = summarize(selected, jobs, reps, manifest["status"])

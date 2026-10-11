@@ -1,0 +1,226 @@
+CHECKPOINT13 — BOUNDED TRANSACTION SPEC
+2026-10-11T03:56:00.711445+00:00
+
+Two-lane rule: reject the entire financial patch on invalid target/aggregate/conflict; retain safety barriers and revoked consent. Preserve old F/N and stage valid new siblings in Q, never as partly agreed terms.
+Source: Bnext3 export062044-9c9917; Opus independent dispositions B3-1/B3-2 supported local faults, B3-3 conditional producer-inconsistency defense. No hosted Bnext3 claim.
+
+INTERFACES
+preflight(snapshot,typed_packet,policy)->Preflight
+commit(preflight,live_revision)->committed_state|retry_preflight
+next_obligations(committed_state,policy)->ordered obligations
+prepare_effect(state,obligation)->immutable plan
+dispatch_one(plan,current_state)->dispatch intent|blocked
+apply_receipt(journal,receipt,current_state)->state|unchanged
+
+PREFLIGHT / COMMIT
+1 snapshot_and_frame: bad frame/overflow/duplicate inconsistent event IDs => financial patch empty, global ingress barrier, current consent invalid
+2 type_and_source_scope: unknown keys/kinds/invalid finite number/non-source identity => reject; missing is not absence
+3 derive_safety: Any complete pause/withdraw/readback request or unfinished permission/correction puts affected targets under a barrier; unresolved scope creates global barrier. Scope uncertainty cannot be ignored because raw-copy text looks affirmative.
+4 resolve_and_expand: any unknown/ambiguous target rejects financial patch; overlapping selectors expand before conflict checks
+5 validate_relations: cycle/dangling edge/cross-component or cross-subject correction => reject; serialization is not semantic order
+6 reduce_components: For each cell retain maximal assertions after correction edges. Distinct maximal complete values => conflict. Unresolved maximal replacement => pending. Same normalized complete value can coalesce provenance. Independent fill-need plus uniquely complete sibling closes the need; unknown replacement semantics cannot be guessed as fill.
+7 validate_policy_and_allocations: any impossible total, missing allocation, stale source, conflict, recorded-product mutation or unsupported dependency => no financial patch; invalid aggregate may require clarification rather than refusal
+8 reduce_dispositions_and_counters: Permission never becomes refusal. Preserve disjoint q refusal even if p permission pauses; count an attempt only at the unique source-defined persuasion-offer consumption step, not once per extracted row.
+8b finalize_dependency_barriers: Union barriers from invalid/unresolved scope, financial rejection, component conflict/pending replacement and permission. Revoke certificates depending on changed cells or any affected joint target. No rejected patch can keep an old queued write enabled.
+9 commit_CAS: If live revision differs, return RETRY_PREFLIGHT without effects; no stale patch application. Otherwise always apply safety+questions+quarantine, and apply F/N/progress only for ready result. Assign a new state revision once.
+10 schedule_then_dispatch: Source-specific priority selects next obligation after reduction. Dispatch separately revalidates source/account/term/permission revisions, identity, no unknown effect, policy, retry class and readback chronology. No tool call inside preflight/commit.
+
+REFERENCE TRANSACTION PSEUDOCODE
+TRANSACT(S, packet, policy):
+  if known turn ID and equal packet digest: return S, NO_EFFECT
+  if known turn ID and unequal digest: return COMMIT_REJECT(global_ingress_barrier), NO_EFFECT
+  S0 = immutable_copy(S); frame = FRAME(packet, policy.bounds)
+  if frame invalid: R = REJECT(global_ingress_barrier, empty_financial_patch)
+  else:
+    E, type_errors = TYPECHECK_ALL(frame); safety = SAFETY_OVERLAY(E,S0)
+    X, scope_errors = EXPAND_ALL_TARGETS(E,S0.account)
+    G, relation_errors = CHECK_SCOPED_DAG(X)
+    cells = SELECT_MAXIMA_AND_FILL_NEEDS(X,G,S0.F) if no blocking type/scope/relation errors else EMPTY
+    errors = type_errors + scope_errors + relation_errors + CELL_CONFLICTS + ALLOCATION_ERRORS + POLICY_ERRORS
+    safety |= BARRIERS_FROM_ERRORS_PENDING_AND_CHANGED_DEPENDENCIES(errors,cells,S0.C)
+    if errors: R = REJECT(safety, quarantine=X, validated_questions=E.questions, F_patch=EMPTY,N_patch=EMPTY)
+    else: R = READY(safety, cells, SOURCE_DISPOSITIONS_AND_COUNTER_OBLIGATIONS(E), E.questions)
+  if LIVE.revision != S0.revision: return RETRY_PREFLIGHT, NO_EFFECT
+  S1 = APPLY_SAFETY_QUESTIONS_AND_QUARANTINE(S0,R)
+  if R.ready: S1 = APPLY_COMPLETE_FINANCIAL_PATCH(S1,R)
+  S1.seen_turns[packet.turn_id] = packet.digest; S1.revision = NEW_OPAQUE_REVISION()
+  ATOMIC_REPLACE_STATE(S1); return S1, SCHEDULE_SOURCE_OBLIGATIONS(S1)
+DISPATCH(plan,S): under serialized transition revalidate current dependencies/certificate/no-unknown/budget; freeze body; journal dispatched; invoke only allowed bank operation.
+ON_RECEIPT(r,S): verify immutable operation-capsule binding; apply three-way receipt transition once with CAS; unknown != no-effect != success.
+
+STATE LANES
+financial: F,N and negotiation-progress flags commit as one patch only after all affected target/aggregate/component constraints are preflighted. No shared-state mutation inside per-row iteration. Existing valid pending facts remain on abort.
+safety: Barrier creation/strengthening and consent invalidation are monotone within a turn and survive rejected financial preflight. Do not restore old consent by restoring the whole snapshot. A malformed whole payload creates a global uncertainty barrier without salvaging individual untrusted rows.
+questions_and_quarantine: Independently understood questions remain obligations. Valid sibling proposal evidence is retained in Q with batch/source/version and uncommitted status, not installed as agreed/current F. Rejected data never creates tool parameters or refusal counters.
+repair: A later repair must reference the rejected batch/affected assertions; re-resolve and revalidate the entire proposed financial patch against a new snapshot. Discard obsolete rows explicitly; never auto-promote a once-valid prefix from Q.
+receipt: Receipt transitions update J/confirmed bank facts through their own revision-checked transaction. A concurrent receipt invalidates stale user-turn preflight; never overwrite confirmed bank state with an old staged copy.
+error_barriers: Every rejected financial batch invalidates consent for its affected targets and blocks its queued plan; unknown/ambiguous scope blocks globally. Changed/pending/conflicting component cells revoke dependent certificates even when no permission row exists. Preserve old facts as last-known evidence, not authority to ignore the new ambiguity.
+
+RELATION AND PERMISSION RULES
+cell_selection: Candidates(target,component)=maximal scoped assertions in the relation DAG. Equal normalized complete maxima collapse to one value; unequal maxima are conflict. An unresolved replacement is never overridden merely by finding an older complete value.
+interturn: New positively asserted terms on a later turn may supersede prior unrecorded component facts under source semantics; add explicit temporal edges in IR. Multiple incompatible assertions within one turn need an explicit relation or remain conflict. Recorded promises are immutable.
+fill_vs_correction: need(role=fill) can be discharged by an independent complete value for that cell. need(role=replacement, correction_of=e) remains unresolved unless a later linked completion fills it. role=unknown is conservative unresolved, not silently fill.
+aggregate: An aggregate T over targets U remains a joint constraint. Permit an allocation only if each A_p is explicit or uniquely source-derived (current export supports total=sum past_due => full balances), sum A_p=T, and every A_p respects per-product policy. No proportional/equal split invented. Missing allocation => clarification; impossible sum => policy rejection; both yield empty financial patch.
+rollback: FinancialAbort => F_after=F_before AND N_after=N_before AND progress_after=progress_before. B may grow; C may shrink; Q/questions may grow. Therefore whole-State equality is the WRONG rollback assertion.
+idempotence: Replaying same stable turn/event or receipt ID changes neither F/N/J nor revisions a second time. Two distinct real turns with identical words are not automatically duplicates.
+independence: Act permutations preserving event IDs, relation graph and target semantics must preserve normalized preflight/commit result. Arrival order of receipts, source speech turns and correction EDGE DIRECTION are meaningful and not freely permutable.
+within_turn: Map barriers to severity clear<needs_fresh_readback<unresolved; take pointwise maximum over expanded target scopes. Unknown scope becomes global. Therefore complete withdrawal cannot downgrade an unfinished-permission barrier in the same packet.
+across_turns: Only the explicit later resolution/readback/confirmation transitions may lower severity. Union provenance/reasons within a turn; never choose the last permission row.
+joint_certificate: If any target in a joint certificate intersects a new barrier/error/changed component, revoke the whole certificate; retain independent target facts and refusal events.
+chronology: earlier(turn_a,turn_b) is an established event-stream ordering relation, not lexicographic or numeric comparison of opaque IDs. If order cannot be established, no confirmation certificate.
+
+DISPATCH BOUNDARY
+point: In one serialized state transition, recheck plan readset/version and all guards, freeze body, and mark operation dispatched before invoking the bank tool. No tool invocation occurs during preflight.
+withdrawal_before: A withdrawal/barrier committed before this transition blocks dispatch; a previously prepared plan is not a continuing authorization.
+withdrawal_after: After dispatch starts, preserve in-flight/unknown journal status. A later withdrawal stops further unsent effects but cannot establish cancellation of the sent operation. A bound success still creates a truthful recorded fact; source disallows changing/cancelling it in-call.
+unknown: A local crash after marking dispatched is not proof the bank did nothing. Missing result is unknown and cannot be retried as failure without a source no-effect guarantee.
+
+FINITE CASES (full typed inputs/fixtures in JSON)
+T01 Policy-invalid aggregate rejects whole financial patch | unordered_act_set | expected={"preflight":"reject","error":"aggregate_policy_or_allocation","F_equals_before":true,"N_equals_before":true,"initial_equals_before":true,"C":[],"barrier_targets":["p","q","r"],"Q_contains":["e1","e2","e3"],"logical_bank_calls":[]}
+T02 Unknown sibling target rejects without prefix mutation | unordered_act_set | expected={"preflight":"reject","error":"unknown_target","F_equals_before":true,"N_equals_before":true,"barrier_scope":"global","logical_bank_calls":[]}
+T03 Full-balance aggregate with unique source allocation | unordered_act_set | expected={"preflight":"ready","F_values":{"q.amount":20000,"r.amount":30000,"q.date":"D0","r.date":"D0"},"obligations":["joint_readback"],"logical_bank_calls":[]}
+T04 Explicit allocation sum mismatch rejects all siblings | unordered_act_set | expected={"preflight":"reject","error":"allocation_sum_mismatch","F_equals_before":true,"N_equals_before":true,"logical_bank_calls":[]}
+T05 Overlapping target sets conflict after expansion | unordered_act_set | expected={"preflight":"reject","conflict_cells":["p.amount"],"F_equals_before":true,"N_equals_before":true,"Q_retains_nonconflicting_cell":"q.amount=5000","logical_bank_calls":[]}
+T06 Independent amount/date assertions commute | unordered_act_set | expected={"preflight":"ready","F_values":{"p.amount":5000,"p.date":"D0"},"obligations":["readback(p)"],"logical_bank_calls":[]}
+T07 Redundant equal values do not conflict | unordered_act_set | expected={"preflight":"ready","F_values":{"p.amount":5000},"provenance_ids":["e1","e2"],"logical_bank_calls":[]}
+T08 Explicit correction keeps graph order, not row order | serialization_only_preserve_relation_graph | expected={"preflight":"ready","F_values":{"p.amount":6000},"old_consent_invalid":true,"logical_bank_calls":[]}
+T09 Reversing correction edge changes the answer | edge_reversal_is_semantic_change | expected={"preflight":"ready","F_values":{"p.amount":5000},"must_differ_from":"T08","logical_bank_calls":[]}
+T10 Cyclic correction graph rejected | serialization_only_preserve_relation_graph | expected={"preflight":"reject","error":"relation_cycle","F_equals_before":true,"logical_bank_calls":[]}
+T11 Complete sibling fills independent unfinished need | unordered_act_set | expected={"preflight":"ready","F_values":{"p.amount":5000,"p.date":"D0"},"unresolved_cells":[],"logical_bank_calls":[]}
+T12 Unfinished replacement is not filled by its superseded assertion | serialization_only_preserve_relation_graph | expected={"preflight":"ready","pending_cells":["p.amount"],"old_value_last_known_only":5000,"C":[],"barrier_targets":["p"],"logical_bank_calls":[]}
+T13 Unfinished permission blocks complete sibling confirmation | unordered_act_set | expected={"F_equals_before":true,"N_equals_before":true,"C":[],"permission_state":"unresolved","obligations":["clarify_permission(p)"],"logical_bank_calls":[]}
+T14 Scoped withdrawal retains disjoint refusal | unordered_act_set | expected={"preflight":"ready","F_term_values_unchanged":true,"C":[],"permission_p":"suspended","refusal_pending":["q"],"N_equals_before":true,"obligations":["fresh_readback(p)","source_permitted_next_offer(q)"],"logical_bank_calls":[]}
+T15 Financial rejection must not roll back withdrawal | unordered_act_set | expected={"preflight":"reject","F_equals_before":true,"N_equals_before":true,"C":[],"permission_p":"suspended","logical_bank_calls":[]}
+T16 Same-turn corrected amount cannot confirm old readback | unordered_act_set | expected={"preflight":"ready","F_values":{"p.amount":6000,"p.date":"D0"},"C":[],"obligations":["fresh_readback(p)","later_confirmation"],"logical_bank_calls":[]}
+T17 ABA amount reversion does not revive old consent | ordered_turn_history_do_not_permute | expected={"final_amount":5000,"final_amount_revision_not":"ap0","C":[],"logical_bank_calls":[]}
+T18 Bound documented500 admits one guarded exact-body retry | ordered_receipt_history_do_not_permute | expected={"J_op0":"confirmed_no_effect","logical_plan":[{"operation":"create_promise","body_equals":"op0.body","new_attempt_id_not":"a0"}],"no_recorded_claim":true}
+T19 Unknown receipt freezes financial plan | ordered_receipt_history_do_not_permute | expected={"J_op0":"unknown","logical_bank_calls":[],"no_recorded_claim":true,"no_no_record_claim":true,"remaining_retry_budget_unchanged":true}
+T20 Wrong-body/stale receipt does not complete current operation | ordered_receipt_history_do_not_permute | expected={"J_op0":"dispatched","F_equals_before":true,"logical_bank_calls":[]}
+T21 Same bound success applied once | ordered_receipt_history_do_not_permute | expected={"J_op0":"confirmed_success","recorded_products":["p"],"record_effect_count":1,"additional_create_calls":0}
+T22 Sentence-delimited recipient plus question preserves both acts | clause_rendering_and_independent_acts | expected={"bank_verified":false,"identity_stage":"first_source_security_question","recipient_unclear_counter_unchanged":true,"obligations":["answer_ai","ask_first_security_question"],"logical_bank_calls":[]}
+T23 Negative/quoted/hypothetical recipient is not affirmation | unordered_act_set | expected={"bank_verified":false,"identity_stage":"recipient","no_identity_advance":true,"logical_bank_calls":[]}
+T24 State changes between preflight and commit | ordered_commit_history_do_not_permute | expected={"commit_result":"RETRY_PREFLIGHT","live_state_not_overwritten":true,"logical_bank_calls":[]}
+T25 Failed note stays failed not confirmed | ordered_receipt_history_do_not_permute | expected={"note_state_p":"confirmed_no_effect","note_confirmed_p":false,"successful_coverage_claim":false,"logical_bank_calls":[]}
+T26 Seen turn replay versus same-ID contradiction | ordered_turn_history_do_not_permute | expected={"exact_replay_changes_state":false,"different_digest_same_id":"ingress_conflict","different_digest_C":[],"logical_bank_calls":[]}
+T27 Withdrawal after dispatch cannot undo a confirmed bank effect | ordered_dispatch_history_do_not_permute | expected={"J_op0":"confirmed_success","recorded_products":["p"],"permission_future_writes":"blocked","extra_create_calls":0,"claim_sent_call_cancelled":false}
+
+METAMORPHIC TESTS — PROPOSED, NOT CANDIDATE PASSES
+M01 T01,T02,T04,T05 | unordered/incomparable acts, including jointly invalid batches
+  Transform: all row permutations, IDs and relation graph unchanged
+  Oracle: same reject/errors modulo canonical ordering; F,N,initial unchanged; affected consent invalid; no prefix mutation
+  Excludes: reordering turns or reversing correction edges
+M02 T06,T07,T11 | independent/nonconflicting facts and fill needs
+  Transform: permute or duplicate compatible independent normalized facts; exact event replay dedup separately
+  Oracle: same selected values/pending cells; no extra counters or writes
+  Excludes: unresolved replacement or conflicting complete values
+M03 T08,T10,T12 | ordered corrections encoded by graph
+  Transform: permute serialization while retaining scoped directed edges
+  Oracle: same selected replacement/pending/cycle result
+  Excludes: edge reversal
+M04 T08,T09 | semantic change, not invariance
+  Transform: reverse correction edge
+  Oracle: selected amount differs6000 vs5000; same-result implementation fails
+  Excludes: claim of row-order invariance
+M05 T05 | equivalent scope representation
+  Transform: expand collective target selector into identical per-product assertions, preserving provenance and original aggregate constraints
+  Oracle: same p conflict; q evidence retained only in Q if whole financial batch rejected
+  Excludes: dropping coupled aggregate constraints
+M06 T13,T14,T15 | defense against structurally valid semantic inconsistency
+  Transform: permute permission and disjoint refusal/invalid financial acts; replace raw-copy text with affirmative while typed uncertainty remains
+  Oracle: barrier/consent invalidation survives; financial abort cannot restore consent; q refusal retained
+  Excludes: claim that inconsistent raw/typed pairs are conforming real speech
+M07 T16,T17 | ordered correction history
+  Transform: change then restore values while retaining different component revisions
+  Oracle: old certificate remains invalid; never confirm new terms with old/same-turn act
+  Excludes: ignoring revisions merely because values coincide
+M08 T18 | source/API relational change
+  Transform: replace source API500 guarantee with unknown-effect semantics; otherwise same receipt bytes
+  Oracle: retry plan disappears and outcome becomes unknown
+  Excludes: editing original API or scorer
+M09 T19,T20,T21 | explicit ordered transport histories
+  Transform: drop, corrupt binding, or duplicate an already bound receipt
+  Oracle: unknown blocks; bad binding unchanged; exact replay applies once
+  Excludes: arbitrary success/failure arrival-order commutativity
+M10 T22 | adapter equivalence with correctly rebound source spans
+  Transform: render own-name clause + independent AI question separated by comma, semicolon, period, ! or ? where clause semantics remain identical
+  Oracle: same recipient-only advance plus answer obligation; bank verification false
+  Excludes: blind splitting inside quoted text, titles/abbreviations, or altered speaker/subject
+M11 T23 | meaning change
+  Transform: change positive affirmation to quoted/negative/hypothetical or wrong-subject form
+  Oracle: must not preserve positive recipient advance
+  Excludes: punctuation-invariance shortcut
+M12 T24 | concurrency/history
+  Transform: advance live revision after preflight but before commit
+  Oracle: CAS rejects stale patch; confirmed receipt facts preserved; re-preflight required
+  Excludes: assuming stale checks are sufficient at initial admission only
+M13 T25 | API effect classification change
+  Transform: replace bound add_note success by bound ok:false
+  Oracle: confirmed note becomes false; successful coverage assertion forbidden
+  Excludes: equating attempted and recorded
+M14 T26 | event identity consistency
+  Transform: replay same ID/digest then same ID/different digest
+  Oracle: exact replay no changes; conflicting reuse rejected with barrier
+  Excludes: deduplicating distinct actual turns with equal wording
+M15 T27 | meaningful order change
+  Transform: move withdrawal from after dispatch to before dispatch linearization
+  Oracle: before prevents request; after does not erase eventual bound success; both prevent further unsent unauthorized effects
+  Excludes: commutative row-permutation property
+
+MINIMAL EXECUTED CELL ALGEBRA
+Only maximal-assertion/fill algebra on already scoped, normalized cells. Target binding, aggregate validation, whole-transaction CAS, policy, permission and receipts remain specification contracts, not implemented/verified by this small function.
+def cell_reduce(atoms, edges):
+    # Normalized atoms for ONE target/component; no policy/API/ingress authority.
+    ids = [a['id'] for a in atoms]
+    if len(set(ids)) != len(ids): return {'status': 'reject_duplicate_id'}
+    by_id = {a['id']: a for a in atoms}
+    children = {i: set() for i in ids}
+    indegree = {i: 0 for i in ids}
+    for old, new in edges:
+        if old not in by_id or new not in by_id:
+            return {'status': 'reject_missing_node'}
+        if new not in children[old]:
+            children[old].add(new); indegree[new] += 1
+    todo = sorted(i for i in ids if indegree[i] == 0)
+    visited = 0
+    while todo:
+        i = todo.pop(); visited += 1
+        for j in children[i]:
+            indegree[j] -= 1
+            if indegree[j] == 0: todo.append(j)
+    if visited != len(ids): return {'status': 'reject_cycle'}
+    maximal = [by_id[i] for i in ids if not children[i]]
+    if any(a['kind'] in ('replacement', 'unknown_need') for a in maximal):
+        return {'status': 'pending'}
+    values = {a['value'] for a in maximal if a['kind'] == 'value'}
+    if len(values) > 1: return {'status': 'conflict'}
+    if values: return {'status': 'value', 'value': next(iter(values))}
+    return {'status': 'pending' if maximal else 'missing'}
+
+11 algebra families/20 permuted evaluations matched. This does not validate targets, totals, whole-state transactions, permissions, receipts or runtime behavior.
+
+IMPLEMENTATION NOTES
+Numbers and D0/D1 are a synthetic finite verification domain, not customer labels, official expected outcomes, or reusable policy constants. In B3-2,50 and total1 are the review-reported counterexample; those exact payload values are retained only in the source-counterexample record. No absolute customer date/name is copied. Fixture receipt provenance is an explicit test assumption; production availability is unproven.
+All listed expected fields are conjunctive assertions. F_values is a subset assertion; equals_before compares entire named lane. Quarantined Q values are never substituted into F. logical_plan describes offline allowable dispatch only; no actual bank calls occur.
+Current flat carrier does not prove correction edges by row order. If the adapter cannot establish a scoped edge, it must produce conflict/clarification. This spec does not require new learned heads or assert current producer support.
+Target expansion, all-total validation, draft-state commit and permission barrier can be implemented around current typed rows. Unencoded correction order must yield conflict; do not add a learned authority head or trust row order.
+Per case report source/implementation hashes, typed inputs, pre/post F/N/B/C/Q/J, logical calls, observed result and unexercised conditions. Preserve source witness classifications; no hosted pass-rate or all-branches claim.
+These finite synthetic cases are compiler/spec regressions, not reviewed training labels, calibration or blind qualification. No original expectations, candidate, guide, model or platform changes here.
+
+SOURCE HASHES
+analysis/learned-layer-design.checkpoint12-policy-obligations.json a4a6cd0e1c37b50493283a90d9ba783985b07d5de0b38355c4e3d9ae25a36327
+analysis/learned-layer-design.checkpoint12-policy-obligations.txt bf694f6a4ab1247c2c280845f3ac1600288cbf8c9920276726c4fc73fa795d9a
+analysis/night-opus-b-next3-review.json a64a93fe0df35cee44b52c5c42a6214b5c8664be6685db637bdc9d30c8b0cee4
+analysis/night-opus-b-next3-review.txt 494627be2861720e9a954ad3de2caa26d03c0f4cdce9ba9ec875ab472476389e
+competition/runs/20261011-062044-9c9917/work/controller.py 051f4d5763f1d61c01bc227e6f6f4fdf6dd940b45df8f1658209d7a3c38eab64
+competition/runs/20261011-062044-9c9917/work/event-contract.json c28852f9ad1bc39d78549742f25b00865c660ed1f3ccc1fa4eca51ac9e2a14d2
+competition/runs/20261011-062044-9c9917/work/policy.json 8c53deefde770698d77e67afe51cd11596a26898dbf1ec0d305a4a358eeb1b38
+competition/runs/20261011-062044-9c9917/codex-stress-b-next.workflow.json f3e856794e554b486bfb5c76c63c9a4ea0288d81c8d0d5a7fb0e83156f062fd4
+competition/runs/20261011-062044-9c9917/work/inputs/01-brief-a.md c989bc4484c9643b0e79646c3091fe29b1792fce9972efd571815ce38fbb7573
+competition/runs/20261011-062044-9c9917/work/inputs/02-brief-b.md 1661a57f3da8bffa2b8d03a8213f6db61f8b3ed8cd2d819767ebaea2d6068742
+competition/runs/20261011-062044-9c9917/work/inputs/openapi.json fa5ef2aec75e41c7f0be454cde1f6ffd69c5a4735ebe364ee065b13090b74d02
+
+13 artifact consistency checks passed; prior four files and checkpoints08-12 unchanged. Candidate/platform/Git/cloud/other-worker actions0. New author/review packets and DEV unread.
+
+ADAPTER / REVISION BOUNDARIES
+T22/T23 constrain the source-to-typed-act adapter and existing identity transition, not the one-cell financial reducer. Recipient recognition advances only to the first source-defined security question. It never establishes bank verification.
+The full reducer retains maximal assertion IDs/provenance. A substantive change or explicit correction creates a fresh component revision even if a later correction restores the same value. An exact event replay does not. The small cell_reference deliberately returns only selected value/status; it does not implement provenance or certificate revision assignment.

@@ -1,0 +1,248 @@
+{
+  "status": "CLOSED_FROZEN_CODEX_A9_SOURCE_CPU_REVIEW",
+  "candidate": {
+    "path": "competition/runs/20261011-082830-a93659/codex-stress-a.workflow.json",
+    "sha256": "471494ad17cab933aa56658e4a5d02d9c99a23bfc165386bf46a352b4585495c",
+    "version": 9,
+    "agent_id": "37b17600-df9a-4934-854e-a3de8f2e7987",
+    "updated_at": "2026-10-11T05:33:06.200Z",
+    "publication_time_user_attested": "2026-10-11T05:33:07Z",
+    "hosted_tested": false
+  },
+  "receipt_utc": "2026-10-11T05:34:26.6516369Z",
+  "finished_utc": "2026-10-11T05:38:42.452849+00:00",
+  "elapsed_seconds": 255.801213,
+  "within_7_minutes": true,
+  "counts": {
+    "cpu_observations": 133,
+    "cpu_pass": 112,
+    "cpu_fail": 21,
+    "literal_source_executions": 915,
+    "codec_checks": 38,
+    "producer_literal_examples": 28,
+    "synthetic_api_hook_sequences": 145,
+    "critical_remaining_defects": 2,
+    "high_remaining_defects": 1,
+    "medium_remaining_defects": 1,
+    "by_category": {
+      "control": {
+        "count": 80,
+        "pass": 79,
+        "fail": 1
+      },
+      "independent_challenge": {
+        "count": 12,
+        "pass": 2,
+        "fail": 10
+      },
+      "receipt_guard_challenge": {
+        "count": 8,
+        "pass": 0,
+        "fail": 8
+      },
+      "schema_contract_challenge": {
+        "count": 2,
+        "pass": 0,
+        "fail": 2
+      },
+      "source_known_repair": {
+        "count": 31,
+        "pass": 31,
+        "fail": 0
+      }
+    }
+  },
+  "findings": [
+    {
+      "id": "A9-C01",
+      "severity": "critical",
+      "classification": "conforming_complete_security_plus_independent_question_source_counterexample",
+      "observed": "Question paraphrases outside security_acts are left inside answer text. The consumer then rejects complete conforming security v, although admin scalar flags correctly identify the independent question. Known repair wording passes; new challenge paraphrases fail to reach bank.",
+      "source_lines": [
+        208,
+        230,
+        548,
+        550
+      ],
+      "witness_ids": [
+        "challenge/dob/call-paraphrase",
+        "challenge/dob/balance-paraphrase",
+        "challenge/dob/security-paraphrase",
+        "challenge/dob/person-paraphrase",
+        "challenge/dob/authenticity-paraphrase",
+        "challenge/phone/call-paraphrase",
+        "challenge/phone/balance-paraphrase",
+        "challenge/phone/security-paraphrase",
+        "challenge/phone/person-paraphrase",
+        "challenge/phone/authenticity-paraphrase"
+      ],
+      "qualification": "Conditional CPU evidence with manually supplied schema-conforming event/raw/admin; no actual producer model execution."
+    },
+    {
+      "id": "A9-C02",
+      "severity": "critical",
+      "classification": "identity_and_account_receipts_lack_fresh_counter_operation_body_binding",
+      "observed": "Literal verify_identity/get_account pre/post hooks and dispatcher consume ok/verified/all_verified or products while awaiting mode matches. They do not bind identity/account success to a fresh counter, requested operation, customer, field or answer. Synthetic stale/mismatched receipts advance security and expose synthetic account data. Promise receipts have separate binding guards.",
+      "source_lines": [
+        361,
+        407,
+        410,
+        411,
+        417
+      ],
+      "witness_ids": [
+        "identity-guard/dob/stale-counter",
+        "identity-guard/dob/wrong-operation",
+        "identity-guard/dob/wrong-body",
+        "identity-guard/phone/stale-counter",
+        "identity-guard/phone/wrong-operation",
+        "identity-guard/phone/wrong-body",
+        "account-guard/stale-counter-wrong-customer",
+        "identity-guard/after-wrong-stale-counter-operation-answer"
+      ],
+      "qualification": "Requires stale/misbound data reaching exported hooks; actual platform correlation is untested. This is a missing source guard, not a claimed observed backend incident."
+    },
+    {
+      "id": "A9-C03",
+      "severity": "high",
+      "classification": "mandatory_raw_missing_not_failclosed",
+      "observed": "A syntactically complete security v reaches comparison when mandatory raw is absent; exported consumer only applies current-self/raw checks if raw is truthy.",
+      "source_lines": [
+        548,
+        559
+      ],
+      "witness_ids": [
+        "schema/missing-raw/dob",
+        "schema/missing-raw/phone"
+      ],
+      "qualification": "Conditional missing extraction control, not conforming producer emission."
+    },
+    {
+      "id": "A9-C04",
+      "severity": "medium",
+      "classification": "advertised_offer_ordinal_without_yes_rejected",
+      "observed": "Producer advertises day-only ordinal referring to current offer. After 26 October holiday counteroffer moves to 27 October, proposal d=twenty seventh with raw The twenty seventh cannot bind the offer; adding Yes to the same proposal succeeds. Consumer line587 restricts offered_date to agree/confirm or explicit yes/sure/okay/ok.",
+      "source_lines": [
+        150,
+        583,
+        587,
+        588
+      ],
+      "witness_ids": [
+        "payment/offer-ordinal-readback"
+      ],
+      "qualification": "Conditional conforming producer frame, actual CPU result; no bank write or false receipt."
+    }
+  ],
+  "source_hashes": {
+    "dispatch": "84da5190ff053e084cf81abdec7f2598e6e5bbfd1781a2774955bc1cfe6f8c34",
+    "verify_identity/pre_process_code": "d9a5483a0dad955669799fbf608d90997be6c10247b9871b39a32251cfdcd65b",
+    "verify_identity/post_process_code": "38a60130ffaf9a33b71877a9c0b086897962a363f9342bb3e79774808481dcbc",
+    "get_account/pre_process_code": "4fb4776b5bf98cf2c53f6bcd7fb320a403b11f2400734da71459f29f321df5c7",
+    "get_account/post_process_code": "68a40eb6d9f80108658dfe191af8532047bca477f622b9654c6d3c747b96a01c",
+    "create_promise/pre_process_code": "90d4d11d5170b84f04a78c1588f862817d7a68cd5a71968cd75597fca9cdc53b",
+    "create_promise/post_process_code": "fd755f6ed30e74a741c38852f50d233b8e0c951917a5fe0de0dc7c70e4578265"
+  },
+  "source_cpu_run_sha256": "c9c1fcf6a9b8b76250a7f547a80cefa715e0c877534b865bcf1fbf12bec31d87",
+  "harness_sha256": "1fd9fcf33338e20e02f8bce217b4e4f43f1dacf31263bd6a6a8605c48d83b4b7",
+  "schema_inspection": {
+    "event_type": "string",
+    "raw_type": "string",
+    "admin_type": "string",
+    "admin_validation_pattern_present": false,
+    "literal_examples": 28,
+    "normalized_pattern": "^k=[a-z_]+;c=[01];(?:[padvtu]=[A-Za-z0-9 ,_./:-]+;)*END(?:\\nk=[a-z_]+;c=[01];(?:[padvtu]=[A-Za-z0-9 ,_./:-]+;)*END)*$",
+    "decoder_split_codepoints": [
+      10
+    ],
+    "regex_separator_codepoints": [
+      92,
+      110
+    ],
+    "literal_examples_all_match": true,
+    "actual_newline_regex_decoder_match": {
+      "id": "aggregate-newline",
+      "wire": "k=proposal;c=1;a=220;END\nk=proposal;c=1;d=20 October 2026;END",
+      "regex": true,
+      "decoder": true,
+      "rows": [
+        {
+          "k": "proposal",
+          "c": "1",
+          "a": "220"
+        },
+        {
+          "k": "proposal",
+          "c": "1",
+          "d": "20 October 2026"
+        }
+      ],
+      "error": null
+    },
+    "literal_backslash_n_rejected": {
+      "id": "aggregate-literal-backslash-n",
+      "wire": "k=proposal;c=1;a=220;END\\nk=proposal;c=1;d=20 October 2026;END",
+      "regex": false,
+      "decoder": false,
+      "rows": [],
+      "error": "field"
+    },
+    "admin_allowed_tokens": [
+      "none",
+      "ai",
+      "scam",
+      "purpose",
+      "balance",
+      "security_purpose",
+      "relative_policy"
+    ],
+    "security_admin_tts": {
+      "text": "{{dialogue_line}}",
+      "type": "tts"
+    },
+    "security_admin_transitions": [
+      {
+        "condition": {
+          "mode": "exact",
+          "operator": "always"
+        },
+        "description": "always",
+        "target_node": "verify_identity"
+      }
+    ]
+  },
+  "protected_files_unchanged": true,
+  "protected_file_count": 105,
+  "scope": "Exact local published-normalized export; actual persistent vars and exact exported code/hooks. Manual conforming producer frames and explicit pollution controls; synthetic bank receipts only. No platform, client, HTTP, Git, native, DEV, model or secret reads. Parent owns workspace queue. No candidate patch. No stage2 pack wording.",
+  "qualification": "CLOSED source CPU review, parent R&D not qualified deployment; HOSTED UNTESTED",
+  "failed_observation_ids": [
+    "challenge/dob/call-paraphrase",
+    "challenge/dob/balance-paraphrase",
+    "challenge/dob/security-paraphrase",
+    "challenge/dob/person-paraphrase",
+    "challenge/dob/authenticity-paraphrase",
+    "challenge/phone/call-paraphrase",
+    "challenge/phone/balance-paraphrase",
+    "challenge/phone/security-paraphrase",
+    "challenge/phone/person-paraphrase",
+    "challenge/phone/authenticity-paraphrase",
+    "identity-guard/dob/stale-counter",
+    "identity-guard/dob/wrong-operation",
+    "identity-guard/dob/wrong-body",
+    "identity-guard/phone/stale-counter",
+    "identity-guard/phone/wrong-operation",
+    "identity-guard/phone/wrong-body",
+    "account-guard/stale-counter-wrong-customer",
+    "identity-guard/after-wrong-stale-counter-operation-answer",
+    "payment/offer-ordinal-readback",
+    "schema/missing-raw/dob",
+    "schema/missing-raw/phone"
+  ],
+  "artifacts": [
+    "analysis/night-codex-a9-review.json",
+    "analysis/night-codex-a9-review.txt",
+    "analysis/night-codex-a9-witnesses.json",
+    "analysis/night-codex-a9-witnesses.txt",
+    "analysis/night-codex-a9-witnesses.py"
+  ]
+}

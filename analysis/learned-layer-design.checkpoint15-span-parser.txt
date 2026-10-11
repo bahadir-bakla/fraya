@@ -1,0 +1,34 @@
+CHECKPOINT15 — TYPED SPAN PARSER / BOUNDARY PROJECTION
+
+Next improvement: implement a NEW bounded typed temporal parser, first calendar/range composition and lossless boundary representation, then narrow reference/event operands. R4/V7 remain frozen. No fit, GPU, platform, Git, credentials, DEV or learned scores/weights were used. Annotation spans were read only as exposed TRAIN diagnostic evidence.
+
+Actual V7 baseline:
+101 reviewed temporal annotations versus105 actual candidates:20 exact+target,2 exact with unresolved/mismatched target,60 boundary mismatches,19 misses. Among the60 mismatches:28 current,30 uncertain,2 superseded. The12 current exact matches are distinct from8 uncertain exact matches. Thus better span recall alone does not prove current financial-proposal role.
+Pre-ancestry construction support is8 primary-positive/9 additional-negative and5 DATE-complete/5 unfinished;18 construction components/38 possible old links unresolved. All postmask new usable support0. V5 remains27/19 primary and20/16 DATE, NO-FIT.
+
+Source-derived mechanisms and repair order:
+S1 — lossless boundary representation. Month parsing currently absorbs a comma without a following year; annotations often include on/for/by/until while actual candidates contain only an anchor. Represent surface extent, semantic operands/operators, attachments and markers separately. ON/FOR can be attachment only with a recognized parent grammar; BY/UNTIL are semantic bounds and cannot be stripped. Keep codepoint and UTF8 offsets distinct.
+S2 — typed composition. R4 has from/either but no between-and; ordinal weekday and month-the-day split into separate atoms. Add parent productions with explicit missing operands: month THE requires a day; nth weekday OF/IN requires period; BETWEEN/FROM ranges require endpoints. Preserve completed children inside an unfinished parent. Containment alone cannot erase another target/correction/act.
+S3 — narrow reference/event operands. THAT/IT in temporal operand position can be linguistically closed but unresolved; event clauses such as 'it closes' need a typed event node. Administrative 'before I answer' is not automatically a payment commitment. Add following/nearest-to and event ranges only with bounded supported productions and negative controls. Unknown/interrupted dependencies remain unsupported; no greedy arbitrary-clause closure.
+S4 — new-version comparison. Re-extract from raw source, pin scanner/feature versions, report raw literal, semantic literal and projected-equivalence outcomes separately. Do not change V7 spans, donate nearest-overlap labels or feed annotation offsets to runtime.
+
+Actual lexical diagnostic partition (101 annotations, not independent support):
+3 between-range compositions;11 ordinal/period compositions;4 month-determiner operands;4 following-relations;7 outer attachments/operators;1 trailing-punctuation mismatch;30 other boundary temporal/event patterns;19 other misses;20 exact-target and2 exact-target-unresolved. Pattern labels are repair categories, not new semantic gold.
+
+Typed interface:
+TemporalNode={source ID,kind,semantic extent,argument segments,operator spans,attachment spans,marker spans,children,typed holes,syntax,unresolved value,source target hypothesis,scoped polarity/role hypothesis,dependencies}.
+Candidates keep validity/reference/normalization masks false until their existing independent proof requirements are met. Source target hypotheses are never copied from reviewer target sets. Clause-scoped corrections retain old and replacement nodes and a directional edge. Ordered corrections are not permutation invariant; independent acts can be permuted with stable relations.
+Every removed formatting/attachment segment remains source-bound and reconstructible. Never delete range connectors, bounds, relation operators, missing-tail determiners or ellipsis. Internal comma+year is retained. A completed calendar expression is not a valid normalized date or financial consent.
+
+Falsifiable delivery contract:
+JSON provides11 grammar productions,8 projection laws,38 finite candidate cases and12 metamorphic properties. Cases include complete/open month-the-day, nth weekdays, ranges, references versus holes, by/until versus on, punctuation/year, ellipsis, corrections, independent if clauses, multi-target terms, Unicode, identifier/clock competing kinds and unknown event operands. All38 NEW full candidate cases are UNEXECUTED here.
+A pure projection helper over already-typed segments is included in JSON.21 reference/artifact checks passed: lossless roundtrip/idempotence, no semantic/marker deletion, holes and masks retained, privacy noninterference, Unicode offsets, diagnostic arithmetic and unchanged source/prior report hashes. This helper does NOT prove parser segmentation/classification is correct.
+Also executed12 observations using only the original frozen pure date-scanner AST, with the legacy/full runtime excluded. They reproduce range/ordinal/month splitting and trailing comma behavior. They are scanner witnesses, not model or deployment metrics.
+
+Ablations on exposed TRAIN:
+A0 frozen R4; A1 lossless projection only; A2 calendar/nth/range composition; A3 narrow reference/event operands; A4 remove the event or attachment extension. Report literal exact counts and projected hypotheses separately, by source family and current/uncertain/superseded role. Report regressions of the existing20 exact-target matches and retained legacy child atoms. Unknown/unreviewed candidates do not become false-positive or unfinished labels. False-candidate precision needs exhaustively reviewed candidate/absent regions.
+Keep all schema/privacy/role/target/feature/ancestry masks, and report the whole mask funnel.21 projection checks do not increase the0 new usable-support count. Source construction/profile checks do not establish trusted current bank ingress.
+
+Minimal Sol slices: S1 representation+comma/attachment/bound handling; S2 three calendar-composition families with holes; S3 narrow references/events; S4 frozen before/after source table and ablations. No bank calls, learned authority, new arbitrary class floors or GPU requirement. After actual extraction improvement, independently resolve ancestry/schema, recount actual eligible groups under existing admission, then obtain exact parent CPU authorization if a fit becomes possible. Any data used to tune this parser is diagnostic; freeze before fresh independent source validation.
+
+Exact evidence hashes and all101 annotation/candidate source pointers are in JSON. Old checkpoints and frozen R4/V7 artifacts were preserved.

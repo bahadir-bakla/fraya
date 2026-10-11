@@ -1,0 +1,319 @@
+CHECKPOINT12: POLICY-GRAPH OBLIGATIONS
+2026-10-11T03:50:16.802543+00:00
+
+Keep a source-generated graph. Introduce typed multi-act reduction, dependency-bound readbacks and serial effect plans; prove compiler relations instead of learning bank authority. No GNN/GAN/GPU need follows from these source faults.
+
+Scope: static source analysis only; no candidate execution, host/API calls, private cases, new author packets, DEV or fits. Only this JSON/TXT pair written.
+
+MOST ACTIONABLE SOURCE FINDINGS
+1. Scoped withdrawal drops bare refusal rows globally; a sibling refusal can disappear (H03).
+2. Exact-target-set merging misses overlap between collective and single-product rows, allowing order-dependent complete values (H02).
+3. A primary-action branch can bypass persistent storage of valid sibling facts (H01/H04).
+4. add_note ok:false is still marked noted; bank record completeness cannot be inferred (H05).
+5. Retry depends on this API explicitly guaranteeing no effect for500. Missing/unknown results need separate handling (H06/H07).
+6. Receipt correlation and no-notes-ever-on-transfer have conditional runtime/realizability gaps; no hosted race is asserted (H08/H09).
+7. Failed transfer after a recorded promise requires explicit outcome resolution (H10).
+
+SOURCE BINDING
+Run inputs have different raw hashes but identical newline-normalized decoded text to original kit. Export contains platform defaults, so whole node objects differ; inspected code, producer schema and bank preactions are identical.
+Embedded715-line controller, exported producer schema and all eight inspected bank pre-action definitions match their work artifacts. Run brief/API/docs match original normalized text. A full exported node object is not byte-identical to its pre-export object.
+
+BUILDER IR
+
+policy_bundle
+fields: source_documents with hash/span/effective priority, API schema hash, typed predicates/limits/calendar expressions, security-order automaton, override edges, outcome decision table, operation failure semantics, unresolved conflicts
+contract: Compile each material value or precedence from current inputs. Detect cycles, missing cases and unresolved amendments. Generated source-specific literals are permitted; global fixed policy knowledge is not.
+
+turn_proposal
+fields: call/turn local IDs, question context, acts(kind,completion,polarity,scope,evidence), facts(component,targets,expression,language_completion,value_resolution,evidence), independent questions, correction/negation/reference relations, ingress quality
+contract: No verified/success/permission authority fields accepted from extraction. Distinguish syntactic completion from exact normalization, target binding and backend truth.
+
+state
+fields: identity stage and verified receipts, account snapshot/product order, per-product component facts with opaque versions, pending dialogue obligations, source-specific counters, readbacks/provisional consent, operation journal, pending plan, confirmed and unknown effects, closing state
+contract: Opaque versions support equality, not integer freshness. Confirmed recorded promises are monotone; unknown effects survive ordinary dialogue updates.
+
+plan
+fields: plan ID, policy/API/state versions, effect nodes with immutable semantic body and digest, dependency DAG, required receipts, speech obligations, cancellation conditions
+contract: Atomic local decision, serial external execution. Revalidate dependencies before each effect. A local body hash is not a bank acknowledgement. Do not add unsupported idempotency fields.
+
+operation_journal
+states: prepared, dispatched, confirmed_success, confirmed_no_effect, unknown
+fields: operation/attempt IDs, subject/product scope, canonical body, guard certificate, dispatch context, receipt provenance, applied-once marker
+contract: Unknown dispatched action cannot become prepared by clearing vars. Retry is a fresh attempt of the same semantic request only after known no-effect and source budget.
+
+scheduler
+expression: Enabled = prerequisites satisfied AND not prohibited; schedule by source-derived strict partial order
+contract: No universal human>hardship>question ranking. Facts/questions persist while selecting the next action. Unordered conflicting effects require clarification or an explicit policy conflict.
+
+TRANSITION OBLIGATIONS
+
+O01 Reduce all acts before action priority
+S1=Reduce(S0,TypeCheck(E)); Plan=Schedule(Enabled(P,S1)); no tool effect during Reduce
+High-priority actions may suppress writes but cannot erase unrelated valid facts/questions. Preverification financial assertions remain quarantined, not a basis for disclosure or account ownership.
+Sources: identity; terms; products; controller.py:393-434,474-594
+
+O02 Partial-fact merge law
+Independent u,v: R(R(S,u),v)=R(R(S,v),u); R(R(S,u),u)=R(S,u)
+Expand target sets to individual products before merging. Distinct complete same-component values without correction edge mean conflict. Complete siblings satisfy matching unfinished needs; missing is not absent. A declared a->b correction is ordered and must not satisfy arbitrary permutation invariance.
+Sources: terms; products; controller.py:186-218,596-686
+
+O03 Questions persist independently
+Question(q) => PendingAnswer(q) until sourced answer/explicit unknown/source-authorized termination
+A source-specific question-as-decline rule such as A15 is phase scoped. Do not turn all questions into payment refusal. Account answers require verification/current API facts. An unfinished q is not automatically a complete request.
+Sources: identity; primary; controller.py:397-425,520-538
+
+O04 Identity, account and source-policy dependency
+G(FinancialWrite(p) => BankVerified(subject,identity_epoch) AND p in CurrentAccount(subject) AND compatible source policy/API)
+Recipient confirmation and extraction completion never prove bank identity. Compile per-operation gates: callbacks and permitted preverification human transfers differ from financial writes. Security sequence derives from the current brief rather than a fixed global two-question path.
+Sources: identity; primary; products; controller.py:349-368,513-537
+
+O05 Product-specific valid complete terms
+G(Create(p,a,d) => complete/resolved(a,d,p) AND finite(a) AND AllowedAmount_P(p,a) AND AllowedDate_P(p,d,call_now))
+Policy floor/deadline/calendar/adjustment rules use the returned product and call clock. Validate backend numeric fields too. Complete-but-vague expressions remain unresolved, not invented dates.
+Sources: terms; products; controller.py:173-180,296-306,362-365
+
+O06 Readback dependency certificate
+C=(subject,account_epoch,policy_hash,API_hash,{p:amount_rev,date_rev,terms},readback_id,spoken_turn,consent_turn); Valid(C) => consent_turn>spoken_turn AND dependencies current AND no scoped withdrawal/correction
+Changed or newly completed components invalidate old consent. Value reversion after a correction (ABA) cannot revive it. Joint-readback policy invalidates the joint batch when one included dependency changes. Scheduled speech is not an independently observed delivery acknowledgement.
+Sources: terms; products; controller.py:249-280,300,561-579
+
+O07 Pause/withdrawal versus refusal
+Pause(p) => revoke applicable C, preserve facts(p), delta attempts(p)=0
+Invalidating a joint certificate may affect all included writes but must not delete q refusal outside pause scope. Resume alone does not restore consent.
+Sources: terms; products; controller.py:395-425,552-560,632-637
+
+O08 Typed, once-only counter consumption
+delta counter_c(p)=1 iff unique new event e satisfies source Predicate_c(e,p,stage)
+Keep security declines, recipient asks, format clarification, per-product persuasion and stop events distinct. Valid new terms clear target deferred refusal; sibling completion cannot revive it. Count API errors/questions/ambiguity only if the source explicitly says so.
+Sources: identity; terms; primary; products; controller.py:259-295,498-524,626-637
+
+O09 Bound operation receipts
+Apply(r,J) iff unique pending capsule matches operation, subject, body/product, attempt, dispatch epoch and receipt provenance; consumed(r) => no second application
+Current mutable request_id is not response provenance. Require an immutable binding or a separately verified strict transport-order assumption; local serial equality alone cannot prove delayed/replayed-response safety.
+Sources: API; platform; controller.py:317-339,369-380,701-706; workflow:/nodes/*/pre_actions/0/post_process_code
+
+O10 Three-way outcome and retry
+Outcome(j) in {confirmed_success,confirmed_no_effect,unknown}; retry requires known no-effect AND budget AND unchanged body AND guard still valid
+Current API500/ok:false explicitly guarantee no effect. Timeout/missing body/missing fields do not inherit this. Block blind unknown-outcome retry; retain same semantics and fresh attempt identity for permitted retry.
+Sources: receipts; partial_failure; API; controller.py:318-323,369-376
+
+O11 Atomic plan is not an atomic bank transaction
+freeze reduced state, dependencies and effect DAG; dispatch one effect; revalidate remainder after receipt
+Preserve successful prefixes. Transfer cancels undispatched promises/prohibited notes, not successful past records. Never imitate rollback by deleting state.
+Sources: terms; transfer; partial_failure; controller.py:296-311,369-380
+
+O12 Honest bank outcome
+Said(recorded,p) => confirmed_success(create,p); terminal=f_P(confirmed effects,known dispositions,unknown effects)
+Intent, attempted call, transport success and bank effect are distinct. Failed note is not recorded note. Undefined failure/unknown terminal mapping is an unresolved obligation, not permission to invent enums or claim no_promise proves no record.
+Sources: receipts; partial_failure; API; controller.py:307-311,369-382; workflow:/nodes/safe_close
+
+O13 Last tool call and conditional liveness
+G(close_dispatched => no later bank call); count(close attempts)<=1; eventual safe terminalization => F(close_dispatched)
+Separate at-most-once attempt from exactly-one successful close under tool failure/dropped calls. Farewell precedes close. Do not retry close blindly when source forbids another call.
+Sources: receipts; workflow:/nodes/farewell,/nodes/close_call,/nodes/safe_close,/nodes/end
+
+O14 No-note-on-transfer realizability
+Transfer in history => no AddNote anywhere in history
+Deferral helps but cannot remove a successful note before a later mandatory transfer. If input may still arrive after note commit and API lacks compensation, these requirements may be jointly unrealizable. Prove a source-permitted finalization boundary or disclose the conflict.
+Sources: transfer; products; controller.py:303-306,483-494; platform
+
+O15 Source-dependent graph flexibility
+Compile(P+amendment,API) satisfies effective source rules; undefined precedence/outcome blocks certification
+Alpha-renamed codes, changed limits/calendars, security order and outcome priority must propagate across producer, decoder, guards and graph. A source rule list and empty conflicts array are not proof of coverage.
+Sources: builder; policy:/machine_policy,/conflicts; identity; terms; products
+
+SYMBOLIC CALL/NO-CALL HISTORIES
+p,q are returned identities, not customer fixtures; a,b distinct policy-valid amounts; d a valid date under call_now/calendar. No copied fixture constants are needed.
+
+H01 Human-help detour preserves independent terms
+Precondition: Verified returned product p; valid symbols a,d; first human request; no write certificate.
+History: USER complete proposal(p,a,d) + human_request -> SOURCE help-first question
+Current source: accumulate reconciles rows but does not persist product facts. Human branch485-489 selects the question before the product-update loop596-686, so new proposal values are not persisted on this path.
+Required: O01: retain tentative validated facts, ask source-required help-first question; financial write remains disabled.
+Allowed next calls: none immediately
+Forbidden: create_promise; add_note; transfer before source-required insistence
+Evidence: static branch derivation; not executed; hosted frequency unmeasured.
+Sources: controller.py:426,485-489,596-686; A42; A34-35
+
+H02 Collective/individual overlap bypasses component conflict merge
+Precondition: Verified p,q; a!=b are allowed p amounts; shared valid d; scopes{p,q} and{p}; no correction relation.
+History: USER proposal({p,q},a,d); proposal({p},b,d) -> PERMUTE serialization only
+Current source: accumulate groups by exact target-set tuple. Overlapping sets form different groups, so the later product loop can assign p twice. Final p amount follows row order instead of a per-product conflict.
+Required: O02: expand target sets first; p amount becomes conflict, q retains a,d; clarify p and disable joint writes.
+Allowed next calls: none immediately
+Forbidden: create_promise from either unresolved serialization
+Evidence: static branch derivation; not executed; hosted frequency unmeasured.
+Sources: controller.py:192-195,206-214,596-686; A34-35; B7
+
+H03 Scoped withdrawal drops another product refusal
+Precondition: Verified p,q with spoken offers; current offer phase.
+History: USER consent(withdraw,p) + refusal(q)
+Current source: Any complete consent row makes descriptive_pause true. Filter421 removes bare no/decline rows without target filtering; both events disappear, so question() occurs and q refusal is lost.
+Required: O07/O08: revoke applicable certificate, preserve p terms with no p attempt spent, retain q refusal for source-permitted processing.
+Allowed next calls: none immediately
+Forbidden: create_promise; closing or noting refusal solely because p permission paused
+Evidence: static branch derivation; not executed; hosted frequency unmeasured.
+Sources: controller.py:395-425; A29-30; B5
+
+H04 Hardship plus partial proposal loses completed sibling storage
+Precondition: Verified p; amount a complete; date unfinished; hardship complete.
+History: USER hardship + partial(p,amount=a,unfinished=date)
+Current source: No complete proposal row exists, so branch556 applies. Because c0 exists,557 asks to finish; the persistent pending-component update605-627 is bypassed.
+Required: O01/O02: retain a, mark only date unfinished, preserve hardship/no-persuasion obligations; do not treat partial row as no facts.
+Allowed next calls: none immediately
+Forbidden: create_promise; persuasion caused by incompleteness
+Evidence: static branch derivation; not executed; hosted frequency unmeasured.
+Sources: controller.py:556-558,605-627; A29; A32
+
+H05 Failed note marked noted
+Precondition: Verified p has non-promise disposition; matching local request serial; HTTP200/body ok:false reaches engine.
+History: CALL add_note(p,source_reason) -> RECEIPT ok:false -> NEXT commit_next
+Current source: Line378 sets noted=True before checking ok. Line379 sets note_failed, but finalization307-311 does not consult it; note loop skips the attempted but unrecorded product.
+Required: O12: distinguish attempted/failed/confirmed note. Preserve disposition without certifying required note coverage. Recover or close only through an explicit source-backed failure rule.
+Allowed next calls: source-authorized recovery or honest unresolved-failure finalization
+Forbidden: claiming note was recorded; successful-case certification from noted=True
+Evidence: static branch derivation; not executed; hosted frequency unmeasured.
+Sources: controller.py:303-311,377-380; API200 no-effect semantics; B8
+
+H06 Current API permits exact-body retry after proven no-effect
+Precondition: Verified complete terms and later joint consent; current-bound500; source retry budget available.
+History: CALL create_promise(p,a,d), attempt i -> RECEIPT HTTP500 known no-effect -> CALL same body, attempt i+1 -> RECEIPT ok:true
+Current source: Source includes matching-counter/status500 fallback318-323 and bounded retry375. It rechecks guards; exact body/receipt binding still require verification independent of control implementation.
+Required: O09/O10: permitted retry has identical semantic body and a fresh attempt identity; acknowledge record only after success.
+Allowed next calls: one create_promise(p,a,d) within remaining source budget
+Forbidden: changed terms during retry; retry beyond policy budget; treating any timeout as no-effect
+Evidence: source-supported intended path; not a tested pass; hosted frequency unmeasured.
+Sources: controller.py:296-302,318-323,369-376; A37; OpenAPI500
+
+H07 Unknown financial outcome cannot establish no-promise
+Precondition: Request dispatched; missing response with no current-bound documented500; bank commit unresolved.
+History: CALL create_promise(p,a,d) -> DELIVERY unknown, possible backend commit not established -> SOURCE safe_exit -> safe_close
+Current source: Controller records unknown_write_outcome then exits. safe_close selects no_promise/service_error when no local status is recorded; this does not settle backend truth.
+Required: O10/O12: preserve unknown, no blind retry or false recorded/no-record claim. API has no reconciliation endpoint/idempotency field/unknown outcome enum; terminal correctness in this environment remains uncertified.
+Allowed next calls: only source-supported best-effort finalization, with explicit unresolved outcome status in audit
+Forbidden: retry assuming no effect; claim that no promise exists in bank
+Evidence: conditional transport countermodel; no hosted behavior observed; hosted frequency unmeasured.
+Sources: controller.py:373-374; workflow:/nodes/safe_close; OpenAPI paths
+
+H08 Delayed response inherits newer local serial
+Precondition: Assume completed j1 for p, current same-operation j2 for q, and delayed duplicate j1 post-hook can occur.
+History: CALL/RECEIPT j1(p) -> CALL j2(q) -> DELAYED j1 hook sees vars.request_id=j2 -> HOOK writes current serial to api_receipt
+Current source: Post-hook copies mutable vars.request_id. Under the stated delivery assumption the local equality check can label j1 result as j2 and apply it to s.writing=q. Docs do not establish that this duplicate delivery is possible or impossible.
+Required: O09: require immutable dispatch/result binding or separately verified ordering/no-duplicate assumption. Reject unbound receipts; do not advance plan.
+Allowed next calls: none immediately
+Forbidden: recording q based on p receipt; dispatch based on relabeled success
+Evidence: conditional proof gap, not claimed reachable hosted race; hosted frequency unmeasured.
+Sources: controller.py:331-339,369-372,701-706; workflow:/nodes/create_promise/pre_actions/0/post_process_code; tools-and-code.md:393-416
+
+H09 Late mandatory transfer after note is a temporal conflict
+Precondition: Successful note exists; assume a later transfer request is mandatory before close; no note-delete API.
+History: CALL add_note(p,reason) -> ok:true -> USER mandatory transfer request
+Current source: Deferring notes does not prove that all subsequent transfer-triggering input is impossible. Priority selection cannot remove a historical note.
+Required: O14: prove a policy-permitted closed finalization/input boundary, otherwise report jointly unrealizable history. No available call repairs both obligations.
+Allowed next calls: no call can undo this history under the current API
+Forbidden: claiming no-notes-ever invariant merely from deferred notes
+Evidence: conditional realizability countermodel; unexecuted; hosted frequency unmeasured.
+Sources: B10; controller.py:303-306,483-494; OpenAPI operation set
+
+H10 Failed transfer after recorded sibling has unresolved outcome precedence
+Precondition: p confirmed recorded; transfer requested; transfer returns ok:false.
+History: CALL create_promise(p) -> ok:true -> CALL transfer_to_agent(source_queue) -> ok:false -> SOURCE finish(no_promise,service_error)
+Current source: Line382 chooses failure outcome from verified flag without examining recorded products. The recorded promise remains, but outcome does not reconcile it with recorded-promise precedence and the transfer exception.
+Required: O12/O15: compile explicit source-backed failed-transfer mapping. Transfer success has not been established; preserve bank records and honest failure speech. If interpretation is unresolved, expose it rather than invent policy.
+Allowed next calls: source-resolved close with truthful recorded/failed-transfer facts
+Forbidden: saying transfer succeeded; discarding recorded p; certifying unsupported failure outcome
+Evidence: static branch plus unresolved policy interpretation; not a declared hosted failure; hosted frequency unmeasured.
+Sources: controller.py:382; B10 and Closing; A46
+
+H11 New component cannot confirm old readback
+Precondition: p readback uses revisions ra,rd; same user turn completes/corrects to ra2 and includes affirmative.
+History: SPEAK readback(p,ra,rd) -> USER complete_amount(p,ra2) + affirmative -> NEXT new readback
+Current source: Existing consent_terms blocks changed values and renegotiates; stored readback/consent are value tuples rather than explicit source/turn/revision certificates. This example is a required proof vector, not a claimed current write failure.
+Required: O06: invalidate certificate, reduce correction, validate, read again, wait for later affirmative. ABA numeric equality cannot alone revive old consent.
+Allowed next calls: none immediately
+Forbidden: create_promise under old readback dependency
+Evidence: required regression vector; implementation outcome unexecuted; hosted frequency unmeasured.
+Sources: controller.py:219-229,274,300,561-590; A34-35; B7
+
+PROPOSED COMPILER PROPERTY HARNESS — NOT EXECUTED
+
+P01 Source-to-IR provenance: Every limit, enum, security step, failure class and precedence edge has source hash/span and effective override ancestry. Unknown/conflicting rules cannot acquire unreported defaults.
+
+P02 Producer/consumer denotation: Generate source-grammar-valid events and require decoding to preserve typed meaning. Malformed/incomplete scopes must not become consent. Compare IR laws rather than mirroring literal implementation strings.
+
+P03 Commuting patches: Permute/duplicate nonconflicting per-product patches and expand overlapping scopes before comparing final facts, obligations and permitted calls. No bank execution needed for the future reducer property harness.
+
+P04 Correction falsification: Reverse a genuine correction edge and require the selected value to change. Remove the edge and require conflict. This rejects an overbroad row-permutation rule.
+
+P05 Priority refinement: Add an independent administrative question: retain product facts/counters. Add transfer/withdrawal: enabled writes may shrink, but no success fact is invented and unrelated facts/questions are not lost.
+
+P06 Product noninterference: Change only q deadline/refusal/amount: p recorded facts remain unchanged except documented joint consent dependencies. Preserve API order only where source policy depends on it.
+
+P07 Dependency mutation: Change amount/date revision, subject, product identity, policy or readback epoch: old write must be disabled. Revert value after correction: old certificate stays invalid. Same-turn new term is not later confirmation.
+
+P08 Receipt binding/replay: Inject stale/wrong-operation/wrong-body/replayed receipts and missing fields into a future symbolic harness. Apply a current effect at most once; unknown never becomes known-no-effect by default.
+
+P09 Failure contract substitution: In separate synthetic API input remove HTTP500 no-effect guarantee; allowable retries must shrink. Change source retry budget; call count follows new limit. Do not edit official API/brief/scorer.
+
+P10 Partial commit and close: Symbolic two-product histories: success then no-effect, success then unknown, success then transfer success/failure. Check monotone bank facts, notes, speech and source outcome; expose undefined terminal cases.
+
+P11 Last-tool graph property: Verify exported close nodes lead only to end with no later bank calls; analyze cycles and conditional liveness separately. API success, speech delivery and interruptions remain external assumptions.
+
+P12 Relational compilation across briefs: Use separate synthetic sources to alpha-rename field/enums/product identifiers, reorder security steps, alter calendar/limits/outcome priority. Require corresponding producer/schema/guard/graph changes and unrelated semantic preservation. Never modify official expectations.
+
+P13 Temporal realizability: Search a symbolic history containing successful note then mandatory transfer. Either demonstrate a supported input-finalization boundary or report conflict; deferral alone is not a proof.
+
+P14 Authority boundary: Spoof extracted verified/success/permission/raw-origin fields; they cannot establish backend evidence or trusted ingress. All emitted runtime operations remain within current bank API and fixed AGENT_LLM.
+
+LIMITS OF PROOF
+safety_proof: Base(S0) and each typed transition: invariant(S) AND stated environment assumptions => invariant(T(S,event)). Discharge source interpretation, extraction fidelity, receipt correlation, backend semantics and graph scheduling assumptions separately.
+atomicity: Local atomic reduction and plan freezing do not make several bank API writes atomic. Preserve successful prefixes and record failed/unknown suffixes.
+liveness: Arbitrary dropped calls, lost responses, unknown commits and post-note mandatory transfers prevent an unconditional successful-all-cases theorem under this API. State unsupported cases without changing official expectations.
+frequency: All histories are symbolic source counterexamples/proof obligations. Candidate execution0; hosted frequency unmeasured; no full branch-coverage claim.
+finalization: At-most-one close attempt is structurally different from exactly-one successful bank close. Unknown close response does not justify either a success claim or an extra forbidden attempt.
+
+TRUST / DATA / RESOURCE BOUNDARIES
+builder: Offline builder may use graph/model reasoning and compile source values into a generated candidate. Reusable builder must not embed future final brief values.
+runtime: Fixed AGENT_LLM and current bank tools only. Code nodes may reduce typed facts, validate source policy and journal operations. No external inference service or undocumented bank parameters.
+raw: raw_speech and clause x are model-extracted copies. Local hashes verify consistency, not cryptographic user-origin attestation. Learned proposals remain shadow/all-abstain.
+data: No new author wording or labels read; no new DEV, fits, data admission changes, or CPU/gold claims. Checkpoint11 no-fit remains.
+cloud: No cloud calls/reservations. Modal transport/grant audit remains blocked; deterministic graph faults do not establish a learned feature bottleneck.
+
+IMPLEMENTATION ORDER
+- In a future automatic compiler rebuild, expand scopes to per-product patches, retain all typed facts/questions, then select source-prioritized actions. Keep producer and consumer schema paired.
+- Separate note/promise attempted, confirmed and unknown states; introduce immutable local request capsules and explicitly verify supported receipt ordering/correlation before asserting replay safety.
+- Bind provisional consent to product components, policy/account/source versions and an earlier readback; preserve confirmed records through failed later effects.
+- Generate source-specific outcome and retry tables, graph obligations and relational checks. Flag undefined failed-transfer, unknown-commit and post-note-transfer cases; do not invent policy or backend atomicity.
+- Keep implementation/data/model/guide/official kit unchanged in this checkpoint. No trained authority, GNN/GAN/GPU or external runtime service is needed to address these deterministic issues.
+
+SOURCE ANCHORS
+identity: Original brief A rules1,10-16; account disclosure after bank verification, not recipient recognition.
+terms: A18-29,34-36: call-bound calendar, source-specific limits, later readback consent, immutable recorded promise.
+primary: A32,39-45: source-defined hardship precedence; human request before/after verification; A15 purpose-instead-of-security-answer can count as decline.
+receipts: A37-38,46-47: success-only recorded speech, bounded failure retry, exactly one close_call last, farewell first.
+products: B1-9: per-product policy, API order, joint readback, independent dispositions and notes.
+transfer: B10 and Closing: transfer preserves recorded promises, discards unrecorded agreements, and forbids notes before/after transfer.
+partial_failure: B11 and Closing: preserve successful siblings, service-error notes for failed product, outcome table from actual records.
+API: openapi.json paths/*/post/responses:200 ok:false means action not carried out;500 explicitly says nothing recorded and call may be repeated. This is source-specific, not generic HTTP semantics.
+platform: tools-and-code.md:250-279,325-353,393-416 describe envelopes, overwrites, counters, hooks and mutable vars, but no immutable transport request-ID echo. workflow-format.md:530-576 documents extraction; extractor.speech is prompt input, not authenticated code-node ingress.
+builder: README Rules/The final: fixed AGENT_LLM, bank API only at runtime, offline builder freedom, changed brief/API rules, no manual candidate edits.
+
+SOURCE SHA256
+competition/runs/20261011-062044-9c9917/codex-stress-b-next.workflow.json f3e856794e554b486bfb5c76c63c9a4ea0288d81c8d0d5a7fb0e83156f062fd4
+competition/runs/20261011-062044-9c9917/work/controller.py 051f4d5763f1d61c01bc227e6f6f4fdf6dd940b45df8f1658209d7a3c38eab64
+competition/runs/20261011-062044-9c9917/work/workflow.json a3b723a3a075a39c2de8333e5c69914ec7f06a4653f4192b3f45132caa9bf222
+competition/runs/20261011-062044-9c9917/work/event-contract.json c28852f9ad1bc39d78549742f25b00865c660ed1f3ccc1fa4eca51ac9e2a14d2
+competition/runs/20261011-062044-9c9917/work/policy.json 8c53deefde770698d77e67afe51cd11596a26898dbf1ec0d305a4a358eeb1b38
+competition/runs/20261011-062044-9c9917/work/inputs/01-brief-a.md c989bc4484c9643b0e79646c3091fe29b1792fce9972efd571815ce38fbb7573
+competition/runs/20261011-062044-9c9917/work/inputs/02-brief-b.md 1661a57f3da8bffa2b8d03a8213f6db61f8b3ed8cd2d819767ebaea2d6068742
+competition/runs/20261011-062044-9c9917/work/inputs/openapi.json fa5ef2aec75e41c7f0be454cde1f6ffd69c5a4735ebe364ee065b13090b74d02
+competition/runs/20261011-062044-9c9917/work/inputs/workflow-format.md b5236915838b6b88196d4d1e194adc21eb45137ffe83828239213f0448c47db9
+competition/runs/20261011-062044-9c9917/work/inputs/tools-and-code.md c094579c4b2169427252a8cf4a32ff8bd2e0e837ff12e56ad4d5f8183980d837
+competition-v3/build-the-builder/README.md 45034ae6079693b8c5eb6e6cc3857d47fdf3629b8b1d2a84fd73fb2f51415d58
+competition-v3/build-the-builder/briefs/brief-a.md d57c049c89aec4615f5b939c5a96ee9bd194142d17045bc4036615cfbdf0f1c7
+competition-v3/build-the-builder/briefs/brief-b.md c59c70099148b91c13e9c5e40246a63b58638f09469d735f8eb65771bb63d550
+competition-v3/build-the-builder/tools/openapi.json 9a8410b12e5c82b6c6a30e9ed7030574d6f919cafdb1e035cef7bd876b0badb8
+competition-v3/build-the-builder/docs/workflow-format.md 4ff70b5a37b647122e6a6f3ca1a523b207dbcdf6afb32058de8451a8c7d1dcfc
+competition-v3/build-the-builder/docs/tools-and-code.md 56be9c87fbfddf5855c25fe83d4633bafd885d7cba5677133c15d211eb21b711
+
+15 artifact/graph-structure checks passed. Candidate executions0; proposed behavior harness unexecuted; no candidate pass/hosted frequency claims. Prior four design files and checkpoint08/09/10/11 pairs preserved. Full protected hashes in JSON.

@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "collection_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "records": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "example_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "input": {
+            "additionalProperties": false,
+            "properties": {
+              "active_readback": {
+                "type": "null"
+              },
+              "api_hash": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "call_local_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "pending": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "components": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "amount": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "evidence_refs": {
+                              "items": {
+                                "type": "object"
+                              },
+                              "minItems": 0,
+                              "type": "array"
+                            },
+                            "revision": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "status": {
+                              "enum": [
+                                "absent",
+                                "complete",
+                                "unfinished",
+                                "ambiguous"
+                              ]
+                            },
+                            "value": {
+                              "type": [
+                                "null",
+                                "string",
+                                "number"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "revision",
+                            "value",
+                            "evidence_refs"
+                          ],
+                          "type": "object"
+                        },
+                        "date": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "evidence_refs": {
+                              "items": {
+                                "type": "object"
+                              },
+                              "minItems": 0,
+                              "type": "array"
+                            },
+                            "revision": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "status": {
+                              "enum": [
+                                "absent",
+                                "complete",
+                                "unfinished",
+                                "ambiguous"
+                              ]
+                            },
+                            "value": {
+                              "type": [
+                                "null",
+                                "string",
+                                "number"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "revision",
+                            "value",
+                            "evidence_refs"
+                          ],
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "amount",
+                        "date"
+                      ],
+                      "type": "object"
+                    },
+                    "target_index": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "unresolved_components": {
+                      "items": {
+                        "enum": [
+                          "amount",
+                          "date",
+                          "time",
+                          "unknown"
+                        ]
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "target_index",
+                    "components",
+                    "unresolved_components"
+                  ],
+                  "type": "object"
+                },
+                "minItems": 0,
+                "type": "array"
+              },
+              "phase": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "policy_hash": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "question": {
+                "additionalProperties": false,
+                "properties": {
+                  "question_id": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "role": {
+                    "enum": [
+                      "payment",
+                      "date",
+                      "amount",
+                      "offer",
+                      "readback",
+                      "callback",
+                      "recipient",
+                      "support",
+                      "security",
+                      "none"
+                    ]
+                  },
+                  "security_field": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "spoken_turn_id": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "target_indices": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "question_id",
+                  "role",
+                  "spoken_turn_id",
+                  "target_indices",
+                  "text"
+                ],
+                "type": "object"
+              },
+              "schema_version": {
+                "const": "semantic_input.v1"
+              },
+              "spoken_offers": {
+                "maxItems": 0,
+                "type": "array"
+              },
+              "state_revision": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "targets": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "index": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "label": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "index",
+                    "type",
+                    "label",
+                    "product_id"
+                  ],
+                  "type": "object"
+                },
+                "minItems": 0,
+                "type": "array"
+              },
+              "turn_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              "utterance": {
+                "additionalProperties": false,
+                "properties": {
+                  "complete_transport": {
+                    "const": true
+                  },
+                  "offset_unit": {
+                    "const": "python_unicode_codepoints"
+                  },
+                  "source": {
+                    "const": "authored_fixture"
+                  },
+                  "source_turn_id": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "text": {
+                    "maxLength": 4096,
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "text",
+                  "source",
+                  "source_turn_id",
+                  "complete_transport",
+                  "offset_unit"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "schema_version",
+              "call_local_id",
+              "turn_id",
+              "state_revision",
+              "policy_hash",
+              "api_hash",
+              "phase",
+              "utterance",
+              "question",
+              "targets",
+              "pending",
+              "spoken_offers",
+              "active_readback"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "example_id",
+          "input"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "blind_source_train_packet.peer.v1"
+    },
+    "split": {
+      "const": "train"
+    }
+  },
+  "required": [
+    "schema_version",
+    "collection_id",
+    "split",
+    "records"
+  ],
+  "title": "Source-only blind projection of exact v5 inputs",
+  "type": "object"
+}

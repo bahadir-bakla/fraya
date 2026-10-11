@@ -1,0 +1,239 @@
+{
+  "$defs": {
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "char_end": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "char_start": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "offset_unit": {
+          "const": "python_unicode_codepoints"
+        },
+        "raw_field_path": {
+          "pattern": "^/records/[0-9]+/input/utterance/text$",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "utf8_byte_end": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "utf8_byte_start": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "raw_field_path",
+        "offset_unit",
+        "char_start",
+        "char_end",
+        "text",
+        "utf8_byte_start",
+        "utf8_byte_end"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:fraya:next-source-review:v5",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "records": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "date_candidates": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "candidate_role": {
+                  "enum": [
+                    "current",
+                    "superseded",
+                    "uncertain"
+                  ]
+                },
+                "completion": {
+                  "enum": [
+                    "complete",
+                    "unfinished",
+                    "ambiguous",
+                    "unassessed"
+                  ]
+                },
+                "completion_observed": {
+                  "type": "boolean"
+                },
+                "maximal_boundary_observed": {
+                  "type": "boolean"
+                },
+                "normalization_status": {
+                  "enum": [
+                    "not_assessed",
+                    "unresolved",
+                    "invalid",
+                    "verified"
+                  ]
+                },
+                "polarity": {
+                  "enum": [
+                    "asserted",
+                    "negated",
+                    "conditional",
+                    "question",
+                    "quoted",
+                    "ambiguous",
+                    "unassessed"
+                  ]
+                },
+                "presence": {
+                  "enum": [
+                    "present",
+                    "absent",
+                    "ambiguous"
+                  ]
+                },
+                "rationale": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "reference_status": {
+                  "enum": [
+                    "not_required",
+                    "unresolved",
+                    "verified",
+                    "unassessed"
+                  ]
+                },
+                "source_span": {
+                  "$ref": "#/$defs/SourceSpan"
+                },
+                "target_indices": {
+                  "items": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "target_scope_observed": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "source_span",
+                "candidate_role",
+                "presence",
+                "completion",
+                "completion_observed",
+                "target_indices",
+                "target_scope_observed",
+                "maximal_boundary_observed",
+                "polarity",
+                "reference_status",
+                "normalization_status",
+                "rationale"
+              ],
+              "type": "object"
+            },
+            "minItems": 0,
+            "type": "array"
+          },
+          "evidence_spans": {
+            "items": {
+              "$ref": "#/$defs/SourceSpan"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "example_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "primary_label": {
+            "enum": [
+              "positive",
+              "negative",
+              "ambiguous",
+              "unassessed"
+            ]
+          },
+          "primary_observed": {
+            "type": "boolean"
+          },
+          "privacy_reason": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "privacy_surface_eligible": {
+            "type": "boolean"
+          },
+          "rationale": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_input_json_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "source_record_json_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "source_record_path": {
+            "pattern": "^/records/[0-9]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "example_id",
+          "source_record_json_sha256",
+          "source_input_json_sha256",
+          "source_record_path",
+          "primary_label",
+          "primary_observed",
+          "privacy_surface_eligible",
+          "privacy_reason",
+          "date_candidates",
+          "evidence_spans",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "reviewer_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "independent_source_review_supplement.v5"
+    },
+    "source_packet_path": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "source_packet_raw_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "reviewer_id",
+    "source_packet_raw_sha256",
+    "source_packet_path",
+    "records"
+  ],
+  "type": "object"
+}

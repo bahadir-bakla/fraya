@@ -1,0 +1,536 @@
+{
+  "schema_version": "learned_layer_design.checkpoint19.v1",
+  "checkpoint": 19,
+  "receipt_utc": "2026-10-11T05:59:13Z",
+  "created_at_utc": "2026-10-11T06:01:00Z",
+  "overall_end_utc": "2026-10-11T06:23:01Z",
+  "status": "TWO_CHECKPOINT18_ISSUES_MATERIALLY_FIXED_BOUNDED_SOURCE_CLOSURE_ONLY",
+  "owned_new_paths": [
+    "analysis/learned-layer-design.checkpoint19-v11-closure.json",
+    "analysis/learned-layer-design.checkpoint19-v11-closure.txt",
+    "analysis/night-architecture-handoff.md"
+  ],
+  "sources": [
+    {
+      "path": "analysis/night-learned-dialogue.v11-parser.json",
+      "sha256": "8f823f05a8d2297e8cf90ca0cfdbd42bd645fcd87f21b3b59b1bd917f41b14b9",
+      "bytes": 72880
+    },
+    {
+      "path": "analysis/night-learned-dialogue.v11-parser.txt",
+      "sha256": "a2073ccbd9e94be3c7fce9cc1f7756f0f0540dbeae47a3b50c8bf702eab25c55",
+      "bytes": 1201
+    },
+    {
+      "path": "analysis/night-learned-dialogue.v11-parser.freeze.json",
+      "sha256": "59f8b180176ac127aecb686f028f9ace71d8a648a476f2e0e97415713cd66778",
+      "bytes": 16441
+    },
+    {
+      "path": "integrations/learned-dialogue/temporal_parser_v11.py",
+      "sha256": "c131cd7fb239eb359e21329c850ddfa1939cae155afd98fc606599a893da4988",
+      "bytes": 43554
+    },
+    {
+      "path": "integrations/learned-dialogue/diagnostic_v11.py",
+      "sha256": "109aff51ad34fcc6cd1d725a277d2398cdfb8c67b114345bedaa06905f481cba",
+      "bytes": 12535
+    },
+    {
+      "path": "integrations/learned-dialogue/test_temporal_v11.py",
+      "sha256": "c473fc8946a031e2b2d33f093b4ba7a9fcccc1b36e7ff36a8e05b94b33ce825a",
+      "bytes": 30228
+    }
+  ],
+  "checks_scope": "Four focused fresh cases only; full 160-check worker suite not rerun. Frozen source/report hashes checked, including manifest equality to parent's requested hash. No annotations, DEV, candidate artifact, weights, credentials or platform were read.",
+  "fresh_CPU": {
+    "parser_sha256": "c131cd7fb239eb359e21329c850ddfa1939cae155afd98fc606599a893da4988",
+    "cases": [
+      {
+        "id": "H01",
+        "input": {
+          "text": "I will pay on Tuesday for item alpha.",
+          "event_id": "checkpoint19-H01",
+          "context": {
+            "locale": "en",
+            "phase": "payment",
+            "targets": [
+              {
+                "index": 0,
+                "label": "item alpha"
+              }
+            ],
+            "question": {
+              "role": "date",
+              "target_indices": [
+                0
+              ]
+            }
+          }
+        },
+        "top_nodes": [
+          {
+            "raw": {
+              "char_start": 11,
+              "char_end": 21,
+              "text": "on Tuesday",
+              "offset_unit": "python_unicode_codepoints",
+              "utf8_byte_start": 11,
+              "utf8_byte_end": 21
+            },
+            "syntax": "closed",
+            "role": "current_hypothesis",
+            "polarity": "asserted_hypothesis",
+            "target": [
+              0
+            ],
+            "governor_evidence": [
+              {
+                "char_start": 7,
+                "char_end": 10,
+                "text": "pay",
+                "offset_unit": "python_unicode_codepoints",
+                "utf8_byte_start": 7,
+                "utf8_byte_end": 10
+              }
+            ]
+          }
+        ],
+        "diagnostics": [],
+        "feature_summaries": [
+          {
+            "nonzeros": 93,
+            "reasons": [],
+            "qualified": false,
+            "training_mask": false,
+            "derived": {
+              "phase=payment": 1,
+              "question_role=date": 1,
+              "source_polarity=asserted_hypothesis": 1,
+              "source_role=current_hypothesis": 1
+            }
+          }
+        ],
+        "focused_expectation_passed": true,
+        "shadow_preserved": true
+      },
+      {
+        "id": "H02",
+        "input": {
+          "text": "The note says \"if you pay on Monday\", and I will pay on Tuesday for item alpha.",
+          "event_id": "checkpoint19-H02",
+          "context": {
+            "locale": "en",
+            "phase": "payment",
+            "targets": [
+              {
+                "index": 0,
+                "label": "item alpha"
+              }
+            ],
+            "question": {
+              "role": "date",
+              "target_indices": [
+                0
+              ]
+            }
+          }
+        },
+        "top_nodes": [
+          {
+            "raw": {
+              "char_start": 26,
+              "char_end": 35,
+              "text": "on Monday",
+              "offset_unit": "python_unicode_codepoints",
+              "utf8_byte_start": 26,
+              "utf8_byte_end": 35
+            },
+            "syntax": "closed",
+            "role": "quoted_hypothesis",
+            "polarity": "quoted_hypothesis",
+            "target": [
+              0
+            ],
+            "governor_evidence": []
+          },
+          {
+            "raw": {
+              "char_start": 53,
+              "char_end": 63,
+              "text": "on Tuesday",
+              "offset_unit": "python_unicode_codepoints",
+              "utf8_byte_start": 53,
+              "utf8_byte_end": 63
+            },
+            "syntax": "closed",
+            "role": "current_hypothesis",
+            "polarity": "asserted_hypothesis",
+            "target": [
+              0
+            ],
+            "governor_evidence": [
+              {
+                "char_start": 49,
+                "char_end": 52,
+                "text": "pay",
+                "offset_unit": "python_unicode_codepoints",
+                "utf8_byte_start": 49,
+                "utf8_byte_end": 52
+              }
+            ]
+          }
+        ],
+        "diagnostics": [],
+        "feature_summaries": [
+          {
+            "nonzeros": 180,
+            "reasons": [],
+            "qualified": false,
+            "training_mask": false,
+            "derived": {
+              "phase=payment": 1,
+              "question_role=date": 1,
+              "source_polarity=quoted_hypothesis": 1,
+              "source_role=quoted_hypothesis": 1
+            }
+          },
+          {
+            "nonzeros": 168,
+            "reasons": [],
+            "qualified": false,
+            "training_mask": false,
+            "derived": {
+              "phase=payment": 1,
+              "question_role=date": 1,
+              "source_polarity=asserted_hypothesis": 1,
+              "source_role=current_hypothesis": 1
+            }
+          }
+        ],
+        "focused_expectation_passed": true,
+        "shadow_preserved": true
+      },
+      {
+        "id": "H03",
+        "input": {
+          "text": "Please schedule Tuesday for item alpha, and can you explain the recording policy?",
+          "event_id": "checkpoint19-H03",
+          "context": {
+            "locale": "en",
+            "phase": "payment",
+            "targets": [
+              {
+                "index": 0,
+                "label": "item alpha"
+              }
+            ],
+            "question": {
+              "role": "date",
+              "target_indices": [
+                0
+              ]
+            }
+          }
+        },
+        "top_nodes": [
+          {
+            "raw": {
+              "char_start": 16,
+              "char_end": 23,
+              "text": "Tuesday",
+              "offset_unit": "python_unicode_codepoints",
+              "utf8_byte_start": 16,
+              "utf8_byte_end": 23
+            },
+            "syntax": "closed",
+            "role": "current_hypothesis",
+            "polarity": "asserted_hypothesis",
+            "target": [
+              0
+            ],
+            "governor_evidence": [
+              {
+                "char_start": 0,
+                "char_end": 15,
+                "text": "Please schedule",
+                "offset_unit": "python_unicode_codepoints",
+                "utf8_byte_start": 0,
+                "utf8_byte_end": 15
+              }
+            ]
+          }
+        ],
+        "diagnostics": [],
+        "feature_summaries": [
+          {
+            "nonzeros": 170,
+            "reasons": [],
+            "qualified": false,
+            "training_mask": false,
+            "derived": {
+              "phase=payment": 1,
+              "question_role=date": 1,
+              "source_polarity=asserted_hypothesis": 1,
+              "source_role=current_hypothesis": 1
+            }
+          }
+        ],
+        "focused_expectation_passed": true,
+        "shadow_preserved": true
+      },
+      {
+        "id": "H04",
+        "input": {
+          "text": "I will pay on Tuesday for item alpha.",
+          "event_id": "checkpoint19-H04",
+          "context": {
+            "locale": "en",
+            "phase": {
+              "nonprivate_canary": "not_a_symbol"
+            },
+            "targets": [
+              {
+                "index": 0,
+                "label": "item alpha"
+              }
+            ],
+            "question": {
+              "role": [
+                "date"
+              ],
+              "target_indices": [
+                0
+              ]
+            }
+          }
+        },
+        "top_nodes": [],
+        "diagnostics": [
+          "invalid_source_context_domain:phase",
+          "invalid_source_context_domain:question_role"
+        ],
+        "feature_summaries": [
+          {
+            "nonzeros": 0,
+            "reasons": [
+              "invalid_source_context_domain:phase",
+              "invalid_source_context_domain:question_role"
+            ],
+            "qualified": false,
+            "training_mask": false,
+            "derived": {}
+          }
+        ],
+        "focused_expectation_passed": true,
+        "shadow_preserved": true
+      }
+    ],
+    "focused_cases": 4,
+    "passed": 4,
+    "shadow_preserved": true,
+    "explicit_calls": {
+      "parse": 4,
+      "features": 5
+    }
+  },
+  "closures": [
+    {
+      "id": "checkpoint18_M18-1",
+      "closed_for_bounded_cases": true,
+      "evidence": [
+        "H01",
+        "H02",
+        "H03"
+      ],
+      "source_functions": [
+        "quotation_intervals",
+        "predicate_region",
+        "source_governor"
+      ],
+      "source_lines": [
+        135,
+        149,
+        165
+      ],
+      "result": "Quoted IF/action mentions are masked without shifting offsets; a quoted date remains quoted, a later independent payment remains asserted. Subject/modal coordination bounds separate admin questions; final punctuation no longer globally overrides the earlier payment act.",
+      "limits": "Finite quotation and predicate grammar. Unsupported predicates remain unknown; source-role features remain weak hypotheses. Four source cases and authored regressions are not generalization, safety or provider-frequency evidence."
+    },
+    {
+      "id": "checkpoint18_M18-2",
+      "closed_for_bounded_cases": true,
+      "evidence": [
+        "H04"
+      ],
+      "source_function": "validate_source_context",
+      "source_lines": [
+        113,
+        124,
+        127,
+        665,
+        699
+      ],
+      "result": "Parse and feature extraction use the same scalar-symbol validator; structured phase/question-role values are rejected with typed diagnostics and no feature output.",
+      "domain": "Versioned bounded lowercase symbolic strings [a-z][a-z0-9_]{0,63}, or explicit/missing unknown. This is the pinned source-loader string adapter, not a newly invented bank-policy enum or proof of source profile compatibility.",
+      "limits": "A syntactically valid symbol does not attest privacy, current ingress, bank identity or policy authority."
+    }
+  ],
+  "worker_freeze_evidence": {
+    "attributed_to": "Exact V11 report/manifest; read-only source/aggregate evidence",
+    "suite": {
+      "checks": 160,
+      "passed": 160,
+      "assertions": 533,
+      "checkpoint18_cases": "G01-G06/C01 pass",
+      "V10_checks_retained": 150
+    },
+    "parity": {
+      "portable_JSON_comparisons": 108,
+      "protected_distinct_paths": 118,
+      "V10_manifest_bindings_checked": 123
+    },
+    "raw_TRAIN_only": {
+      "rows": 132,
+      "A3_candidates": 95,
+      "changed_governor_hypotheses": 36,
+      "mechanically_nonempty_A3": 89,
+      "unsupported_or_other_A3": 6,
+      "unknown_peer_profile_rows": 60
+    },
+    "labels_not_read": {
+      "annotation_alignment": null,
+      "semantic_accuracy": null,
+      "unmatched_vs_truth": null,
+      "note": "V11 did not recompute label alignment. Do not promote V10's 75/101 diagnostic or its unmatched counts to a new V11 semantic score."
+    },
+    "derived_slot_ablation": {
+      "finite_cases": 6,
+      "removed_nonzeros": 18,
+      "fit_calls": 0,
+      "performance_comparison": null,
+      "note": "Demonstrates removal of three feature slots only; not a trained ablation."
+    },
+    "footprint": {
+      "raw_parser_file_bytes": 43554,
+      "normalized_LF_source_bytes": 42827,
+      "CRLF_count": 727,
+      "imports": [
+        "re"
+      ],
+      "coefficients": 0,
+      "complete_trained_bundle_bytes": null,
+      "note": "The worker counts decoded/re-encoded LF source. The raw hash-pinned file is 727 bytes larger due to CRLF. No source/hash mismatch was found; either fits the future code budget but neither is a trained bundle."
+    },
+    "admission": {
+      "all_132_abstain": true,
+      "accepted": 0,
+      "new_primary_usable_groups": 0,
+      "new_DATE_usable_groups": 0,
+      "ancestry_closed": false,
+      "fit_calls": 0,
+      "qualified": false
+    },
+    "GPU_USD": 0
+  },
+  "architecture": {
+    "deployed": {
+      "path": [
+        "Source brief and original API contract",
+        "Automatic builder/compiler generates workflow and extraction contract",
+        "Fixed AGENT_LLM emits event/component candidates",
+        "Deterministic typed-turn reduction and persistent per-target facts",
+        "Deterministic policy/readback/identity checks and transaction plan",
+        "Only permitted bank tools",
+        "Receipt classification updates state and constrains honest speech"
+      ],
+      "authority": "Policy/tool effects are determined by source-derived deterministic obligations. LLM event candidates are untrusted extracted copies, not authenticated raw-user attestations. Whole-turn act/fact preservation, scoped corrections and withdrawals, target expansion/preflight, freshness and operation receipts are compiler obligations; current exports still have source-reviewed failures.",
+      "atomicity": "All-target local preflight must precede intended financial writes. Multiple remote bank calls are not automatically a distributed atomic transaction; unknown/partial receipts require explicit unresolved state and source-approved recovery.",
+      "status": "Automatically generated and tested runtime path; no clean deployment claim."
+    },
+    "offline_shadow": {
+      "path": [
+        "Independent TRAIN sources and lineage evidence",
+        "V11 lossless temporal AST + typed source/context features",
+        "Masked source-first alignment and ancestry eligibility",
+        "Future separately admitted CPU primary/DATE heads",
+        "Frozen calibration/risk and later blind/OOD qualification"
+      ],
+      "integration": false,
+      "trained": false,
+      "qualified": false,
+      "permission": false,
+      "bank_tool_access": false,
+      "ingress_binding": "Unavailable/unqualified. Fixture flags, local source IDs/digests, source-schema symbols and lexical completion cannot supply bank authority."
+    },
+    "invariant": "Offline supervision/model training has no arrow to bank tools or financial permission. Any future runtime proposal integration requires real original-runtime ingress/component binding and retains deterministic obligations."
+  },
+  "parent_runtime_snapshot": {
+    "attribution": "Latest explicit parent message only; no host or platform fetch by this designer",
+    "A9_original": {
+      "combined_calls": "26/30",
+      "bank_calls": "28/30",
+      "cases_all3": "6/10"
+    },
+    "B14_original": {
+      "combined_calls": "9/9",
+      "cases_all3": "3/3",
+      "source_review": "302 conditional CPU observations; collective-exclusion source issue remains, so no source-clean claim"
+    },
+    "A_next5": {
+      "source_review": "50/52; remaining branch-hours question/availability issues",
+      "original_30": "active; no final result asserted"
+    },
+    "interpretation": "Hosted original results and source conditional witnesses are different evidence. Neither a local source-audit failure count nor authored regression pass rate is provider occurrence frequency."
+  },
+  "practical_next_steps": [
+    {
+      "order": 1,
+      "task": "Stop adding parser branches tonight",
+      "reason": "The two requested V10 issues are closed in bounded V11 checks; no new material fault arose here. Preserve frozen V11; keep unsupported construction axes unknown rather than grow an action allowlist."
+    },
+    {
+      "order": 2,
+      "task": "Close actual ancestry and source/context profile compatibility",
+      "output": "Parent-adjudicated canonical-root manifest with proven alias/source/template unions and explicit unresolved edges. Unknown peer schema and unresolved ancestry still mask usable new support; renamed/paired variants cannot manufacture independent roots."
+    },
+    {
+      "order": 3,
+      "task": "Freeze scoped source features and generate candidates before labels",
+      "output": "Immutable source/schema/parser/feature hash tuple. Join independent TRAIN annotations only after exact runtime extraction for per-head masks. Maximal DATE completion is independent of target, polarity, value/reference resolution and permission. Missing candidate/label is masked, not negative. V11's valid symbols are not profile admission."
+    },
+    {
+      "order": 4,
+      "task": "Admit the smallest real CPU experiment",
+      "output": "Actual eligible canonical groups per class under the unchanged 20-per-class floor and actual parent source-bound fit authorization. Old V5 primary27/19 and DATE20/16 do not automatically transfer to V11. Report every training fold's actual class support; 20 total can leave 16 in a five-fold train subset. Admit each useful head separately."
+    },
+    {
+      "order": 5,
+      "task": "Compare two masked-BCE heads against finite rules",
+      "output": "Dominant new proposal vs existing offer/admin/info/permission alternatives; maximal DATE complete vs unfinished. Use group->turn->candidate mean masked BCE. Same frozen root folds and privacy masks for finite-rule, phase-only, text-only, text+context, full derived-governor and governor-removed controls. Add a genuinely label-changing root-randomized control; an identity permutation of paired label profiles is not an ablation."
+    },
+    {
+      "order": 6,
+      "task": "Measure actual end-to-end benefit and portable inference",
+      "output": "Canonical-root OOF loss/error/coverage and failed-dependency abstention; actual-candidate DATE performance separate from oracle-span diagnostics. Exact model/native/export feature parity, <=500000-byte complete standard-library inference bundle, cold-load and per-turn CPU measurements. OOF selection remains diagnostic, not qualification."
+    },
+    {
+      "order": 7,
+      "task": "Use genuinely new independent evaluation only after freeze",
+      "output": "Separate calibration-fit, risk and later blind/OOD canonical-root sets, with fully reviewed source-compatible labels. Exposed TRAIN/DEV and these authored witnesses remain diagnostic. Group-level one-sided risk bounds require justified sampling and a frozen selector; accepted n0 supplies no useful risk estimate. Semantic qualification does not establish bank-policy correctness; parent evaluates original bank scores/ledgers with unchanged expectations."
+    }
+  ],
+  "cloud_conclusion": "No GPU need or new spend is established. Source fixes, unsupported ancestry and lack of authenticated ingress are not GPU bottlenecks. A later encoder experiment requires measured CPU benefit hypothesis and audited parent reservation; runtime external inference remains disallowed.",
+  "actions": {
+    "old_files_mutated": 0,
+    "model_fits": 0,
+    "labels_or_DEV_opened": 0,
+    "platform_calls": 0,
+    "Git": 0,
+    "keys": 0,
+    "native_calls": 0,
+    "cloud": 0,
+    "GPU_USD": 0,
+    "workers": 0
+  }
+}
+

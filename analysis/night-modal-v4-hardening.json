@@ -1,0 +1,161 @@
+{
+  "schema_version": "modal_hardening.v4",
+  "status": "BLOCKED_ZERO_SPEND",
+  "remote_launch_enabled": false,
+  "cloud_actions": 0,
+  "GPU_jobs": 0,
+  "spend_usd": 0,
+  "production_ledger_writes": 0,
+  "CPU_grant_is_GPU_permission": false,
+  "parent_gpu_grant_created": false,
+  "verification": {
+    "suite": "test_modal_v4",
+    "command": "python -m unittest test_modal_v4 -v",
+    "tests_run": 23,
+    "failures": 0,
+    "errors": 0,
+    "elapsed_seconds": 1.531,
+    "temporary_synthetic_ledgers_only": true,
+    "real_modal_or_network_subprocesses": 0
+  },
+  "implementation_sha256": {
+    "modal_budget_v4.py": "e3e057b06240612cf0c157bf34bbc7df47e5649139b0fca0024ffe5718331b39",
+    "modal_runner_v4.py": "0bd3549894590c0b18dd4281a1f5e60540a9b5309687e80bf030b0365c0fe32a",
+    "test_modal_v4.py": "9dd7a79ed90fc7889b0851cf16e21d845dd18a6769370e326541ab334e28e8cd"
+  },
+  "protected_source_sha256": {
+    "analysis\\night-opus-learned-v3-r3.json": "ac6c63221abb4b546ec2a8b0435354f0f8e16538c34d5e80f91458a84d035f70",
+    "analysis\\learned-layer-design.checkpoint10-admission-budget.json": "d552fa37e3e6f625787ab21561346d97c3a1ee512026dd27a899298cd46bf6ed",
+    "local-runs\\autonomous-rd\\modal-budget.json": "87423d458ab5b8767291f7773c1078fde6d4e522b0c791184d1316b14e7d832f",
+    "integrations\\learned-dialogue\\modal_narrow_app.py": "664fcaa79175d78901718abfc646e849c11782221662d4a5b8f5f73201c5fe52",
+    "integrations\\learned-dialogue\\modal_narrow_checkpoint.py": "b75a7eb3d7f44b1fbb45750ce9540d5a18de3a008aec18ff2fe0ab107c08a8e0",
+    "integrations\\learned-dialogue\\modal_narrow_core.py": "81c6637bc9e90950bc8257f5c1e62512e99249dc19fce3dc4b4bfb48d7eb845a",
+    "integrations\\learned-dialogue\\modal_narrow_cpu_trial.py": "528acc5a5a8785fada90c84d63540bb3549f7dd92ab3989e319e046fe8032142",
+    "integrations\\learned-dialogue\\modal_narrow_metadata.py": "205103b56b3009bfa5b684c80d4ad084d03a6db35d3c74307adc179f54cf739e",
+    "integrations\\learned-dialogue\\modal_narrow_model.json": "0f547a4842c8f42decdc2bdd3299307fcea61e458e52c4d854c7d3e28cb1cfe8",
+    "integrations\\learned-dialogue\\modal_narrow_README.txt": "b12b343f01453178857e53cdf306c0184d49db88b43003f365f7c04c8f095d29",
+    "integrations\\learned-dialogue\\modal_narrow_review.py": "f4b33ec5503cce74a5ca03af714343ca7155cef0df535b059a44d391aa7c3fd1",
+    "integrations\\learned-dialogue\\modal_narrow_runner.py": "749e48e87b717d5d43828366ba1b47bcda5c43afeab1b6357a36db62bb6528a7",
+    "integrations\\learned-dialogue\\modal_narrow_student.py": "800fca92b474f455ed09535efacae23321156450a6d84e3eb9dc4cd6574d8d4f",
+    "integrations\\learned-dialogue\\modal_narrow_teacher.py": "c99ba561ddf313cde97fc6d09385d47853c2b9e302386baf33230237e4590dbc",
+    "integrations\\learned-dialogue\\modal_narrow_tests.py": "20cd66abd6c34571ed9b3bab349f4ab2c11719e01187f5df0c60a8836b6c7183",
+    "research\\customer-benchmark\\semantic-v3-collection\\label-free-primary-review-packet.json": "7bf9081b5c51fb6e402a88d71ab57c398ba1292ef5eaa145948865d2f4e952f9",
+    "research\\customer-benchmark\\semantic-v3-collection\\label-free-date-review-packet.json": "7397467d49bbd557f8cfe3c5b23520049d081addb594e1a6696d749cdaa07808",
+    "analysis\\night-v3-fresh-reviewer-a.json": "87280983ed1772b09d782d582cbc5647a3a478566c1327483a956b31ef780a31",
+    "analysis\\night-v3-fresh-reviewer-b.json": "46efb3e528b738cf372ba81d178b875ce0bd080bd0045bd8785ee822033a75f9",
+    "analysis\\night-v3-fresh-adjudication.json": "12fe2752007afc6c978b05f3a6b0db0f963683f1a3a5238f49b2589995d737b4"
+  },
+  "budget_profile": "businessforever2338",
+  "credential_profile_files_read": false,
+  "secret_environment_values_read": false,
+  "explicit_host_environment_reads": false,
+  "environment_witnesses": "synthetic sentinel values only; standard-library temporary-directory selection used",
+  "profile_credential_hashes": "not inspected; token/config files deliberately not read or written",
+  "native_opus_elapsed_seconds": 106.594,
+  "cpu_audit_observations": 56,
+  "audit_findings": [
+    {
+      "id": "F1",
+      "priority": "P0",
+      "title": "Launch and cancel subprocesses inherit the full parent environment; a profile override is not credential isolation",
+      "source_references": [
+        "modal_narrow_runner.py L151 env=dict(os.environ, MODAL_PROFILE=PROFILE)",
+        "modal_narrow_runner.py L86 cancel_parent env",
+        "modal_narrow_core.py L203-206 docstring 'SDK verification never reads installed tokens'"
+      ],
+      "claim": "The child that creates the app and the cancel and list commands both run with every parent variable. Only MODAL_PROFILE is set. Any MODAL_TOKEN_ID/MODAL_TOKEN_SECRET, MODAL_ENVIRONMENT, MODAL_SERVER_URL, HF_TOKEN, PYTHONPATH or proxy variable in the parent passes through unchanged. Python -B does not drop PYTHONPATH or PYTHONSTARTUP; only -I or -E does. If the SDK lets token variables win over the profile, the job runs, and the stop command targets, whatever account or environment those variables name. The admission check of budget.profile cannot detect this.",
+      "concrete_counterexample": "Parent env has MODAL_TOKEN_ID/SECRET for a different workspace and MODAL_ENVIRONMENT=prod. supervised_parent launches the child with both still present. The app is created outside the businessforever2338 ledger, and `modal app stop` with the exact ap-ID is sent to that same foreign context.",
+      "CPU_witness_contract": "Pure CPU: monkeypatch os.environ with sentinel MODAL_TOKEN_ID, HF_TOKEN, PYTHONPATH and MODAL_ENVIRONMENT. Inject a fake subprocess.Popen and a fake subprocess_run that record the env= and argv arguments. Call supervised_parent with an admission stub and cancel_parent('ap-abc','fc-abc', subprocess_run=fake). Assert the recorded env contains the sentinels. That reproduces the finding. Assert also that argv lacks -I.",
+      "conditional_assumptions": "Whether token variables override the profile depends on the installed SDK 1.5.1 config precedence. This review does not claim it was verified.",
+      "remedy": "Build the child and cancel env from an explicit allowlist: PATH, SYSTEMROOT/TEMP on Windows, MODAL_PROFILE and the config path. Strip MODAL_TOKEN_*, MODAL_ENVIRONMENT, MODAL_SERVER_URL, HF_* and PYTHON* variables. Run the child with -I. Have the child assert the absence of the token variables, and record the resolved workspace and environment in the ids file before spawn."
+    },
+    {
+      "id": "F2",
+      "priority": "P0",
+      "title": "The reservation, the one-job rule and the three-invocation cap are read-only claims and are never consumed; the ledger check also contradicts itself",
+      "source_references": [
+        "modal_narrow_core.py L219-220 budget_snapshot hash",
+        "L223-234 reservation/another_job_active",
+        "L255 invocation_ordinal in (1,2,3)",
+        "modal_narrow_runner.py L113 child re-admission",
+        "L144"
+      ],
+      "claim": "invocation_ordinal is only checked against the grant. Nothing counts budget['invocations'], ties the reservation to one invocation, or marks the grant as spent. The same grant and reservation_id therefore admit any number of sequential or concurrent launches. The child repeats admission against the same files. If the parent records a 'starting' invocation, the budget hash changes and the child is blocked by global_budget_snapshot_changed or another_job_active. If the parent does not record it, nothing serializes concurrent parents.",
+      "concrete_counterexample": "Two parent processes run with an identical grant (ordinal=1) and an unchanged ledger. Both pass admission and both spawn H100 jobs on one $10 reservation. A fourth invocation with ordinal=3 also passes.",
+      "CPU_witness_contract": "Pure CPU: call admission(payload_ok, budget, grant, now) twice with identical inputs. Both return admitted=True. Then set budget invocations to four closed entries and reuse the grant: still admitted. Then add {'status':'starting'} and recompute the grant hash: admitted=False, with another_job_active and global_budget_snapshot_changed (unless the grant hash was recomputed). This shows the parent cannot both record the job and pass the child gate. Use mocked payload validation only.",
+      "conditional_assumptions": "The docstring delegates the global transaction to the parent. This is a caller-contract gap made worse by a source-level contradiction, not proof of a deployed double spend.",
+      "remedy": "Add a grant_nonce and require a ledger entry {reservation_id, nonce, status:'admitted_unlaunched'} that a single atomic parent transaction moves to 'starting'. Have the child validate that state instead of hash equality. Enforce len(non-cancelled invocations)<=3, ordinal == count+1 and one reservation per invocation."
+    },
+    {
+      "id": "F6",
+      "priority": "P2",
+      "title": "The parent finally block can crash before writing the stop record; stop proof depends on an unverified CLI JSON schema",
+      "source_references": [
+        "modal_narrow_runner.py L161-171",
+        "L75-81",
+        "L121-126"
+      ],
+      "claim": "If the child is killed mid-write_new, the ids file exists but is truncated. load() raises inside finally, so the .stop.json record is never written and the exception surfaces without any cancel attempt. stopped_from_listing assumes the keys app_id, state and tasks; if the CLI emits other keys (for example display headers), verified is always False. That fails closed but makes the reservation permanently unreleasable. A kill after spawn but before the .call.json write loses the fc-ID, leaving only app-level stop. On Windows, child.terminate() hard-kills, so the child's own call.cancel in finally never runs.",
+      "concrete_counterexample": "The ids file contains b'{\"app_id\":\"ap-x' because the watchdog fired during fsync. supervised_parent raises ValueError, no stop is attempted and no stop record exists.",
+      "CPU_witness_contract": "Mocked process: a fake Popen whose wait raises TimeoutExpired after pre-writing a truncated ids file in a tmp dir, plus a fake cancel. Assert an exception and no .stop.json. A separate pure test: stopped_from_listing with b'[{\"App ID\":\"ap-x\",\"State\":\"stopped\",\"Tasks\":\"0\"}]' returns False.",
+      "conditional_assumptions": "The actual SDK 1.5.1 list schema is claimed in a code comment and was not verified here.",
+      "remedy": "Wrap the ids parse and fall back to regex-extracting an ap- ID. Always write the stop record. Write the app_id via a pre-spawn atomic rename. Pin a recorded CLI JSON sample hash as a fixture. Prefer the call ID recorded before get, and treat any unknown outcome as non-release."
+    }
+  ],
+  "astra_decision": "NO-GO GPU. Specify and test the parent transaction, result/stop recovery, environment and real data/CPU evidence first. All learned outputs remain shadow abstentions.",
+  "installed_listing_schema": {
+    "known": true,
+    "version": "1.5.1",
+    "source_sha256": {
+      "C:\\Users\\9bakl\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\modal\\cli\\app.py": "e5c1ea117ba81189035c1b983f2535f45b8713c513d7392bf3e7a93262ec61f5",
+      "C:\\Users\\9bakl\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\modal\\cli\\utils.py": "a00850568a2376c8f771fe71bebe080d2a6dac22389dd109ed93e6065b0fe58c"
+    },
+    "keys": [
+      "app_id",
+      "created_at",
+      "description",
+      "state",
+      "stopped_at",
+      "tasks"
+    ],
+    "schema_sha256": "3c2434ee99e347fe24f9340cdba232815192410479e4f05ad820361cc1d8a6e3"
+  },
+  "transaction": "One parent/one host, grant-pinned unsynchronized authoritative journal path, Windows OS byte lock + fsync + atomic replace; production aggregate stays read-only in workers.",
+  "states": "reserved -> admitted_unlaunched -> starting -> launch_claimed -> finished/stopped/unknown; nonce and lifetime starting count never refunded",
+  "budgets": {
+    "task_target_usd": 30,
+    "task_hard_cap_usd": 35,
+    "shared_first_experiment_usd": 10,
+    "all_task_attempts_maximum": 3,
+    "active_GPU_jobs_maximum": 1,
+    "cost_categories": [
+      "GPU",
+      "CPU",
+      "memory",
+      "disk",
+      "build",
+      "storage",
+      "egress",
+      "other"
+    ]
+  },
+  "watchdog": {
+    "hard_stop_utc": "2026-10-11T06:13:01Z",
+    "startup_seconds_max": 240,
+    "compute_seconds_max": 1800,
+    "total_window_seconds_max": 2100,
+    "shutdown_reserved_seconds": 60,
+    "retries": 0
+  },
+  "isolation": "Launch/cancel/list share allowlisted OS environment, pinned profile and explicit PATH; actual absolute system Python -I -S -B, only hash-reviewed files in exact staging cwd.",
+  "stop_policy": "Duplicate/conflicting/unknown/stale listing or missing account/all-resource provider proof => unknown; CLI exit 0 never releases budget. Unknown retains global active slot and full hold.",
+  "limits": [
+    "No live transport implemented or enabled; no Modal/API subprocess invoked.",
+    "Local CAS does not guarantee exactly-once cloud creation or cutoff during host/provider/network failure.",
+    "No current rates/account/billing/provider resource bounds or live independent guardian verified; parent evidence is still required.",
+    "Caller identity/file ACLs and rollback protection across coordinator restart need parent deployment; class APIs cannot authenticate caller.",
+    "File persistence cannot be guaranteed during disk/OS failure; persisted active claim blocks subsequent launches.",
+    "Listing source shape verified without importing SDK; source shape alone does not verify workspace, zero billing resources or settled cost."
+  ],
+  "handoff": "Parent creates fresh exact-payload GPU/cloud grants only after real benefit, reviewed TRAIN/dev allowlist, no holdout, provider maxima/cost/account evidence, trusted software and independent guardian are reviewed. Existing primary CPU-only grant is insufficient."
+}

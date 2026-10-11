@@ -195,6 +195,31 @@ class RunnerTests(unittest.TestCase):
         self.assertFalse((self.root / "never_created").exists())
         self.adapter.verify_pack.assert_not_called()
 
+    def test_unexpected_scoring_failure_keeps_type_and_withholds_exception_text(self):
+        self.adapter.score = Mock(side_effect=TimeoutError('DO_NOT_LOG_UNSAFE_EXCEPTION_MESSAGE'))
+        result, manifest, client = self.execute()
+        self.assertEqual(result['execution_status'], 'incomplete')
+        self.assertEqual(manifest['error_type'], 'TimeoutError')
+        self.assertEqual(manifest['error_code'], 'execution_failed')
+        self.assertNotIn('DO_NOT_LOG_UNSAFE_EXCEPTION_MESSAGE', json.dumps(manifest))
+        self.assertEqual(len(client.starts), 1)
+        self.assertEqual(manifest['jobs'][0]['state'], 'collecting_evidence')
+
+    def test_upstream_persona_failure_withholds_exception_text_before_simulation(self):
+        client = FakeClient(rows())
+        original = client.api
+        def failing_api(method, path, body=None, **params):
+            if method == 'POST' and path == '/api/v2/personas':
+                raise TimeoutError('DO_NOT_LOG_UNSAFE_EXCEPTION_MESSAGE')
+            return original(method, path, body, **params)
+        client.api = failing_api
+        result, manifest, _ = self.execute(client=client)
+        self.assertEqual(result['execution_status'], 'incomplete')
+        self.assertEqual(manifest['error_code'], 'request_failed')
+        self.assertNotIn('DO_NOT_LOG_UNSAFE_EXCEPTION_MESSAGE', json.dumps(manifest))
+        self.assertEqual(client.starts, [])
+        self.assertEqual(manifest['jobs'][0]['state'], 'persona_start_attempted')
+
     def test_fail_fast_preserves_failed_batch_and_unverified_repeats(self):
         cases=rows(2);client=FakeClient(cases);client.outcomes=['fail']
         result,manifest,client=self.execute(cases=cases,client=client,fail_fast=True)
