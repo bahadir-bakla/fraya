@@ -1,7 +1,7 @@
 """Autonomous evidence -> Freya -> official tests -> repair -> export. Standard library only."""
 import argparse, codecs, contextlib, datetime, getpass, hashlib, json, os, pathlib, queue, re, shutil, signal, subprocess, sys, threading, time, tomllib, uuid
 from validation import validate,validate_coverage
-from transcripts import compact_messages
+from transcripts import compact_messages,loop_signals
 
 ROOT=pathlib.Path(__file__).resolve().parent
 KIT=ROOT.parent/'build-the-builder 2'
@@ -96,6 +96,9 @@ class Run:
         self.trace=self.path/'trace.jsonl';self.work=self.path/'work';self.work.mkdir(exist_ok=bool(args.resume_run))
         self.feedback=[]
         self.test_brief=getattr(args,'brief',None) or infer_practice_group(args.briefs)
+        if getattr(args,'self_practice',False):
+            from self_practice import GROUP
+            self.test_brief=GROUP
         self.status['test_brief']=self.test_brief
         write_json(ROOT/'.state/latest.json',{'run_id':self.id})
     def clean(self,value):
@@ -103,9 +106,10 @@ class Run:
         for secret in self.secrets:
             if secret:text=text.replace(secret,'[REDACTED]')
         return json.loads(re.sub(r'fak_[A-Za-z0-9_-]+','[REDACTED]',text))
+    _trace_lock=threading.Lock()
     def event(self,kind,**data):
         record=self.clean({'at':stamp(),'kind':kind,**data})
-        with self.trace.open('a') as out:out.write(json.dumps(record,ensure_ascii=False)+'\n')
+        with self._trace_lock,self.trace.open('a') as out:out.write(json.dumps(record,ensure_ascii=False)+'\n')
     def phase(self,name,**data):
         self.status.update(phase=name,**data,updated=stamp(),elapsed_s=round(self.elapsed()))
         write_json(self.path/'status.json',self.clean(self.status));self.event('phase',phase=name,**data)
@@ -114,9 +118,9 @@ class Run:
     def elapsed(self):return max(time.monotonic()-self.start,time.time()-datetime.datetime.fromisoformat(self.status['started']).timestamp())
     def prepare(self):
         source=self.path/('builder-source-resume' if self.args.resume_run else 'builder-source');source.mkdir(exist_ok=True)
-        for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py'):
-            shutil.copyfile(ROOT/name,source/name)
-        self.event('builder_source',sha256={name:hashlib.sha256((source/name).read_bytes()).hexdigest() for name in ('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py')})
+        names=('builder.py','validation.py','bounded_freya.py','simulate.py','transcripts.py','self_practice.py','caller_styles.py')
+        for name in names:shutil.copyfile(ROOT/name,source/name)
+        self.event('builder_source',sha256={name:hashlib.sha256((source/name).read_bytes()).hexdigest() for name in names})
         inputs=self.work/'inputs';inputs.mkdir(exist_ok=bool(self.args.resume_run))
         self.sources=[]
         for i,source in enumerate(self.args.briefs):
@@ -156,11 +160,11 @@ class Run:
         schema={'type':'object','properties':{key:{'type':'string'} for key in ('workflow_file','policy_file','coverage_file','summary')},'required':['workflow_file','policy_file','coverage_file','summary'],'additionalProperties':False}
         write_json(self.path/'response.schema.json',schema)
         self.event('inputs',briefs=self.sources,tool_api_sha256=hashlib.sha256((inputs/'openapi.json').read_bytes()).hexdigest())
-    def child(self,command,*,timeout,env=None,stdin=None,log_name='command.jsonl',purpose='command'):
+    def child(self,command,*,timeout,env=None,stdin=None,log_name='command.jsonl',purpose='command',cwd=None):
         end=time.monotonic()+min(timeout,self.remaining())
         wall_end=time.time()+min(timeout,self.remaining())
         self.event('command_start',command=command,purpose=purpose,timeout_s=round(end-time.monotonic()))
-        proc=subprocess.Popen(command,cwd=self.work,env=env,stdin=subprocess.PIPE if stdin is not None else subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,start_new_session=True)
+        proc=subprocess.Popen(command,cwd=cwd or self.work,env=env,stdin=subprocess.PIPE if stdin is not None else subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,start_new_session=True)
         chunks=queue.Queue()
         def read_output():
             try:
@@ -267,20 +271,25 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
         self.status['artifacts']={'workflow':export.name,'policy':'work/policy.json','coverage':'work/coverage.json','trace':'trace.jsonl'}
         self.phase('published',freya=ids)
         return ids
-    def test(self,ids,round_number):
+    def test(self,ids,round_number,cases=None,style=None,label=None,repair_feedback=True):
         import freya
-        self.phase('official_simulation',round=round_number)
-        report=self.path/f'results-{round_number}.json'
-        command=[sys.executable,str(ROOT/'simulate.py'),ids['agent_id'],'--cases',str(pathlib.Path(self.args.cases).resolve()),'--out',str(report)]
+        cases=cases or self.args.cases;style=style or self.args.style;label=label or str(round_number)
+        self.phase('official_simulation' if cases==self.args.cases else 'self_practice_simulation',round=round_number,style=style)
+        report=self.path/f'results-{label}.json'
+        command=[sys.executable,str(ROOT/'simulate.py'),ids['agent_id'],'--cases',str(pathlib.Path(cases).resolve()),'--out',str(report)]
         if self.test_brief:command+=['--brief',self.test_brief]
         if self.args.only:command+=['--only',self.args.only]
-        if self.args.style:command+=['--style',self.args.style]
+        if style:command+=['--style',style]
+        if cases!=self.args.cases:command+=['--adjust-reasons']
         env={**os.environ,'COMPETITION_DEADLINE_EPOCH':str(time.time()+self.remaining())}
         self.child(command,timeout=min(900,self.remaining()),env=env,log_name=f'simulation-{round_number}.log',purpose='Official practice customers: bank ledger plus conversation judge')
         result=json.loads(report.read_text())
         if result.get('total',0)<=0:raise RuntimeError('No customer was evaluated; an empty test cannot count as success')
-        result.update(freya_version=ids['version'],workflow_id=ids['workflow_id'],test_brief=self.test_brief);write_json(report,self.clean(result));self.status['tests'].append({'freya_version':ids['version'],'round':round_number,'passed':result['passed'],'total':result['total'],'simulation_id':result['simulation_id'],'report':report.name})
-        self.event('official_test',**self.status['tests'][-1])
+        result.update(freya_version=ids['version'],workflow_id=ids['workflow_id'],test_brief=self.test_brief,style=style);write_json(report,self.clean(result))
+        entry={'freya_version':ids['version'],'round':round_number,'passed':result['passed'],'total':result['total'],'simulation_id':result['simulation_id'],'report':report.name,'style':style}
+        if 'official_passed' in result:entry['official_passed']=result['official_passed']
+        if not repair_feedback:self.event('holdout_test',**entry);return result
+        self.status['tests'].append(entry);self.event('official_test',**entry)
         failures=[row for row in result['rows'] if not row['pass']]
         self.feedback=[{'official_report':report.name,'passed':result['passed'],'total':result['total'],'failures':failures}]
         transcripts=[]
@@ -291,19 +300,57 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                     call=freya.get_call(row['call_id']);messages=call.get('messages',[])
                     raw=self.path/'call-transcripts'/f"{row['id']}.json"
                     write_json(raw,self.clean(call))
-                    entry={'case':row['id'],'failed':row['failed'],'endedReason':call.get('endedReason'),'full_call':str(raw.relative_to(self.path)),'messages':compact_messages(messages)}
+                    entry={'case':row['id'],'failed':row['failed'],'endedReason':call.get('endedReason'),'loop_signals':loop_signals(messages,call.get('endedReason')),'full_call':str(raw.relative_to(self.path)),'messages':compact_messages(messages)}
                     transcripts.append(entry)
                 except Exception as error:self.event('transcript_error',case=row['id'],error=str(error))
         if transcripts:
             write_json(self.work/'failed-calls.json',self.clean(transcripts))
             self.feedback.append({'read_file':'failed-calls.json','instruction':'Read actual tool/routing events and dialogue before repairing. Do not hardcode case identities or expected outcomes.'})
+            looping=[{'case':t['case'],'signals':t['loop_signals']} for t in transcripts if t.get('loop_signals')]
+            if looping:
+                self.event('loop_detected',calls=looping)
+                self.feedback.append({'loops':looping,'instruction':'These calls looped. Remove the loop at its source: never ask the same question a third time after the same answer twice; change approach (offer one concrete option the caller can accept, or apply the policy fallback); a turn the code cannot use never closes the call and is never a service error; a verified call can never close as not verified. Keep every policy guard.'})
         return result
+    def await_practice(self,author,holder):
+        author.join(timeout=max(0,self.remaining()-150))
+        result=holder.get('result') or {'train':None,'holdout':None,'report':{'error':holder.get('error','case authoring did not finish in time')}}
+        self.status['self_practice']=self.clean({k:(str(v) if isinstance(v,pathlib.Path) else v) for k,v in result.items()})
+        self.event('self_practice_cases',**self.status['self_practice'])
+        return result
+    def save_candidate(self,number,ids,result):
+        folder=self.work/'candidates'/f'round-{number}';folder.mkdir(parents=True,exist_ok=True)
+        for name in ('workflow.json','policy.json','coverage.json'):
+            if (self.work/name).exists():shutil.copyfile(self.work/name,folder/name)
+        return {'round':number,'passed':result['passed'],'total':result['total'],'folder':folder,'version':ids['version']}
+    def finish_self_practice(self,candidates,practice):
+        """Keep the candidate with the best self-practice score (latest on ties), then measure it once on holdout cases."""
+        best=max(candidates,key=lambda c:(c['passed'],c['round']))
+        if best is not candidates[-1] and self.remaining()>150:
+            for name in ('workflow.json','policy.json','coverage.json'):
+                if (best['folder']/name).exists():shutil.copyfile(best['folder']/name,self.work/name)
+            try:self.publish(json.loads((self.work/'workflow.json').read_text()));self.event('self_practice_restored',round=best['round'],passed=best['passed'])
+            except (ValueError,RuntimeError,TimeoutError) as error:self.event('self_practice_restore_failed',error=str(error))
+        self.status['self_practice_choice']={'round':best['round'],'passed':best['passed'],'total':best['total']}
+        if practice.get('holdout') and self.remaining()>150:
+            from caller_styles import ROTATION
+            ids=self.status['freya'];held=self.test(ids,best['round'],cases=str(practice['holdout']),style=ROTATION[best['round']%len(ROTATION)],label='holdout',repair_feedback=False)
+            self.status['holdout']={'passed':held['passed'],'total':held['total'],'official_passed':held.get('official_passed')}
+        return bool(self.status.get('freya'))
     def execute(self):
         import freya
         from bounded_freya import install
         install(freya,self.remaining,self.event)
         self.event('run_resume' if self.args.resume_run else 'run_start',model=self.args.model,phone_agent_model=freya.AGENT_LLM,maximum_minutes=self.args.minutes,remaining_seconds=round(self.remaining()))
         self.prepare();last_result=None;completed=False
+        practice=None;candidates=[];author=None
+        if getattr(self.args,'self_practice',False):
+            from self_practice import build_cases
+            holder={}
+            def write_cases():
+                try:holder['result']=build_cases(self,KIT)
+                except Exception as error:holder['error']=self.clean(str(error))
+            author=threading.Thread(target=write_cases,daemon=True);author.start()
+            self.event('self_practice_started')
         if self.args.resume_run:
             self.feedback=[{'resume_same_budget':'Continue these generated artifacts in the same run, with unchanged bank evidence and the original deadline. Read the latest model log and fix the actual remaining failure.'}]
             if self.status['tests']:
@@ -330,9 +377,17 @@ Feedback from previous validation/tests: {json.dumps(self.feedback,ensure_ascii=
                     self.feedback=[{'validation_or_build_error':str(error)}];self.event('build_error',round=number,error=str(error));continue
                 if self.args.skip_tests:completed=True;break
                 if self.remaining()<120:self.event('test_skipped',reason='Insufficient remaining run budget');break
-                last_result=self.test(ids,number)
+                if author:
+                    if practice is None:practice=self.await_practice(author,holder)
+                    if not practice.get('train'):self.event('test_skipped',reason='No audited self-practice cases');completed=True;break
+                    from caller_styles import ROTATION
+                    last_result=self.test(ids,number,cases=str(practice['train']),style=ROTATION[(number-1)%len(ROTATION)])
+                    candidates.append(self.save_candidate(number,ids,last_result))
+                else:last_result=self.test(ids,number)
                 if last_result['passed']==last_result['total']:completed=True;break
-            self.phase('completed' if completed else 'needs_attention',ended=stamp(),evaluation='not_evaluated' if self.args.skip_tests else 'official_practice' if last_result else 'incomplete',latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
+            if author and candidates:
+                completed=self.finish_self_practice(candidates,practice)
+            self.phase('completed' if completed else 'needs_attention',ended=stamp(),evaluation='not_evaluated' if self.args.skip_tests else 'self_practice' if author else 'official_practice' if last_result else 'incomplete',latest_score={key:last_result[key] for key in ('passed','total','freya_version','workflow_id','simulation_id') if key in last_result} if last_result else {},within_30_minutes=self.elapsed()<=1800)
         except Exception as error:
             self.phase('failed',ended=stamp(),error=self.clean(str(error)))
             raise
@@ -348,18 +403,20 @@ def arguments():
     parser.add_argument('--rounds',type=int,help='Build/repair rounds within the same 30 minutes (default 3 with tests, 6 with --skip-tests)');parser.add_argument('--minutes',type=float,default=30)
     parser.add_argument('--brief',help='Case group in the provided test set; public A/B groups are inferred from their exact evidence')
     parser.add_argument('--only');parser.add_argument('--style',choices=['pieces','corrects','talkative','asks_back','in_words'])
-    parser.add_argument('--skip-tests',action='store_true');parser.add_argument('--model',default=os.environ.get('BUILDER_MODEL'))
+    parser.add_argument('--skip-tests',action='store_true');parser.add_argument('--self-practice',action='store_true',help='Write, audit and run own practice customers from the evidence; for unseen briefs without test cases')
+    parser.add_argument('--model',default=os.environ.get('BUILDER_MODEL'))
     parser.add_argument('--practice-repair',help='New explicitly logged practice cycle from a stopped public-brief run; never permitted for unseen briefs')
     parser.add_argument('--repair-first',action='store_true',help='With public practice repair, use the existing failed-call evidence before rerunning the candidate')
     parser.add_argument('--resume-run',help='Continue a stopped run with identical evidence and its original total time budget')
     args=parser.parse_args()
     if args.repair_first and not args.practice_repair:parser.error('--repair-first requires --practice-repair')
-    try:validate_case_scope(args.briefs,args.cases,args.skip_tests)
+    try:validate_case_scope(args.briefs,args.cases,args.skip_tests or args.self_practice)
     except ValueError as error:parser.error(str(error))
     if args.resume_run and args.practice_repair:parser.error('Use either same-budget resume or a separate public practice repair cycle')
     if not 0<args.minutes<=30:parser.error('Each build is limited to 30 minutes.')
     # Without tests a round costs only model time, so the full budget may need more than three short rounds.
-    if args.rounds is None:args.rounds=6 if args.skip_tests else 3
+    if args.self_practice and args.skip_tests:parser.error('--self-practice runs tests; do not combine it with --skip-tests')
+    if args.rounds is None:args.rounds=6 if args.skip_tests else 4 if args.self_practice else 3
     if not 1<=args.rounds<=6:parser.error('Use 1 to 6 bounded build/repair rounds within the same 30-minute maximum.')
     if not re.fullmatch(r'[A-Za-z0-9_-]+',args.slot):parser.error('slot must use letters, numbers, - or _.')
     if not args.model:
