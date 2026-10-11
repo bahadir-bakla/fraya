@@ -1,0 +1,24 @@
+{
+  "schema": "portable-live-layer-v1",
+  "mode": "v2-student",
+  "bank_authority": false,
+  "financial_authorization": "UNKNOWN",
+  "full_MiniLM_encoder_in_phone_agent": false,
+  "hosted_runtime_verified": false,
+  "student_kind": "V3_PORTABLE_STUDENT_NOT_MINILM",
+  "student_consumer_enabled": true,
+  "student_use": "clarify",
+  "risk_qualified": false,
+  "activation_scope": "Explicit experimental clarification only; below the CAL target",
+  "files": {
+    "recipient_assertion.py": "417cba0cd772d742c3155e7efb1649f6870c5dfcc9040f0099bf7606f739a60d",
+    "student-runtime.py": "b6315933ccb78c76c1c7f5dc48fa65dd18c2a6adc675a054e055f31c0fd24acd",
+    "student-model.json": "68f38b89333e14db53262b43ff77e2f9948d4fe831aacc784950f8e11459a2f5",
+    "student-manifest.json": "a21e38a23d51bdef25d6e35de517e9e4bb16a4f64beb67ce265b738749f36740",
+    "live-layer-code.py": "7722121c15765d63986b5c7d1d2ed48a237bffba400c37f5062f793f3315d8e6"
+  },
+  "component_bytes": 55811,
+  "call": "live_layer_apply(vars)",
+  "recipient_check": "live_recipient_reply(raw, vars)",
+  "notice": "Read live-layer-contract.json and live-layer-code.py. The latter is a\nfrozen portable component, not a phone workflow: include its EXACT complete\ntext in the controller code_exec and call live_layer_apply(vars) BEFORE the\ncontroller consumes/clears the CURRENT raw utterance on each dispatch. Do not\nThe invocation MUST be the standalone unconditional module statement\nlive_layer_apply(vars), outside every function, try, if or loop. Definitions may\nprecede it, followed by this call and then the controller entry call. Preserve\nthe exact component's line endings and complete text, not an adapted copy.\nrun any controller statements before this call except definitions, imports and\nliteral constants. The component belongs in a CODE node, never conversation\npre_actions. Do not redefine or rebind its helpers or model constants.\nFor the currently supplied shadow-only bundles LIVE_STUDENT_ENABLED is False:\nrecord live_semantic_diagnostic internally, leave live_semantic_hint empty, and\ndo not let diagnostic labels change routing, dialogue or tools. This is a\nper-turn runtime integration experiment, not an enabled learned decision layer.\nDo not\ncall it on bank response mode or replace observed current text with model text.\nUse live_recipient_reply(raw, vars) as the source-backed recipient assertion\ncheck instead of substring matching: SELF only opens the existing DOB prompt,\nnever establishes verified identity. OTHER/UNKNOWN retain classic safe routing.\nThe optional V2 student is a DISTINCT compact distilled model, not the full\nMiniLM encoder. It executes locally inside code_exec, never via a tool/server.\nlive_semantic_hint is a proposal for conversational agenda only. For a verified\ncustomer with an UNKNOWN/unresolved language extraction, consult that hint to\nask ONE source-grounded clarification of the currently supplied proposal,\ndispute or correction; preserve the current target and already stored slots.\nDo not treat uncertainty or an absent/negative label as a refusal. Current raw\nspeech, source scope, classical policy guards, explicit readback confirmation\nand bank receipts remain authoritative. A model hint must NEVER set identity,\nconsent, amounts, dates, product targets, backend receipts or close outcomes.\nExtraction happened BEFORE this code: do not pretend the hint repaired that\nalready-run extraction. Keep AGENT_LLM and all bank-only tools unchanged.\nThe supplied raw field is an extractor copy, not an attested engine transcript;\ndeclare this provenance and validate literal source patterns conservatively.\nDo not apply the student to recipient or security-answer phases. The runtime\nskips those phases and does not store their copied text in learned history.\nFail closed to classic behavior on malformed/unavailable student input. Declare\nall live_* vars you use; counters/labels are internal and never read verbatim.\nNo post-generation/manual phone JSON edits are permitted.\n\nThis run explicitly uses student_use=clarify: LIVE_STUDENT_ENABLED=True. Below-target CAL is disclosed. A hint may only request ONE source-grounded clarification when verified and canonical extraction is UNKNOWN/unresolved. Never invent slots, targets or consent; no complete valid canonical event may be changed.\n"
+}

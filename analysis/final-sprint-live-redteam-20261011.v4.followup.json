@@ -1,0 +1,120 @@
+{
+  "status": "CLOSED_FROZEN_CODEX_V4_OPT_IN_FOLLOWUP",
+  "finished_utc": "2026-10-11T15:06:09.357096+00:00",
+  "original_deadline_utc": "2026-10-11T15:08:10Z",
+  "native_attempts": 0,
+  "source_hashes": {
+    "competition/live_layer.py": "4e8eec7a337b4e3292070c5f56e6ea060a29a0933f237e93e04d2d3b0075cae9",
+    "competition/recipient_assertion.py": "417cba0cd772d742c3155e7efb1649f6870c5dfcc9040f0099bf7606f739a60d",
+    "competition/builder.py": "f849b383ae5bd192bfadc051bdeea52c6044363a1a00ff14d6dfe1c19a0f0e1d"
+  },
+  "sources_unchanged": {
+    "competition/live_layer.py": true,
+    "competition/recipient_assertion.py": true,
+    "competition/builder.py": true
+  },
+  "prior_v4_sha256": "7f7883c08776e853a5f53d554ceef3b9d1dbc4f02118d9a8033b655b44076ecf",
+  "prior_v4_unchanged": true,
+  "checks": 7,
+  "met": 5,
+  "unmet": [
+    "regex-constant-rebinding",
+    "canonical-unknown-enforcement"
+  ],
+  "results": [
+    {
+      "id": "regex-constant-rebinding",
+      "expected": "reject mutation of embedded regex globals",
+      "met": false,
+      "observed": {
+        "accepted": true,
+        "initial_recipient_decision": "UNKNOWN",
+        "later_recipient_reply": true,
+        "bank_authority": "false"
+      }
+    },
+    {
+      "id": "opt-in-shadow",
+      "expected": "shadow default empty, clarify explicit proposal-only hint; no authority mutation",
+      "met": true,
+      "observed": {
+        "mode": "shadow",
+        "consumer_enabled": false,
+        "risk_qualified": false,
+        "hint": "",
+        "diagnostic": "proposal",
+        "state": {
+          "phase": "proposal",
+          "verified": true,
+          "dob_passed": true,
+          "consent": "UNKNOWN"
+        },
+        "qualification": "NONE_DIAGNOSTIC_SHADOW"
+      }
+    },
+    {
+      "id": "opt-in-clarify",
+      "expected": "shadow default empty, clarify explicit proposal-only hint; no authority mutation",
+      "met": true,
+      "observed": {
+        "mode": "clarify",
+        "consumer_enabled": true,
+        "risk_qualified": false,
+        "hint": "proposal",
+        "diagnostic": "proposal",
+        "state": {
+          "phase": "proposal",
+          "verified": true,
+          "dob_passed": true,
+          "consent": "UNKNOWN"
+        },
+        "qualification": "NONE_DIAGNOSTIC_SHADOW"
+      }
+    },
+    {
+      "id": "canonical-unknown-enforcement",
+      "expected": "runtime itself emits no hint for valid canonical extraction",
+      "met": false,
+      "observed": {
+        "hint": "proposal",
+        "canonical_value": "complete-valid-canonical-event",
+        "classification": "Generated consumer must apply UNKNOWN/unresolved/one-clarification guard; no consumer or hosted misrouting established."
+      }
+    },
+    {
+      "id": "shadow-manifest-unchanged",
+      "expected": "opt-in cannot alter source model promotion/default flags",
+      "met": true,
+      "observed": {
+        "unchanged": true
+      }
+    },
+    {
+      "id": "clarify-needs-student",
+      "expected": "explicit pin/bundle required",
+      "met": true,
+      "observed": {
+        "rejected": true
+      }
+    },
+    {
+      "id": "prompt-scoped-activation",
+      "expected": "clarify scoped notice actually supplied instead of shadow-only static notice",
+      "met": true,
+      "observed": {
+        "static_notice_says_disabled": true,
+        "contract_notice_explicit_true": true,
+        "builder_appends_static_NOTICE": false,
+        "classification": "Generator reads contract, so conflicting static wording is a source ambiguity, not an observed generation failure."
+      }
+    }
+  ],
+  "authorization": "User waived .95 requirement for explicit experimental clarification only. No automatic promotion or changed model qualification claimed.",
+  "model_status": "User-supplied actual V3 pin a21e38a23d51bdef25d6e35de517e9e4bb16a4f64beb67ce265b738749f36740 not independently reopened here; no weights, 64/96 labels, data or prediction outputs read.",
+  "limits": [
+    "Interface stub explicitly synthetic; these results are not actual student model quality or native-model inference.",
+    "Canonical UNKNOWN, source grounding and one-question consumption are generated-controller obligations not proven by enabling the broker.",
+    "No candidate inspected; generation94242 frozen source requires separate exact artifact proof.",
+    "No Git/push/platform/training/source/model edits or native retry."
+  ]
+}

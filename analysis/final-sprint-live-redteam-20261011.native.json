@@ -1,0 +1,121 @@
+{
+  "status": "VERIFIED_NATIVE_OPUS_SOURCE_REVIEW",
+  "started_utc": "2026-10-11T14:45:22.182736+00:00",
+  "source_hashes": {
+    "competition/live_layer.py": "42025966b6664efe367646d7a6abda4771ec405f000925ef486f301a820fa7c1",
+    "competition/recipient_assertion.py": "5a2cd9c467f2dfe05ef26fa36fe5f22acaa00ca36fd5d487e904fc2f02c2cb8d",
+    "competition/builder.py": "0465fe1334bf568158682ca6a77d20a2ed3d835a1565fb2e72f1c5e01688743d",
+    "integrations/learned-dialogue/live_v2_student_runtime.py": "a060566f2875c37de7e89b45c2c2002b7c710f319219211165bdac21d8978c36",
+    "integrations/learned-dialogue/live_v2_student_train.py": "f0614dff8c3c593adef022eb3d422300988e5fde0fe756434c83ef87d67e4a9a",
+    "build-the-builder 2/README.md": "7084fac5aa44c7b2a9f0b9a31138ab6a7f47cbb3618790096611ebb78340dc08",
+    "build-the-builder 2/docs/workflow-format.md": "b5236915838b6b88196d4d1e194adc21eb45137ffe83828239213f0448c47db9",
+    "build-the-builder 2/docs/tools-and-code.md": "c094579c4b2169427252a8cf4a32ff8bd2e0e837ff12e56ad4d5f8183980d837",
+    "integrations/learned-dialogue/live_v2_student/current_only_run/model.json": "d3af3e7da88aa7bdb7fe2e00cbe0011dc7ccce1f2508a944a6d81f422400f010",
+    "integrations/learned-dialogue/live_v2_student/current_only_run/manifest.json": "e9ac8c2fb7af817441a433bbc8ddd64894969df049479ec37703dff95c7e11c9"
+  },
+  "actual_opus_inference_verified": true,
+  "attempts": 1,
+  "scope": "Source-only; no generated candidate, heldout data/outcomes or platform evidence.",
+  "raw_streams_thinking_prompt_saved": false,
+  "auth_status": {
+    "loggedIn": true,
+    "authMethod": "claude.ai",
+    "apiProvider": "firstParty",
+    "subscriptionType": "pro"
+  },
+  "packet_sha256": "2d2ed79050064ba514970b8ad9171d6a17a397cfb5a1482af97cb16f62adce5c",
+  "packet_bytes": 208998,
+  "timeout_seconds": 300,
+  "seconds": 111.188,
+  "exit_code": 0,
+  "rate_notification_count": 1,
+  "inference_evidence": {
+    "assistant_response_models": [
+      "claude-opus-5-5",
+      "claude-opus-5-5"
+    ],
+    "exclusive_usage_models": [
+      "claude-opus-5-5"
+    ],
+    "model_usage": {
+      "claude-opus-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 10381,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 80105,
+        "webSearchRequests": 0,
+        "costUSD": 0.848468,
+        "canonicalModel": "claude-opus-5-5",
+        "provider": "firstParty"
+      }
+    },
+    "tool_calls": 0
+  },
+  "model_claims": {
+    "findings": [
+      {
+        "id": "F1-dead-student-provenance",
+        "priority": "high",
+        "source_pointer": "PINNED_MODEL_INTERFACE_ONLY (logit_cutoffs:null, quant_logit_margins:null, thresholds[2,5,6]=1.01); live_v2_student_runtime._valid_model lines that loop over 'logit_cutoffs','quant_logit_margins'; MANIFEST runtime_sha256/trainer_sha256; live_layer.prepare student branch",
+        "contract": "The v2-student mode should embed a student that the frozen runtime accepts. The emitted labels should be the advertised proposal/dispute/correction/uncertain/reported_third_party proposals. The model's provenance should match the reviewed runtime and trainer.",
+        "counterexample": "_valid_model requires 11 finite values for logit_cutoffs and quant_logit_margins. If the pinned model.json really holds null, every student_predict call returns INVALID. The broker then writes live_layer_status='STUDENT_INVALID' and an empty hint on every eligible turn, so the student is dead code. Even with valid cutoffs, thresholds of 1.01 make correction, uncertain and reported_third_party unreachable, so only proposal and dispute can ever fire. The manifest pins do not tie back to the sources under review. runtime_sha256 f5b5\u2026 and the bundle runtime.py 0f87\u2026 both differ from the reviewed runtime a060\u2026, and trainer_sha256 c0a2\u2026 differs from the reviewed trainer f061\u2026. The current trainer emits effective thresholds of the form sigmoid(cutoff+16\u00b7scale), not round values like 0.6 or 0.8, which suggests an older artifact. prepare() only checks the manifest digest and bank_authority. It never runs the embedded model through the embedded runtime, never compares manifest.runtime_sha256 with the runtime it embeds, and never records which heads are reachable. The runtime also does not check that margins are at least 16\u00b7scale for current_only, or 24\u00b7scale if context_mode were observed_prior.",
+        "control": "Fail-closed behaviour holds: an INVALID result yields an empty hint and classic routing, with no authority leak.",
+        "claim_limit": "PINNED_MODEL_INTERFACE_ONLY may have elided the arrays rather than reporting real nulls. The bundle runtime.py (0f87\u2026) was not provided and might accept a different schema. Hash differences could also come from CRLF rewriting by read_text/write_text on Windows. All of these must be resolved from the actual bytes."
+      },
+      {
+        "id": "F2-embedding-validator-accepts-dead-misordered-shadowed-calls",
+        "priority": "high",
+        "source_pointer": "live_layer.validate_embedding: `exact in code`, ast.walk 'applied'/'checked' checks, node iteration over pre_actions",
+        "contract": "The validator should only accept a workflow where live_layer_apply(vars) actually executes before the current raw is consumed or cleared on every dispatch. It should also confirm the helpers are unmutated and that live_recipient_reply is the recipient check actually used.",
+        "counterexample": "ast.walk finds Call nodes anywhere in the code. Each of the following passes: `if False: live_layer_apply(vars)`, a call inside an uncalled `def _x():`, a call placed after `vars['raw']=''` or after the controller has already routed on raw, and `live_recipient_reply()` with any number of arguments whose result is ignored. Shadowing also passes: `def live_layer_apply(v): pass` placed after the exact text, or `vars={}` before the call. The check accepts any node with the exact text, including a code node that is never reached, not passthrough, or run only once at the initial node. NOTICE ordering ('BEFORE the controller consumes/clears') and the bank-response-mode exclusion are never checked.",
+        "control": "Hash-pinned exact text is required, and the handler must be __function__:code_exec. The scope string honestly says runtime behaviour needs replay.",
+        "claim_limit": "This is static analysis only. It cannot prove execution order inside generated controllers. A replay with a sentinel is still required."
+      },
+      {
+        "id": "F3-phase-denylist-security-text-leak",
+        "priority": "high",
+        "source_pointer": "BROKER live_layer_apply: `phase in ('recipient','dob','phone')`, `v['live_observed_prior']=(prior+[dict(speaker='USER',text=raw)])[-2:]`; NOTICE 'Do not apply the student to recipient or security-answer phases'",
+        "contract": "Security answers and pre-verification speech should never reach the student or be stored in learned history. The student should run only for a verified customer.",
+        "counterexample": "Phase names are generated by the model from unseen briefs, which per the README use 'other identity questions'. A controller with state={'phase':'security_question'}, 'postcode', 'verify_pin', 'mother_maiden' or 'identity' passes the denylist. The security answer then goes to student_predict and is written into vars['live_observed_prior']. Any later prompt, {{var}} or context use can then echo it. A phase of 'DOB' (case differs) also bypasses the denylist. Nothing ties student use to a bank verification receipt. Prior entries are not tagged with a phase, so text stored before a phase mislabel persists for two turns. Separately, a stored prior turn carrying extra keys makes runtime _valid_input fail (INVALID), which is fail-closed but silent.",
+        "control": "A missing or non-dict state defaults to 'recipient', so the bypass is skipped safely. Early return happens before history is stored for the denylisted names. context_mode current_only ignores prior for prediction.",
+        "claim_limit": "The leak path depends on the phase vocabulary the generated controller uses. Whether vars are surfaced to the dialogue model is not proven here."
+      },
+      {
+        "id": "F4-recipient-false-OTHER-and-extractor-laundering",
+        "priority": "medium",
+        "source_pointer": "recipient_assertion._ra_aliases (only the group containing the supplied title), _ra_name `if strong or proper: return 'OTHER'`, _ra_fold fixed composition list; BROKER passes v['raw'] (extractor_copy) unchanged",
+        "contract": "The actual recipient should never be classified OTHER because of honorific or Unicode form. Reported, quoted or hypothetical identity should stay non-SELF. The extractor-copied raw should be treated as lower-provenance than an engine transcript.",
+        "counterexample": "(a) With title='' (the broker default when the title is unset), 'Mr. Smith speaking' leaves ['mr','smith'], which counts as a proper phrase, so the result is OTHER (EXPLICIT_DIFFERENT_NAME). Title 'Mrs' with an utterance of 'Ms Smith here' gives the same OTHER, as does Turkish 'Bay Y\u0131lmaz benim' with no title. (b) Combining sequences outside the fixed list, such as 'Zoe\\u0308', 'e\\u0300' or 'a\\u030a', fail to match the NFC given name and become OTHER. (c) Suppose the user says 'My neighbour said \"this is John Smith\"' and the extractor copies only 'This is John Smith'. The quote and report cues are gone, so the result is SELF, while live_input_kind stays only a label. (d) A bare 'Yes.' is SELF regardless of whether the agent asked 'Is John available?'.",
+        "control": "SELF only opens the DOB prompt, and live_recipient_reply returns False for OTHER. Conflicting identities give UNKNOWN. Quotes, reports and hypotheticals are masked when visible in raw.",
+        "claim_limit": "The harm depends on whether generated controllers route on live_recipient_decision=='OTHER'. Laundering in (c) depends on extractor behaviour, which was not observed."
+      }
+    ],
+    "recommendations": [
+      "In prepare(): exec the assembled source in an isolated namespace. Require _valid_model(LIVE_STUDENT_MODEL) and a non-INVALID result on a synthetic non-empty probe. Require manifest.runtime_sha256 == sha(student-runtime.py) == the reviewed runtime pin. Record the reachable heads (threshold \u2264 1) and enforce margin \u2265 16\u00b7scale (or \u2265 24\u00b7scale for observed_prior). Refuse v2-student mode otherwise.",
+      "Replace the AST call search with a structural contract. The component must be the module prefix. It must be followed by a top-level `live_layer_apply(vars)` statement before any read or write of vars['raw'] and outside any conditional or def. No reassignment of vars or of the helper names may appear anywhere. Add a replay sentinel check per dispatch.",
+      "Invert the phase gate to an allowlist. Run the student only when a bank-receipt-derived string flag (for example identity_verified=='verified' from a response_mapping) is present, and normalise phase case. Never persist raw text in vars; keep the hint only.",
+      "In recipient_assertion: strip any honorific from all _RA_TITLES groups, and return UNKNOWN (not OTHER) when an honorific or unsupported-normalisation mismatch is the only difference. Downgrade SELF to UNKNOWN when live_input_kind=='extractor_copy' unless the extractor field is constrained to verbatim copying. Never route OTHER from the live layer.",
+      "Builder integrity (builder.model_permissions/test): reject the inherited ':danger-full-access' profile unless an explicit flag is set. Run simulate.py from the hashed builder-source snapshot, not ROOT. Re-hash ROOT/KIT sources after each model call, since a full-access model could rewrite simulate.py and forge results."
+    ],
+    "limits": [
+      "This is a source-only review with no execution and no platform tests. The bundle runtime.py, model.json bytes and inline_live.py were not visible.",
+      "No fresh64/EVAL96 data, labels or predictions were used. CAL metrics were not assessed.",
+      "The code_exec sandbox size limit, module list and template behaviour are undocumented. The 85000-byte budget is not shown to fit the platform.",
+      "Sources may change after this freeze. The findings bind only to the quoted SHA256 values."
+    ]
+  },
+  "final_answer_sha256": "415c340415522d3b4ff5b0d5daab0260ca3fb4ff120fd3e3cfb71f6e93e09397",
+  "finished_utc": "2026-10-11T14:47:14.515827+00:00",
+  "source_stability": {
+    "competition/live_layer.py": true,
+    "competition/recipient_assertion.py": true,
+    "competition/builder.py": true,
+    "integrations/learned-dialogue/live_v2_student_runtime.py": true,
+    "integrations/learned-dialogue/live_v2_student_train.py": false,
+    "build-the-builder 2/README.md": true,
+    "build-the-builder 2/docs/workflow-format.md": true,
+    "build-the-builder 2/docs/tools-and-code.md": true,
+    "integrations/learned-dialogue/live_v2_student/current_only_run/model.json": true,
+    "integrations/learned-dialogue/live_v2_student/current_only_run/manifest.json": true
+  }
+}

@@ -1,0 +1,525 @@
+import json
+"""Current opening-answer source assertions, never verified identity.
+
+Portable inline source: re and builtins only; no IO, model, bank variables or
+test subjects. Call recipient_assertion(raw, given_name, last_name, title='').
+SELF supplies only eligibility for the next security question. The caller must
+keep verification and disclosure authority independent. Offsets are Python
+codepoint offsets into the exact original raw string, with end exclusive.
+"""
+import re
+
+_RA_WORD = re.compile(r"[^\W\d_](?:[^\W\d_]|[\u0300-\u036f])*(?:['’‘ʼ\-‐‑–−][^\W\d_](?:[^\W\d_]|[\u0300-\u036f])*)*", re.UNICODE)
+_RA_TITLES = (
+    ('dr', 'doctor', 'doktor'),
+    ('prof', 'professor', 'profesör', 'profesor'),
+    ('mr', 'mister', 'bay', 'bey'),
+    ('ms', 'miss', 'bayan', 'hanım', 'hanim'),
+    ('mrs', 'madam', 'hanım', 'hanim'),
+    ('sir',), ('mx',), ('dame',),
+)
+_RA_COURTESY = re.compile(r"^(?:[,.:\s]*)(?:please|thanks|thank you|hello|hi|good morning|good afternoon|buyurun|efendim|merhaba|teşekkürler|tesekkurler|evet|yes)(?:[.!\s]*)$", re.I)
+_RA_RELATION = re.compile(
+    r"\b(?:i\s+am|i['’]m|this\s+is)\s+(?:(?:his|her|their|the)\s+|[^;.!?]+?['’]s\s+)"
+    r"(?:assistant|mother|father|sister|brother|wife|husband|son|daughter|neighbou?r|colleague|friend|partner)\b"
+    r"|\b(?:ben\s+)?(?:annesiyim|babas(?:ı|i)y(?:ı|i)m|kardeşiyim|kardesiyim|komşusuyum|komsusuyum|asistan(?:ı|i)y(?:ı|i)m|eşiyim|esiyim|oğluyum|ogluyum|k(?:ı|i)z(?:ı|i)y(?:ı|i)m)\b", re.I)
+_RA_DOB_REFUSAL = re.compile(
+    r"\b(?:i\s+(?:will\s+not|won['’]t|refuse\s+to|do\s+not\s+want\s+to)|i['’]m\s+not\s+going\s+to)"
+    r"[^;.!?]{0,100}\b(?:birthday|birth\s*date|date\s+of\s+birth|dob)\b"
+    r"|\b(?:doğum|dogum)\s+(?:tarihimi|günümü|gunumu)[^;.!?]{0,100}\b(?:söylemem|soylemem|vermeyeceğim|vermeyecegim|paylaşmam|paylasmam|söylemeyeceğim|soylemeyecegim)\b", re.I)
+_RA_PREFIX = re.compile(
+    r"^(?:(?:i\s+am|i['’]m|this\s+is|my\s+name\s+is|the\s+name\s+is|benim\s+ad(?:ı|i)m|ad(?:ı|i)m|ismim|ben)\s+|speaking\s*[,.:]\s*)(.+)$", re.I)
+_RA_EN_DENIAL = re.compile(
+    r"^(?:(?:i\s+am|i['’]m|this\s+is)\s+(?:not|never)|my\s+name\s+(?:is\s+not|isn['’]t))\s+(.+)$", re.I)
+_RA_TR_DENIAL = re.compile(r"^(?:ben\s+)?(.+?)\s+(?:ben\s+)?(?:değilim|degilim)\s*$", re.I)
+_RA_SUFFIX = re.compile(r"^(.+?)\s+(?:speaking|here|benim|konuşuyor|konusuyor|konuşuyorum|konusuyorum)(.*)$", re.I)
+_RA_REPORT = re.compile(r"\b(?:said|says|told|quoting|quoted|according\s+to|read\s+aloud|dedi|diyor|söyledi|soyledi|söylemiş|soylemis|alıntı|alinti)\b", re.I)
+_RA_HYPOTHETICAL = re.compile(r"\b(?:if|suppose|imagine|pretend|hypothetically|eğer|eger|varsay|diyelim)\b", re.I)
+_RA_NO_ANSWER = re.compile(r"\b(?:no\s+answer|voicemail|silence|unanswered|caller\s+(?:repeats|prompt)|cevap\s+yok|sessizlik|sesli\s+mesaj)\b", re.I)
+_RA_WRONG_RECIPIENT = re.compile(
+    r"^(?:not\s+me|it['’]s\s+not\s+me|wrong\s+(?:number|person)|you\s+(?:have|have\s+got|are\s+calling)\s+(?:the\s+)?wrong\s+(?:number|person)"
+    r"|yanlış\s+numara|yanlis\s+numara|ben\s+değilim|ben\s+degilim|aradığınız\s+kişi\s+değilim|aradiginiz\s+kisi\s+degilim)$", re.I)
+_RA_ABSENCE = re.compile(r"^(.+?)\s+(?:is\s+(?:away|not\s+here|unavailable|deceased|dead)|burada\s+(?:değil|degil)|yok)\s*$", re.I)
+
+
+def _ra_fold(text):
+    text = text.casefold().replace('\u0307', '').replace('ı', 'i')
+    for source, target in (("’", "'"), ("‘", "'"), ("ʼ", "'"), ('‐', '-'), ('‑', '-'), ('–', '-'), ('−', '-')):
+        text = text.replace(source, target)
+    # Common Latin decomposed spelling, without importing an undocumented module.
+    for source, target in (('s\u0327', 'ş'), ('c\u0327', 'ç'), ('g\u0306', 'ğ'),
+                           ('o\u0308', 'ö'), ('u\u0308', 'ü'), ('a\u0308', 'ä'),
+                           ('e\u0301', 'é'), ('a\u0301', 'á'), ('i\u0301', 'í'),
+                           ('o\u0301', 'ó'), ('u\u0301', 'ú'), ('n\u0303', 'ñ')):
+        text = text.replace(source, target)
+    return text
+
+
+def _ra_tokens(text):
+    return [_ra_fold(match.group()) for match in _RA_WORD.finditer(text)]
+
+
+def _ra_aliases(title):
+    value = _ra_fold(title.strip().rstrip('.'))
+    aliases = [value] if value else []
+    for group in _RA_TITLES:
+        folded = [_ra_fold(item) for item in group]
+        if value in folded:
+            aliases.extend(folded)
+    return [_ra_tokens(item) for item in aliases if item]
+
+
+def _ra_name(candidate, given, family, aliases, *, strong=False):
+    """Match the complete asserted name phrase, never an utterance substring."""
+    tokens = _ra_tokens(candidate)
+    if not tokens:
+        return 'UNKNOWN', [], 'NO_NAME'
+    # Reject arbitrary punctuation/numeric payload embedded in a name phrase.
+    rest = _RA_WORD.sub('', candidate)
+    if re.search(r"[^\s,.'’‘ʼ\-‐‑–−]", rest):
+        return 'UNKNOWN', [], 'NOT_A_NAME_PHRASE'
+    for alias in sorted(aliases, key=len, reverse=True):
+        if tokens[:len(alias)] == alias:
+            tokens = tokens[len(alias):]; break
+        if tokens[-len(alias):] == alias:
+            tokens = tokens[:-len(alias)]; break
+    allowed = []
+    if given: allowed.append((given, ['given']))
+    if family: allowed.append((family, ['family']))
+    if given and family:
+        allowed.extend(((given + family, ['given', 'family']), (family + given, ['family', 'given'])))
+    for name, parts in allowed:
+        if tokens == name:
+            return 'SELF', parts, 'CURRENT_NAME_ASSERTION'
+    if not tokens:
+        return 'UNKNOWN', [], 'TITLE_ONLY'
+    # A matching family name cannot discard an explicitly different given name.
+    overlaps = [part for part, name in (('given', given), ('family', family)) if name and
+                any(tokens[i:i+len(name)] == name for i in range(len(tokens)-len(name)+1))]
+    words = [match.group() for match in _RA_WORD.finditer(candidate)]
+    proper = bool(words) and all(word[0].isupper() or _ra_fold(word) in ('de', 'van', 'von', 'da', 'di') for word in words)
+    # Ordinary copular descriptions such as "I'm busy" are not different names.
+    if strong or proper:
+        return 'OTHER', overlaps, 'EXPLICIT_DIFFERENT_NAME'
+    return 'UNKNOWN', [], 'UNSUPPORTED_NAME_PHRASE'
+
+
+def _ra_quotes(raw):
+    ranges = []; active = None; begin = None
+    for index, char in enumerate(raw):
+        if char not in "'\"‘’“”":
+            continue
+        left = raw[index-1] if index else ''
+        right = raw[index+1] if index+1 < len(raw) else ''
+        if char in "'‘’" and left and right and (left.isalnum() or '\u0300' <= left <= '\u036f') and right.isalnum():
+            continue  # Contraction, name apostrophe, or Turkish possessive.
+        kind = 'single' if char in "'‘’" else 'double'
+        if active is not None:
+            if kind == active:
+                ranges.append((begin, index+1)); active = None; begin = None
+        elif char in "'\"‘“":
+            # A trailing possessive apostrophe is punctuation, not a quotation.
+            if char == "'" and left.isalnum() and (not right or right.isspace()):
+                continue
+            active = kind; begin = index
+    if active is not None:
+        ranges.append((begin, len(raw)))
+    return ranges
+
+
+def _ra_segments(raw, masked, quote_ranges):
+    bounds = [0, len(raw)]
+    for start, end in quote_ranges:
+        bounds.extend((start, end))
+    for index, char in enumerate(masked):
+        if char in ';!?':
+            bounds.append(index+1)
+        elif char == '.':
+            preceding = re.search(r"([^\W\d_]+)$", masked[max(0, index-32):index])
+            abbreviation = preceding and _ra_fold(preceding.group()) in ('dr', 'prof', 'mr', 'mrs', 'ms', 'mx')
+            if not abbreviation: bounds.append(index+1)
+    # Commas within inverted names stay in the candidate; speech-act connectors
+    # and courtesy/question suffixes form separate clauses.
+    for match in re.finditer(r",\s*(?=(?:but|and|ama|fakat|ancak|i\b|i['’]m|ben\b|buyurun|please|thanks|thank\s+you|what\b|who\b|why\b|which\b|how\b|merhaba|efendim)\b)|\s+(?=(?:but|ama|fakat|ancak)\s+)", masked, re.I):
+        bounds.append(match.end())
+    ordered = sorted(set(bounds))
+    for start, end in zip(ordered, ordered[1:]):
+        while start < end and (raw[start].isspace() or raw[start] in ',;.!'):
+            start += 1
+        while end > start and raw[end-1].isspace():
+            end -= 1
+        if start < end and masked[start:end].strip():
+            yield start, end
+
+
+def recipient_assertion(raw, given_name, last_name, title=''):
+    """Parse one current recipient-opening answer. No extractor output needed.
+
+    Name-only answers and short affirmatives are scoped to this opening API.
+    Input contains only current speech and dynamic recipient name/title strings.
+    Unclear attribution, unsupported grammar and conflicting identities remain
+    UNKNOWN. Independent DOB refusal does not negate recipient identification.
+    """
+    result = {'decision': 'UNKNOWN', 'recipient_self': None, 'source_span': [],
+              'assertions': [], 'reason': 'NO_CURRENT_ASSERTION', 'bank_authority': False}
+    if any(type(value) is not str for value in (raw, given_name, last_name, title)):
+        result['reason'] = 'INVALID_INPUT'; return result
+    if not raw.strip() or len(raw) > 16384 or max(len(given_name), len(last_name)) > 256 or len(title) > 64:
+        result['reason'] = 'INVALID_INPUT'; return result
+    given, family = _ra_tokens(given_name), _ra_tokens(last_name)
+    if not given and not family:
+        result['reason'] = 'MISSING_RECIPIENT_NAME'; return result
+    aliases = _ra_aliases(title)
+    assertions = result['assertions']
+    def add(act, start, end, subject, polarity, decision='UNKNOWN', parts=None, reason=''):
+        assertions.append({'act': act, 'source_span': [start, end], 'text': raw[start:end],
+                           'subject': subject, 'polarity': polarity, 'decision': decision,
+                           'matched_name_parts': parts or [], 'reason': reason})
+    quote_ranges = _ra_quotes(raw)
+    masked = list(raw)
+    for start, end in quote_ranges:
+        prefix = raw[max(0, start-100):start]
+        subject = 'reported' if _RA_REPORT.search(prefix) else 'unknown'
+        add('quotation', start, end, subject, 'unknown', reason='QUOTED_NOT_CURRENT_SELF')
+        masked[start:end] = [' '] * (end-start)
+    for match in re.finditer(r"\[[^\]]*\]", raw):
+        if _RA_NO_ANSWER.search(match.group()):
+            add('no_answer', match.start(), match.end(), 'no_current_speaker', 'negative', 'OTHER', reason='NO_LIVE_ANSWER')
+            masked[match.start():match.end()] = [' '] * (match.end()-match.start())
+    masked = ''.join(masked)
+    for start, end in _ra_segments(raw, masked, quote_ranges):
+        segment = masked[start:end]
+        text = segment.rstrip(' .;!?,').strip()
+        if not text: continue
+        # Discourse prefixes express courtesy or repair, not a name component.
+        prefix = re.match(r"^(?:(?:yes|no|evet|hayır|hayir|hello|merhaba|actually|aslında|aslinda)\s*[,.:]\s*)+", text, re.I)
+        offset = prefix.end() if prefix else 0
+        core = text[offset:]
+        connector = re.match(r"^(?:but|and|ama|fakat|ancak)\s+", core, re.I)
+        if connector: offset += connector.end(); core = core[connector.end():]
+        core_start = start + offset
+        reverse_denial = re.fullmatch(r"(.+?)\s+(?:is\s+not\s+me|isn['’]t\s+me|is\s+not\s+my\s+name|isn['’]t\s+my\s+name)", core, re.I)
+        if reverse_denial and _ra_name(reverse_denial.group(1), given, family, aliases)[0]=='SELF':
+            add('identity_denial', core_start, end, 'speaker', 'negative', 'OTHER', reason='CURRENT_RECIPIENT_DENIAL')
+            continue
+        possessive = re.fullmatch(r"(?:i\s+am|i['’]m|this\s+is)\s+(.+?)['’]s\s+([^;.!?]+)", core, re.I)
+        generic_relation = re.fullmatch(r"(?:i\s+am|i['’]m|this\s+is)\s+(?:his|her|their)\s+(?:cousin|relative|attorney|representative|carer|caregiver|aunt|uncle|niece|nephew|grandchild|grandparent)", core, re.I)
+        if (possessive and _ra_name(possessive.group(1),given,family,aliases)[0]=='SELF') or generic_relation:
+            add('other_person',core_start,end,'speaker','positive','OTHER',reason='CURRENT_THIRD_PARTY_POSSESSIVE_RELATION')
+            continue
+        if re.fullmatch(r"(?:i\s+am|i['’]m|ben)\s+(?:(?:just|only)\s+)?(?:pretending|roleplaying|acting|imitating|şaka\s+yapıyorum|saka\s+yapiyorum)(?:\s+to\s+be\s+[^;.!?]+)?",core,re.I):
+            add('identity_qualification',core_start,end,'speaker','unknown',reason='CURRENT_IDENTITY_NOT_ASSERTED_LITERALLY')
+            continue
+        refusal = _RA_DOB_REFUSAL.search(segment)
+        if refusal:
+            add('dob_refusal', start+refusal.start(), start+refusal.end(), 'speaker', 'negative', reason='INDEPENDENT_DISCLOSURE_REFUSAL')
+        relation = _RA_RELATION.search(segment)
+        if relation:
+            if re.match(r"(?:i\s+am|i['’]m|this\s+is)\s+(?:not|never)\b", relation.group(), re.I):
+                add('other_person', start+relation.start(), start+relation.end(), 'speaker', 'negative', reason='DENIED_RELATION_NOT_RECIPIENT_DENIAL')
+                continue
+            add('other_person', start+relation.start(), start+relation.end(), 'speaker', 'positive', 'OTHER', reason='CURRENT_THIRD_PARTY_RELATION')
+            continue
+        if _RA_NO_ANSWER.fullmatch(text) or re.match(r"^(?:caller\s*:|voicemail\s*:|no\s+answer\b|silence\b)", text, re.I):
+            add('no_answer', start, end, 'no_current_speaker', 'negative', 'OTHER', reason='NO_LIVE_ANSWER'); continue
+        # A question cannot become an assertion by stripping its question mark.
+        if segment.rstrip().endswith('?'):
+            add('identity_question', start, end, 'unknown', 'unknown', reason='QUESTION_NOT_ASSERTION'); continue
+        if _RA_WRONG_RECIPIENT.fullmatch(core):
+            add('wrong_recipient', core_start, end, 'speaker', 'negative', 'OTHER', reason='CURRENT_WRONG_RECIPIENT_ASSERTION'); continue
+        absent = _RA_ABSENCE.fullmatch(core)
+        if absent and _ra_name(absent.group(1), given, family, aliases)[0] == 'SELF':
+            add('recipient_absent', core_start, end, 'recipient', 'negative', 'OTHER', reason='CURRENT_RECIPIENT_ABSENCE'); continue
+        # Unquoted reported/hypothetical introductions apply to this clause too.
+        sentence_start = max(raw.rfind('.', 0, start), raw.rfind(';', 0, start), raw.rfind('?', 0, start), raw.rfind('!', 0, start)) + 1
+        context_prefix = raw[sentence_start:core_start]
+        for qstart, qend in quote_ranges:
+            if qend <= start and qend > sentence_start:
+                context_prefix = raw[qend:core_start]
+        # A word such as Said may itself be the supplied name. In an exact
+        # current naming frame it is a name, not an attribution verb/condition.
+        naming = _RA_PREFIX.match(core) or _RA_SUFFIX.match(core)
+        named = naming.group(1) if naming else ''
+        nested_suffix = _RA_SUFFIX.match(named) if _RA_PREFIX.match(core) else None
+        if nested_suffix and (not nested_suffix.group(2).strip() or _RA_COURTESY.fullmatch(nested_suffix.group(2))):
+            named = nested_suffix.group(1)
+        exact_name = naming and _ra_name(named, given, family, aliases)[0] == 'SELF'
+        if (_RA_REPORT.search(core) and not exact_name) or _RA_REPORT.search(context_prefix):
+            add('reported_identity', start, end, 'reported', 'unknown', reason='ATTRIBUTED_NOT_CURRENT_SELF'); continue
+        if (_RA_HYPOTHETICAL.search(core) and not exact_name) or _RA_HYPOTHETICAL.search(context_prefix):
+            add('hypothetical_identity', start, end, 'unknown', 'unknown', reason='HYPOTHETICAL_NOT_CURRENT_SELF'); continue
+        denial = _RA_EN_DENIAL.match(core) or _RA_TR_DENIAL.match(core)
+        if denial:
+            decision, parts, reason = _ra_name(denial.group(1), given, family, aliases)
+            decision = 'OTHER' if decision == 'SELF' else 'UNKNOWN'
+            add('identity_denial', core_start, end, 'speaker', 'negative', decision, parts,
+                'CURRENT_RECIPIENT_DENIAL' if decision == 'OTHER' else 'DENIAL_OF_UNBOUND_IDENTITY')
+            continue
+        if re.fullmatch(r"(?:yes|evet|speaking|it's\s+me|it['’]s\s+me|that['’]s\s+me|that's\s+me|(?:that|this)\s+is\s+me|benim|ben\s+konuşuyorum)[.!\s]*", core, re.I):
+            add('opening_confirmation', core_start, end, 'speaker', 'positive', 'SELF', reason='SHORT_CURRENT_OPENING_ANSWER')
+            continue
+        identified = _RA_PREFIX.match(core)
+        suffix = _RA_SUFFIX.match(identified.group(1) if identified else core)
+        candidate = suffix.group(1) if suffix else identified.group(1) if identified else core
+        if suffix and suffix.group(2).strip() and not _RA_COURTESY.fullmatch(suffix.group(2)):
+            add('unresolved_identity', core_start, end, 'unknown', 'unknown', reason='UNRESOLVED_SUFFIX_SCOPE'); continue
+        if identified:
+            # Remove a conventional courtesy tail; never arbitrary extra words.
+            courtesy = re.search(r"(?:,\s*|\s+)(?:please|thanks|thank you|buyurun|efendim|merhaba)\b.*$", candidate, re.I)
+            if courtesy and _RA_COURTESY.fullmatch(candidate[courtesy.start():]):
+                candidate = candidate[:courtesy.start()]
+        decision, parts, reason = _ra_name(candidate, given, family, aliases,
+                                          strong=bool(re.match(r"^(?:my\s+name|benim\s+ad|ad[ıi]m|ismim)\b", core, re.I)))
+        if decision == 'SELF' and not identified and not suffix and quote_ranges:
+            # A bare subject adjoining quoted speech may be its attribution.
+            # Require an explicit unquoted self frame when quotation is present.
+            decision, reason = 'UNKNOWN', 'BARE_NAME_WITH_QUOTATION_ATTRIBUTION_UNCLEAR'
+        if identified or suffix or decision == 'SELF':
+            add('self_identification', core_start, end, 'speaker', 'positive', decision, parts, reason)
+        elif re.fullmatch(r"(?:yes|evet|speaking|it's\s+me|it['’]s\s+me|that['’]s\s+me|that's\s+me|(?:that|this)\s+is\s+me|benim|ben\s+konuşuyorum)[.!\s]*", core, re.I):
+            add('opening_confirmation', core_start, end, 'speaker', 'positive', 'SELF', reason='SHORT_CURRENT_OPENING_ANSWER')
+    decisive = [item for item in assertions if item['decision'] in ('SELF', 'OTHER')]
+    # Generic opening yes cannot override a more specific current identity act.
+    specific = [item for item in decisive if item['act']!='opening_confirmation']
+    if specific: decisive=specific
+    elif any(item['act'] in ('reported_identity','hypothetical_identity','quotation') for item in assertions):
+        # An opening yes alongside attributed/delegated speech is not a literal
+        # current naming assertion. An explicit unquoted self frame is separate.
+        decisive=[]
+    if any(item['act']=='identity_qualification' for item in assertions):
+        result['reason']='QUALIFIED_CURRENT_IDENTITY'; return result
+    choices = set(item['decision'] for item in decisive)
+    if len(choices) == 1:
+        result['decision'] = decisive[-1]['decision']
+        result['recipient_self'] = result['decision'] == 'SELF'
+        result['source_span'] = decisive[-1]['source_span']
+        result['reason'] = decisive[-1]['reason']
+    elif len(choices) > 1:
+        result['reason'] = 'CONFLICTING_CURRENT_IDENTITIES'
+    return result
+
+"""Pure proposal-only student runtime: V3 PORTABLE STUDENT != full MiniLM V2.
+
+student_predict returns exactly status, scores, labels, bank_authority, and
+financial_authorization. The latter is always UNKNOWN, including on malformed
+input; this student never establishes financial authorization. Parents using a
+closed output schema must explicitly permit that field before integration.
+student_features raises ValueError for malformed input; prediction returns INVALID.
+No model loading, I/O, input mutation, or auxiliary-label selection occurs here.
+"""
+
+import json
+import re
+
+
+DOMAIN7 = (
+    "proposal", "dispute", "correction", "current_affirm", "current_withdraw",
+    "uncertain", "reported_third_party",
+)
+AUX4 = ("AFFIRM", "NEGATE", "INFORM", "REQUEST")
+LABELS = DOMAIN7 + AUX4
+FEATURE_DIM = 768
+MIN_THRESHOLDS = (0.5, 0.5, 0.5, 1.01, 1.01, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+_ACTIVE = (0, 1, 2, 5, 6)
+_MODEL_KEYS = (
+    "schema", "labels", "feature_dim", "quantization", "weights", "scales",
+    "bias", "thresholds", "disabled_heads",
+    "context_mode", "bank_authority", "financial_authorization",
+    "logit_cutoffs", "quant_logit_margins",
+)
+
+
+def _valid_input(current, previous):
+    if type(current) is not str or not current.strip() or len(current) > 16384:
+        return False
+    if type(previous) is not list or len(previous) > 2:
+        return False
+    for turn in previous:
+        if type(turn) is not dict or set(turn) != {"speaker", "text"}:
+            return False
+        if type(turn["speaker"]) is not str or turn["speaker"] not in (
+            "ASSISTANT", "USER", "SYSTEM",
+        ):
+            return False
+        if type(turn["text"]) is not str or len(turn["text"]) > 16384:
+            return False
+    return True
+
+
+def _finite(value):
+    return type(value) in (int, float) and -float("inf") < value < float("inf")
+
+
+def _valid_model(model):
+    if type(model) is not dict or any(key not in model for key in _MODEL_KEYS):
+        return False
+    if model["bank_authority"] is not False or type(model["financial_authorization"]) is not str or model["financial_authorization"] != "UNKNOWN":
+        return False
+    if type(model["context_mode"]) is not str or model["context_mode"] != "current_only":
+        return False
+    if type(model["schema"]) is not str or model["schema"] != "live_v3_student.v1":
+        return False
+    if type(model["labels"]) is not list or model["labels"] != list(LABELS):
+        return False
+    if any(type(label) is not str for label in model["labels"]):
+        return False
+    if type(model["feature_dim"]) is not int or model["feature_dim"] != FEATURE_DIM:
+        return False
+    if type(model["quantization"]) is not str or model["quantization"] != "int8_per_head":
+        return False
+    disabled = model["disabled_heads"]
+    if type(disabled) is not list or disabled != ["current_affirm", "current_withdraw"]:
+        return False
+    if any(type(label) is not str for label in disabled):
+        return False
+    rows = model["weights"]
+    if type(rows) is not list or len(rows) != 11:
+        return False
+    for row in rows:
+        if type(row) is not list or len(row) != FEATURE_DIM:
+            return False
+        if any(type(weight) is not int or not -127 <= weight <= 127 for weight in row):
+            return False
+    for key in ("scales", "bias", "thresholds", "logit_cutoffs", "quant_logit_margins"):
+        values = model[key]
+        if type(values) is not list or len(values) != 11:
+            return False
+        if any(not _finite(value) for value in values):
+            return False
+    if any(type(scale) is not float or scale <= 0 for scale in model["scales"]):
+        return False
+    if any(type(bias) is not float for bias in model["bias"]):
+        return False
+    if any(value < floor for value, floor in zip(model["thresholds"], MIN_THRESHOLDS)):
+        return False
+    if any(value < 0 for value in model["quant_logit_margins"]):
+        return False
+    return True
+
+
+def _add(block, feature):
+    hashed = 2166136261
+    for char in feature:
+        hashed = ((hashed ^ ord(char)) * 16777619) & 0xffffffff
+    block[hashed % 256] += 1 if hashed & 0x80000000 == 0 else -1
+
+
+def _block(text):
+    block = [0.0] * 256
+    tokens = re.findall(r"[\w]+|[^\w\s]", text.lower())
+    for index, token in enumerate(tokens):
+        _add(block, "w:" + token)
+        if index:
+            _add(block, "b:" + tokens[index - 1] + " " + token)
+        for start in range(len(token) - 2):
+            _add(block, "c:" + token[start:start + 3])
+    norm = sum(value * value for value in block) ** 0.5
+    return [value / norm for value in block] if norm else block
+
+
+def student_features(current, previous, no_context=False):
+    """Return three independently L2-normalized 256-bin count blocks.
+
+    Blocks represent the entire current text, its final 512 characters, and
+    chronological prior turns. SYSTEM is rendered as ASSISTANT. no_context
+    zeroes only the prior block; even ignored context must satisfy the contract.
+    """
+    if not _valid_input(current, previous) or type(no_context) is not bool:
+        raise ValueError("Invalid student input")
+    prior = "" if no_context else "\n".join(
+        ("ASSISTANT" if turn["speaker"] == "SYSTEM" else turn["speaker"])
+        + ": " + turn["text"] for turn in previous
+    )
+    return _block(current) + _block(current[-512:]) + _block(prior)
+
+
+def _result(status, scores, labels):
+    return {
+        "status": status,
+        "scores": scores,
+        "labels": labels,
+        "bank_authority": False,
+        "financial_authorization": "UNKNOWN",
+    }
+
+
+def student_predict(current: str, previous: list, model: dict) -> dict:
+    """Return diagnostic scores and active domain proposals, never authority."""
+    if not _valid_input(current, previous) or not _valid_model(model):
+        return _result("INVALID", [0.0] * 11, [])
+    features = student_features(current, previous, no_context=model["context_mode"] == "current_only")
+    if not any(features[:512]):
+        return _result("ABSTAIN", [0.0] * 11, [])
+    scores = []
+    logits = []
+    for row, scale, bias in zip(model["weights"], model["scales"], model["bias"]):
+        # Scale after the dot product to avoid overflow during cancellation.
+        logit = sum(weight * value for weight, value in zip(row, features)) * scale + bias
+        if not _finite(logit):
+            return _result("INVALID", [0.0] * 11, [])
+        logits.append(logit)
+        logit = max(-60.0, min(60.0, logit))
+        scores.append(1.0 / (1.0 + 2.718281828459045 ** (-logit)))
+    selected = [LABELS[index] for index in _ACTIVE
+                if scores[index] >= model["thresholds"][index]
+                and logits[index] >= model["logit_cutoffs"][index] + model["quant_logit_margins"][index]]
+    return _result("OK" if selected else "ABSTAIN", scores, selected)
+
+LIVE_STUDENT_MODEL=json.loads('{"schema":"live_v3_student.v1","model_kind":"V3_PORTABLE_STUDENT_HARD_LINEAR_FNV768_INT8","teacher_manifest_sha256":"7eca3b016b47ec20f1b1fd9e207c71a0c72ece9bf91f4e2c28ecd411dcb59189","feature_dim":768,"labels":["proposal","dispute","correction","current_affirm","current_withdraw","uncertain","reported_third_party","AFFIRM","NEGATE","INFORM","REQUEST"],"thresholds":[0.7974996676826089,1.01,1.01,1.01,1.01,0.9937596520810524,1.01,0.9657163580279856,0.9431714887830236,0.8607110353341915,0.7941459755050618],"logit_cutoffs":[0.8472978603872034,1000000.0,1000000.0,1000000.0,1000000.0,4.595119850134589,1000000.0,2.9444389791664394,2.1972245773362196,1.3862943611198908,0.8472978603872034],"quant_logit_margins":[0.5234420299540029,0.6245557069788442,0.7258962392817007,0.45070761442284446,0.5425598621378408,0.4753395915041433,0.42080721259217124,0.39376285672287803,0.6119853854189382,0.43491381406884055,0.5028021335611806],"disabled_heads":["current_affirm","current_withdraw"],"quantization":"int8_per_head","weights":[[36,-34,-15,-91,-12,-12,16,-35,-34,13,2,-41,30,27,-77,45,32,-8,24,-9,-55,-46,91,-47,-17,0,-56,12,9,70,-18,-33,-51,-34,-68,43,-12,66,-13,-16,-46,-94,22,-66,10,-48,90,-2,-34,31,3,-21,-18,15,51,23,-14,14,-43,9,-12,36,-24,7,36,91,25,-80,48,-4,26,58,24,-21,22,-13,39,3,-28,-4,-27,57,-21,-86,-72,-23,-15,5,18,-50,22,36,12,-22,-18,17,49,10,5,37,29,-3,96,21,-55,2,19,-1,-44,-26,41,6,-31,-56,-13,68,77,46,21,-64,-33,44,-15,-15,-5,-17,-46,-12,15,-67,-8,57,-28,38,39,8,43,29,-22,-40,-23,6,-13,19,-56,-41,5,39,-17,58,7,-21,-23,-30,34,-16,-17,-8,16,-12,49,-28,6,42,70,-100,2,14,-8,-44,37,-71,65,-33,78,-15,70,18,-40,13,-7,-41,31,-19,68,6,18,0,-2,2,11,63,24,-58,12,7,23,10,73,0,72,-29,-5,6,6,-42,-64,-73,35,33,-29,24,-49,19,-74,-16,-5,58,-4,-59,-23,-45,-10,-18,-6,37,16,87,31,9,-92,49,28,45,42,-30,-19,-30,-24,15,1,11,31,-57,56,5,44,-20,30,9,17,-22,-30,-3,30,35,45,-31,-8,-109,-5,-13,22,-43,-45,4,-20,-52,27,37,-85,49,47,-24,39,-13,-51,-52,91,-66,-11,1,-53,15,-2,53,-12,-30,-64,-37,-80,43,-2,62,-33,-27,4,-90,14,-95,13,-48,100,-9,-38,21,13,-25,-35,18,49,13,12,13,-58,7,-21,46,-23,24,22,86,23,-82,53,15,20,65,16,-39,28,-25,38,-2,-30,33,-47,64,-33,-88,-109,-14,-12,-4,24,-43,17,22,15,-37,-23,5,37,10,7,34,32,-14,127,49,-61,11,26,-4,-57,-12,30,5,-32,-79,-23,74,96,34,29,-70,-40,41,-4,-46,-17,7,-41,5,27,-60,-10,59,-22,55,50,17,48,41,-31,-42,-14,-8,-6,17,-63,-38,4,32,-10,69,16,-31,-26,-29,57,-17,-27,-24,16,-15,59,-19,21,32,88,-116,8,4,-10,-49,49,-68,82,-31,102,-12,67,62,-45,19,-26,-58,50,-15,69,29,13,10,0,-15,12,65,39,-47,14,20,30,24,88,6,74,-38,12,10,15,-68,-62,-74,42,30,-37,23,-39,10,-67,-29,-13,65,13,-50,-18,-39,4,-21,2,51,61,123,44,19,-105,47,23,59,39,-30,-28,-25,-72,12,10,7,52,-77,69,-2,58,-51,68,6,23,-18,-26,2,32,26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[22,-27,6,-15,-15,-18,17,19,-21,34,3,49,-5,48,11,10,73,-11,36,61,-4,39,-17,20,-26,-30,-45,-3,-3,-8,17,-22,4,49,-4,13,-15,27,-62,35,44,30,22,8,-10,21,-27,-112,-10,-26,21,5,-58,10,6,9,27,58,-14,7,-10,11,-13,2,19,64,-42,2,-19,-38,3,-1,20,26,-24,-6,37,-22,-19,-70,9,-24,-13,36,-9,-25,-44,-14,7,7,38,47,-1,-79,8,42,-24,41,-30,31,32,8,31,90,-34,47,-15,-24,68,-51,40,41,-19,-29,32,-68,-67,17,8,14,42,81,-45,-51,71,-52,41,53,28,24,9,36,-60,23,1,17,20,-1,38,-12,33,-30,6,41,-12,-6,66,12,-50,-59,38,30,11,-32,69,20,52,21,39,72,10,-21,-21,29,-27,4,-35,-29,-14,7,-17,-35,-3,-3,-12,-44,37,-66,-70,-7,17,58,57,-32,-30,-15,-16,32,24,9,-39,41,-10,-31,-15,9,-82,-33,58,14,40,18,-37,-20,-57,-49,6,-7,67,48,25,21,11,-2,12,-27,0,-10,3,-49,-42,27,-27,21,27,-51,-9,-13,6,-12,-21,-24,-68,3,26,-22,21,0,35,15,22,28,-19,36,69,-31,25,-6,-3,-33,-45,-53,-17,-11,-15,-43,6,-38,14,-11,-14,-20,23,26,-8,41,5,54,-13,64,-5,9,81,-6,54,65,10,35,-28,16,-37,-30,-62,1,10,-2,18,-22,0,51,3,13,-9,31,-68,40,56,21,19,-2,-16,34,-26,-127,-10,-26,24,-3,-63,13,11,-3,30,59,-10,13,-3,22,-12,-7,9,66,-48,3,-17,-38,-5,-1,33,35,-32,12,33,-21,-26,-78,13,-28,-43,51,-11,-34,-40,-29,0,-5,42,54,-4,-88,14,32,-31,48,-24,31,27,4,37,91,-32,45,-12,-18,80,-45,41,41,-26,-35,21,-62,-84,13,21,23,58,94,-42,-60,82,-52,47,36,29,38,5,36,-62,8,15,22,21,-2,35,-9,40,-35,21,47,-9,-4,77,17,-53,-72,36,39,21,-39,78,25,51,22,36,83,7,-27,-17,25,-33,11,-47,-19,-13,8,-16,-39,-1,-13,-17,-39,42,-80,-81,-13,19,70,58,-28,-38,-19,-28,40,31,8,-37,40,11,-39,-6,17,-93,-40,60,0,35,34,-48,-26,-66,-57,7,-8,74,56,40,25,21,-2,10,-30,-17,-7,-2,-52,-61,19,-22,34,24,-60,-3,-14,4,-20,-20,-23,-73,-6,38,-29,35,13,49,18,10,22,-27,58,79,-22,27,-4,-1,-43,-49,-53,-11,-7,-17,-41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[6,-11,-9,-32,-21,25,-12,8,56,-1,-7,-34,29,-10,52,18,-41,-32,2,-4,-6,30,68,-41,60,3,12,-8,-31,20,-7,30,4,35,-26,-50,38,-11,31,-37,5,4,27,-11,-1,24,19,-11,-9,11,53,-24,-9,49,-9,27,-38,-22,-17,-28,31,3,28,-26,-8,0,19,45,36,-52,9,2,-71,-15,19,-24,-7,44,43,112,-27,-12,-38,-10,1,-1,1,61,52,-23,14,-12,-43,16,45,-2,37,14,-48,28,21,43,0,-37,-39,20,38,-21,-5,-12,-16,-29,-1,18,-4,0,35,2,53,-10,12,29,25,67,11,15,-18,12,-26,15,16,35,-19,-17,31,-20,-55,15,35,18,-19,36,-13,23,12,-18,-30,-50,-28,-16,6,4,-4,39,7,-60,-13,14,39,26,-27,13,-18,-40,-35,18,-5,31,-14,9,-60,56,-31,11,-12,39,-38,13,25,1,-21,-17,-5,-42,33,24,-14,4,16,-4,-3,3,-38,26,8,-9,40,-43,80,-1,-46,-16,-5,-7,46,-33,-12,23,0,11,-16,10,11,-19,-26,-26,14,-8,7,-23,-9,-2,17,14,-32,12,2,-14,-1,-26,17,-3,14,-17,19,-20,-17,21,36,-53,-10,19,26,-48,42,13,-6,-5,5,-38,45,27,-28,-10,6,-23,21,-3,3,-25,-18,22,-10,5,70,-12,-19,-49,30,-16,66,22,-32,-44,5,-21,-4,34,73,-44,68,1,10,-19,-41,11,-24,36,6,35,-25,-53,32,-9,50,-38,18,6,32,-24,8,31,26,-9,9,0,67,-38,-15,45,-3,25,-44,-28,-18,-33,27,2,31,-24,-7,-8,13,44,31,-53,-1,16,-79,-35,32,-27,-6,50,49,127,-42,-1,-48,-20,-6,7,0,62,53,-25,14,-12,-41,14,49,-6,35,33,-52,28,24,60,0,-37,-38,30,55,-19,9,-20,-28,-28,1,9,-14,-6,55,3,61,-23,15,44,39,68,14,19,-15,11,-38,19,15,35,-19,9,40,-26,-66,17,34,24,-15,46,-8,24,6,-15,-35,-63,-33,-20,13,-6,-13,36,11,-66,-21,2,48,17,-34,7,-18,-58,-40,11,-7,24,-25,7,-57,66,-30,15,-6,41,-39,36,27,-10,-32,-12,-4,-40,37,36,-26,-2,18,-16,-14,-11,-23,39,6,-14,44,-40,83,-3,-54,-4,-2,-1,54,-34,-20,13,10,16,-1,4,26,-21,-24,-44,18,-7,14,-30,8,-3,23,12,-25,24,8,-12,1,-40,12,-1,25,-16,13,-19,-8,15,26,-72,-16,15,28,-56,47,29,-14,-15,7,-51,62,18,-23,-18,10,-27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[-50,65,13,35,-34,69,19,-30,-39,-30,15,-14,12,-28,-40,-41,11,-27,-18,47,15,-19,83,56,18,3,-15,31,45,-18,-27,-37,-43,34,-4,2,8,-73,30,17,-70,-12,2,51,27,-28,54,62,-49,-12,77,44,45,22,-85,-80,65,54,-2,-63,54,-67,3,-22,-29,96,34,78,-19,-68,-11,-27,-25,55,-2,10,-36,21,-27,-100,-33,-7,4,-38,110,44,39,-11,76,19,43,-46,46,43,-82,17,63,-8,-15,-85,26,-28,39,9,95,50,41,-37,-8,-83,78,4,5,61,33,-59,-53,75,-32,57,-18,62,-19,-34,-20,2,49,-49,25,43,17,74,24,55,8,92,72,-14,-10,-43,67,-38,-27,-83,40,11,45,18,67,-14,-50,7,60,-35,43,18,7,-70,38,-44,62,17,11,13,9,-20,47,72,-28,7,-20,45,23,3,-30,2,-26,-69,-66,28,15,69,57,-37,21,-75,4,24,22,28,16,2,45,-43,41,46,63,-38,-50,-24,-18,-39,-21,8,-28,83,-52,21,36,-66,-61,-7,-24,60,-33,-31,86,-53,-47,63,8,43,2,1,14,-8,-68,-48,20,-58,80,-82,-3,-32,36,38,9,-51,39,-36,22,-20,44,38,2,0,-6,-37,-60,-15,-53,52,-7,-18,-42,5,-63,68,16,51,-28,75,20,-47,-39,-44,10,-13,10,-40,-40,-61,15,-30,-22,39,19,-3,90,88,21,-4,-13,38,29,-3,-50,-35,-57,20,1,-4,0,-83,51,26,-80,-18,-5,58,24,-11,65,85,-57,-13,80,45,55,30,-82,-81,45,47,-6,-56,47,-74,-34,-18,-32,80,41,81,-33,-81,-5,-23,-26,62,4,32,-31,39,-33,-106,-52,-1,8,-45,127,51,39,-14,79,25,42,-47,52,45,-86,25,55,-9,-17,-86,32,-44,52,33,94,63,36,-55,-10,-93,86,10,-6,72,32,-49,-49,81,-38,65,-25,64,-13,-29,-25,-3,62,-65,19,53,19,72,38,58,16,110,77,-35,-25,-48,73,-33,-41,-84,34,47,51,17,59,-15,-48,8,80,-41,45,23,2,-98,44,-27,62,-1,21,9,30,-22,50,43,-39,3,-8,54,6,-9,-22,18,-22,-70,-70,34,7,63,59,-27,15,-74,6,24,23,35,12,-4,64,-36,39,31,69,-45,-49,-13,-15,-47,-25,2,-37,90,-66,30,35,-66,-80,-13,-23,60,-51,-39,99,-58,-56,71,22,49,-10,-19,17,-7,-82,-62,7,-64,86,-89,-15,-41,20,43,24,-63,50,-37,20,-31,51,58,13,-9,-19,-32,-64,-17,-52,46,-12,-21,-38,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[-42,-52,-47,-26,-51,-81,78,-26,17,21,48,43,13,-54,-32,-53,-32,-99,-13,22,82,-31,65,-9,53,11,-11,-1,-12,18,-51,-8,35,9,34,21,6,-45,13,6,-58,23,-29,-20,10,-25,43,-7,20,0,-14,27,-20,10,-73,39,-11,12,-5,-2,92,-24,-9,80,38,39,42,-23,-35,-32,-31,35,16,32,37,19,46,5,-20,33,-12,-1,-18,24,26,-102,-7,43,11,-10,-21,-3,9,1,10,18,-28,-18,-53,-17,27,4,24,-75,35,-17,-3,3,3,-14,67,-44,46,28,18,29,26,-20,19,-44,-4,-25,15,-3,57,49,63,-16,-49,-27,-11,-33,19,-26,42,26,-19,15,-49,22,11,18,11,-28,31,37,17,13,42,-3,10,-25,70,15,-4,25,30,23,18,13,9,-27,12,70,-36,63,5,71,-21,-14,6,32,17,-63,-36,-36,-29,-62,-25,11,25,-16,34,2,16,-31,2,-15,-48,-7,18,-16,-44,-51,1,20,37,-54,-25,-74,-66,-8,-32,10,28,36,-112,6,5,42,-36,-19,-62,24,-94,25,-30,21,7,-2,-59,-10,-22,-29,-4,84,-29,1,41,-29,88,3,-69,4,47,0,46,-53,-24,-25,58,15,10,55,-23,-38,7,-18,-44,64,-19,1,4,-18,-55,-29,-58,-63,-49,-31,-48,-94,87,-24,19,25,50,58,13,-41,-40,-91,-25,-104,-23,2,95,-31,66,7,71,11,-22,-1,-34,30,-65,-4,38,6,42,49,-20,-52,3,6,-57,15,-30,-15,8,-15,52,-13,45,-2,-3,28,-31,-5,-91,29,-27,5,17,-15,116,-13,-1,90,40,26,57,-46,-37,-28,-60,40,29,44,51,11,42,17,-19,46,-4,-2,-24,38,53,-127,-20,33,10,-5,-32,4,0,-1,-1,15,-59,-17,-60,-10,48,13,33,-85,45,-18,-8,4,31,-8,58,-49,56,12,28,43,22,-22,23,-58,-9,-32,31,-6,57,60,77,-6,-49,-21,-17,-34,29,-13,60,37,-26,13,-71,46,18,17,18,-26,24,73,14,18,38,-19,-4,-33,101,24,-8,43,29,36,6,5,13,-49,26,87,-37,74,-11,81,-20,-11,24,47,17,-61,-58,-43,-23,-69,-4,1,27,-29,31,12,14,-19,-8,-15,-50,-27,6,-29,-54,-45,-2,10,29,-70,-35,-94,-83,1,-41,21,10,58,-121,6,4,46,-25,-24,-79,18,-121,18,-48,34,4,-3,-56,-16,-51,-27,-8,110,-45,-11,53,-21,100,1,-71,-9,48,-5,53,-52,-35,-32,62,8,-6,76,-49,-32,13,-11,-51,72,-19,8,32,-18,-62,-35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[-12,96,-61,34,-11,14,17,-52,-42,10,-39,89,-71,32,-40,94,4,-66,-7,49,-81,1,-51,-6,71,2,-17,72,-8,3,82,-40,-13,29,-43,-97,43,40,-32,20,16,7,-36,20,-6,-78,67,107,18,27,-72,28,51,19,23,-19,-69,-15,-57,-14,-45,9,-70,-5,-35,-61,-28,-67,-52,24,70,89,97,21,37,-6,-10,-27,41,-54,19,9,13,10,19,13,-27,-12,-33,33,14,10,19,12,25,46,23,-19,-9,10,-19,47,17,-89,-45,-58,2,-50,8,53,-25,-48,-88,-11,-37,-2,46,7,-17,-63,40,-85,-47,34,-49,46,-96,-32,1,-50,-22,68,10,10,-65,-12,18,78,-37,76,-75,-50,14,1,63,-90,-97,8,67,15,74,-5,-28,-50,106,21,-9,57,-12,-62,-35,103,57,5,27,-69,-60,-1,-3,16,-60,-18,111,44,9,-35,-25,-68,0,18,-73,-30,-68,64,3,-26,62,-21,-14,37,68,-41,-2,-20,-13,-8,71,24,62,-48,19,-1,2,-39,-49,-54,-45,-23,-4,1,37,-8,-41,9,-32,-35,-2,-80,27,-65,20,-77,-34,-54,17,-37,-7,-36,-55,34,8,63,-19,11,-45,-4,77,-51,9,62,7,-38,4,40,42,38,-15,8,-25,50,-23,-14,49,43,-9,98,9,116,-76,23,3,28,1,-62,-43,24,-39,107,-66,38,-34,111,-3,-68,-12,65,-90,0,-61,-9,84,15,-15,83,-22,9,99,-48,-3,26,-49,-113,50,40,-36,23,2,1,-45,26,-9,-85,69,127,24,28,-73,35,58,15,18,-37,-78,-19,-49,-36,-52,22,-62,-6,-32,-78,-31,-82,-39,33,73,72,99,29,38,0,-8,-23,47,-47,26,12,17,9,29,12,-35,-23,-14,35,20,9,15,30,1,48,1,-12,13,10,-13,63,18,-100,-55,-51,8,-75,4,57,-50,-46,-97,-31,-53,0,60,15,-24,-59,36,-99,-53,45,-55,50,-106,-32,-6,-56,-28,68,9,40,-73,-20,32,97,-33,88,-93,-77,15,3,67,-101,-105,14,69,23,70,-11,-44,-42,119,36,-12,59,-9,-72,-36,112,78,-1,45,-61,-67,-9,8,30,-63,-31,119,78,16,-36,-13,-75,-18,22,-71,-36,-60,74,3,-21,81,-23,-20,52,73,-35,-18,-17,-23,-30,70,29,78,-29,34,7,4,-47,-59,-36,-42,-16,4,-7,42,-7,-51,4,-44,-52,-16,-82,47,-63,17,-63,-36,-70,18,-48,-22,-53,-53,53,-2,69,-23,-1,-53,-11,73,-65,28,58,8,-36,4,22,44,30,-18,19,-35,73,-23,-8,59,43,-10,96,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[46,-63,25,16,80,0,18,31,-73,8,51,-89,78,-42,42,-56,-44,104,-2,20,40,-62,-32,37,-43,26,38,-89,94,22,26,-34,2,-3,123,-17,51,-32,8,22,-37,73,21,90,-39,-21,-51,-23,-18,33,-60,-102,22,-11,-66,40,89,40,-7,87,-71,30,-10,29,-1,20,26,41,36,25,49,40,-49,59,-32,-18,63,10,1,19,39,-19,2,-66,88,44,37,0,45,20,18,22,66,-7,58,-9,36,-23,-29,-4,56,-76,0,-10,-93,-57,-72,7,-28,-98,-32,57,48,23,75,39,60,61,25,73,23,-76,2,17,-23,-100,4,18,-19,82,50,73,20,-15,-2,-38,19,-8,55,0,81,53,24,4,25,-14,-29,39,30,58,-58,4,11,3,-11,-62,26,-120,14,66,-15,-29,-39,41,37,4,54,-77,24,46,-5,49,10,64,51,-69,-67,73,89,45,-66,40,9,-18,-14,-107,23,-18,51,5,17,-1,-51,-12,51,51,69,19,-20,107,-18,-1,-49,19,21,84,11,22,-64,2,-12,32,-15,14,113,-6,-21,-38,-99,-57,5,26,-49,18,12,-52,-23,23,-17,25,9,4,23,-12,-91,9,-73,96,26,17,12,29,33,7,-45,-26,70,-67,-1,26,8,14,-16,45,8,-43,62,-67,45,36,65,12,11,44,-67,-1,60,-71,80,-40,32,-61,-45,127,2,-1,60,-73,-46,44,-50,14,41,-103,98,19,20,-30,15,15,121,-6,57,-40,3,22,-31,74,19,84,-50,-27,-63,-30,-3,21,-64,-98,27,-8,-58,89,94,35,-21,95,-75,41,-7,18,-10,38,26,37,63,31,59,46,-49,54,-34,-8,55,25,-2,36,76,-14,-4,-87,113,60,35,-14,30,25,12,12,87,11,62,-37,45,-35,-28,-5,46,-92,-37,-17,-94,-67,-89,33,-31,-93,-50,55,51,17,80,48,47,42,-25,102,33,-69,11,15,-6,-118,-7,19,-12,83,56,73,23,-24,-5,-68,15,-4,61,-20,91,84,36,4,19,-3,-32,44,30,63,-65,-11,6,5,-12,-71,20,-90,6,65,-22,-43,-31,49,53,-10,64,-76,-1,57,-10,58,32,83,65,-76,-72,79,120,32,-87,65,-6,-24,-4,-120,10,-15,43,4,8,0,-42,-11,45,66,85,40,-27,93,-20,34,-51,31,36,94,8,18,-85,4,2,30,6,12,120,14,-41,-22,-111,-58,31,14,-29,17,25,-57,-36,30,-26,1,8,14,55,0,-96,7,-109,117,26,26,9,34,25,-28,-81,-19,78,-62,-9,30,13,31,-18,30,16,-30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[-49,49,11,18,-29,2,92,-3,9,45,22,9,-68,46,-22,6,-4,31,30,38,-7,15,-26,-8,-21,-25,3,3,55,-22,-76,40,-11,3,-14,-5,-78,14,7,-34,20,1,24,-86,30,51,-3,-9,21,-44,66,7,-33,-9,-20,-29,-23,-49,-20,-9,11,33,4,49,-17,-52,18,-3,1,-14,-74,-6,-78,14,-76,34,-7,33,-2,-50,17,10,27,-1,52,13,-65,-73,-12,49,-32,-34,-32,30,-79,-35,-15,58,-11,-122,-34,-10,0,10,-83,-51,5,-34,36,-3,5,-27,-79,127,64,14,-14,47,10,-18,20,44,0,-17,7,-39,-19,-96,4,-43,4,90,-40,4,-27,-2,-14,35,-26,-9,1,9,41,-123,-23,-22,-40,-44,-11,-4,-38,45,-37,56,-39,25,17,-26,-34,2,4,-9,-5,1,-78,42,6,-22,-81,-18,41,16,27,2,10,22,16,-10,-53,80,3,-1,-24,0,29,-66,24,-6,-21,1,-3,-66,-49,-29,8,-7,56,-76,-71,-72,-50,-26,-3,36,-24,28,-30,26,42,10,-83,14,-70,35,-5,-35,86,-17,-91,69,-39,60,8,-24,36,4,-38,-42,-5,-6,22,36,-30,-44,28,-26,-58,15,-23,-5,-95,-79,-12,28,-15,-59,-65,-30,-4,-23,-36,57,12,15,62,2,-43,53,25,27,-29,2,89,-10,18,27,10,12,-70,47,-21,-12,11,30,33,35,-4,17,-36,2,-20,-30,-8,4,44,-19,-80,40,-11,2,-15,2,-75,13,10,-20,24,-5,19,-94,42,56,20,-2,27,-55,77,19,-31,8,-14,-36,-27,-54,-24,-9,9,35,4,49,-21,-55,14,-11,8,-13,-82,3,-74,15,-74,59,-6,40,-9,-34,17,18,1,1,57,12,-59,-76,6,40,-34,-33,-26,33,-82,-42,-44,56,21,-122,-34,-9,12,10,-86,-41,8,-22,49,-14,-15,-19,-81,122,60,21,-13,43,4,-11,20,49,28,-35,25,-34,-14,-96,-4,-39,4,90,-32,18,-2,-2,-13,35,-37,-6,2,9,37,-122,-28,0,-34,-41,-19,-7,-37,36,-19,53,-39,35,5,-33,-30,-4,4,-33,0,-11,-70,35,9,-24,-85,-8,52,33,26,6,18,25,21,-8,-60,66,-2,-2,-22,8,21,-61,20,-7,-24,-2,0,-68,-28,-24,9,-8,55,-70,-67,-72,-56,9,-14,41,-29,30,-33,20,44,16,-71,7,-53,31,-13,-36,72,-16,-83,70,-13,57,9,-39,50,16,-39,-46,-4,-11,24,34,-35,-48,24,-45,-59,14,-25,-10,-104,-77,-9,27,-33,-53,-65,-32,-8,-16,-33,56,25,13,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[-55,40,-35,-18,-29,-3,32,-27,-8,34,25,9,-25,30,8,18,-24,4,-38,29,29,-22,-19,-3,38,-24,-17,-7,4,-12,58,-3,-19,-12,15,-10,3,7,-58,-8,-45,53,-55,-6,-11,0,-58,-4,-7,-9,10,-28,0,-36,36,13,-95,-1,-6,38,-5,-22,6,-13,29,-63,-67,0,2,2,-16,-12,19,21,65,-3,2,-48,-73,-2,42,-25,7,-46,-68,-13,37,19,-7,3,12,21,14,8,-13,-31,-11,33,35,64,19,-18,-29,1,12,-9,41,-29,3,-37,-45,-25,2,-14,-16,-2,-18,39,-19,-37,18,39,101,17,-7,-22,1,15,13,-5,10,-127,-52,-95,-92,18,10,-8,5,-67,-17,38,26,57,24,1,-46,39,-78,-6,31,19,-2,-22,-22,28,32,38,-72,24,30,40,-22,12,27,-11,13,-25,55,-21,-11,32,-28,-28,39,6,-13,-44,-5,-19,-50,0,3,-8,-8,-15,21,-10,28,-8,-59,-8,19,-71,-39,23,-21,1,-32,-29,0,-16,12,-13,37,4,29,4,15,16,-7,2,-40,1,22,0,29,17,-28,9,-28,-18,-35,12,12,-25,22,48,-14,25,10,20,34,5,-13,-3,-42,11,7,37,32,31,-7,-8,-13,-40,-9,-10,86,6,-10,31,-18,30,-3,-5,-56,42,-27,-11,-30,-6,32,-23,-3,17,19,8,-24,31,10,10,-16,6,-32,28,32,-23,-28,-4,39,-23,-23,-12,-4,-10,57,-3,-18,-12,17,-3,7,11,-59,-5,-45,42,-57,-20,0,4,-52,-2,-2,-13,24,-24,5,-30,42,4,-94,-7,-9,37,-8,-17,7,-13,28,-61,-67,-9,13,11,-28,-8,22,20,66,19,0,-50,-77,12,48,-21,-6,-39,-62,-15,37,16,1,-6,11,23,7,10,-11,-35,-39,36,52,65,18,-13,-25,-3,6,4,42,-19,11,-41,-56,-21,3,-26,-24,4,-20,36,-22,-31,19,45,108,9,0,-13,3,18,7,-5,5,-127,-50,-90,-71,12,10,-3,-1,-65,-19,35,25,60,22,20,-40,45,-78,-8,32,13,10,-25,-26,37,21,39,-70,17,32,28,-17,6,36,-14,16,-26,55,-13,-2,35,-28,-24,44,2,-15,-45,-13,-33,-52,-2,2,-4,-16,-9,19,-10,23,-10,-57,-9,28,-69,-41,20,-25,5,-36,-30,-5,2,0,-4,34,1,29,0,16,20,7,-1,-28,-2,8,1,17,16,-20,10,-20,-20,-35,9,19,-15,21,42,-12,25,7,19,34,3,-17,-26,-42,11,5,33,24,32,-10,-12,-29,-37,-1,-11,83,10,-8,29,-6,29,-4,-6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[47,43,-116,-21,61,-1,17,-24,-10,-29,37,-2,29,-14,53,13,40,2,-87,-4,40,-50,-7,23,48,-71,60,7,11,-17,65,-44,10,-85,-37,-6,15,-51,32,53,-75,-92,-16,-10,-4,2,74,3,-5,-35,3,-74,-42,-17,-57,-22,-45,53,66,17,-58,9,-24,-16,-46,20,-14,-73,-67,-3,16,-72,-61,41,34,-19,64,-25,4,62,-24,-58,-31,-86,-45,0,81,24,-44,21,-14,8,14,64,-30,5,15,12,-5,97,-32,-29,-40,-7,-24,69,-97,-16,-61,-10,-40,2,30,3,10,7,-38,12,56,38,-83,27,43,-96,-117,19,-37,-10,16,61,39,50,24,-2,0,60,-41,-41,4,24,74,7,-65,9,-51,-39,4,13,41,-52,1,51,-30,-111,51,-38,38,-47,-33,-63,-34,59,55,103,57,-48,-29,-23,29,1,-43,-32,53,-11,-87,-63,-57,-30,127,-80,-22,-4,-24,-22,-27,13,-10,-87,46,71,19,-52,-99,-85,-3,20,-21,-22,-11,34,82,90,18,24,-42,-18,26,59,-72,-30,30,-38,75,-20,28,17,35,-13,-6,-124,17,64,62,71,-19,-80,19,-9,27,-37,-42,-57,-26,77,11,23,0,-29,-19,15,-36,109,11,-39,37,66,-20,65,-42,17,-30,7,-22,-17,-33,-51,49,44,-113,-19,61,1,18,-23,-7,-36,35,2,29,-14,54,10,40,2,-83,-4,40,-50,-12,20,48,-69,57,7,8,-19,65,-44,13,-85,-36,-4,16,-50,34,54,-73,-95,-17,-17,-1,3,76,4,-4,-39,4,-72,-41,-15,-56,-24,-42,52,66,16,-60,11,-24,-17,-46,18,-15,-74,-64,-1,15,-71,-63,41,34,-14,64,-25,3,65,-24,-58,-34,-84,-49,0,82,23,-41,18,-15,9,15,66,-29,3,5,13,4,97,-32,-27,-38,-8,-26,73,-97,-12,-59,-14,-42,3,30,2,8,8,-38,8,56,39,-83,29,50,-99,-114,21,-37,-11,14,61,36,50,25,0,8,59,-41,-41,3,26,74,6,-65,11,-51,-35,5,15,42,-53,1,50,-27,-112,53,-36,34,-45,-31,-65,-33,54,57,101,58,-49,-29,-23,27,2,-42,-30,53,-10,-87,-63,-59,-28,125,-83,-23,-3,-22,-21,-29,14,-10,-87,46,70,20,-53,-95,-84,-3,19,-22,-20,-11,34,80,95,16,28,-43,-19,27,57,-72,-29,33,-38,80,-21,26,18,29,-12,-5,-124,22,64,63,67,-16,-78,19,-9,28,-35,-45,-57,-24,76,10,19,-1,-28,-20,13,-40,109,11,-40,33,65,-18,64,-41,19,-28,7,-21,-18,-33,-51,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[-119,18,75,42,39,2,84,32,-11,78,-48,24,73,17,-6,6,-35,23,62,90,-26,55,0,-46,-22,26,-41,-56,2,-48,-63,-41,14,-75,4,-14,-64,-45,-49,-66,48,-7,23,-78,-8,-31,-23,15,47,-47,-15,33,15,48,79,-20,-5,-55,30,-14,38,28,-50,50,13,-37,22,-65,33,24,-19,33,36,63,-39,0,12,10,47,-70,59,55,43,47,44,-57,-72,-66,-45,3,19,-34,-20,36,-23,-23,-17,30,38,20,-28,-11,27,14,-61,-8,64,13,33,-23,39,-101,-35,88,81,93,-37,-40,37,-43,118,52,-33,-25,41,-45,-45,-102,-5,-61,31,102,2,-40,55,-47,23,9,-22,-25,-10,-29,19,1,-62,-41,-12,-66,-21,19,44,69,-15,88,-28,-73,53,26,53,-61,15,26,-37,-61,-51,-43,-12,-69,-4,-24,48,43,-49,-4,19,85,53,-24,-74,95,-78,8,-14,45,90,-46,16,-55,-79,-28,17,-12,-24,125,-13,40,5,-66,26,-38,-73,-47,-7,-28,-33,-2,36,-2,54,-15,-58,57,-23,59,0,71,-1,57,-18,27,-4,-13,-55,-59,12,-27,-33,-11,-35,12,100,78,-66,12,7,-60,-8,-41,-42,6,-45,-108,2,23,-51,-25,7,-81,42,-39,-35,-16,-45,24,-63,36,-120,21,80,47,40,4,84,31,-6,64,-53,26,73,18,-3,-2,-30,20,63,89,-25,55,-9,-45,-20,33,-45,-56,-14,-49,-63,-42,21,-76,5,-6,-62,-42,-48,-62,53,-12,21,-88,2,-29,-11,19,51,-57,-8,42,18,52,81,-22,-4,-58,26,-15,37,31,-49,51,12,-40,23,-71,36,29,-21,35,38,64,-37,11,10,8,40,-61,59,57,44,49,44,-57,-71,-68,-42,-5,18,-32,-18,39,-22,-24,-35,35,52,20,-26,-9,33,14,-64,4,64,17,40,-31,28,-98,-37,87,80,95,-32,-43,34,-38,120,55,-19,-35,44,-41,-43,-100,-11,-60,28,103,4,-36,74,-49,23,9,-24,-22,-11,-32,16,2,-65,-32,-10,-64,-23,17,50,66,-6,86,-28,-72,42,28,58,-70,15,13,-36,-67,-45,-47,-11,-73,-7,-17,55,45,-49,-1,21,85,50,-23,-76,87,-81,6,-8,49,86,-43,13,-55,-82,-31,23,-13,-10,127,-15,39,1,-64,26,-38,-80,-31,-14,-19,-35,-4,37,-6,56,-12,-54,55,-11,55,-10,71,-17,55,-11,29,15,-13,-55,-73,21,-17,-33,-6,-33,21,101,76,-65,10,1,-65,-14,-39,-45,3,-57,-107,1,22,-73,-23,10,-83,43,-37,-31,-18,-41,24,-63,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],"scales":[0.03271512687206268,0.039034731686115265,0.04536851495504379,0.02816922590136528,0.03390999138355255,0.029708724468946457,0.026300450786948204,0.024610178545117378,0.03824908658862114,0.027182113379240036,0.03142513334751129],"bias":[-2.3575046062469482,-2.2816944122314453,-2.0678107738494873,-1.1975315809249878,-1.471518874168396,-1.486639142036438,-1.7885710000991821,-2.9889423847198486,-2.1555540561676025,-2.345839738845825,-1.8527381420135498],"bank_authority":false,"financial_authorization":"UNKNOWN","context_mode":"current_only","mode":"diagnostic_shadow","feature_version":"ord_fnv32_words_bigrams_char3_global_tail512_prior_256x3.v1","default_enabled":false,"calibration_base_thresholds":[0.7,1.01,1.01,1.01,1.01,0.99,1.01,0.95,0.9,0.8,0.7],"calibration_rule":"Own quantized CAL-fit >=.95 precision and >=10 predictions, analytic16*scale margin"}')
+LIVE_STUDENT_ENABLED=True
+
+def live_layer_apply(v):
+    v['live_layer_status']='NO_CURRENT_RAW'
+    v['live_semantic_hint']=''
+    v['live_semantic_diagnostic']=''
+    v['live_recipient_decision']='UNKNOWN'
+    v['live_recipient_span']='[]'
+    v['live_bank_authority']='false'
+    v['live_financial_authorization']='UNKNOWN'
+    v['live_input_kind']='extractor_copy'
+    raw=v.get('raw')
+    if v.get('mode','event')!='event' or not isinstance(raw,str) or not raw.strip():
+        return
+    v['live_layer_status']='SOURCE_ONLY'
+    try:
+        assertion=recipient_assertion(raw,str(v.get('first_name') or ''),str(v.get('last_name') or ''),str(v.get('title') or ''))
+        if assertion.get('bank_authority') is False and assertion.get('decision') in ('SELF','OTHER','UNKNOWN'):
+            v['live_recipient_decision']=assertion['decision']
+            v['live_recipient_span']=json.dumps(assertion.get('source_span',[]))
+    except Exception:
+        v['live_recipient_decision']='UNKNOWN'
+    prior=v.get('live_observed_prior',[])
+    if not isinstance(prior,list): prior=[]
+    prior=[p for p in prior if isinstance(p,dict) and p.get('speaker')=='USER' and isinstance(p.get('text'),str)][-2:]
+    state=v.get('state',{})
+    phase=state.get('phase','recipient') if isinstance(state,dict) else 'recipient'
+    if phase not in ('decision','readback','proposal','offer','multi','after_partial','payment','confirmation','payment_terms','product'):
+        v['live_layer_status']='SOURCE_ONLY_SECURITY_BYPASS'
+        return
+    if state.get('verified') is not True or state.get('dob_passed') is not True:
+        v['live_layer_status']='SOURCE_ONLY_UNVERIFIED_BYPASS'
+        return
+    if LIVE_STUDENT_MODEL:
+        try:
+            result=student_predict(raw,prior,LIVE_STUDENT_MODEL)
+            allowed=('proposal','dispute','correction','uncertain','reported_third_party')
+            labels=result.get('labels',[])
+            if result.get('bank_authority') is not False or not isinstance(labels,list): raise ValueError('authority')
+            v['live_layer_status']='STUDENT_'+str(result.get('status','INVALID'))
+            diagnostic=','.join(label for label in allowed if label in labels)
+            v['live_semantic_diagnostic']=diagnostic
+            if LIVE_STUDENT_ENABLED:
+                v['live_semantic_hint']=diagnostic
+        except Exception:
+            v['live_layer_status']='STUDENT_UNAVAILABLE'
+            v['live_semantic_hint']=''
+    v['live_observed_prior']=(prior+[dict(speaker='USER',text=raw)])[-2:]
+    count=v.get('live_layer_turns',0)
+    v['live_layer_turns']=(count if isinstance(count,int) and not isinstance(count,bool) and count>=0 else 0)+1
+
+def live_recipient_reply(raw,v):
+    try:
+        result=recipient_assertion(raw,str(v.get('first_name') or ''),str(v.get('last_name') or ''),str(v.get('title') or ''))
+        return result.get('bank_authority') is False and result.get('decision')=='SELF'
+    except Exception:
+        return False

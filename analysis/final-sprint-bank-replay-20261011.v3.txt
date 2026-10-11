@@ -1,0 +1,108 @@
+12 bank cases: offline conditional replay
+Three identical deterministic conditional actor replays with fresh Banks and synthetic customer IDs; not independent actor repetitions.
+NO ASR/LLM/extractor/judge/Freya/network/credentials. Sources pinned before/after and unchanged.
+Independent original-source oracle QA: all 12 PASS, no discrepancies.
+
+baseline fsbank-20261011-a01 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+baseline fsbank-20261011-a02 CODE_FORMAT_GATE 0/3; raw ledger=0; tools=close_call
+  CODE_FORMAT_GATE:script_recipient_or_complete_security_raw_rejected_before_account
+  outcome ('not_reached', 'unclear'), expected ('promise', None)
+  promises [], expected [('p1', 916.43, '2026-10-21')]
+baseline fsbank-20261011-a03 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=schedule_callback>close_call
+baseline fsbank-20261011-a04 CODE_FORMAT_GATE 0/3; raw ledger=0; tools=close_call
+  CODE_FORMAT_GATE:script_recipient_raw_rejected_before_refusal
+  outcome ('not_reached', 'unclear'), expected ('not_verified', 'declined')
+baseline fsbank-20261011-a05 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=verify_identity>verify_identity>get_account>create_promise>close_call
+baseline fsbank-20261011-a06 CODE_FORMAT_GATE 0/3; raw ledger=0; tools=close_call
+  CODE_FORMAT_GATE:script_recipient_or_complete_security_raw_rejected_before_account
+  outcome ('not_verified', 'failed'), expected ('paid', None)
+baseline fsbank-20261011-b01 ACTOR 0/3; raw ledger=0; tools=close_call
+  ACTOR:later_payment_confirmation_selected_at_recipient
+  outcome ('not_reached', 'unclear'), expected ('promise', None)
+  promises [], expected [('p1', 1257.49, '2026-10-21'), ('p2', 687.13, '2026-10-21')]
+baseline fsbank-20261011-b02 ACTOR 0/3; raw ledger=0; tools=close_call
+  ACTOR:later_payment_confirmation_selected_at_recipient
+  outcome ('not_reached', 'unclear'), expected ('promise', None)
+  promises [], expected [('p1', 1526.81, '2026-10-21'), ('p2', 893.47, '2026-10-21')]
+baseline fsbank-20261011-b03 ACTOR 0/3; raw ledger=0; tools=verify_identity>verify_identity>get_account
+  uninitialized_template_variable:reason
+  loan_refusal_delivered_while_bank_asked_about_card; scripted_loan_offer_condition_not_met
+  B14 bank_claim rejects scripted passive 'was already paid' and card-ending label; neutral current-card claim blocks disposition
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('no_promise', 'refused')
+  notes [], expected [('p1', 'paid'), ('p2', 'refused')]
+  the call was not closed with close_call
+  Harness divergence: documented unset API field is dropped before preprocessing; strict sidecar raises. No declared reason default omitted from initialization; raw score retained.
+baseline fsbank-20261011-b04 HARNESS_UNSUPPORTED 0/3; raw ledger=0; tools=
+  uninitialized_template_variable:reason
+  B14 English-only security_raw rejects the supplied Turkish-month DOB; paid/disputed turns unreachable
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('no_promise', 'dispute')
+  notes [], expected [('p1', 'paid'), ('p2', 'dispute')]
+  the call was not closed with close_call
+  Harness divergence: documented unset API field is dropped before preprocessing; strict sidecar raises. No declared reason default omitted from initialization; raw score retained.
+baseline fsbank-20261011-b05 HARNESS_UNSUPPORTED 0/3; raw ledger=0; tools=
+  uninitialized_template_variable:reason
+  B14 asserted(third) requires English third-party terms; Turkish spouse statement blocks callback phase
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('not_reached', 'callback')
+  callbacks [], expected [{'date': '2026-10-22', 'time': '10:13'}]
+  the call was not closed with close_call
+  Harness divergence: documented unset API field is dropped before preprocessing; strict sidecar raises. No declared reason default omitted from initialization; raw score retained.
+baseline fsbank-20261011-b06 CONDITIONAL_LEDGER_PASS 3/3; raw ledger=3; tools=close_call
+candidate fsbank-20261011-a01 HARNESS_UNSUPPORTED 0/3; raw ledger=0; tools=
+  unsupported_transition_semantics
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('promise', None)
+  promises [], expected [('p1', 843.27, '2026-10-21')]
+  the call was not closed with close_call
+candidate fsbank-20261011-a02 HARNESS_UNSUPPORTED 0/3; raw ledger=0; tools=
+  unsupported_transition_semantics
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('promise', None)
+  promises [], expected [('p1', 916.43, '2026-10-21')]
+  the call was not closed with close_call
+candidate fsbank-20261011-a03 HARNESS_UNSUPPORTED 0/3; raw ledger=0; tools=
+  unsupported_transition_semantics
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('not_reached', 'callback')
+  callbacks [], expected [{'date': '2026-10-21', 'time': '18:17'}]
+  the call was not closed with close_call
+candidate fsbank-20261011-a04 HARNESS_UNSUPPORTED 0/3; raw ledger=0; tools=
+  unsupported_transition_semantics
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('not_verified', 'declined')
+  the call was not closed with close_call
+candidate fsbank-20261011-a05 HARNESS_UNSUPPORTED 0/3; raw ledger=0; tools=
+  unsupported_transition_semantics
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('promise', None)
+  promises [], expected [('p1', 412.83, '2026-10-30')]
+  the call was not closed with close_call
+candidate fsbank-20261011-a06 HARNESS_UNSUPPORTED 0/3; raw ledger=0; tools=
+  unsupported_transition_semantics
+  A46: exactly one terminal close_call required
+  exactly_one_terminal_close_call
+  outcome (None, None), expected ('paid', None)
+  the call was not closed with close_call
+candidate fsbank-20261011-b01 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+candidate fsbank-20261011-b02 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+candidate fsbank-20261011-b03 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+candidate fsbank-20261011-b04 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+candidate fsbank-20261011-b05 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+candidate fsbank-20261011-b06 CANDIDATE_PENDING 0/0; raw ledger=0; tools=
+
+Limitations:
+Authored contract events; NO ASR/LLM/extractor/conversation judge. No hosted or full bank pass claim.
+Original scorer compares normalized arrays and exact outcome/reason; selected chronological/spoken/confirmation audits are additional guards.
+Unsupported actor delivery, extraction grammar and raw-language code gates are separate from policy failures.
+Current-request API envelopes/hooks run on generic mockBank; actual Freya receipt semantics and transcript judgments remain untested.
+Frozen scripts, fixtures, expectations and source code are never altered to fix failures.

@@ -1,0 +1,85 @@
+ARKADASIN AJANINA SON SPRINT: portable V3 + klasik banka engine
+11 Ekim 2026. Bu teslim yeni model egitimi istemiyor; mevcut V3 sabit.
+
+1. origin/codex/builder-rd dalini normal merge ile al; aktif benchmark veya
+   yayinin dosyalarini degistirme. Arkadas branch/history korunur; force/reset yok.
+2. Son A adayi competition/releases/live-v3-candidate-a-20261011/workflow.json.
+   SHA256 01737194f782659fb2799c9513e353bcf08005e004129fe7ba80c3e9669705ee
+   Aday otomatik builder kosusu 20261011-180353-bdb56c'de 514 saniyede uretildi.
+   policy.json ve coverage.json ayni klasordedir; elle JSON yama YAPMA.
+   Freya'da henuz yayinlanmadi/calistirilmadi. Klasik A10/B14 yedekleri aynen
+   competition/releases/classic-baseline altindadir.
+3. Tam MiniLM V2 transformer builder tarafinda kalir. Canli code node'a gomulen
+   V3 AYRI 768-feature int8 ogrencidir; banka-only tool ve sabit AGENT_LLM korunur.
+   Harici inference servisi/tool, torch, model dosya indirme veya GPU yoktur.
+   Inline student + runtime 33260 byte, model frozen. CAL-risk proposal precision
+   21/23 = %91.3. %95 hedefini karsilamadi; kullanici deneyselclarification icin
+   bu siniri gevsetti. Model qualified/default_enabled diye raporlama.
+4. Aday vars.raw extractor kopyasi uzerinde gercek student_predict cagirir.
+   Recipient/security/bank-response donemlerinde ogrenci bypass; yalniz verified
+   ve dob_passed GERCEK boolean True iken finans konusmasinda kullanilir.
+   live_semantic_hint yalniz canonical UNKNOWN/bozuk dil yorumunda, guncel kaynak
+   bunu destekliyorsa bir aciklama sorusuna yardimci olabilir. Kimlik, DOB, tutar,
+   tarih, hedef, onay, receipt veya close_outcome icin model yetkisi YOKTUR.
+   Guncel/onceki metin speaker-projection kisiti ve min/maks tarih/tutar kurallari
+   klasik engine'de. Brief A24 acik miktar sorusu yasak; tekrar reddedilen teklif
+   ve sakli izin varsayimi yok. Eksik/bozuk model cikisinda klasik fallback.
+5. Yerel PUBLIC: degismemis score.py ledger kontroluyle 13x3 = 39/39;
+   A adayi 30/30, B14 kontrol 9/9. A+V3 ile B+V3 sonucu DEGILDIR.
+   Konusma hakemi, ASR, LLM extractor veya Freya calismadi. Bu 3 deterministik
+   tekrar bagimsiz 3 aktor degildir. Kalan PUB06 konusma failinin cozuldugu ancak
+   gercek platform hakemi ile soylenebilir.
+6. Isim/unvan: yeni adayin 24 raw-speech probunda 21 bilinenin tamami dogru;
+   uc tekrarda 63/63, kalan3un beklentisi UNKNOWN. Onceki dort pozitiffail gecti.
+   Relative/quotation/delegation kontrolleri kaynak-spandir. Bilinen kalan
+   'just role-playing' hyphenli aciklama recipient SELF uygunlugu acabilir;
+   identity verified/banka yetkisi olusturmaz. B14 eski parser yedek kalir.
+7. Yeni 64 sentetik zor metin: tam V2 rawjoint25/64, V3 ogrenci21/64;
+   eski artik acik96: V2 rawjoint20/96, V3 rawjoint14/96. Bunlar semantik
+   etiket tanilaridir, bankahareket/konusma basarisi DEGILDIR. V3'u V2'den daha
+   akilli diye sunma. Veri train/cal/EVAL ayrimi ve tum eski modelagirliklari
+   korunur; bu EVAL'lerle yeniden fit/esik ayarlamasi yapilmadi.
+8. Yeni 12 A/B banka vakasi research/customer-benchmark/final-sprint-bank-cases-
+   20261011.json: bagimsiz kaynak QA mevcut. Bunlar custom fixture gerektirir;
+   hosted_registered=false/local_only=true. Mevcut bankadan bu customer_id'lerin
+   desteklendigi kanitlanmadan Freya'da calisiyor diye sunma. Kosucu actor/harness
+   gaplerini politika failinden ayirir; expected/actor/scorer sonuc gecsin diye
+   degistirilmez. Tum onceki basarisizskorlar korunur.
+
+REPRODUCE FROM REPO (python3.11 ve mevcut yerel dependencies):
+python -X utf8 -B scripts/replay_final_public_candidate.py --candidate-workflow competition/releases/live-v3-candidate-a-20261011/workflow.json --candidate-sha256 01737194f782659fb2799c9513e353bcf08005e004129fe7ba80c3e9669705ee --output-prefix analysis/final-sprint-public-replay-20261011.FRIEND_NEW
+python -X utf8 -B scripts/run_local_recipient_probes.py --probes analysis/local-recipient-fresh-probes-20261011.json --candidate-workflow competition/releases/live-v3-candidate-a-20261011/workflow.json --output analysis/FRIEND-NEW-recipient-probes.json
+
+PLATFORM SON KOSU:
+Workspace aktif simulation bitmeden yayin/test baslatma. Ayrik practice A slotuna
+AYNI generatedworkflow'yu API/MCP ile yayinla; gercek export hash ve actual agent/
+version kaydet. Tek workspace simulation, en cok5call. 13publici uc bagimsiz turda
+original run_cases.py/score.py/transcript/ledger ile calistir; B kontrol/classic
+B14 ayni kalir. Freya'da student status/counter/diagnostic kayitlari modelin hangi
+USER turunda gercekten cagrildigini gostermeli; unused/shadow hint etki kaniti degil.
+Eksik hakem skoru failedcombined kalir. Tum failedcasekategorileri ve hamsonuclar
+korunur; once faili niyet/tarih/isim/actor/hakem/altyapi olarak ayir, sonra sadece
+kaynakgenel guide/guard'u otomatik yenidenuret. Gizli testlere erisim yok.
+B icin live-V3 henuz generated/hosted kanitli DEGILDIR: B brief+bankguardstate ve
+extractor raw alanlariyla otomatik yeni candidate uretmeden A'nin sonucunu B'ye
+yayma. Sirf yenilik icin son saglam klasik surumu ezme.
+
+KAYNAKLAR:
+analysis/final-sprint-v3-live-generation-20261011.json
+analysis/final-sprint-public-replay-20261011.v3.json
+analysis/final-sprint-recipient-v3-live-probes-20261011.json
+analysis/final-sprint-v3-student-20261011.json ve .audit.json
+analysis/final-sprint-fresh64-v3-eval-20261011.json
+analysis/final-sprint-exposed96-v3-eval-20261011.json
+analysis/final-sprint-v3-live-candidate-review-20261011.* (tamamlanan review)
+analysis/final-sprint-bank-replay-20261011.v3-adapter.* (tamamlanan run)
+
+SON KANIT EKİ: finalcandidate independentCodex CPU audit64/64 gecti.
+Gercek pinnedstudent6 girdide5abstention+1proposal/tekclarificationuretti;
+tamcanonicalevents, yeni readback/onay ve receiptguardlari korundu.
+Malformeddecodeclarificationyolu ve hyphenlirole-playing eligibilitygap
+raporda kalir; hostedhakem/ASR/gercekbanka kaniti degildir.
+Son adapter-final72kosuda yeniA4/6vakax3gecti (12/18). A02/A06Turkce
+DOBrawformatgatekaldi. B14kontrol2/6vakax3gecti, kalan4HARNESS_UNSUPPORTED
+veoncekifailkanitlariaynenkorundu; B-V3entegrasyoniddiasiyok.
+12kaynak/schemacontrolu gecti. Sonbankrapor .v3-adapter-final.json/.txt.

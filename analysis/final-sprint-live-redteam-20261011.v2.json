@@ -1,0 +1,217 @@
+{
+  "status": "CLOSED_FROZEN_CODEX_POST_PACKET_SOURCE_RETEST",
+  "version": 2,
+  "finished_utc": "2026-10-11T14:51:45.259692+00:00",
+  "actual_native_attempts": 0,
+  "scope": "Changed parser/live helper only. Prior verified Opus reviewed earlier hashes; no Opus claim for this version.",
+  "source_hashes": {
+    "competition/recipient_assertion.py": "e3cecffd410408a8b6834a73b7f2e423b312d8327eeb6f4d6cacc804ce2a3fab",
+    "competition/live_layer.py": "42d6e7ec0843a419893fc5a4cefb8ff9fb3901f6e58944b80473e6d70413b0fd"
+  },
+  "sources_unchanged": {
+    "competition/recipient_assertion.py": true,
+    "competition/live_layer.py": true
+  },
+  "checks": 16,
+  "met": 11,
+  "unmet": [
+    "recipient-8",
+    "recipient-9",
+    "recipient-10",
+    "security-phase-retention",
+    "dead-branch-validator"
+  ],
+  "results": [
+    {
+      "id": "recipient-0",
+      "expected": "SELF",
+      "met": true,
+      "observed": {
+        "raw": "Speaking, Riley Vale.",
+        "decision": "SELF",
+        "reason": "CURRENT_NAME_ASSERTION",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-1",
+      "expected": "SELF",
+      "met": true,
+      "observed": {
+        "raw": "This is Riley Vale speaking.",
+        "decision": "SELF",
+        "reason": "CURRENT_NAME_ASSERTION",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-2",
+      "expected": "SELF",
+      "met": true,
+      "observed": {
+        "raw": "Yes, this is Riley Vale speaking.",
+        "decision": "SELF",
+        "reason": "CURRENT_NAME_ASSERTION",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-3",
+      "expected": "SELF",
+      "met": true,
+      "observed": {
+        "raw": "That is me.",
+        "decision": "SELF",
+        "reason": "SHORT_CURRENT_OPENING_ANSWER",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-4",
+      "expected": "SELF",
+      "met": true,
+      "observed": {
+        "raw": "This is me.",
+        "decision": "SELF",
+        "reason": "SHORT_CURRENT_OPENING_ANSWER",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-5",
+      "expected": "OTHER",
+      "met": true,
+      "observed": {
+        "raw": "Speaking, Jordan Vale.",
+        "decision": "OTHER",
+        "reason": "EXPLICIT_DIFFERENT_NAME",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-6",
+      "expected": "UNKNOWN",
+      "met": true,
+      "observed": {
+        "raw": "My cousin said \"Speaking, Riley Vale\".",
+        "decision": "UNKNOWN",
+        "reason": "NO_CURRENT_ASSERTION",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-7",
+      "expected": "UNKNOWN",
+      "met": true,
+      "observed": {
+        "raw": "If I said this is Riley Vale speaking.",
+        "decision": "UNKNOWN",
+        "reason": "NO_CURRENT_ASSERTION",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-8",
+      "expected": "UNKNOWN",
+      "met": false,
+      "observed": {
+        "raw": "Yes. Riley is not me.",
+        "decision": "SELF",
+        "reason": "SHORT_CURRENT_OPENING_ANSWER",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-9",
+      "expected": "UNKNOWN",
+      "met": false,
+      "observed": {
+        "raw": "Yes. I am Riley Vale’s cousin.",
+        "decision": "SELF",
+        "reason": "SHORT_CURRENT_OPENING_ANSWER",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-10",
+      "expected": "UNKNOWN",
+      "met": false,
+      "observed": {
+        "raw": "This is Riley Vale, but I am pretending.",
+        "decision": "SELF",
+        "reason": "CURRENT_NAME_ASSERTION",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "recipient-11",
+      "expected": "SELF",
+      "met": true,
+      "observed": {
+        "raw": "This is Riley Vale; I will not give my date of birth.",
+        "decision": "SELF",
+        "reason": "CURRENT_NAME_ASSERTION",
+        "bank_authority": false
+      }
+    },
+    {
+      "id": "security-phase-retention",
+      "expected": "no learned history before verified security",
+      "met": false,
+      "observed": {
+        "status": "SOURCE_ONLY",
+        "history": [
+          {
+            "speaker": "USER",
+            "text": "2718"
+          }
+        ],
+        "bank_authority": "false"
+      }
+    },
+    {
+      "id": "dead-branch-validator",
+      "expected": "reject unused invocation",
+      "met": false,
+      "observed": {
+        "nodes": [
+          "dispatch"
+        ],
+        "mode": "recipient",
+        "bank_authority": false,
+        "scope": "Exact embedding and call sites; runtime/guard behavior requires separate replay and Freya validation"
+      }
+    },
+    {
+      "id": "generator-minimal-payload",
+      "expected": "copy only model/runtime, not unrelated manifest payload",
+      "met": true,
+      "observed": {
+        "copied_files": [
+          "live-layer-code.py",
+          "live-layer-contract.json",
+          "recipient_assertion.py",
+          "student-manifest.json",
+          "student-model.json",
+          "student-runtime.py"
+        ],
+        "synthetic_index_only": true
+      }
+    },
+    {
+      "id": "manifest-unrelated-digest",
+      "expected": "still verify manifest payload not copied to generator",
+      "met": true,
+      "observed": {
+        "rejected": true
+      }
+    }
+  ],
+  "findings": "Compose positives fixed. Whole-turn contradiction/third-party/hypothetical suffix residuals, phase retention and dead branch validator remain if reproduced. No generated candidate reviewed; original active builder has an older component.",
+  "harness_correction": "An initial whitespace-sensitive source substring check falsely flagged minimal-payload copying. Replaced before handoff by functional synthetic prepare/corruption witnesses; no source defect claimed for that change.",
+  "limits": [
+    "No native retry, platform, training or candidate edits.",
+    "No fresh64/EVAL96 data/predictions/labels or prior case outputs.",
+    "Frozen v1 report/native/witness files untouched."
+  ]
+}

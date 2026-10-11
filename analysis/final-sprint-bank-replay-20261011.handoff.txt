@@ -1,0 +1,54 @@
+Runnable handoff delivered 2026-10-11T15:02:04Z, about five minutes after task start.
+Baseline sealed12: 36 executions, three fresh synthetic-customer Banks per case.
+NO ASR/LLM/extractor/conversation judge/Freya/network/credentials/Git/training.
+Deterministic repetitions are NOT independent actor repetitions.
+
+All 12 baseline statuses (three identical results per case):
+A01 CONDITIONAL_LEDGER_PASS 3/3
+A02 CODE_FORMAT_GATE 0/3; Turkish recipient utterance rejected
+A03 CONDITIONAL_LEDGER_PASS 3/3; exact callback, no identity/account access
+A04 CODE_FORMAT_GATE 0/3; recipient gate prevents scripted security refusal
+A05 CONDITIONAL_LEDGER_PASS 3/3; both final terms parsed from actual script correction, fresh matching spoken readback and confirmation
+A06 CODE_FORMAT_GATE 0/3; Turkish-month DOB rejected; paid turn unreachable
+B01 ACTOR 0/3; later confirmation incorrectly selected at recipient, retained without repair
+B02 ACTOR 0/3; same selection fault, no Turkish security/purpose conclusion from this run
+B03 ACTOR 0/3; passive paid claim rejected by B14 raw grammar, then adapter refuses loan while bank asks about card. Terminal HARNESS_UNSUPPORTED also retained
+B04 HARNESS_UNSUPPORTED 0/3; underlying Turkish-month DOB gate, paid/dispute turns unreachable
+B05 HARNESS_UNSUPPORTED 0/3; underlying Turkish third-party grammar gate, callback unreachable
+B06 CONDITIONAL_LEDGER_PASS 3/3; two explicit security refusals, no account access
+
+New candidate: all 12 CANDIDATE_PENDING; no final new candidate file was supplied.
+The CLI smoke test used A10 itself, explicitly identified by its frozen hash; it is not new-candidate evidence.
+Separate original public13 actor replay: 39/39 conditional baseline ledger checks.
+Old scripts/local_public_replay.py unchanged and pinned before/after.
+
+B reason initialization diagnosis:
+Frozen B14 test_variables is {}. No reason variable default is declared or omitted
+from actor initialization. Only finish() writes vars['reason']; safe-exit paths do
+not call finish(). Both the old public replayer and this sidecar eagerly raise on
+{{reason}} while building safe_close body, before its pre_process_code.
+Original tools-and-code.md lines 111-118 and workflow-format.md Variables section
+say an unset exact-placeholder normal API field is dropped without error. The
+frozen safe_close preprocessor derives outcome/reason after the drop. A direct
+diagnostic successfully derived not_verified/failed from the untouched hook.
+Therefore this strict interpolation exception is replayer divergence, not evidence
+of the actual platform throwing. Failed ledgers/scores remain unchanged; no empty
+sentinel was injected and no workflow/fixture/actor/oracle was patched to pass.
+
+Commands from repository root, replacing finalA.json with the actual new file:
+python -X utf8 -B scripts/replay_final_bank_cases.py --candidate-workflow "A=C:\absolute\path\to\finalA.json" --output-prefix analysis/final-sprint-bank-replay-20261011.candidate
+
+Full public39 composite with new A and explicitly supplied frozen B14:
+python -X utf8 -B scripts/replay_final_bank_cases.py --public39 --candidate-workflow "A=C:\absolute\path\to\finalA.json" --candidate-workflow B=competition/releases/classic-baseline/b.review-template.json --output-prefix analysis/final-sprint-bank-replay-20261011.candidate-public39
+
+Using only the A argument in public39 mode runs 30 candidate A executions and marks
+the three B cases pending, alongside the complete 39 baseline executions.
+Every subprocess has a 90-second bound. Output is restricted to the authorized
+analysis/final-sprint-bank-replay-20261011 prefix.
+
+Validation: all 16 checks passed, including frozen raw SHA, source before/after,
+36 unique customer IDs, unchanged fixture/product order, no oracle fields in
+runtime projection, matching current-request receipts when exposed, script-sourced
+final correction/consent, preserved first-run original scores, socket deny, and
+three fresh Bank get_account parity checks. Independent policy-source QA found no
+discrepancies in the 12 frozen expected ledgers. This is not a full bank pass.
