@@ -1,0 +1,138 @@
+ARKADASIN AJANINA GOREV: MiniLM V2 + klasik builder karsilastirmasi
+11 Ekim 2026. Kaynak teslim commit'i: 7f2ec88c133da11f9aa23e1e681ed219de5815f9.
+Bu dosya yeni kullanici talimatiyla hazirlandi. Benchmark ve Freya kuyrugu
+arkadasin ajaninda; bu talimat hazirlanirken yeni platform cagrisi yapilmadi.
+
+HEDEF
+V2'yi klasik politika engine'inin semantik yardimcisi olarak degerlendir.
+Klasik engine'i ve V1'i koru. V2'yi otomatik olarak varsayilan yapma.
+Odeme sozu, itiraz, son duzeltme, izin, isim/unvan ve uzun konusmalarda hangi
+gercek hatalari azalttigini kontrollu karsilastirmayla goster. Model ciktisi
+banka islemi yetkisi degildir; kimlik, guncel onay, politika ve banka receipt'i
+engine tarafinda belirlenir. Tum varyantlar ayni banka kurallarini uygulamali.
+
+MEVCUT DURUMU DOGRU OKU
+1. V2 GERCEKTEN fine-tune edildi: 168821 TRAIN x 2 tam tur, 10552 optimizer
+   adimi, 101 encoder tensoru degisti; yerel RTX3070Ti. V1 aynen saklandi.
+2. Yeni96 metin probunda RAW macroF1: V1 0.3244, V2 0.4574. Tum bilinen
+   domain etiketleri birlikte dogru: V1 17/96, V2 20/96. Bunlar tam banka
+   gorusmesi / score.py / ledger gecme oranlari DEGILDIR. Klasik engine'in
+   ayni96 uzerinde karsilastirilabilir sonucu HENUZ YOKTUR.
+3. Eski32 tani: 12/32 -> 16/32. Eski384 macroF1: 0.8207 -> 0.8986.
+   Bunlar yeniden kullanilan regresyon tanilaridir; yeni bagimsiz test diye
+   raporlama. Yeni96 da artik goruldu; sonraki gelistirmelerin taze holdout'u
+   olamaz. Yeni model/engine icin ayri zor vakalar uret ve beklentilerini
+   aday ciktilarini gormeden brief/tool/politika kaynaklarindan sabitle.
+4. V2 release kapisi KAPALI: yeni96 joint kazanc +3, onceden belirlenmis
+   kosul en az +6 idi. default_enabled=false; auto halen V1 secer.
+5. current_affirm ve current_withdraw domain basliklarinin secilen esigi
+   1.01: bu iki baslik CAL seciminde devre disi. RAW tahminleri izin diye
+   kullanma; proposal/dispute/correction basliklari da tek basina yetki vermez.
+   Bir sinyalin bulunmamasi ret/izin olarak yorumlanamaz.
+
+ENTEGRASYONUN GERCEK YERI
+competition/builder.py -> prepare_finetuned_assist -> finetuned-evidence.json
+-> builder onarim prompt'u -> uretilen klasik Freya workflow'u.
+Bu mekanizma ancak work/failed-calls.json veya previous-failed-calls.json
+bulundugunda egitilmis modeli cagirir. Sadece ilk brief uretiminde
+--finetuned-version v2 yazmak modelin calistigini kanitlamaz.
+Ilk brief icin belge retrieval MiniLM'i ayri yardimcidir.
+V2 su anda Freya'nin her canli USER turunda calisan inference katmani DEGIL.
+Harici GPU tool ekleme; sabit AGENT_LLM ve bank-tool sozlesmesini koru.
+Modelin buldugu kaynak-genel dil ayrimlarini builder/extractor/guard tasarimina
+aktar; herhangi bir testin isim/tutar/tarih/expected sonucunu hardcode etme.
+
+ONCELIKLI UYGULAMA
+A. origin/codex/builder-rd'yi fetch et, kendi branch'ine normal merge ile al.
+   Arkadas degisikliklerini koru; reset/force/rewrite yapma. Once calisan
+   builder/testleri bitir, kaynak/hash degisikliklerini aktif kosuya karistirma.
+B. analysis/classic-v2-guide-followup.json ve classic-v2-generated-review.json
+   oku. Guncel competition/skills/build-phone-agent.md kaynak-genel onarimlari
+   iceriyor. Yeni adaylari buradan OTOMATIK yeniden uret. classic-v2-local/c/d
+   kopyalari FAILED, unpublished tanidir: temiz yeni surum diye yayinlama.
+   Son dort rehber onarimi bu C/D kopyalari uretildikten sonra eklendi.
+C. Isim/unvan icin ozneyi isim eslesmesinden once belirle; akraba/ucuncu kisi
+   sozu muhatap onayi olamaz. Guvenlik operand'i sadece guncel kisinin yaniti
+   olabilir. Tam yeni DOB duzeltmesi eski parcali yaniti gecersiz kilmali.
+   Onay, son seslendirilmis islem/tutar/tarih/hedef revizyonuna bagli olmali.
+D. V2 destekli onarimi lokal uret, sema/coverage ve literal controller
+   kontrollerini yap; sonra kendi mevcut Freya kuyruğunda test et.
+
+KONTROLLU UC KOL
+Her A/B brief grubu icin ayni DURMUS public practice seed'i, ayni gozlenen
+failed-call girdileri, ayni guncel rehber ve kaynak hashleriyle yeni kosular ac:
+K0: klasik finans engine + ortak belge retrieval; fine-tuned yardimci OFF.
+K1: ayni engine/onarim akisina V1 fine-tuned yardimci REQUIRED.
+K2: ayni engine/onarim akisina V2 fine-tuned yardimci REQUIRED.
+Generic dialogue-assist bu karsilastirmada ucunde de OFF; belge retrieval
+ayarlari ve gercek kullanimi ucunde ortak tut. Boylece V1/V2 farkini baska
+yardimcilarla karistirma. Tam klasik yedek ayrica --semantic-assist off ile
+tum MiniLM yardimcilarini kapatir; historical yedegi uzerine yazma.
+
+Public A icin CLI sablonlari; <...> yerlerini kendi mevcut yollarinla degistir.
+Her komut ayri YENI en cok30dk onarim butcesi kullanir, eski timeout'u resetlemez.
+K0:
+python competition/builder.py competition-v3/build-the-builder/briefs/brief-a.md --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-classic --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist off --semantic-python <TORCH_PYTHON>
+K1:
+python competition/builder.py competition-v3/build-the-builder/briefs/brief-a.md --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-v1 --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist required --finetuned-version v1 --semantic-python <TORCH_PYTHON>
+K2:
+python competition/builder.py competition-v3/build-the-builder/briefs/brief-a.md --practice-repair <STOPPED_PUBLIC_A_RUN> --repair-first --slot compare-a-v2 --minutes 30 --local-only --semantic-assist auto --dialogue-assist off --finetuned-assist required --finetuned-version v2 --semantic-python <TORCH_PYTHON>
+Public B icin brief-b.md, STOPPED_PUBLIC_B_RUN ve ayri compare-b-* slotlarini
+kullan. Seed public kapsaminda ve failed-call kaniti mevcut olmali. Required
+bayragi kanit dosyasi yokken modeli cagirtmaz: K1/K2 logunda finetuned_assist
+status=ready, dogru version, manifest hash ve gozlenen turn sayisini dogrula.
+Belge retrieval pin/hazirlik durumu kollarda farkliysa olcum kontrollu degildir.
+
+PLATFORM KARSILASTIRMASI
+* Once kaynak kontrolleri gecen yeni otomatik adaylari ayri practice slotlarda
+  yayinla/export et. Workflow'lari elle patchleme. Freya yayini ve global
+  freya-agents.json yazimlarini seri tut. Kuyruk bitene kadar aday surumu sabit.
+* Aynı13 public + source-QA yapilmis zor banka senaryolari; her adayda uc
+  BAGIMSIZ tekrar. Workspace basina tek aktif simulation, en cok5 call.
+  Aday uretimi tekrari ile gorusme test tekrarini farkli raporla.
+* Eski96 semantic probu oldugu gibi koru. Ledger testi icin ayri turetilmis
+  banka brief/fixture/actor/expected paketi gerekiyorsa dogru banka islemlerini
+  kaynak kurallariyla ayrica dogrula. Semantic label'i banka expected'ina cevirme.
+* Once kalan public fail + isim/soyisim/unvan + ucuncu kisi + gec duzeltme +
+  birlesik niyet + alinti ile guncel onay + izin geri cekme iceren kucuk
+  cekirdek paketi uc tekrarla kostur. Sonra yeni bagimsiz zor vakalari genislet.
+  Kapsam ve call sayilarini gercekte tamamlanan manifeste gore raporla.
+* Orijinal ZIP/brief/OpenAPI/publicactor/expected/score.py/run_cases.py degismez.
+  Original score.py, transcript, tool/API body, ledger, actualagent/version ve
+  export hash birlikte kanit olsun. Missing judge failedcombined olarak kalsin.
+  Actor/extractor/judge/infra/politika hatalarini ayir; beklenenleri gecmek icin
+  degistirme. Metin testi ASR/aksan/gercek ses dogrulamasi degildir.
+
+ARA KATMAN TASARIMI / RED TEAM
+Gozlenen konusma -> semantik aday veya UNKNOWN -> kapsam/sonduzeltme takibi
+-> deterministik kimlik/guncel islem-onayi/para/tarih/politika guard'lari
+-> izin verilen banka tool'u -> GERCEK basarili receipt -> kullaniciya sonuc.
+Ara soru, eski gecersiz onayi tekrar canlandirmamali. Son tutar/tarih/hedef
+degistiyse onceki readback/confirmation revizyonu gecersiz; yeniden onay al.
+Ucuncu kisi/alinti/varsayim kullanicinin guncel islemi degildir. UNKNOWN veya
+eksik parcali bilgi gerekli netlestirmeye gider. Model guard'i atlayamaz.
+Mevcut Opus5.5 CLI ile bu sınırları ve yeni aday kaynaklarini bagimsiz incelet.
+Model/usage kaniti yoksa Opus calisti iddiasi yok; kota varsa acik Codex fallback.
+V2 her canli turda calissin istenirse once Freya runtime deployment/inference
+olanagini ve yarisma sozlesmesini kanitla. Bu teslim bunu uygulamis sayilmaz.
+
+PINLER / TESLIM
+V1 manifest: 0e8b19305d935c08ec0b25ff9ca42ac556d3474cf6c859a06683988f630350ea
+V2 manifest: 7eca3b016b47ec20f1b1fd9e207c71a0c72ece9bf91f4e2c28ecd411dcb59189
+96 EVAL SHA: 04c69c6e0e1ddeb48f40e6b7c3934a506cd0cb8690dedb98961f42d10cb65571
+Olcum: analysis/minilm-v2-results.json. Ozet: analysis/MINILM-V2-HANDOFF-20261011.txt.
+V2 release: integrations/learned-dialogue/minilm_ft_v2/release.json.
+Klasik yedek: competition/releases/classic-baseline/ (A10/B14).
+Tarihsel A10 29/30 combined,30/30 bank,9/10 all3; B14 9/9,3/3 all3.
+Bu12/13 historical publicall3 sonucudur; yeni96 veya yeniV2 workflow skoru degil.
+
+Teslim et: uc kolun kaynak/seed/model/workflow/export pinleri, assisted-ready
+kanitlari, her case'in uc skor/ledger/actualversion'i, all3 ve toplam call
+tablosu, gercek yeni duzelen/regrese olan vakalar ve nedenleri. Kalan hatalari
+failed/incomplete/unknown olarak koru. Hangi engine veya model daha iyi diye
+kararini bu ayni-senaryo kanitlarina dayandir. Yeni calisma icin 96'nin semantic
+skorunu Freya basarisi diye sunma; farkli surumlerden best-of skor derleme.
+Sirlar/raw keyli export/log/corpus Git'e girmesin; kaynak kontrollere ek olarak
+credential taramasi ve orijinal16 ZIP byte karsilastirmasindan sonra nonforce
+commit/push yap. Bu gorev yeni cloud kiralamasi gerektirmiyor; toplam35USD
+siniri degismez, mevcut yerel model agirliklarini kullan.
