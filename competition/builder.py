@@ -35,7 +35,8 @@ def slot_lock(path):
 def stamp(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
 def write_json(path,value):
     path.parent.mkdir(parents=True,exist_ok=True)
-    temp=path.with_suffix(path.suffix+'.tmp');temp.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n');temp.replace(path)
+    # Unique temp name: builds in different slots share .state files and may write them in the same instant.
+    temp=path.with_name(f'{path.name}.{os.getpid()}.{uuid.uuid4().hex[:8]}.tmp');temp.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n');temp.replace(path)
 
 def infer_practice_group(brief_paths):
     canonical=lambda value:re.sub(r'\s+',' ',value).strip()
