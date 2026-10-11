@@ -1,0 +1,171 @@
+Independent read-only CPU evidence. No fit/hosted calls.
+{
+  "status": "CLOSED_FROZEN_INDEPENDENT_CODEX_CPU_WITNESSES",
+  "started_task_utc": "2026-10-11T09:15:20Z",
+  "finished_utc": "2026-10-11T09:20:51.524078+00:00",
+  "wall_seconds": 7.047,
+  "check_count": 416,
+  "passed": 416,
+  "failed": 0,
+  "source_hashes_unchanged": true,
+  "partitions": {
+    "fit": {
+      "rows": 7943,
+      "groups": 7943,
+      "min_class_rows": 27
+    },
+    "calibration": {
+      "rows": 993,
+      "groups": 993,
+      "min_class_rows": 4
+    },
+    "internal_publisher_TRAIN_eval": {
+      "rows": 993,
+      "groups": 993,
+      "min_class_rows": 4
+    }
+  },
+  "paired_ablation": {
+    "gnn_only_correct": 67,
+    "no_edges_only_correct": 63,
+    "net_rows": 4,
+    "discordant": 130,
+    "exact_paired_binomial_p_diagnostic": 0.7925825227940952,
+    "qualification": false,
+    "one_fit_and_known_paraphrase_links": true
+  },
+  "contraction_cross_split_links": [
+    [
+      {
+        "id": "banking77-train:03984",
+        "partition": "fit",
+        "publisher_label": "unable_to_verify_identity"
+      },
+      {
+        "id": "banking77-train:03968",
+        "partition": "calibration",
+        "publisher_label": "unable_to_verify_identity"
+      }
+    ],
+    [
+      {
+        "id": "banking77-train:03980",
+        "partition": "fit",
+        "publisher_label": "unable_to_verify_identity"
+      },
+      {
+        "id": "banking77-train:03922",
+        "partition": "internal_publisher_TRAIN_eval",
+        "publisher_label": "unable_to_verify_identity"
+      }
+    ]
+  ],
+  "independent_export_numpy_comparisons": 288,
+  "independent_export_numpy_max_error": 1.2212453270876722e-15,
+  "full_precision_training_parity": "Producer-reported768comparisons; original full-precision arrays not retained; NOT independently reproduced and no refit",
+  "bank_abstention_canary_calls": 39,
+  "scrub_semantic_loss_witnesses": [
+    {
+      "authored_text": "My password is working again.",
+      "scrubbed": "My password is working again.",
+      "counts": {}
+    },
+    {
+      "authored_text": "My PIN is required to unlock my card.",
+      "scrubbed": "[REDACTED_SECRET_VALUE].",
+      "counts": {
+        "secret_value": 1
+      }
+    },
+    {
+      "authored_text": "I paid 100 yesterday.",
+      "scrubbed": "I paid [REDACTED_NUMERIC_VALUE] yesterday.",
+      "counts": {
+        "numeric_value": 1
+      }
+    },
+    {
+      "authored_text": "I paid 900 yesterday.",
+      "scrubbed": "I paid [REDACTED_NUMERIC_VALUE] yesterday.",
+      "counts": {
+        "numeric_value": 1
+      }
+    }
+  ],
+  "known_redaction_row_metadata": [
+    {
+      "id": "banking77-train:01708",
+      "publisher_label": "pin_blocked",
+      "partition": "internal_publisher_TRAIN_eval",
+      "observed_mask": true,
+      "word_count": 2,
+      "redaction_placeholder_count": 1,
+      "text_sha256": "939a0f2e104c3597bfa735ea92c119eeb58c01b9164dc4dde1e0ab15ac48b164"
+    }
+  ],
+  "A_next6_paid_predicates": [
+    {
+      "authored_text": "I have already processed the payment through the app this morning.",
+      "kind": "paid",
+      "expected": true,
+      "actual": true,
+      "expectation_met": true,
+      "classification": "conforming_positive"
+    },
+    {
+      "authored_text": "I've already processed the payment through the app this morning.",
+      "kind": "paid",
+      "expected": true,
+      "actual": false,
+      "expectation_met": false,
+      "classification": "conforming_positive"
+    },
+    {
+      "authored_text": "I made the payment in 2024.",
+      "kind": "paid",
+      "expected": false,
+      "actual": true,
+      "expectation_met": false,
+      "classification": "forced_inconsistent_paid_row"
+    },
+    {
+      "authored_text": "I processed the payment tomorrow.",
+      "kind": "paid",
+      "expected": false,
+      "actual": true,
+      "expectation_met": false,
+      "classification": "forced_inconsistent_paid_row"
+    },
+    {
+      "authored_text": "I made the hotel payment yesterday.",
+      "kind": "paid",
+      "expected": false,
+      "actual": false,
+      "expectation_met": true,
+      "classification": "forced_inconsistent_paid_row"
+    },
+    {
+      "authored_text": "I paid it today, but I did not actually pay this overdue amount.",
+      "kind": "paid",
+      "expected": false,
+      "actual": true,
+      "expectation_met": false,
+      "classification": "forced_inconsistent_paid_row"
+    },
+    {
+      "authored_text": "I paid my credit card ending 7736 today.",
+      "kind": "paid",
+      "expected": false,
+      "actual": true,
+      "expectation_met": false,
+      "classification": "forced_inconsistent_paid_row"
+    }
+  ],
+  "A_next6_paid_predicate_expectation_failures": 5,
+  "fits": 0,
+  "hosted_calls": 0,
+  "bank_calls": 0,
+  "GPU": 0,
+  "native_inference_claim": false,
+  "mask_warning": "Observed mask tests type/length, not recoverable label semantics. Source-intent predictions have no bank authority."
+}

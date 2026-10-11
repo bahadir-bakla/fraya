@@ -1,0 +1,133 @@
+{
+  "schema_version": "day2.multisource-semantic-design.v1",
+  "status": "implementation_contract_only",
+  "designer_fits": 0,
+  "designer_evaluations": 0,
+  "GPU_USD": 0,
+  "owned_outputs": ["analysis/day2-multisource-gnn-design.json", "analysis/day2-multisource-gnn-design.txt"],
+  "authorization": {
+    "completed_Hooke_plan_sha256": "df7a323ebc73b29c8581935ee5f1bae257604c2299cce4fb3d1351601c8a54da",
+    "parent_grant": "analysis/day2-parent-public-cpu-authorization-v2.json",
+    "grant_scope": "completed Banking77-only three-model CPU experiment using frozen original v1 corpus paths",
+    "new_multisource_grant_claimed": false,
+    "handoff": "Parent relays this proposal; implementer emits a new exact source/data/feature/encoder-bound plan. No retroactive approval for designer historical exploratory fits."
+  },
+  "actual_existing_results": {
+    "metrics": "integrations/learned-dialogue/day2_public_metrics_v2.json",
+    "sha256": "c7fd536d28760e462019dafb8d8162d49b1c2ff9f75468b0dd655be114944134",
+    "TRAIN_rows": 7943,
+    "internal_EVAL_rows": 993,
+    "total_fit_and_save_seconds": 91.703,
+    "models": {
+      "sparse": {"accuracy": 0.730110775427996, "CE": 1.2167475948799051, "preprocess_fit_seconds": 9.563, "runtime_bundle_bytes": 218614},
+      "gnn": {"accuracy": 0.7844914400805639, "CE": 0.7745080514042751, "preprocess_fit_seconds": 40.781, "runtime_bundle_bytes": 192505, "source_proposal_precision": 0.9073033707865169, "source_proposal_coverage": 0.7170191339375629},
+      "no_edges": {"accuracy": 0.7804632426988922, "CE": 0.865041204653529, "preprocess_fit_seconds": 39.422, "runtime_bundle_bytes": 191430}
+    },
+    "edge_interpretation": "4 net correct rows/993, 0.4028 percentage points; paired disagreement counts and semantic-group replication unavailable. No significant edge advantage claim. Sparse comparison also changes nonlinearity.",
+    "bank_acceptance": 0,
+    "qualification": false,
+    "parity_evidence": "existing metrics.native_full_precision_export_parity; not independently rerun here"
+  },
+  "v2_corpus": {
+    "manifest": "research/customer-benchmark/day2-training-data/v2/manifest.json",
+    "manifest_sha256": "8fbbd1ec7e3cefda0cbcef616bcf61ba7886d9234fee9b9ed5e23513c7cc2ba0",
+    "files": {
+      "TRAIN": {"path": "research/customer-benchmark/day2-training-data/v2/train.jsonl", "sha256": "03707b592734838d9ad80fadaab3d87f42a5ed72c170580b86fa9cb58876e60f"},
+      "CAL": {"path": "research/customer-benchmark/day2-training-data/v2/calibration.jsonl", "sha256": "e2e708b9254a53712c852b26c49b2444be50d72b4f130e35599bb174df94d73d"},
+      "EVAL": {"path": "research/customer-benchmark/day2-training-data/v2/eval.jsonl", "sha256": "f8bbb9dfdf89752bc71b1c5a99ea0042892e3e1dd3175a9e3b3a7dedd8bc8923"}
+    },
+    "rows_train_cal_eval": {"banking77": [7943,993,993], "nlupp": [2088,261,261], "taskmaster": [2053,126,168]},
+    "observed_TRAIN_groups": {"banking77": 7943, "nlupp": 2088, "taskmaster": 24},
+    "Taskmaster_all_partition_groups": 30,
+    "NLUpp_TRAIN_domains": {"banking":1417,"hotels":671},
+    "support": "Actual TRAIN scan: all62 intent and17 slot-presence classes have positive and known-negative examples. Rarest intent positives9; slot positives18. Auxiliary fits need no invented20 floor.",
+    "taxonomy_paths": ["research/customer-benchmark/day2-training-data/v2/banking77-taxonomy.json", "research/customer-benchmark/day2-training-data/v2/nlupp-taxonomy.json"],
+    "taxonomy_hashes": ["338a9dae6fea33fa3f4a921d751633aa344f0f7f6a4386f3f6e38caedcc4c128", "24ebe7b853b2e202ce7fab9e5e9ab63b563bd9049cd59364f9610a244c6e3f32"],
+    "processor_sha256": "779abab2b49299c8bb2fe2faf3a3922556d23c60c5c5717de35e8c689f1acaa3",
+    "license": "CC-BY-4.0 with retained notices",
+    "heldout_policy_OOD": null,
+    "unseen_NLUpp_folds18_19": "not downloaded or used",
+    "scope": "Internal publisher TRAIN/shard partitions; closure groups are embargo units, not proven IID or global qualified groups. No old designer8/Hooke101 ancestry comparison is treated as independent support."
+  },
+  "field_mapping": {
+    "bookkeeping_only": ["record_id", "group_id", "conversation_root_ids", "source_fold", "source_scenario", "source_text_sha256"],
+    "banking77": {"input":"text", "label":"targets.banking77_intent", "mask":"head_mask.banking77_intent", "readout":"77-way softmax"},
+    "nlupp": {"input":"text", "labels":["targets.nlupp_intents","targets.nlupp_slot_presence"], "masks":"head_mask[h] AND target_element_masks[h][k]", "readouts":["62 independent sigmoids","17 independent sigmoids"], "domain":"source_domain affects supervision masks only; never a source-ID lexical feature", "slot_values":"slot_value_target_mask=false; publisher reference date/time never bank calendar"},
+    "taskmaster": {"input":"context[].speaker,text and validated graph.edges observed_next_turn", "label":"targets.taskmaster_next_utterance", "mask":"head_mask.taskmaster_next_utterance", "task":"observed sanitized response representation prediction", "forbidden":"target text/index, scenario, annotation spans, source labels and group IDs in inference features; no invented intent or state labels"},
+    "untrained_axes": ["bankpolicy","ledger","financialconsent","primarypaymentdominance","completion","scopednegation","normalizedvalues","componenttarget","readbackfreshness"]
+  },
+  "one_experiment": {
+    "fits": ["S_sparse_three_source_heads", "G_shared512x24_typed_messages", "G_identical_no_nonself_edges", "E_frozen_MiniLM_fresh_source_heads"],
+    "priority": "Measure frozen lexical embedding baseline before expanding graph architecture. GNN topology is not universal pretrained language or bank-policy knowledge.",
+    "features": "Reuse signed SHA256 word/bigram/character3gram hashing from day2_public_model_v2.keys/sparse, width512, add only local speaker/node-type keys. No source labels, IDs, domain labels, gold spans or targets in inputs. Preserve empty turns and all context text; reject rather than silently clip unsupported sizes.",
+    "graph": "Single turns keep whole-turn+up-to3 balanced text spans. Taskmaster uses up-to6 observed context turns+summary. Directed membership, source_order, observed_next_turn matrices only. No invented correction/coreference/policy edges.",
+    "equations": {
+      "encoder": "h0_i=tanh(x_i E+bE); h1_i=tanh(h0_i Wself+bm+sum_r mean_{j:(j,i,r)} h0_j Wr). Empty relation contributes0. No-edge control deletes nonself messages only; same initialization, schedule, heads and pooling.",
+      "pooling": "Single-turn: ordered-span mean. Taskmaster:0.5last_context+0.5last_user (context mean if no user). Sparse uses same context pooling before linear decoder.",
+      "BCE": "max(z,0)-z*y+log1p(exp(-abs(z)))",
+      "masked_loss": "ell_i,h=sum_k m_ik BCE(z_ik,y_ik)/max(1,sum_k m_ik); false mask is unknown, not negative. B77 uses source CE.",
+      "group_loss": "L_s,h=mean_over_supported_groups(mean_over_supported_rows(ell_i,h)); equal group mass, especially Taskmaster24TRAIN components.",
+      "objective": "L_B77/log77 +0.5L_NLUintent/log2 +0.5L_NLUslot/log2 +0.2L_TM +0.0005||theta||^2. Report unnormalized components separately.",
+      "Taskmaster": "y=normalized signed-hash512(actual next assistant response); u=normalize(p Wnext+bnext,epsilon1e-8); L_TM=||u-y||^2. This is lexical response representation, not generation or policy gold. Equal scrubbed responses are not false negative classes.",
+      "teacher": "Freeze local MiniLM384 normalized attention-mean embeddings. Fresh77/62/17 readouts fitted only on our corresponding TRAIN masks. Classification comparator omits Taskmaster loss.",
+      "later_distillation": "Only after measured lexical benefit, separate frozen TRAIN-only experiment:0.75hard+0.25tau^2KL(teacher||student),tau2; masked BernoulliKL for multilabel. Never fit CAL/EVAL pseudo-labels. Not executed or automatically approved here."
+    },
+    "schedule": {"seed":20261012,"epochs":90,"optimizer":"Adam lr0.01 batch128; deterministic source/group/row sampling; fresh weights; same G/no-edge batches", "search":false,"CAL_EVAL_early_stop":false},
+    "limits": {"student_fit_seconds_each":300,"teacher_cache_seconds":1200,"teacher_head_seconds":300,"parent_totalwall_seconds":2700,"cpu_threads":2,"attempts":1,"automatic_retries":0,"GPU":false,"timeout":"partial/unscored status; never silently reschedule after EVAL"}
+  },
+  "calibration_evaluation": {
+    "split_roots": "Preserve split/group_id/conversation_root_ids and all descendants. No heldout fitting or frozen packet edits.",
+    "CAL": "Before outcomes, SHA256(group_id) parity partitions each source into disjoint temperature-fit and threshold-select groups. B77 existing496/497. Compute others before calibration; no within-conversation split.",
+    "temperature": "One scalar per head grid[0.5,0.75,1,1.5,2,3] on masked CAL-fit CE/BCE; no per-rare-class adaptive calibrator.",
+    "threshold": "B77 existing fixed grid/rule; NLUpp global0.5 baseline plus per-head grid[0.3,0.5,0.7,0.9,1.1] maximizing masked microF1 on CAL-select, tie higher. Absent-positive CAL labels have unknown calibration support; no precision certificate.",
+    "EVAL": "Freeze all transforms/weights/calibrators before one aggregate run. Already exposed internal EVAL stays exploratory/adaptive research, even if this individual run is frozen. Fresh policy qualification requires actual new data after freeze.",
+    "metrics": ["per-source loss,accuracy,micro/macroF1,per-label positive/known-negative support", "paired G/noedge correctness disagreements, not only4netrows", "Taskmaster group cosine/MSE and fixed latest-only/order-role controls", "actual package bytes,peakRSS,p50/p95/p99latency,export logits/calibration parity"],
+    "denominators": "Exclude unknown masked labels from relevant estimands and report their counts; no negative padding. Accepted source precision denominator is accepted examples/groups, not all rows. Marginal scores are not a joint correctness probability.",
+    "negative_control": "If time permits, TRAIN-only whole-group donor permutation within source/domain preserving masks/aliases; no rowwise split leakage. Main fits must not wait for optional control.",
+    "risk": "No OOD or bank-safety bound from in-domain source CAL. Exact one-sided group bounds need genuinely independent frozen qualification groups and multiplicity control; current publisher/template counts do not prove assumptions."
+  },
+  "QA_limits": {
+    "report":"analysis/day2-public-data-independent-review.json",
+    "sha256":"92e2a12b3289e7420b48abe602152c47562460b6a78351624ec0a6504614d906",
+    "integrity_blocker":false,
+    "known_contraction_alias_cross_split_families":2,
+    "other_limits":"QA lists additional paraphrase/answer-like families and secret/numeric scrubbing semantic loss. Preserve results; future whole-family quarantine needs source evidence/new manifest, not current label rewrites or EVAL tuning.",
+    "NLUpp_marker_leak":"build-v2 spans_scrub replaces gold slot spans with REDACTED_ENTITY. Slot presence may exploit annotation-derived markers unavailable in raw runtime. Report placeholder-only and fixed placeholder-neutral feature controls; keep original frozen rows/labels unchanged. Sanitized-domain scores do not establish raw slot extraction."
+  },
+  "portable": {
+    "maximum_actual_json_plus_inference_bytes":500000,
+    "format":"finite JSON+base64 little-endianfloat32 arrays; stdlib base64/struct/math/hashlib/re only. Int8 per-output-column optional after measured probability/logit parity. No pickle/joblib/remote code.",
+    "G_runtime_coefficients":18540,
+    "G_float32_base64_payload_bytes":98880,
+    "arithmetic":"512*24+24 encoder;4*24*24 self+3relations;24messagebias;24*156+156readouts. Remove TRAIN-only24*512+512response decoder.",
+    "sparse_runtime_coefficients":80028,
+    "teacher":"22.7M MiniLM encoder cannot fit500KB. Offline comparator/teacher only; never count head-only bytes as complete inference.",
+    "platform":"fixedAGENT_LLM and banktools remain live authority. No external embedding API, endpoint, inference tool or added banktools."
+  },
+  "proposal_interface": {
+    "mode":"offline_shadow",
+    "authority":"none",
+    "bank_acceptance":false,
+    "ingress":"unqualified diagnostic source context, not authenticated-user attestation",
+    "outputs":"Namespaced B77 candidates, NLUpp marginal intents and slot-type presence with support/calibration status. Values, completion, componenttarget and untrained axes explicitly unknown.",
+    "conversation_update":"Append immutable observed turns and bounded local ordering edges; append proposals only. Never replace typedfacts, advance financial revisions, confirm readbacks, change consent/refusal/withdrawal or mutate receipts. Deterministic source-policy transactions remain authoritative.",
+    "nonpermissions":["affirm is publisher affirmation, not financialconsent","transfer_payment_deposit is topic, not payment mutation","date/amountpresence is not a normalized bank value","Taskmaster response is observed movie-dialogue text, not bank instruction"]
+  },
+  "pretrained_sources": {
+    "MiniLM":{"url":"https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2","checked":true,"dimension":384,"license":"Apache-2.0","load":"implementer pins actual revision/model/tokenizer bytes; standard local safetensors/ONNX, remote-code disabled; upstream contamination not exhaustively audited"},
+    "FutureLabs":{"url":"https://huggingface.co/Future-Labs/banking77-minilm","checked":true,"card_train":"9999 unique publisherTRAIN partitioned8499fit/1500validation; overlap with our internal task possible; no exact overlap audit here","decision":"Do not import ready head as fair internalEVAL baseline; refit our7943TRAINonly. Card says uncalibrated/noOOD;45.4MBONNX exceeds500KB."},
+    "SetFit":{"url":"https://huggingface.co/docs/setfit/en/index","checked":true,"role":"fine-tuning framework, not ready policyweights; frozen embeddings first"}
+  },
+  "SGD_next_frozen_corpus_interface": {
+    "source":"https://github.com/google-research-datasets/dstc8-schema-guided-dialogue",
+    "status":"collector pending; no SGD corpus opened, trained or evaluated by designer",
+    "route":"Separate service-schema encoder plus intent/slot-presence and belief-update heads from actual published frame annotations; streaming conversation-group minibatches after manifest freeze. Do not reshuffle Banking77 to mimic complex dialogues.",
+    "fields_to_validate":"dialogue_id,turns[].speaker,utterance,frames[].service,state.active_intent,state.requested_slots,state.slot_values,actions[]; schema service slots/intents with required_slots/optional_slots/is_transactional where actually present",
+    "losses":"masked active-intentCE incl published NONE, requested-slotBCE, slot-presenceBCE; consecutive USER-frame deltas derive KEEP/SET/DELETE only for slot states whose annotation completeness is documented. Missing frame/state is unknown, not DELETE. Correction/negation labels only if publisher action taxonomy actually supports them; lexical heuristics are weaklabels, not gold.",
+    "graph":"observed turn order and explicit frame-service/schema-slot membership; previous annotated state is teacher forcing TRAIN input only for that ablation. Main autoregressive evaluation feeds predicted prior belief and reports error accumulation; compare no-context and oracle-state separately. Gold current state is never a runtime feature.",
+    "split":"Preserve official conversations and service-domain evaluation protocol; union exact templates/descendants without inventing IID gold. No unseen service/schema label in TRAIN target lookup. Schema descriptions may be inference features only under predeclared schema-generalization protocol.",
+    "streaming":"TRAIN-only iterator,shuffle dialogue groups with fixedseed,carry bounded typed proposal state within dialogue,detach between batches; no cross-split memory/cache; current turn frames cannot leak into input. Report event/update denominator and per-service support.",
+    "authority":"Publisher is_transactional/confirm acts are schema/semantic labels, not current bank permission or successful receipts. Map no actual bankingauthority. CCBYSA license/attribution pinned by collector before redistribution. CPU minbatch path first;90sec current fits do not justify GPU."
+  },
+  "handoff": "Same Hooke implements new isolated multi-source/embedding files; Harvey collector freezes SGD corpus next. Preserve completed models/data. Parent relays this exact design; designer closes this bounded role for capacity, no further fits/parser expansion."
+}

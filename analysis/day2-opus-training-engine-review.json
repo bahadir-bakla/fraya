@@ -1,0 +1,612 @@
+{
+  "status": "CLOSED_FROZEN_VERIFIED_NATIVE_OPUS_AND_INDEPENDENT_CPU_REVIEW",
+  "started_at_utc": "2026-10-11T09:15:20Z",
+  "closed_at_utc": "2026-10-11T09:24:48.201659+00:00",
+  "deadline_utc": "2026-10-11T09:25:20Z",
+  "reviewer_roles": {
+    "native": "Exact native OAuth claude-opus-5-5 source-only architectural reviewer",
+    "independent_CPU": "Codex executed read-only saved code and exported weights; no refit"
+  },
+  "native_attempts": 1,
+  "preflight_recovery": "High effort rejected by existing helper validation before native process launch; preserved preflight safe metadata, used supported medium. No inference retry.",
+  "actual_native_model_verified": true,
+  "native_elapsed_seconds": 178.969,
+  "native_proof": {
+    "assistant_response_models": [
+      "claude-opus-5-5",
+      "claude-opus-5-5"
+    ],
+    "model_usage": {
+      "claude-opus-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 17181,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 47455,
+        "webSearchRequests": 0,
+        "costUSD": 0.723268,
+        "canonicalModel": "claude-opus-5-5",
+        "provider": "firstParty"
+      }
+    },
+    "tool_calls": 0
+  },
+  "native_findings": {
+    "review_type": "source_review_not_executed",
+    "findings": [
+      {
+        "id": "F1",
+        "priority": "P0",
+        "title": "Paid-predicate guard accepts on the first matching clause and leaves time, object and record binding unvalidated",
+        "source_references": [
+          "A-next6 disposition_source L366 (clause split on [;.!?], 'but', 'and i')",
+          "L368-L370 (modal and negation lists checked per clause only)",
+          "L374 (\\bi\\s+ needs whitespace after 'i')",
+          "L383-L393 (object/adjunct check runs only when the literal 'paid' is present; return True on first clause)",
+          "L387 (credit card ending \\d{4} is accepted but never compared with the verified record)"
+        ],
+        "claim": "The guard checks each clause on its own and returns True on the first clause that passes. Later contradictions are never read. Interrogatives lose their '?' at the split. Text before the predicate, including time phrases, is not validated. The made/processed/completed/submitted payment branch skips object validation. Card suffix digits are not bound to the verified record. The prior 6 forced inconsistent positives and the 2 contraction false-rejects follow directly from these lines.",
+        "concrete_counterexample": "Source trace only, not executed. 'I paid it but it bounced' returns True from the first clause. 'I paid it? not sure' returns True because the second clause is never reached. 'Last March I paid it' returns True because only 'last year' and 'years ago' are blocked (historical). 'By Friday I have paid it' returns True (future/scheduled). 'I made the payment for my phone contract' returns True (unrelated; the tail check lists only order/ticket/groceries/utility/electricity). 'I made the payment and it was returned' returns True (contradictory). 'I paid my credit card ending 9999' returns True whatever the record's suffix is. 'I've paid it' and 'I've processed the payment' return False at L374 (legitimate false-rejects).",
+        "safe_CPU_contract": "Pure-function table test with no I/O and no tool calls. Every clause must be consistent, and any contradicting or interrogative clause forces False. A pre-predicate temporal phrase must be an allowlisted current-time adjunct. Every predicate branch must pass object validation. Card digits must equal the verified record suffix or return False. Expected outputs are fixed before running.",
+        "conditional_assumptions": "Assumes a True from disposition_source(kind='paid') is used as a necessary condition upstream. The caller's code was not provided. If True alone prepares a write, severity rises.",
+        "remedy": "Require all clauses to agree and reject the whole text on any contradiction clause, '?', or unresolved temporal prefix. Add an explicit 'i(?:'ve| have)' contraction form. Apply object validation to every predicate. Bind named digits and product to the verified record. Never let this guard replace an actual API receipt."
+      },
+      {
+        "id": "F2",
+        "priority": "P0",
+        "title": "Acceptance, quotation and subject guards are inconsistent and assume a self subject when none is stated",
+        "source_references": [
+          "A-next6 blocked_acceptance L145-L147",
+          "security_subject L249-L253",
+          "disposition_source L364 (curly double quotes blocked here)"
+        ],
+        "claim": "blocked_acceptance normalizes only single curly quotes, so the double curly quotes U+201C/U+201D pass. It does not block don't, didn't, never, nope or stop. It blocks 'actually', while security_subject strips 'actually' as a filler word. security_subject returns True for an empty prefix and for subjectless frames ('it's', 'that is', 'phone number is'). The subject is therefore never shown to be the caller. Legitimate self forms such as 'my number is' and 'the last four digits of my phone are' fall outside the frame.",
+        "concrete_counterexample": "Source trace only. 'He said “yes, go ahead”' is not blocked: no straight quote is present and 'he' is not checked. 'I don't agree' is not blocked. A prior turn about a relative followed by 'it's <digits>' gives security_subject=True. 'my number is <digits>' gives False (legitimate false-reject). Together these match the prior 4 quoted or third-party confirmations that reached write preparation, and the 2 self-phone false-rejects.",
+        "safe_CPU_contract": "Static table tests covering curly and straight quotes, contracted negations, and subjectless frames given a non-self antecedent. Expected outcomes are fail-closed. No HTTP and no write preparation is reachable from the test harness.",
+        "conditional_assumptions": "Assumes 'not blocked' is treated as permissive by the caller. The caller was not provided.",
+        "remedy": "Share one normalizer covering all quote code points. Use a negation lexicon that includes n't forms. Require an explicit first-person possessive or verb for self-phone; a missing subject resolves to False. Accept the listed legitimate self variants by explicit enumeration. A guard result is necessary but never sufficient; an actual API receipt is still required."
+      },
+      {
+        "id": "F3",
+        "priority": "P0",
+        "title": "Runtime and evaluator trust the bundle JSON unchecked; calibration fields can be tampered",
+        "source_references": [
+          "day2_public_model_v2.py L61-L63 (only version and qualified are checked)",
+          "L81-L82, L88-L90 (temperature and threshold read without validation)",
+          "day2_public_eval_v2.py L100 (model re-read by path, no sha re-check)",
+          "eval L148 and train L225/L228 (freeze records sha computed at save, not at load)",
+          "eval L92/L129 (overlap 0 hard-coded)"
+        ],
+        "claim": "score() accepts any JSON with the right version and qualified=false. Temperature can be 0, which raises an error, or negative, which inverts the ranking so the least likely label scores highest. Threshold can be 0. Labels and weights can be swapped with no shape or label-count check. evaluate() reloads the bundle without checking it against outputs[name].sha256, so the metrics and the freeze sha could describe different bytes. Several 'overlap 0' fields are literal constants, not measurements.",
+        "concrete_counterexample": "A bundle edited after save with calibration.temperature=-1 and threshold=0.0 still gives status bank_abstain and authority none, but the diagnostic becomes 'accept_proposal' on an inverted top-1 label. The freeze file would still list the original sha.",
+        "safe_CPU_contract": "A load-time verifier recomputes the bundle sha against the freeze and checks: temperature finite and >0, threshold in [0,1.1], parameter shapes match WIDTH, HIDDEN and 77, and the label list equals the plan. Any failure returns None or abstain. Test with tampered copies in a scratch directory only.",
+        "conditional_assumptions": "Threat model: same-host artifact modification or an untrusted bundle. Not observed, only possible from the source.",
+        "remedy": "Add sha pinning and a schema/range check inside score(). Re-hash the bundle in evaluate() before scoring. Replace hard-coded overlap constants with computed values."
+      },
+      {
+        "id": "F4",
+        "priority": "P1",
+        "title": "Graph ablation is confounded and its effect cannot be statistically resolved; the sparse baseline is underfit",
+        "source_references": [
+          "model_v2 L45-L51 (node 0 is the whole-turn node; user_nodes start at 1)",
+          "eval L35-L38 and train L259 (pooling over user_nodes only)",
+          "train L213 (single seed, one run per variant)",
+          "train L246, L255 (sparse: zero init, 120 full-batch Adam steps)"
+        ],
+        "claim": "In the no_edges model, node 0 never reaches the readout. The ablation therefore removes both the edges and access to whole-turn features, including n-grams that cross span boundaries. GNN 779/993 versus no_edges 775/993 is a net difference of 4 rows. Even if all discordant pairs favoured the GNN (b=4, c=0), exact two-sided McNemar gives p=0.125. The sparse model's resubstitution accuracy is 80.7%, so it is underfit and not a fair linear baseline.",
+        "concrete_counterexample": "Any 7+-token utterance whose discriminating bigram crosses a span boundary is visible to the GNN only through node 0. A no_edges loss on such a row reflects the missing node, not missing relations.",
+        "safe_CPU_contract": "Report the paired discordant counts (b, c) and exact McNemar from the stored EVAL predictions only. Do not refit or retune. Any edges-only ablation goes to the owning worker under a new grant.",
+        "conditional_assumptions": "CE gap (0.775 vs 0.865) is under different temperatures (1.0 vs 0.75), so it is only weakly comparable.",
+        "remedy": "Describe the result as 'no resolved graph benefit'. For future work by the owning worker only: an ablation that keeps node 0 pooled, multiple seeds, and a converged linear baseline."
+      },
+      {
+        "id": "F5",
+        "priority": "P1",
+        "title": "Selected-threshold precision is optimistic, and 'raw' metrics are post-temperature",
+        "source_references": [
+          "eval L84-L90 (adaptive selection on 497 rows)",
+          "eval L39 (native_scores applies the calibration temperature)",
+          "eval L48/L55 ('raw_fixed_0_8' computed on calibrated scores)",
+          "eval L75 (calibrate relies on the model having no calibration key yet)"
+        ],
+        "claim": "At threshold 0.6, CAL-select precision was .920 (GNN) and .906 (no_edges). EVAL precision was .907 and .892, so no_edges falls below the .90 target. The GNN's Wilson lower bound at n=712 is about .886. The 'raw_fixed_0_8' metrics are actually temperature-scaled (sparse T=0.5). Classes with 4 EVAL rows make class-conditional precision unmeasurable. If calibrate() were called on an already-calibrated bundle, temperature would be applied twice.",
+        "concrete_counterexample": "no_edges: CAL-select 310/342 at threshold 0.6 versus EVAL proposal precision .8924 on 725 proposed rows.",
+        "safe_CPU_contract": "Compute Wilson or Clopper-Pearson bounds and per-class proposal counts from the stored metrics or predictions only. Assert that calibrate() refuses a bundle that already has a calibration key.",
+        "conditional_assumptions": "None beyond the reported numbers.",
+        "remedy": "Rename to post_temperature_fixed_0_8. Report confidence bounds. Make calibrate() fail closed on pre-calibrated input. Proposal precision confers no authority."
+      },
+      {
+        "id": "F6",
+        "priority": "P1",
+        "title": "Group weighting is vacuous, skeleton closure is narrower than feature equivalence, and EVAL has been consumed",
+        "source_references": [
+          "train L82-L86 (skeleton uses \\w+)",
+          "model_v2 L17-L18 (features use letter-only tokens)",
+          "train L238 (group weight)",
+          "metrics: groups = rows in every split",
+          "KUHN broader_contraction_alias_cross_split_groups=2"
+        ],
+        "claim": "Every canonical group is a singleton (7943/993/993). Group-mean accuracy therefore equals row accuracy exactly, and the loss weighting is uniform. Grouping provides no protection against paraphrase siblings. The exact skeleton keeps 'i ve' distinct from 'i have', so contraction aliases can cross splits; two such links are known. Three variants are now reported on EVAL, so choosing among them turns EVAL into a development set.",
+        "concrete_counterexample": "Row-level and group-level GNN EVAL accuracy are both 0.7844914400805639.",
+        "safe_CPU_contract": "Offline: add a contraction- and stopword-normalized alias pass and count cross-split links. Report only; do not repartition the current fits.",
+        "conditional_assumptions": "Two cross-split links are known from independent review; the full extent is unknown. The original v2 split is not proven independent or IID.",
+        "remedy": "State that the effective sample size is unknown. Freeze any variant choice as non-qualifying. Future splits should use broader alias unions decided before any fit."
+      },
+      {
+        "id": "F7",
+        "priority": "P2",
+        "title": "Quantization parity does not cover EVAL, threshold boundaries or ties; hashing and redaction lose semantic information",
+        "source_references": [
+          "eval L104 (first 256 sorted ids across all partitions)",
+          "eval L116-L118 (argmax mismatch only)",
+          "model_v2 L26-L30 (512-wide signed hashing; zero buckets dropped)",
+          "model_v2 L17 (digits replaced)",
+          "KUHN redaction (row 01708)"
+        ],
+        "claim": "Stdlib/export parity covers 256 rows per model, selected by id order and not stratified to EVAL. Flips of the accept/abstain decision within max error (1.5e-5) of 0.6, and near-tie top-2 orderings, are not tested. Ties break by lowest index in both paths, but numpy and stdlib summation order differ. Signed hashing into 512 buckets merges word, bigram and trigram keys and can cancel negation evidence. Digit delexicalization and secret redaction remove the information needed for amount, time and card distinctions.",
+        "concrete_counterexample": "Any record with max probability in [0.6-1.5e-5, 0.6+1.5e-5] can change its diagnostic decision between the numpy and stdlib paths without being counted as a decoder mismatch.",
+        "safe_CPU_contract": "Parity over all EVAL rows plus a constructed low-margin set. Count threshold-side flips and near-tie top-2 swaps. No fitting.",
+        "conditional_assumptions": "Whether any boundary rows exist is unknown.",
+        "remedy": "Report threshold-flip counts. Treat the model as unable to identify digits, time, subject or consent, by design."
+      }
+    ],
+    "assessment": {
+      "split_and_group_closure": "Exact skeleton closure is enforced and fails closed on crossing (train L112-L114). All groups are singletons, so group metrics are row metrics. Two contraction alias links cross splits. No independence or IID claim is supported.",
+      "calibration_and_selective_precision": "Temperature and threshold were fitted on disjoint CAL halves; this part is sound. Adaptive threshold optimism is visible: no_edges EVAL .892 < .90 and GNN lower bound ≈ .886. 'raw' metrics are post-temperature. No guarantee is claimed, correctly.",
+      "quantization_and_parity": "Max error 1.48e-5 and 0 argmax mismatches on 768 sampled comparisons. EVAL rows not sampled in the stdlib path are scored with dequantized numpy only. Threshold, tie and tamper coverage is missing.",
+      "graph_ablation_effect_size": "Net 4 rows; exact McNemar p ≥ 0.125 even in the best case. Ablation is confounded by dropping node 0. Single seed. Sparse baseline underfit. No resolved graph benefit.",
+      "bank_authority_separation": "predict() returns bank_abstain, qualified False, acceptance False, authority none. However, the 'accept_proposal' diagnostic and action-like publisher labels (terminate_account, cancel_transfer, lost_or_stolen_phone) invite downstream misuse. The A-next6 guards have the false-accept paths described in F1 and F2.",
+      "source_quality_semantic_loss": "The BANKING77 taxonomy contains no consent, subject, current-payment, time, phone, promise or tool-permission labels. Digit removal and secret redaction make authority distinctions unidentifiable. Hashed features collide. These limits are intrinsic and cannot be fixed by calibration."
+    },
+    "recommendations": [
+      "Keep all bank deployment at bank_abstain, qualified False, acceptance False, authority none. No raw financial fallback and no direct tool authority from the model or its labels.",
+      "Fix the F1 and F2 guards to fail closed on all clauses. Handle curly quotes, n't negations, attributed or subjectless phone frames, and current-time and target binding. Add explicit contraction and self-phone positives.",
+      "Track conforming positives (2 self-phone, 2 contraction false-rejects) and polluted-primary forced positives (6 inconsistent paid, 4 quoted or third-party) as separate ledgers. Never net them against each other.",
+      "No write preparation without an actual API receipt. A guard result is necessary, never sufficient.",
+      "Add bundle sha and schema/range validation to score(), plus a re-hash in evaluate(). Replace hard-coded overlap constants with computed values.",
+      "Report discordant pairs, Wilson bounds and threshold-flip counts from stored outputs only. State that the graph benefit is unresolved.",
+      "Any refit or broader-alias resplit belongs to the MiniLM public teacher worker under a new grant. This review proposes no duplicate fit."
+    ],
+    "limitations": [
+      "Source review only. Nothing was executed, weights were not inspected, and all counterexample outcomes are traced from the source text.",
+      "Callers of the A-next6 guards and the full guard file were not provided. Severity depends on how the guards are wired.",
+      "Per-row predictions and discordant counts were not available, so only bounds are given.",
+      "The extent of alias leakage beyond the two known links is unknown.",
+      "No publisher TEST, hidden or Freya benefit is claimed or assessed."
+    ]
+  },
+  "native_claim_adjudication": {
+    "F1": "Confirmed contraction false rejection and4forced-inconsistent paid predicate true results among7pure-function probes. Prior persistent-store222report supplies separate caller evidence, not newly replayed here. Native unexecuted examples remain claims.",
+    "F2": "Quote/negation predicate gaps independently executed. Reject a blanket ban on bare security answers: legitimate bare self answers must remain allowed with current-question/subject binding. Context-free empty prefix is not authority.",
+    "F3": "Conditional malformed in-memory bundle causes ZeroDivisionError; negative temperature/zero threshold still bank_abstain. Current exact artifact/grant hashes match. Treat as robustness/trusted-loader requirement, not an observed P0 bank authority bypass.",
+    "F4": "Paired exact diagnostic p=.7925825 independently calculated. NoEdges loses whole-turn-node influence. Sparse lower resubstitution alone cannot prove undertraining; capacity/hash-collision limits are alternative explanations.",
+    "F5": "GNN646/712 lowerWilson=.8837609, not native rounded .886; NoEdges647/725=.8924138. Intervals are descriptive with uncertain dependence. raw_fixed_0_8 metrics are post-temperature. No new calibration performed.",
+    "F6": "Known2contraction links and7943/993/993singleton groups reproduced. Current exposed EVAL is diagnostic for future variant selection; original baseline remains immutable.",
+    "F7": "Correct overbroad no-EVAL wording:reported256sample includes26EVAL, but only2of77classes overall.768original-fullprecision comparisons are producer reported, not independently reconstructed. Independent288export-vs-NumPy parity is a distinct proof."
+  },
+  "independent_CPU": {
+    "checks": 416,
+    "passed": 416,
+    "failed": 0,
+    "export_vs_numpy_comparisons": 288,
+    "export_vs_numpy_max_error": 1.2212453270876722e-15,
+    "actual_bank_output_predict_calls": 2979,
+    "all_bank_outputs_abstain": true,
+    "paid_predicate_probe_count": 7,
+    "paid_predicate_expectation_failures": 5,
+    "other_pure_guard_calls": 11,
+    "malformed_bundle_probes": 3,
+    "notes": "416invariant/arithmetic/parity checks passing does not mean semantic qualification.5of7paid-predicate expectations failed:1conforming contraction and4forced-inconsistent rows. Preserve that separate count."
+  },
+  "partitions": {
+    "fit": {
+      "rows": 7943,
+      "groups": 7943,
+      "min_class_rows": 27
+    },
+    "calibration": {
+      "rows": 993,
+      "groups": 993,
+      "min_class_rows": 4
+    },
+    "internal_publisher_TRAIN_eval": {
+      "rows": 993,
+      "groups": 993,
+      "min_class_rows": 4
+    }
+  },
+  "metrics": {
+    "gnn": {
+      "recomputed_EVAL": {
+        "observed_rows": 993,
+        "groups": 993,
+        "accuracy": 0.7844914400805639,
+        "macro_precision": 0.7982607481265552,
+        "macro_recall": 0.7818159090182731,
+        "row_CE": 0.7745080514042751,
+        "group_mean_CE": 0.7745080514042751,
+        "group_mean_accuracy": 0.7844914400805639,
+        "raw_fixed_0_8_score_coverage": 0.5166163141993958,
+        "raw_fixed_0_8_accuracy": 0.9707602339181286,
+        "CAL_selected_source_threshold": 0.6,
+        "source_intent_proposed": 712,
+        "source_intent_proposal_coverage": 0.7170191339375629,
+        "source_intent_proposal_precision": 0.9073033707865169,
+        "source_intent_abstention_rate": 0.2829808660624371,
+        "deployment_coverage": 0.0,
+        "deployment_abstention": 1.0
+      },
+      "correct_rows": 779,
+      "proposal_correct_rows": 646,
+      "proposal_precision_Wilson95_diagnostic_only": [
+        0.8837609258539386,
+        0.9264743474082657
+      ],
+      "threshold": 0.6,
+      "temperature": 1.0,
+      "complete_runtime_bytes": 192505
+    },
+    "no_edges": {
+      "recomputed_EVAL": {
+        "observed_rows": 993,
+        "groups": 993,
+        "accuracy": 0.7804632426988922,
+        "macro_precision": 0.8000613270927086,
+        "macro_recall": 0.7751960325625434,
+        "row_CE": 0.865041204653529,
+        "group_mean_CE": 0.865041204653529,
+        "group_mean_accuracy": 0.7804632426988922,
+        "raw_fixed_0_8_score_coverage": 0.5287009063444109,
+        "raw_fixed_0_8_accuracy": 0.9428571428571428,
+        "CAL_selected_source_threshold": 0.6,
+        "source_intent_proposed": 725,
+        "source_intent_proposal_coverage": 0.730110775427996,
+        "source_intent_proposal_precision": 0.8924137931034483,
+        "source_intent_abstention_rate": 0.26988922457200404,
+        "deployment_coverage": 0.0,
+        "deployment_abstention": 1.0
+      },
+      "correct_rows": 775,
+      "proposal_correct_rows": 647,
+      "proposal_precision_Wilson95_diagnostic_only": [
+        0.8677552796554183,
+        0.9129357651716329
+      ],
+      "threshold": 0.6,
+      "temperature": 0.75,
+      "complete_runtime_bytes": 191430
+    },
+    "sparse": {
+      "recomputed_EVAL": {
+        "observed_rows": 993,
+        "groups": 993,
+        "accuracy": 0.730110775427996,
+        "macro_precision": 0.7428894573695708,
+        "macro_recall": 0.697259538037452,
+        "row_CE": 1.2167475948799051,
+        "group_mean_CE": 1.2167475948799051,
+        "group_mean_accuracy": 0.730110775427996,
+        "raw_fixed_0_8_score_coverage": 0.17925478348439072,
+        "raw_fixed_0_8_accuracy": 0.9943820224719101,
+        "CAL_selected_source_threshold": 0.4,
+        "source_intent_proposed": 551,
+        "source_intent_proposal_coverage": 0.5548841893252769,
+        "source_intent_proposal_precision": 0.9074410163339383,
+        "source_intent_abstention_rate": 0.44511581067472306,
+        "deployment_coverage": 0.0,
+        "deployment_abstention": 1.0
+      },
+      "correct_rows": 725,
+      "proposal_correct_rows": 500,
+      "proposal_precision_Wilson95_diagnostic_only": [
+        0.8803409385902707,
+        0.9288992377915405
+      ],
+      "threshold": 0.4,
+      "temperature": 0.5,
+      "complete_runtime_bytes": 218614
+    }
+  },
+  "paired_ablation": {
+    "gnn_only_correct": 67,
+    "no_edges_only_correct": 63,
+    "net_rows": 4,
+    "discordant": 130,
+    "exact_paired_binomial_p_diagnostic": 0.7925825227940952,
+    "qualification": false,
+    "one_fit_and_known_paraphrase_links": true
+  },
+  "known_contraction_links": [
+    [
+      {
+        "id": "banking77-train:03984",
+        "partition": "fit",
+        "publisher_label": "unable_to_verify_identity"
+      },
+      {
+        "id": "banking77-train:03968",
+        "partition": "calibration",
+        "publisher_label": "unable_to_verify_identity"
+      }
+    ],
+    [
+      {
+        "id": "banking77-train:03980",
+        "partition": "fit",
+        "publisher_label": "unable_to_verify_identity"
+      },
+      {
+        "id": "banking77-train:03922",
+        "partition": "internal_publisher_TRAIN_eval",
+        "publisher_label": "unable_to_verify_identity"
+      }
+    ]
+  ],
+  "redaction_evidence": {
+    "authored_scrub_witnesses": [
+      {
+        "authored_text": "My password is working again.",
+        "scrubbed": "My password is working again.",
+        "counts": {}
+      },
+      {
+        "authored_text": "My PIN is required to unlock my card.",
+        "scrubbed": "[REDACTED_SECRET_VALUE].",
+        "counts": {
+          "secret_value": 1
+        }
+      },
+      {
+        "authored_text": "I paid 100 yesterday.",
+        "scrubbed": "I paid [REDACTED_NUMERIC_VALUE] yesterday.",
+        "counts": {
+          "numeric_value": 1
+        }
+      },
+      {
+        "authored_text": "I paid 900 yesterday.",
+        "scrubbed": "I paid [REDACTED_NUMERIC_VALUE] yesterday.",
+        "counts": {
+          "numeric_value": 1
+        }
+      }
+    ],
+    "known_labeled_row_metadata": [
+      {
+        "id": "banking77-train:01708",
+        "publisher_label": "pin_blocked",
+        "partition": "internal_publisher_TRAIN_eval",
+        "observed_mask": true,
+        "word_count": 2,
+        "redaction_placeholder_count": 1,
+        "text_sha256": "939a0f2e104c3597bfa735ea92c119eeb58c01b9164dc4dde1e0ab15ac48b164"
+      }
+    ]
+  },
+  "full_precision_parity_limit": "Producer-reported768comparisons; original full-precision arrays not retained; NOT independently reproduced and no refit",
+  "producer_parity_sample_scope": {
+    "rows": 256,
+    "class_rows": {
+      "card_arrival": 152,
+      "card_linking": 104
+    },
+    "partitions": {
+      "fit": 206,
+      "calibration": 24,
+      "internal_publisher_TRAIN_eval": 26
+    },
+    "interpretation": "Producer full-precision parity samples only2of77classes. Independent288export-vs-NumPy checks do not establish missing full-precision parity."
+  },
+  "source_manifest": {
+    "analysis/day2-a-next6-source-review.json": {
+      "sha256": "d7b215bed96964c111d7b355eccaf269246c68ac1479c868506ceb4e8b6899a7",
+      "bytes": 20026
+    },
+    "analysis/day2-a-next6-witnesses.json": {
+      "sha256": "a7121ee1058f178c2649196a084d9143f812290372be23f3e340343ac7fe015e",
+      "bytes": 2490888
+    },
+    "analysis/day2-parent-public-cpu-authorization-v2.json": {
+      "sha256": "8930c21f9edee7f2bf52bd1c113b5d44711513fccb61a32a26ba171faf4e78b7",
+      "bytes": 2866
+    },
+    "analysis/day2-public-data-independent-review.json": {
+      "sha256": "92e2a12b3289e7420b48abe602152c47562460b6a78351624ec0a6504614d906",
+      "bytes": 30529
+    },
+    "analysis/day2-public-model-experiment-v2.json": {
+      "sha256": "e4cb02687ade5e0646cd75cd8bd596299be7e39132b27cf69adfebbd1c5dba2e",
+      "bytes": 53659
+    },
+    "analysis/day2-public-model-experiment-v2.txt": {
+      "sha256": "accbe1215ac6c0f2c37bd89c50dc05e340620eec2c5b68ef41d33fdef2bf0f66",
+      "bytes": 649
+    },
+    "integrations/learned-dialogue/day2_public_eval_v2.py": {
+      "sha256": "251130bf84fbb21041de9e8e1e215c741cfd79b390a533184d014fe2a8f0c239",
+      "bytes": 13009
+    },
+    "integrations/learned-dialogue/day2_public_freeze_v2.json": {
+      "sha256": "846904edf6afd341b54f0eb1d1f791bdbe90fa4a65b5882179d08b7e19138830",
+      "bytes": 2674
+    },
+    "integrations/learned-dialogue/day2_public_metrics_v2.json": {
+      "sha256": "c7fd536d28760e462019dafb8d8162d49b1c2ff9f75468b0dd655be114944134",
+      "bytes": 37466
+    },
+    "integrations/learned-dialogue/day2_public_model_v2.gnn.json": {
+      "sha256": "44bc177734fd2c4c8817d375dbdf1210c359faddc9fe08ad9368bf42715964de",
+      "bytes": 187583
+    },
+    "integrations/learned-dialogue/day2_public_model_v2.no_edges.json": {
+      "sha256": "63d16d779dc97826d360c02a32231419c8b4336c0dde15eae4bdd0f16dd90513",
+      "bytes": 186508
+    },
+    "integrations/learned-dialogue/day2_public_model_v2.py": {
+      "sha256": "77f9d818f9b9b2132210a30f759ece24241168ef6e08b4260108e120cb9cb005",
+      "bytes": 4922
+    },
+    "integrations/learned-dialogue/day2_public_model_v2.sparse.json": {
+      "sha256": "b2763d0bb97240055ffd0af97e0cdaffe1d36ad80ed2b2b2b47bb3e298f7543e",
+      "bytes": 213692
+    },
+    "integrations/learned-dialogue/day2_public_plan_v2.json": {
+      "sha256": "df7a323ebc73b29c8581935ee5f1bae257604c2299cce4fb3d1351601c8a54da",
+      "bytes": 3338179
+    },
+    "integrations/learned-dialogue/day2_public_pre_eval_freeze_v2.json": {
+      "sha256": "dea697a3bfe559406a1e1b507ab2065199e62536eef57dd38253d35d36d6a275",
+      "bytes": 2274
+    },
+    "integrations/learned-dialogue/day2_public_train_v2.py": {
+      "sha256": "c236b807e1a2bd2e37d57a0735c1f4a6dec09beb9575b6e0f300eac84644d4ad",
+      "bytes": 23953
+    },
+    "integrations/opus-redteam/run.py": {
+      "sha256": "c87a710d118046d546b5ff87c1640d115ebf251153da9fccc23abd4613e7cc09",
+      "bytes": 45690
+    },
+    "local-runs/autonomous-rd/night-opus-review.py": {
+      "sha256": "84f5d1f370002ebd497a4aed5c4ff1b992ea2b9f66661ce2f7cbace6254b1072",
+      "bytes": 54064
+    },
+    "research/customer-benchmark/day2-training-data/BANKING77-LICENSE.txt": {
+      "sha256": "7e7170e3cebf88a9f60c7b8421418323c09304da1af4d5e90f4da1dc1c8a2661",
+      "bytes": 18650
+    },
+    "research/customer-benchmark/day2-training-data/NOTICE.txt": {
+      "sha256": "93a3156a8f40716d03d0b41557274a3f9fe1551e9139c9a9e9b8f926d6b72061",
+      "bytes": 1140
+    },
+    "research/customer-benchmark/day2-training-data/calibration.jsonl": {
+      "sha256": "cdaf6e6045e7fb13118bee7f4c3b07d2df5214b9ea3a46d5fbca4e22cf18870d",
+      "bytes": 701017
+    },
+    "research/customer-benchmark/day2-training-data/eval.jsonl": {
+      "sha256": "3c178ba644a4f5db7d58dedb3f4ca19009c4008a7958b3afdccbe2a84cf714db",
+      "bytes": 697223
+    },
+    "research/customer-benchmark/day2-training-data/manifest.json": {
+      "sha256": "e5c4da1d528da021aea8a1131b169ff000c8106b0955a35928405a1d55f65fb0",
+      "bytes": 8654
+    },
+    "research/customer-benchmark/day2-training-data/processor-v1.py": {
+      "sha256": "e534f78d49808857ee77523083243ef847296a7676966c90ce315b839f88dc19",
+      "bytes": 35674
+    },
+    "research/customer-benchmark/day2-training-data/sources-v1.json": {
+      "sha256": "fddb66f3aa4fd9e338523b8676d3f129de0a63f2c8af1cdbaafb4d8ba95ecbf5",
+      "bytes": 2817
+    },
+    "research/customer-benchmark/day2-training-data/taxonomy.json": {
+      "sha256": "338a9dae6fea33fa3f4a921d751633aa344f0f7f6a4386f3f6e38caedcc4c128",
+      "bytes": 16713
+    },
+    "research/customer-benchmark/day2-training-data/train.jsonl": {
+      "sha256": "cbe4f19f99e10065fb9c19c33c82b5e17fa76685c497a1f99d1c072e96692406",
+      "bytes": 5570947
+    },
+    "research/customer-benchmark/day2-training-data/validation.json": {
+      "sha256": "5a88c64624c3a9f144cbeff6825e879b1a9cb5d68db27282126766582fa441f2",
+      "bytes": 1028
+    }
+  },
+  "source_hashes_unchanged_at_close": {
+    "analysis/day2-a-next6-source-review.json": true,
+    "analysis/day2-a-next6-witnesses.json": true,
+    "analysis/day2-parent-public-cpu-authorization-v2.json": true,
+    "analysis/day2-public-data-independent-review.json": true,
+    "analysis/day2-public-model-experiment-v2.json": true,
+    "analysis/day2-public-model-experiment-v2.txt": true,
+    "integrations/learned-dialogue/day2_public_eval_v2.py": true,
+    "integrations/learned-dialogue/day2_public_freeze_v2.json": true,
+    "integrations/learned-dialogue/day2_public_metrics_v2.json": true,
+    "integrations/learned-dialogue/day2_public_model_v2.gnn.json": true,
+    "integrations/learned-dialogue/day2_public_model_v2.no_edges.json": true,
+    "integrations/learned-dialogue/day2_public_model_v2.py": true,
+    "integrations/learned-dialogue/day2_public_model_v2.sparse.json": true,
+    "integrations/learned-dialogue/day2_public_plan_v2.json": true,
+    "integrations/learned-dialogue/day2_public_pre_eval_freeze_v2.json": true,
+    "integrations/learned-dialogue/day2_public_train_v2.py": true,
+    "integrations/opus-redteam/run.py": true,
+    "local-runs/autonomous-rd/night-opus-review.py": true,
+    "research/customer-benchmark/day2-training-data/BANKING77-LICENSE.txt": true,
+    "research/customer-benchmark/day2-training-data/NOTICE.txt": true,
+    "research/customer-benchmark/day2-training-data/calibration.jsonl": true,
+    "research/customer-benchmark/day2-training-data/eval.jsonl": true,
+    "research/customer-benchmark/day2-training-data/manifest.json": true,
+    "research/customer-benchmark/day2-training-data/processor-v1.py": true,
+    "research/customer-benchmark/day2-training-data/sources-v1.json": true,
+    "research/customer-benchmark/day2-training-data/taxonomy.json": true,
+    "research/customer-benchmark/day2-training-data/train.jsonl": true,
+    "research/customer-benchmark/day2-training-data/validation.json": true
+  },
+  "all_protected_hashes_unchanged": true,
+  "recommendations": [
+    {
+      "priority": "P1",
+      "scope": "Banking77 auxiliary training engine",
+      "remedy": "Keep the current three weights/CAL/EVAL frozen and bank deployment closed. Do not route model accept_proposal or action-named publisher labels into bank tools, policy outcomes or consent. Authenticate current ingress and verify bank identity/account receipts outside this auxiliary model."
+    },
+    {
+      "priority": "P1",
+      "scope": "Paid source guard",
+      "remedy": "Normalize contracted first-person forms before parsing. Produce one scoped completed-payment predicate with self subject, current relevant time, target/object and matching product digits. Validate all clauses before accepting; later negation, reversal, uncertainty or a conflicting target vetoes the whole paid claim. Apply identical time/object validation to made/processed/completed/submitted and paid. Preserve conforming unknown negatives."
+    },
+    {
+      "priority": "P1",
+      "scope": "Consent and security source guards",
+      "remedy": "Recognize quote/attribution spans and contracted negation across the whole turn. Support explicit self-phone paraphrases. Preserve legitimate bare answers only bound to the current self-security question; reject nonself/quoted operands before value decoding. Recipient identification never verifies bank identity. Bind fresh later assent to exact latest complete readback and component revisions; acknowledgements require a matching successful promise receipt."
+    },
+    {
+      "priority": "P1",
+      "scope": "CAL/EVAL and data quality",
+      "remedy": "Report frozen EVAL selected precision with diagnostic intervals and per-class counts. Two contraction links and singleton groups preclude an independence claim. The two-word redacted labeled EVAL row remains observed: later preprocessing versions need a reviewed recoverability mask, not a privacy exception or score-driven deletion. Current labels/splits/scores remain unchanged."
+    },
+    {
+      "priority": "P1",
+      "scope": "Quantization and artifact loading",
+      "remedy": "Before any deployment, verify bundle hash, taxonomy/shapes and finite positive temperature/valid threshold. Future granted parity should cover all77 classes, EVAL, near ties and acceptance-threshold flips. Existing full-precision arrays were ephemeral, so this audit independently verifies serialized export-vs-NumPy only; no refit."
+    },
+    {
+      "priority": "P2",
+      "scope": "Architecture comparison",
+      "remedy": "Describe GNN vs NoEdges as unresolved:779vs775 correct with67vs63 discordants. NoEdges also loses whole-turn-node influence, so the difference is not a clean relations-only test. Future owner may design an equal-information ablation and convergence study under a new grant; no duplicate MiniLM fit here."
+    }
+  ],
+  "qualification": {
+    "trained": true,
+    "bank_deployment": false,
+    "bank_authority": "none",
+    "Freya_or_hidden_benefit": false,
+    "all_bank_abstain": true,
+    "GPU_USD": 0
+  },
+  "new_fits": 0,
+  "new_bank_API_calls": 0,
+  "new_platform_calls": 0,
+  "Git_actions": 0,
+  "raw_stdout_or_thinking_retained": false,
+  "credentials_read_by_audit": false,
+  "artifacts": {
+    "day2-opus-training-engine-review-native.json": {
+      "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-opus-training-engine-review-native.json",
+      "sha256": "944cbdac2122bb4ccbd35b061c99edd90f8461a01d622145595aa1d764b5c1ae"
+    },
+    "day2-opus-training-engine-review-witnesses.json": {
+      "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-opus-training-engine-review-witnesses.json",
+      "sha256": "72f16887c0bb58bad5f5f96bf74a284d8f46ee2037b4f1c2d56b8eb9c2ba8fde"
+    },
+    "day2-opus-training-engine-review-witnesses.txt": {
+      "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-opus-training-engine-review-witnesses.txt",
+      "sha256": "0d7652d311853b79aff75a0f0c2467bca7e97046c6017e2c395c86c05c6d7ef7"
+    },
+    "day2-opus-training-engine-review-authority-witnesses.json": {
+      "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-opus-training-engine-review-authority-witnesses.json",
+      "sha256": "2a310643d26b72cc4cdafa0e672b03395fbbd49a929ce9fb76d98d74a1e26815"
+    },
+    "day2-opus-training-engine-review-controls.json": {
+      "path": "C:\\Users\\9bakl\\OneDrive\\Belgeler\\ChatGPT\\BUILD THE BUILDER\\fraya\\analysis\\day2-opus-training-engine-review-controls.json",
+      "sha256": "ce4fa19a81a081a269f88b1db3156aff4bde7ba27344364fe8eb6eaa33b22da0"
+    }
+  }
+}
